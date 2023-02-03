@@ -102,7 +102,9 @@ mod tests {
         let req = GetLogsReq {
             from_block: "0".to_string(),
             address: "0xD7Fa4fdaae7b69A2b7B87A860fFbDB8232310a43".to_string(),
-            topics: vec!["0x04157dc3f231c23b7cbecbadb1af08b865aa2e8d6624fe39a72a17279da72278".to_string()],
+            topics: vec![
+                "0x04157dc3f231c23b7cbecbadb1af08b865aa2e8d6624fe39a72a17279da72278".to_string(),
+            ],
         };
         let jsonrpc_req = req.to_jsonrpc();
 
@@ -135,7 +137,8 @@ mod tests {
     }]
 }
 "#;
-        let result: serde_json::Result<JsonRpcResp<Vec<GetLogsResp>>> = serde_json::from_str(response);
+        let result: serde_json::Result<JsonRpcResp<Vec<GetLogsResp>>> =
+            serde_json::from_str(response);
         assert!(result.is_ok(), "cannot parse response");
         let result = result.unwrap();
         let result = result.get_result();
@@ -143,8 +146,17 @@ mod tests {
         let result = result.unwrap();
         assert_eq!(result.len(), 1, "wrong parsed number of results");
 
-        assert!(!result[0].removed, "parsed block marked as removed when it's not");
-        assert_eq!(result[0].block_number, "0x6dc0733", "parsed block's number is wrong");
-        assert_eq!(result[0].data, "0x0123456789", "parsed block's data is wrong");
+        assert!(
+            !result[0].removed,
+            "parsed block marked as removed when it's not"
+        );
+        assert_eq!(
+            result[0].block_number, "0x6dc0733",
+            "parsed block's number is wrong"
+        );
+        assert_eq!(
+            result[0].data, "0x0123456789",
+            "parsed block's data is wrong"
+        );
     }
 }
