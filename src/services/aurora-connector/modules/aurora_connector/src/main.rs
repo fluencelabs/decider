@@ -102,7 +102,7 @@ pub fn poll_deals(
         }
         Ok(value) => value,
     };
-    log::debug!("{:?}", value);
+    log::debug!("request result: {:?}", value);
     let deals = match value.get_result() {
         Err(err) => return DealResult::error(err.to_string()),
         Ok(deals) => deals,
