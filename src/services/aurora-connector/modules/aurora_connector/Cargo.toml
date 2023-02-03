@@ -1,0 +1,18 @@
+[package]
+name = "aurora_connector"
+version = "0.1.0"
+edition = "2018"
+
+[[bin]]
+name = "aurora_connector"
+path = "src/main.rs"
+
+[dependencies]
+marine-rs-sdk = "0.7.1"
+serde_json = "1.0.91"
+serde = { version = "1", features = ["derive"] }
+log = "0.4.17"
+thiserror = "1.0.38"
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.8.1"
