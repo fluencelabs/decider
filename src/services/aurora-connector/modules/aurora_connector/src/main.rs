@@ -1,3 +1,5 @@
+#![feature(assert_matches)]
+
 mod deal;
 mod jsonrpc;
 mod request;
@@ -92,6 +94,7 @@ pub fn poll_deals(
         }
         Ok(url) => url,
     };
+    log::debug!("sending request to {}", url);
     let result = send_request(url, address, topics, from_block);
     let value = match result {
         Err(err) => {
@@ -107,9 +110,20 @@ pub fn poll_deals(
 
     let deals = deals
         .into_iter()
-        .map(|deal| {
+        .filter(|deal| !deal.removed)
+        .filter_map(|deal| {
             let data = parse_chain_deal_data(deal.data);
-            Deal::new(deal.block_number, data)
+            match data {
+                Err(err) => {
+                    log::warn!(
+                        "Cannot parse data of deal from block {}: {:?}",
+                        deal.block_number,
+                        err.to_string()
+                    );
+                    None
+                }
+                Ok(data) => Some(Deal::new(deal.block_number, data)),
+            }
         })
         .collect();
 
