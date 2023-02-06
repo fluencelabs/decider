@@ -1,0 +1,63 @@
+-- Phases:
+-- 1. Create a spell that will be aquiring deal event from auroraconnector and doing nothing.
+-- 2. Extend the spell with ability react on the event by installing simple oneshot spell.
+-- 3. Install a worker instead of simple spell
+--
+
+import "@fluencelabs/spell/api.aqua"
+import "@fluencelabs/spell/spell_service.aqua"
+-- import "@fluencelabs/aqua-lib/builtin.aqua"
+import "services/auroraconnector.aqua"
+
+service Scope("scope"):
+  get_peer_id() -> PeerId
+
+data AuroraInfo:
+  net: string
+  address: string
+  topics: []string
+
+func main(listener_id: string, info: AuroraInfo, from_block: string): 
+    AuroraConnector listener_id
+    result <- AuroraConnector.poll_deals(info.net, info.address, info.topics, from_block) 
+    if result.success:
+        -- blocks: *string
+        for deal <- deals:
+            -- blocks <<- deal.block_number
+            decide(deal)   
+        -- len <- Op.array_length(blocks)
+
+   -- How to update `from_block` value?
+   -- <- from_block
+
+
+
+func decide(deal: DealData) 
+    -- if hash(deal.info.deal_id) % 5
+    if true:
+        join_deal(deal.info)
+
+-- func join_deal(deal: DealData):
+--     PeerSpell.install(,,)
+
+-- const APP_CID = "1234"
+-- 
+-- func join_deal(deal: DealData):
+--    worker_keypair <- get_worker_peer_id(deal_id)
+-- 
+--    on worker_keypair.peer_id:
+--        args = Args(deal_id = deal.address, app_cid = APP_CID)
+--        config <- periodic(60)
+--        Spell.install(script, args, config)
+-- 
+-- func periodic(period_sec: u32) -> TriggerConfig
+--    <- TriggerConfig(
+--         clock = ClockConfig(start_sec = 1, end_sec = 0, period_sec = period_sec),
+--         connections = ConnectionPoolConfig(connect = false, disconnect = false),
+--         blockchain = BlockChainConfig(start_block = 0, end_block = 0) 
+--       )
+-- 
+-- func get_worker_peer_id(deal_id: Address) -> PeerId:
+--   -- kp <- get_worker_keypair(deal_id)
+--   -- <- kp.peer_id
+--   <- Scope.get_peer_id()
