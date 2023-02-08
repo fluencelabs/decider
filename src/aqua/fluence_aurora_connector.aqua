@@ -1,0 +1,35 @@
+module FluenceAuroraConnector declares *
+
+data Net:
+  name: string
+  url: string
+
+data Config:
+  nets: []Net
+
+data U256:
+  bytes: []u8
+
+data DealData:
+  deal_id: string
+  payment_token: string
+  price_per_epoch: U256
+  required_stake: U256
+  min_workers: u32
+  max_workers: u32
+  target_workers: u32
+  app_cid: string
+  effector_wasms_cids: []string
+
+data DealCreated:
+  block_number: string
+  info: DealData
+
+data DealCreatedResult:
+  error: []string
+  success: bool
+  result: []DealCreated
+
+service FluenceAuroraConnector:
+  get_config() -> Config
+  poll_deals(net: string, address: string, topics: []string, from_block: string) -> DealCreatedResult
