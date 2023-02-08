@@ -6,4 +6,4 @@
 
 version: 0
 type: rust
-name: aurora_connector
+name: fluence_aurora_connector

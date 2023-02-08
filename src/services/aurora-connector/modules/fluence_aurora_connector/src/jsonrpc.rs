@@ -78,7 +78,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_request() {
+    fn test_get_logs_request() {
         let request = r#"
 {
     "jsonrpc": "2.0",
@@ -116,7 +116,7 @@ mod tests {
     }
 
     #[test]
-    fn test_reponse() {
+    fn test_get_logs_reponse() {
         let response = r#"
 {
   "jsonrpc": "2.0",

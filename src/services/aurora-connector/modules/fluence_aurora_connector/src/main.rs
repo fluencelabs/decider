@@ -1,4 +1,6 @@
+#![allow(dead_code)]
 #![feature(assert_matches)]
+#![feature(try_blocks)]
 
 mod deal;
 mod jsonrpc;
@@ -49,18 +51,22 @@ pub fn get_config() -> Config {
 
 // Nets we allow to poll.
 fn nets() -> HashMap<&'static str, &'static str> {
-    HashMap::from([("testnet", "https://testnet.aurora.dev")])
+    HashMap::from([
+        ("testnet", "https://testnet.aurora.dev"),
+        // Note: cool for debugging, but do we want to leave it here?
+        ("local", "http://localhost:8545"),
+    ])
 }
 
 #[marine]
-pub struct DealResult {
+pub struct DealCreatedResult {
     error: Vec<String>,
     success: bool,
-    result: Vec<Deal>,
+    result: Vec<DealCreated>,
 }
 
-impl DealResult {
-    fn ok(result: Vec<Deal>) -> Self {
+impl DealCreatedResult {
+    fn ok(result: Vec<DealCreated>) -> Self {
         Self {
             success: true,
             error: vec![],
@@ -87,24 +93,24 @@ pub fn poll_deals(
     address: String,
     topics: Vec<String>,
     from_block: String,
-) -> DealResult {
+) -> DealCreatedResult {
     let url = match get_url(net) {
         Err(err) => {
-            return DealResult::error(err);
+            return DealCreatedResult::error(err);
         }
         Ok(url) => url,
     };
     log::debug!("sending request to {}", url);
-    let result = send_request(url, address, topics, from_block);
+    let result = get_logs(url, address, topics, from_block);
     let value = match result {
         Err(err) => {
-            return DealResult::error(err.to_string());
+            return DealCreatedResult::error(err.to_string());
         }
         Ok(value) => value,
     };
     log::debug!("request result: {:?}", value);
     let deals = match value.get_result() {
-        Err(err) => return DealResult::error(err.to_string()),
+        Err(err) => return DealCreatedResult::error(err.to_string()),
         Ok(deals) => deals,
     };
 
@@ -112,9 +118,12 @@ pub fn poll_deals(
         .into_iter()
         .filter(|deal| !deal.removed)
         .filter_map(|deal| {
-            let data = parse_chain_deal_data(deal.data);
+            println!("Parse block {:?}", deal.block_number);
+            let data = parse_chain_deal_data(&deal.data);
             match data {
                 Err(err) => {
+                    // Here we ignore blocks we cannot parse.
+                    // Is it okay? We can't send warning
                     log::warn!(
                         "Cannot parse data of deal from block {}: {:?}",
                         deal.block_number,
@@ -122,12 +131,12 @@ pub fn poll_deals(
                     );
                     None
                 }
-                Ok(data) => Some(Deal::new(deal.block_number, data)),
+                Ok(data) => Some(DealCreated::new(deal.block_number, data)),
             }
         })
         .collect();
 
-    DealResult::ok(deals)
+    DealCreatedResult::ok(deals)
 }
 
 fn get_url(net: String) -> Result<String, String> {

@@ -14,7 +14,7 @@ dependencies:
     marine: 0.12.5
     mrepl: 0.18.8
 services:
-  auroraconnector:
+  fluence_aurora_connector:
     get: src/services/aurora-connector
     deploy:
       - deployId: default

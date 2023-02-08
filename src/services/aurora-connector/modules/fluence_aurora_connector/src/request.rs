@@ -16,7 +16,7 @@ pub enum Error {
     OtherError(String),
 }
 
-pub fn send_request(
+pub fn get_logs(
     url: String,
     address: String,
     topics: Vec<String>,
@@ -34,7 +34,7 @@ pub fn send_request(
     let req = serde_json::to_string(&req).unwrap();
     log::debug!("request: {}", req);
     // Make a request
-    let result = curl_request(request(url, req)).into_std();
+    let result = curl_request(curl_params(url, req)).into_std();
     let result = match result {
         None => {
             return Err(OtherError(
@@ -53,7 +53,7 @@ pub fn send_request(
 }
 
 #[rustfmt::skip]
-fn request(url: String, data: String) -> Vec<String> {
+fn curl_params(url: String, data: String) -> Vec<String> {
     let params = vec![
         url.as_str(),
         // To avoid unneccessary data in stderr
