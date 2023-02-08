@@ -15,6 +15,6 @@ dependencies:
     mrepl: 0.18.8
 services:
   fluence_aurora_connector:
-    get: src/services/aurora-connector
+    get: src/services/fluence-aurora-connector
     deploy:
       - deployId: default
