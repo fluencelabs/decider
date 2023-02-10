@@ -24,18 +24,6 @@ service RunConsoleMany("run-console"):
    print(msg: []string)
 
 
-func report_err(spell_id: string, error_msg: string):
-    Spell spell_id
-    Spell.list_push_string("custom_error", error_msg)    
-
-func report_warn(spell_id: string, msg: string):
-    Spell spell_id
-    Spell.list_push_string("custom_warning", msg)    
-
-
-func decide(deal: DealData) -> bool:
-    <- true
-
 service Json("json"):
   parse(str: string) -> TriggerConfig
   stringify(obj: ⊤) -> string
@@ -52,21 +40,83 @@ data JoinedDeal:
   deal_id: string
   spell_id: string
 
-func join_deal(spell_id: string, deal: DealData):
+data WorkerSettings:
+  worker_config: TriggerConfig
+  worker_script: string
+
+func report_err(spell_id: string, error_msg: string):
     Spell spell_id
-    worker_script_str = Spell.get_string("worker_script")
-    worker_script <- JsonString.parse(worker_script_str.str)
-    worker_config_str = Spell.get_string("worker_config")
-    worker_config <- Json.parse(worker_config_str.str)
+    Spell.list_push_string("custom_error", error_msg)
 
-    worker_keypair = INIT_PEER_ID
-    on worker_keypair:
-        args = WorkerArgs(deal_id = deal.deal_id, app_cid = deal.app_cid)
-        worker_spell_id <- PeerSpell.install(worker_script, args, worker_config)
+func report_warn(spell_id: string, msg: string):
+    Spell spell_id
+    Spell.list_push_string("custom_warning", msg)
 
-    joined_deal = JoinedDeal(deal_id = deal.deal_id, spell_id = worker_spell_id)
+func report_deal(spell_id: string, joined_deal: JoinedDeal):
+    Spell spell_id
     msg <- Json.stringify(joined_deal) 
     Spell.list_push_string("joined_deals", msg)
+
+-- TODO
+func decide(deal: DealData) -> bool:
+    <- true
+
+func get_string(spell_id: string, key: string) -> ?string, bool:
+    Spell spell_id
+
+    status: *bool
+    result: *string
+
+    value <- Spell.get_string(key)
+    if value.success == false:
+       status <<- false
+    else:
+       if value.absent:
+          status <<- false
+       else:
+          result <<- value.str
+          status <<- true
+    <- result, status!
+
+func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
+    Spell spell_id
+    result: *bool
+    settings: *WorkerSettings
+
+    worker_script_str, is_ok1 <- get_string(spell_id, "worker_script")
+    worker_config_str, is_ok2  <- get_string(spell_id, "worker_config")
+
+    if is_ok1 == false:
+        report_err(spell_id, "worker_script doesn't set")
+        result <<- false
+    else:
+        if is_ok2 == false:
+            report_err(spell_id, "worker_config doesn't set")
+            result <<- false
+        else:
+            worker_script <- JsonString.parse(worker_script_str!)
+            worker_config <- Json.parse(worker_config_str!)
+
+            ws = WorkerSettings(worker_config = worker_config, worker_script = worker_script)
+            settings <<- ws
+            result <<- true
+    <- settings, result!
+
+func join_deal(spell_id: string, deal: DealData) -> bool:
+    settings, error <- get_worker_settings(spell_id)
+    is_ok: *bool
+    if error:
+        is_ok <<- false
+    else:
+        worker_keypair = INIT_PEER_ID
+        on worker_keypair:
+            args = WorkerArgs(deal_id = deal.deal_id, app_cid = deal.app_cid)
+            worker_spell_id <- PeerSpell.install(settings!.worker_script, args, settings!.worker_config)
+
+        joined_deal = JoinedDeal(deal_id = deal.deal_id, spell_id = worker_spell_id)
+        report_deal(spell_id, joined_deal)
+        is_ok <<- true
+    <- is_ok!
 
 func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string) -> Update: 
     FluenceAuroraConnector listener_id
@@ -89,7 +139,11 @@ func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: s
                 RunConsole.print(spell_id, deal.info.deal_id)
                 if decide(deal.info):
                     RunConsoleMany.print([spell_id, "joining the deal", deal.info.deal_id, "from_block", deal.block_number])
-                    join_deal(spell_id, deal.info)
+                    is_ok <- join_deal(spell_id, deal.info)
+                    if is_ok:
+                        RunConsoleMany.print([spell_id, "joined the deal", deal.info.deal_id])
+                    else:
+                        RunConsoleMany.print([spell_id, "couldn't join the deal", deal.info.deal_id])
                 else:
                     RunConsoleMany.print([spell_id, "skipping deal for deal id", deal.info.deal_id, "from_block", deal.block_number])
                     msg <- Op.concat_strings("skipping ", deal.info.deal_id)
