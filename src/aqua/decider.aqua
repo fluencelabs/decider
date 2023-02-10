@@ -1,8 +1,6 @@
 -- Phases:
--- 1. Create a spell that will be aquiring deal event from auroraconnector and doing nothing.
--- 2. Extend the spell with ability react on the event by installing simple oneshot spell.
--- 3. Install a worker instead of simple spell
---
+-- 4. Implement decide function
+-- 
 
 import "@fluencelabs/spell/api.aqua"
 import "@fluencelabs/spell/spell_service.aqua"
@@ -23,14 +21,12 @@ service RunConsole("run-console"):
 service RunConsoleMany("run-console"):
    print(msg: []string)
 
-
 service Json("json"):
   parse(str: string) -> TriggerConfig
   stringify(obj: ⊤) -> string
 
 service JsonString("json"):
   parse(str: string) -> string
-
 
 data WorkerArgs:
     deal_id: string
@@ -87,10 +83,12 @@ func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
     worker_config_str, is_ok2  <- get_string(spell_id, "worker_config")
 
     if is_ok1 == false:
+        RunConsole.print(spell_id, "worker_script doesn't set")
         report_err(spell_id, "worker_script doesn't set")
         result <<- false
     else:
         if is_ok2 == false:
+            RunConsole.print(spell_id, "worker_config doesn't set")
             report_err(spell_id, "worker_config doesn't set")
             result <<- false
         else:
@@ -103,20 +101,20 @@ func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
     <- settings, result!
 
 func join_deal(spell_id: string, deal: DealData) -> bool:
-    settings, error <- get_worker_settings(spell_id)
-    is_ok: *bool
-    if error:
-        is_ok <<- false
+    settings, is_ok <- get_worker_settings(spell_id)
+    status: *bool
+    if is_ok == false:
+        status <<- false
     else:
-        worker_keypair = INIT_PEER_ID
-        on worker_keypair:
+        worker_peer_id <- Scope.get_peer_id() 
+        on worker_peer_id:
             args = WorkerArgs(deal_id = deal.deal_id, app_cid = deal.app_cid)
             worker_spell_id <- PeerSpell.install(settings!.worker_script, args, settings!.worker_config)
 
         joined_deal = JoinedDeal(deal_id = deal.deal_id, spell_id = worker_spell_id)
         report_deal(spell_id, joined_deal)
-        is_ok <<- true
-    <- is_ok!
+        status <<- true
+    <- status!
 
 func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string) -> Update: 
     FluenceAuroraConnector listener_id
