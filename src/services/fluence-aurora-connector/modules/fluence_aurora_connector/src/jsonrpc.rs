@@ -47,6 +47,7 @@ impl<T> JsonRpcResp<T> {
 #[serde(rename_all = "camelCase")]
 pub struct GetLogsReq {
     pub from_block: String,
+    pub to_block: String,
     pub address: String,
     pub topics: Vec<String>,
 }
@@ -101,6 +102,7 @@ mod tests {
 
         let req = GetLogsReq {
             from_block: "0".to_string(),
+            to_block: "latest".to_string(),
             address: "0xD7Fa4fdaae7b69A2b7B87A860fFbDB8232310a43".to_string(),
             topics: vec![
                 "0x04157dc3f231c23b7cbecbadb1af08b865aa2e8d6624fe39a72a17279da72278".to_string(),
