@@ -1,0 +1,5 @@
+service Console("run-console"):
+   print(msg: []string)
+
+func main(spell_id: string, deal_id: string, app_cid: string):
+    Console.print(["worker", spell_id, deal_id, app_cid])    
