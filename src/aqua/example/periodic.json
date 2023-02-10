@@ -1,0 +1,5 @@
+{
+  "clock":       { "start_sec": 1, "end_sec": 0, "period_sec": 30 },
+  "connections": { "connect": false, "disconnect": false },
+  "blockchain":  { "start_block": 0, "end_block": 0 }
+}
