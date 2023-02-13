@@ -9,7 +9,9 @@ aquaInputPath: src/aqua/main.aqua
 dependencies:
   npm:
     "@fluencelabs/aqua-lib": 0.6.0
-    "@fluencelabs/spell": 0.0.1
+    "@fluencelabs/spell": 0.1.0
+    "@fluencelabs/aqua": 0.9.2
+    "@fluencelabs/installation-spell": 0.0.2-installation
   cargo:
     marine: 0.12.5
     mrepl: 0.18.8
@@ -18,3 +20,7 @@ services:
     get: src/services/fluence-aurora-connector
     deploy:
       - deployId: default
+        relays:
+          - /ip4/0.0.0.0/tcp/9999/ws/p2p/12D3KooWN4XNKgu76nwB7iKUXmE4FKCA5Ycak6SbSqLTaWo2nFsQ
+relays:
+  - /ip4/0.0.0.0/tcp/9999/ws/p2p/12D3KooWN4XNKgu76nwB7iKUXmE4FKCA5Ycak6SbSqLTaWo2nFsQ

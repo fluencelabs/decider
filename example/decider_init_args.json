@@ -7,5 +7,6 @@
         "0xa01ee5be4ccf7a0848dd3443b51ebe7876778549a41114f7c49257267981abdd"
       ]
     },
-    "from_block": "latest"
+    "from_block": "latest",
+    "worker_ipfs": "/ip4/127.0.0.1/tcp/5001"
 }

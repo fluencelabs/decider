@@ -21,16 +21,17 @@ service RunConsole("run-console"):
 service RunConsoleMany("run-console"):
    print(msg: []string)
 
-service Json("json"):
+service JsonTriggerConfig("json"):
   parse(str: string) -> TriggerConfig
-  stringify(obj: ⊤) -> string
 
-service JsonString("json"):
+service Json("json"):
   parse(str: string) -> string
+  stringify(obj: ⊤) -> string
 
 data WorkerArgs:
     deal_id: string
-    app_cid: string
+    worker_def_cid: string
+    ipfs: string
 
 data JoinedDeal:
   deal_id: string
@@ -39,6 +40,7 @@ data JoinedDeal:
 data WorkerSettings:
   worker_config: TriggerConfig
   worker_script: string
+  worker_ipfs: string
 
 func report_err(spell_id: string, error_msg: string):
     Spell spell_id
@@ -81,7 +83,9 @@ func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
 
     worker_script_str, is_ok1 <- get_string(spell_id, "worker_script")
     worker_config_str, is_ok2  <- get_string(spell_id, "worker_config")
+    worker_ipfs_str, is_ok3  <- get_string(spell_id, "worker_ipfs")
 
+    -- :c
     if is_ok1 == false:
         RunConsole.print(spell_id, "worker_script doesn't set")
         report_err(spell_id, "worker_script doesn't set")
@@ -92,12 +96,18 @@ func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
             report_err(spell_id, "worker_config doesn't set")
             result <<- false
         else:
-            worker_script <- JsonString.parse(worker_script_str!)
-            worker_config <- Json.parse(worker_config_str!)
+            if is_ok3 == false:
+                RunConsole.print(spell_id, "worker_ipfs doesn't set")
+                report_err(spell_id, "worker_ipfs doesn't set")
+                result <<- false
+            else:
+                worker_script <- Json.parse(worker_script_str!)
+                worker_config <- JsonTriggerConfig.parse(worker_config_str!)
+                worker_ipfs <- Json.parse(worker_ipfs_str!)
 
-            ws = WorkerSettings(worker_config = worker_config, worker_script = worker_script)
-            settings <<- ws
-            result <<- true
+                ws = WorkerSettings(worker_config = worker_config, worker_script = worker_script, worker_ipfs = worker_ipfs)
+                settings <<- ws
+                result <<- true
     <- settings, result!
 
 func join_deal(spell_id: string, deal: DealData) -> bool:
@@ -106,9 +116,10 @@ func join_deal(spell_id: string, deal: DealData) -> bool:
     if is_ok == false:
         status <<- false
     else:
+        -- TODO
         worker_peer_id <- Scope.get_peer_id() 
         on worker_peer_id:
-            args = WorkerArgs(deal_id = deal.deal_id, app_cid = deal.app_cid)
+            args = WorkerArgs(deal_id = deal.deal_id, worker_def_cid = deal.app_cid, ipfs = settings!.worker_ipfs)
             worker_spell_id <- PeerSpell.install(settings!.worker_script, args, settings!.worker_config)
 
         joined_deal = JoinedDeal(deal_id = deal.deal_id, spell_id = worker_spell_id)

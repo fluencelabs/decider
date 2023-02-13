@@ -14,15 +14,19 @@ decider_args="$2"
 worker_config="$3"
 
 # compile worker.aqua to worker.main.air
-aqua -i worker.aqua -o "$dir" --air --no-relay
+fluence aqua -i src/aqua/worker.aqua -o "$dir" --air --no-relay
+echo "compiled worker"
 
 # compile decider.aqua to decider.main.air
-aqua -i decider.aqua -o "$dir" --air --no-relay
+fluence aqua -i src/aqua/decider.aqua -o "$dir" --air --no-relay
+echo "compiled decider"
 
 # create worker_settings.json
 jq --arg script "$(cat $dir/worker.main.air)" '{"worker_script": $script, "worker_config": .}' "$worker_config" > "$dir"/worker_settings.json
+echo "create worker settings"
 
 jq -s '.[0] * .[1]' "$decider_args" "$dir"/worker_settings.json > "$dir"/init.json
+echo "create initial data for decider"
 
 # Need json with:
 # "script": decider script
