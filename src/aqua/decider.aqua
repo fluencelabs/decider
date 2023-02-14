@@ -15,11 +15,12 @@ data AuroraInfo:
 data Update:
   from_block: string
 
-service RunConsole("run-console"):
-   print(id: string, msg: string)
-
 service RunConsoleMany("run-console"):
-   print(msg: []string)
+   print(title: string, msg: []string)
+
+-- debugging
+service RunConsoleAny("run-console"):
+   print(msg: []⊤)
 
 service JsonTriggerConfig("json"):
   parse(str: string) -> TriggerConfig
@@ -27,6 +28,9 @@ service JsonTriggerConfig("json"):
 service Json("json"):
   parse(str: string) -> string
   stringify(obj: ⊤) -> string
+
+service OpExt("op"):
+    concat_strings(a1: string, a2: string, a3: string) -> string
 
 data WorkerArgs:
     deal_id: string
@@ -41,6 +45,10 @@ data WorkerSettings:
   worker_config: TriggerConfig
   worker_script: string
   worker_ipfs: string
+
+func print(spell_id: string, msg: []string):
+   title <- OpExt.concat_strings("decider <", spell_id, ">")
+   RunConsoleMany.print(title, msg)
 
 func report_err(spell_id: string, error_msg: string):
     Spell spell_id
@@ -87,17 +95,17 @@ func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
 
     -- :c
     if is_ok1 == false:
-        RunConsole.print(spell_id, "worker_script doesn't set")
+        print(spell_id, ["worker_script doesn't set"])
         report_err(spell_id, "worker_script doesn't set")
         result <<- false
     else:
         if is_ok2 == false:
-            RunConsole.print(spell_id, "worker_config doesn't set")
+            print(spell_id, ["worker_config doesn't set"])
             report_err(spell_id, "worker_config doesn't set")
             result <<- false
         else:
             if is_ok3 == false:
-                RunConsole.print(spell_id, "worker_ipfs doesn't set")
+                print(spell_id, ["worker_ipfs doesn't set"])
                 report_err(spell_id, "worker_ipfs doesn't set")
                 result <<- false
             else:
@@ -135,37 +143,35 @@ func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: s
 
     result <- FluenceAuroraConnector.poll_deals(info.net, info.address, info.topics, from_block) 
     if result.success:
-        RunConsole.print(spell_id, "ok")
+        print(spell_id, ["found deals"])
         last_blocks: *string
         last_blocks <<- from_block
 
-        -- not `par` to be able to find the latest seen block number
         for deal <- result.result:
-            -- `from_block` is the latest seen block, so it's supposed that we already processed it.
-            -- For initializing, we can use "latest" tag which isn't equal to any possible block numbers
-            if from_block != deal.block_number:
+             -- `from_block` is the latest seen block, so it's supposed that we already processed it.
+             -- For initializing, we can use "latest" tag which isn't equal to any possible block numbers
+             if from_block != deal.block_number:
                 last_blocks <<- deal.block_number
-                RunConsole.print(spell_id, deal.info.deal_id)
                 if decide(deal.info):
-                    RunConsoleMany.print([spell_id, "joining the deal", deal.info.deal_id, "from_block", deal.block_number])
+                    print(spell_id, ["joining the deal", deal.info.deal_id, "from_block", deal.block_number])
                     is_ok <- join_deal(spell_id, deal.info)
                     if is_ok:
-                        RunConsoleMany.print([spell_id, "joined the deal", deal.info.deal_id])
+                        print(spell_id, ["joined the deal", deal.info.deal_id])
                     else:
-                        RunConsoleMany.print([spell_id, "couldn't join the deal", deal.info.deal_id])
+                        print(spell_id, ["couldn't join the deal", deal.info.deal_id])
                 else:
-                    RunConsoleMany.print([spell_id, "skipping deal for deal id", deal.info.deal_id, "from_block", deal.block_number])
+                    print(spell_id, ["skipping deal for deal id", deal.info.deal_id, "from_block", deal.block_number])
                     msg <- Op.concat_strings("skipping ", deal.info.deal_id)
                     report_warn(spell_id, msg)
         
-        -- Do it to detect the latest seen block number
+        -- Do it to detect the number of deals to find the last deal's block number
         len <- Op.array_length(last_blocks)
         new_from_block = last_blocks[len - 1]
-        RunConsoleMany.print([spell_id, "new_from_block", new_from_block])
+        print(spell_id, ["old from_block", from_block, "new from_block", new_from_block])
         update <<- Update(from_block = new_from_block)
     else:
         -- report error somehow
-        RunConsole.print(spell_id, result.error!)
+        print(spell_id, result.error)
         report_err(spell_id, result.error!)
         -- since the last seen block didn't change we just 
         update <<- Update(from_block = from_block)

@@ -8,5 +8,5 @@
       ]
     },
     "from_block": "latest",
-    "worker_ipfs": "/ip4/127.0.0.1/tcp/5001"
+    "worker_ipfs": "/dns4/ipfs.fluence.dev/tcp/5001"
 }
