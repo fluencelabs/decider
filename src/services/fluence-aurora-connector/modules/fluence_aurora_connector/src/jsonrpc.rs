@@ -87,6 +87,7 @@ mod tests {
     "params": [
         {
             "fromBlock": "0",
+            "toBlock": "latest",
             "address": "0xD7Fa4fdaae7b69A2b7B87A860fFbDB8232310a43",
             "topics": [
                 "0x04157dc3f231c23b7cbecbadb1af08b865aa2e8d6624fe39a72a17279da72278"
