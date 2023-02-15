@@ -29,6 +29,7 @@ pub fn get_logs(
         address,
         topics,
         from_block,
+        to_block: "latest".to_string(),
     };
     let req = json!(req.to_jsonrpc());
     let req = serde_json::to_string(&req).unwrap();

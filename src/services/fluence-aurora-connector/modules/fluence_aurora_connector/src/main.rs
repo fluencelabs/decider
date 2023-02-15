@@ -118,7 +118,7 @@ pub fn poll_deals(
         .into_iter()
         .filter(|deal| !deal.removed)
         .filter_map(|deal| {
-            println!("Parse block {:?}", deal.block_number);
+            log::debug!("Parse block {:?}", deal.block_number);
             let data = parse_chain_deal_data(&deal.data);
             match data {
                 Err(err) => {
