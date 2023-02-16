@@ -2,9 +2,7 @@
 
 set -efu
 
-dir=$(mktemp -d)
-
-trap 'rm -rf -- "$dir"' EXIT
+dir="./src/air/"
 
 # example/periodic.json or example/oneshot.json
 decider_config="$1"
@@ -22,7 +20,7 @@ fluence aqua -i src/aqua/decider.aqua -o "$dir" --air --no-relay
 echo "compiled decider"
 
 # create worker_settings.json
-jq --arg script "$(cat $dir/worker.main.air)" '{"worker_script": $script, "worker_config": .}' "$worker_config" > "$dir"/worker_settings.json
+jq -c --arg script "$(cat $dir/worker.main.air | awk '{$1=$1};1')" '{"worker_script": $script, "worker_config": .}' "$worker_config" > "$dir"/worker_settings.json
 echo "create worker settings"
 
 jq -s '.[0] * .[1]' "$decider_args" "$dir"/worker_settings.json > "$dir"/init.json
@@ -40,5 +38,5 @@ echo "create initial data for decider"
 #      "worker_script": worker.aqua script
 #      "worker_config": periodic worker config worker_config.json
 #      "worker_ipfs": IPFS API address from which to get apps
-jq -s --arg script "$(cat $dir/decider.main.air )" '{ "script": $script, "cfg": .[0], "dat": .[1]}' "$decider_config" "$dir"/init.json > decider.json
+jq -s --arg script "$(cat $dir/decider.main.air | awk '{$1=$1};1')" '{ "script": $script, "cfg": .[0], "dat": .[1]}' "$decider_config" "$dir"/init.json > decider.json
 echo "Compiled to decider.json"
