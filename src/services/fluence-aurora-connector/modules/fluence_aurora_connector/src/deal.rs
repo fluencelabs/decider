@@ -21,8 +21,16 @@ pub struct DealCreated {
 }
 
 impl DealCreated {
+    pub const EVENT_NAME: &str = "DealCreated";
+
     pub fn new(block_number: String, info: DealData) -> Self {
         Self { block_number, info }
+    }
+
+    pub fn topic() -> String {
+        let sig = DealData::signature();
+        let hash = ethabi::long_signature(Self::EVENT_NAME, &sig);
+        format!("0x{}", hex::encode(hash.as_bytes()))
     }
 }
 
@@ -64,7 +72,7 @@ pub struct DealData {
     deal_id: String,
     /// Token used to pay for the deal
     payment_token: String,
-    ///
+    /// How much to pay per epoch
     price_per_epoch: U256,
     /// How much a peer should pay to join the deal
     required_stake: U256,
@@ -82,25 +90,31 @@ pub struct DealData {
     epoch: u32,
 }
 
+impl DealData {
+    fn signature() -> Vec<ParamType> {
+        vec![
+            ParamType::Address,                            // deal
+            ParamType::Address,                            // paymentToken
+            ParamType::Uint(256),                          // pricePerEpoch
+            ParamType::Uint(256),                          // requiredStake
+            ParamType::Uint(256),                          // minWorkers
+            ParamType::Uint(256),                          // maxWorkersPerProvider
+            ParamType::Uint(256),                          // targetWorkers
+            ParamType::String,                             // appCID
+            ParamType::Array(Box::new(ParamType::String)), // effectorWasmsCids
+            ParamType::Uint(256),                          // epoch
+        ]
+    }
+}
+
 /// Parse data from chain. Accepts data with and without "0x" prefix.
 pub fn parse_chain_deal_data(data: &str) -> Result<DealData, DealParseError> {
     let data = data.strip_prefix("0x").unwrap_or(data);
-    if data.len() == 0 {
+    if data.is_empty() {
         return Err(DealParseError::Empty);
     }
     let data = hex::decode(data)?;
-    let types = vec![
-        ParamType::Address,                            // deal
-        ParamType::Address,                            // paymentToken
-        ParamType::Uint(256),                          // pricePerEpoch
-        ParamType::Uint(256),                          // requiredStake
-        ParamType::Uint(256),                          // minWorkers
-        ParamType::Uint(256),                          // maxWorkersPerProvider
-        ParamType::Uint(256),                          // targetWorkers
-        ParamType::String,                             // appCID
-        ParamType::Array(Box::new(ParamType::String)), // effectorWasmsCids
-        ParamType::Uint(256),                          // epoch
-    ];
+    let types = DealData::signature();
     let result = ethabi::decode(&types, &data)?;
 
     let deal_data: Option<DealData> = try {
@@ -152,8 +166,8 @@ fn convert_to_bytes(num: ethabi::ethereum_types::U256) -> U256 {
 
 #[cfg(test)]
 mod test {
-    use std::assert_matches::assert_matches;
     use crate::{parse_chain_deal_data, DealParseError};
+    use std::assert_matches::assert_matches;
 
     // Cannot now provide an example of encoded data with effectors
     // #[test]
@@ -175,22 +189,31 @@ mod test {
 
     #[test]
     fn test_chain_parsing_ok_empty_effectors() {
-
-let data = "0x00000000000000000000000094952482aa36dc9ec113bbba0df49284ecc071e20000000000000000000000005f7a3a2dab601ee4a1970b53088bebca176e13f40000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000de0b6b3a7640000000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000009896800000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001a00000000000000000000000000000000000000000000000000000000000554509000000000000000000000000000000000000000000000000000000000000002e516d5758616131534b41445274774e7472773278714a5556447864734472536d4a635542614a7946324c353476500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
-
+        let data = "0x00000000000000000000000094952482aa36dc9ec113bbba0df49284ecc071e20000000000000000000000005f7a3a2dab601ee4a1970b53088bebca176e13f40000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000de0b6b3a7640000000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000009896800000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001a00000000000000000000000000000000000000000000000000000000000554509000000000000000000000000000000000000000000000000000000000000002e516d5758616131534b41445274774e7472773278714a5556447864734472536d4a635542614a7946324c353476500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 
         let result = parse_chain_deal_data(data);
-        println!("{:?}", result);
         assert!(result.is_ok(), "can't parse data: {:?}", result);
         let result = result.unwrap();
         assert_eq!(result.deal_id, "94952482aa36dc9ec113bbba0df49284ecc071e2");
-        assert_eq!(result.payment_token, "5f7a3a2dab601ee4a1970b53088bebca176e13f4");
-        assert_eq!(result.required_stake.to_eth(), ethabi::ethereum_types::U256::exp10(18));
-        assert_eq!(result.price_per_epoch.to_eth(), ethabi::ethereum_types::U256::exp10(18));
+        assert_eq!(
+            result.payment_token,
+            "5f7a3a2dab601ee4a1970b53088bebca176e13f4"
+        );
+        assert_eq!(
+            result.required_stake.to_eth(),
+            ethabi::ethereum_types::U256::exp10(18)
+        );
+        assert_eq!(
+            result.price_per_epoch.to_eth(),
+            ethabi::ethereum_types::U256::exp10(18)
+        );
         assert_eq!(result.min_workers, 3);
         assert_eq!(result.max_workers_per_provider, 10000000);
         assert_eq!(result.target_workers, 5);
-        assert_eq!(result.app_cid, "QmWXaa1SKADRtwNtrw2xqJUVDxdsDrSmJcUBaJyF2L54vP");
+        assert_eq!(
+            result.app_cid,
+            "QmWXaa1SKADRtwNtrw2xqJUVDxdsDrSmJcUBaJyF2L54vP"
+        );
         let empty: Vec<String> = vec![];
         assert_eq!(result.effector_wasms_cids, empty);
         assert_eq!(result.epoch, 5588233);
@@ -209,6 +232,9 @@ let data = "0x00000000000000000000000094952482aa36dc9ec113bbba0df49284ecc071e200
         let data = "0x1234567890";
         let result = parse_chain_deal_data(data);
         assert!(result.is_err());
-        assert_matches!(result, Err(DealParseError::EthError(ethabi::Error::InvalidData)));
+        assert_matches!(
+            result,
+            Err(DealParseError::EthError(ethabi::Error::InvalidData))
+        );
     }
 }

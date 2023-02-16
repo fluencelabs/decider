@@ -3,9 +3,6 @@
     "info": {
       "net": "testnet",
       "address": "0x432FE883CfF46313aA2C35D2f0b5D9785E9eE711",
-      "topics": [
-        "0xa235ca2f283bc16e762d21ff08469113882217cd6d97018de88e66a94e601b91"
-      ]
     },
     "from_block": "latest",
     "worker_ipfs": "/dns4/ipfs.fluence.dev/tcp/5001"
