@@ -111,7 +111,7 @@ pub fn parse_chain_deal_data(data: &str) -> Result<DealData, DealParseError> {
         let required_stake = convert_to_bytes(result[3].clone().into_uint()?);
 
         let min_workers = result[4].clone().into_uint()?.as_u32();
-        let max_workers_per_provider= result[5].clone().into_uint()?.as_u32();
+        let max_workers_per_provider = result[5].clone().into_uint()?.as_u32();
         let target_workers = result[6].clone().into_uint()?.as_u32();
 
         let app_cid = result[7].clone().into_string()?;
