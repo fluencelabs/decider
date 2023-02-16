@@ -1,11 +1,8 @@
 {
-    "listener_id": "9e1a992b-35e1-4b24-bc4f-4f330abf65e3",
+    "listener_id": "5138ca3c-5c0a-45da-bfb5-f64b75292e88",
     "info": {
-      "net": "local",
-      "address": "0xA7489Ba54188533acFEe0a6161aE039111ce55aD",
-      "topics": [
-        "0xa01ee5be4ccf7a0848dd3443b51ebe7876778549a41114f7c49257267981abdd"
-      ]
+      "net": "testnet",
+      "address": "0x432FE883CfF46313aA2C35D2f0b5D9785E9eE711",
     },
     "from_block": "latest",
     "worker_ipfs": "/dns4/ipfs.fluence.dev/tcp/5001"

@@ -36,9 +36,9 @@ echo "create initial data for decider"
 #     "info":
 #     	 "net": net from which to poll
 #     	 "address": contract address
-#     	 "topics": created deal topic
 #      "from_block": "latest"
 #      "worker_script": worker.aqua script
 #      "worker_config": periodic worker config worker_config.json
+#      "worker_ipfs": IPFS API address from which to get apps
 jq -s --arg script "$(cat $dir/decider.main.air )" '{ "script": $script, "cfg": .[0], "dat": .[1]}' "$decider_config" "$dir"/init.json > decider.json
 echo "Compiled to decider.json"

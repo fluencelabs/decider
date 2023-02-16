@@ -29,16 +29,26 @@ pub struct Net {
     url: String,
 }
 
+#[marine]
+pub struct SupportedEvent {
+    /// Name of the event
+    name: String,
+    /// Topic by which we poll the event
+    topic: String,
+}
+
 /// Service configuration.
 #[marine]
-pub struct Config {
+pub struct Env {
     /// List of allowed networks.
     nets: Vec<Net>,
+    /// List of polled events with
+    events: Vec<SupportedEvent>,
 }
 
 // TODO: allow owners to configure the service
 #[marine]
-pub fn get_config() -> Config {
+pub fn get_env() -> Env {
     let nets = nets()
         .into_iter()
         .map(|(name, url)| Net {
@@ -46,7 +56,11 @@ pub fn get_config() -> Config {
             url: url.to_string(),
         })
         .collect::<_>();
-    Config { nets }
+    let events = vec![SupportedEvent {
+        name: DealCreated::EVENT_NAME.to_string(),
+        topic: DealCreated::topic(),
+    }];
+    Env { nets, events }
 }
 
 // Nets we allow to poll.
@@ -85,15 +99,9 @@ impl DealCreatedResult {
 
 // TODO: How to set an upper limit for how many responses to return?
 //       Don't see this functionallity in eth_getLogs
-// TODO: add url as a parameter?
 // TODO: need to restrict who can use this service to its spell.
 #[marine]
-pub fn poll_deals(
-    net: String,
-    address: String,
-    topics: Vec<String>,
-    from_block: String,
-) -> DealCreatedResult {
+pub fn poll_deals(net: String, address: String, from_block: String) -> DealCreatedResult {
     let url = match get_url(net) {
         Err(err) => {
             return DealCreatedResult::error(err);
@@ -101,7 +109,7 @@ pub fn poll_deals(
         Ok(url) => url,
     };
     log::debug!("sending request to {}", url);
-    let result = get_logs(url, address, topics, from_block);
+    let result = get_logs(url, address, vec![DealCreated::topic()], from_block);
     let value = match result {
         Err(err) => {
             return DealCreatedResult::error(err.to_string());
