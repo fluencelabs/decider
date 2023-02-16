@@ -1,6 +1,6 @@
 -- Phases:
 -- 4. Implement decide function
--- 
+--
 
 import "@fluencelabs/spell/api.aqua"
 import "@fluencelabs/spell/spell_service.aqua"
@@ -60,7 +60,7 @@ func report_warn(spell_id: string, msg: string):
 
 func report_deal(spell_id: string, joined_deal: JoinedDeal):
     Spell spell_id
-    msg <- Json.stringify(joined_deal) 
+    msg <- Json.stringify(joined_deal)
     Spell.list_push_string("joined_deals", msg)
 
 -- TODO
@@ -125,7 +125,7 @@ func join_deal(spell_id: string, deal: DealData) -> bool:
         status <<- false
     else:
         -- TODO
-        worker_peer_id <- Scope.get_peer_id() 
+        worker_peer_id <- Scope.get_peer_id()
         on worker_peer_id:
             args = WorkerArgs(deal_id = deal.deal_id, worker_def_cid = deal.app_cid, ipfs = settings!.worker_ipfs)
             worker_spell_id <- PeerSpell.install(settings!.worker_script, args, settings!.worker_config)
@@ -135,13 +135,13 @@ func join_deal(spell_id: string, deal: DealData) -> bool:
         status <<- true
     <- status!
 
-func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string) -> Update: 
+func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string) -> Update:
     FluenceAuroraConnector listener_id
 
     -- For preserving new from_block value
     update: *Update
 
-    result <- FluenceAuroraConnector.poll_deals(info.net, info.address, from_block) 
+    result <- FluenceAuroraConnector.poll_deals(info.net, info.address, from_block)
     if result.success:
         print(spell_id, ["found deals"])
         last_blocks: *string
@@ -163,7 +163,7 @@ func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: s
                     print(spell_id, ["skipping deal for deal id", deal.info.deal_id, "from_block", deal.block_number])
                     msg <- Op.concat_strings("skipping ", deal.info.deal_id)
                     report_warn(spell_id, msg)
-        
+
         -- Do it to detect the number of deals to find the last deal's block number
         len <- Op.array_length(last_blocks)
         new_from_block = last_blocks[len - 1]
@@ -173,7 +173,7 @@ func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: s
         -- report error somehow
         print(spell_id, result.error)
         report_err(spell_id, result.error!)
-        -- since the last seen block didn't change we just 
+        -- since the last seen block didn't change we just
         update <<- Update(from_block = from_block)
 
     <- update!
