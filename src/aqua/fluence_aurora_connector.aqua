@@ -1,12 +1,5 @@
 module FluenceAuroraConnector declares *
 
-data Net:
-  name: string
-  url: string
-
-data Config:
-  nets: []Net
-
 data U256:
   bytes: []u8
 
@@ -15,11 +8,12 @@ data DealData:
   payment_token: string
   price_per_epoch: U256
   required_stake: U256
-  min_workers: u32
-  max_workers: u32
-  target_workers: u32
+  min_workers: u64
+  max_workers_per_provider: u64
+  target_workers: u64
   app_cid: string
   effector_wasms_cids: []string
+  epoch: u64
 
 data DealCreated:
   block_number: string
@@ -30,6 +24,18 @@ data DealCreatedResult:
   success: bool
   result: []DealCreated
 
+data Net:
+  name: string
+  url: string
+
+data SupportedEvent:
+  name: string
+  topic: string
+
+data Env:
+  nets: []Net
+  events: []SupportedEvent
+
 service FluenceAuroraConnector:
-  get_config() -> Config
-  poll_deals(net: string, address: string, topics: []string, from_block: string) -> DealCreatedResult
+  get_env() -> Env
+  poll_deals(net: string, address: string, from_block: string) -> DealCreatedResult

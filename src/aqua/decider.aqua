@@ -141,7 +141,7 @@ func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: s
     -- For preserving new from_block value
     update: *Update
 
-    result <- FluenceAuroraConnector.poll_deals(info.net, info.address, info.topics, from_block) 
+    result <- FluenceAuroraConnector.poll_deals(info.net, info.address, from_block) 
     if result.success:
         print(spell_id, ["found deals"])
         last_blocks: *string

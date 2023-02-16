@@ -11,5 +11,5 @@ cargo:
 npm:
   "@fluencelabs/spell": 0.1.0
   "@fluencelabs/aqua-lib": 0.6.0
-  "@fluencelabs/aqua": 0.9.2
-  "@fluencelabs/installation-spell": 0.0.2-installation
+  "@fluencelabs/aqua": 0.9.4
+  "@fluencelabs/installation-spell": 0.3.3
