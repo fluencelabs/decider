@@ -77,17 +77,17 @@ pub struct DealData {
     /// How much a peer should pay to join the deal
     required_stake: U256,
     /// Minimum required workers
-    min_workers: u32,
+    min_workers: u64,
     /// Maximum required workers
-    max_workers_per_provider: u32,
+    max_workers_per_provider: u64,
     /// Desired amount of workers
-    target_workers: u32,
+    target_workers: u64,
     /// Target application CID
     app_cid: String,
     /// CIDs of required effectors
     effector_wasms_cids: Vec<String>,
     /// Number of epoch
-    epoch: u32,
+    epoch: u64,
 }
 
 impl DealData {
