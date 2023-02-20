@@ -63,7 +63,7 @@ fn curl_params(url: String, data: String) -> Vec<String> {
         "-H", "Content-Type: application/json",
         // To avoid hanging on try to connect
         // TODO: what the best timeout?
-        "--connect-timeout", "0.5",
+        "--connect-timeout", "5",
         // Do not try to reconnect, just make another call
         "--retry", "0",
         "--data", data.as_str(),
