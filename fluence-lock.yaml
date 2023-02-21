@@ -9,8 +9,8 @@ cargo:
   marine: 0.12.5
   mrepl: 0.18.8
 npm:
-  "@fluencelabs/spell": 0.3.4
+  "@fluencelabs/spell": 0.3.6
   "@fluencelabs/aqua-lib": 0.6.0
   "@fluencelabs/aqua": 0.9.5
-  "@fluencelabs/installation-spell": 0.3.4
+  "@fluencelabs/installation-spell": 0.3.6
   "@fluencelabs/aqua-ipfs": 0.5.9
