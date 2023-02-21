@@ -1,8 +1,8 @@
 {
-    "listener_id": "2dd2df1b-2dd9-4d28-8a10-7b23e7d39a2d",
+    "listener_id": "4afd5cd4-56b1-47f7-8023-a5bfb2904c1c",
     "info": {
-      "net": "aurora-testnet",
-      "address": "0x432FE883CfF46313aA2C35D2f0b5D9785E9eE711"
+      "net": "testnet",
+      "address": "0x5858103A51dd9FF771e5744C43f821162aB8eb1f"
     },
     "from_block": "latest",
     "worker_ipfs": "/dns4/ipfs.fluence.dev/tcp/5001"

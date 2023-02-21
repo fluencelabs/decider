@@ -22,6 +22,6 @@ services:
     deploy:
       - deployId: default
 relays:
-  - /ip4/0.0.0.0/tcp/9999/ws/p2p/12D3KooWN4XNKgu76nwB7iKUXmE4FKCA5Ycak6SbSqLTaWo2nFsQ
+  #- /ip4/0.0.0.0/tcp/9999/ws/p2p/12D3KooWN4XNKgu76nwB7iKUXmE4FKCA5Ycak6SbSqLTaWo2nFsQ
   #- /ip4/127.0.0.1/tcp/9990/ws/p2p/12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK
-  #- /dns4/stage.fluence.dev/tcp/19001/wss/p2p/12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv
+  - /dns4/stage.fluence.dev/tcp/19001/wss/p2p/12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv
