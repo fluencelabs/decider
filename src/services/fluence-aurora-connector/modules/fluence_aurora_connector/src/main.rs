@@ -66,7 +66,8 @@ pub fn get_env() -> Env {
 // Nets we allow to poll.
 fn nets() -> HashMap<&'static str, &'static str> {
     HashMap::from([
-        ("testnet", "https://testnet.aurora.dev"),
+        ("testnet", "https://endpoints.omniatech.io/v1/matic/mumbai/public"),
+        ("aurora-testnet", "https://testnet.aurora.dev"),
         // Note: cool for debugging, but do we want to leave it here?
         ("local", "http://localhost:8545"),
     ])
@@ -102,9 +103,13 @@ impl DealCreatedResult {
 // TODO: need to restrict who can use this service to its spell.
 #[marine]
 pub fn poll_deals(net: String, address: String, from_block: String) -> DealCreatedResult {
-    let url = match get_url(net) {
-        Err(err) => {
-            return DealCreatedResult::error(err);
+    let url = match get_url(&net) {
+        Err(_err) => {
+
+            // TODO: right now we allow to use URL directly for emergency cases.
+            // Would be nice to now
+            // return DealCreatedResult::error(err);
+            net
         }
         Ok(url) => url,
     };
@@ -147,9 +152,9 @@ pub fn poll_deals(net: String, address: String, from_block: String) -> DealCreat
     DealCreatedResult::ok(deals)
 }
 
-fn get_url(net: String) -> Result<String, String> {
+fn get_url(net: &str) -> Result<String, String> {
     nets()
-        .get(net.as_str())
+        .get(net)
         .map(|x| String::from(*x))
         .ok_or_else(|| format!("unknown net: {}", net))
 }

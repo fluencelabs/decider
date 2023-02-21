@@ -12,11 +12,11 @@ decider_args="$2"
 worker_config="$3"
 
 # compile worker.aqua to worker.main.air
-fluence aqua -i src/aqua/worker.aqua -o "$dir" --air --no-relay
+fluence aqua -i src/aqua/worker.aqua -o "$dir" --air
 echo "compiled worker"
 
 # compile decider.aqua to decider.main.air
-fluence aqua -i src/aqua/decider.aqua -o "$dir" --air --no-relay
+fluence aqua -i src/aqua/decider.aqua -o "$dir" --air
 echo "compiled decider"
 
 # create worker_settings.json

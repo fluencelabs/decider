@@ -1,7 +1,7 @@
 {
-    "listener_id": "f759117f-e0c6-4ca2-a6c0-2a297f34355e",
+    "listener_id": "2dd2df1b-2dd9-4d28-8a10-7b23e7d39a2d",
     "info": {
-      "net": "testnet",
+      "net": "aurora-testnet",
       "address": "0x432FE883CfF46313aA2C35D2f0b5D9785E9eE711"
     },
     "from_block": "latest",
