@@ -1,0 +1,13 @@
+(seq
+  (xor
+    (xor
+      (call relay ("spell" "remove") ["decider"])
+      (seq
+        (call relay ("spell" "install") [script dat cfg] id)
+        (call relay ("srv" "add_alias") ["decider" id])
+      )
+    )
+    (call relay ("op" "return") [%last_error% 1])
+  )
+ (call relay ("op" "return") [true])
+)
