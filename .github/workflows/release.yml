@@ -98,7 +98,7 @@ jobs:
 
     needs:
       - release-please
-      - control-plane
+      - connector
 
     permissions:
       contents: read
