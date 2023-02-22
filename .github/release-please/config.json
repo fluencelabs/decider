@@ -1,0 +1,12 @@
+{
+  "bootstrap-sha": "ca59550cf20acde2e7a532d687709a9739a09ce2",
+  "release-type": "simple",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "packages": {
+    ".": {
+      "package-name": "connector",
+      "component": "connector"
+    }
+  }
+}
