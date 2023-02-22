@@ -8,6 +8,10 @@ on:
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
 
+env:
+  FORCE_COLOR: true
+  CI: true
+
 jobs:
   release-please:
     runs-on: ubuntu-latest

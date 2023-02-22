@@ -8,6 +8,7 @@ concurrency:
 
 env:
   FORCE_COLOR: true
+  CI: true
 
 jobs:
   connector:
