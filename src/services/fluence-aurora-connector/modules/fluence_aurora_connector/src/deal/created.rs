@@ -1,54 +1,6 @@
 use ethabi::param_type::ParamType;
-use marine_rs_sdk::marine;
-use thiserror::Error;
 
-#[derive(Debug, Error)]
-pub enum DealParseError {
-    #[error(transparent)]
-    EthError(#[from] ethabi::Error),
-    #[error(transparent)]
-    HexError(#[from] hex::FromHexError),
-    #[error("internal error, please, contact developers: {0}")]
-    InternalError(&'static str),
-    #[error("empty data, nothing to parse")]
-    Empty,
-}
-
-#[marine]
-pub struct DealCreated {
-    block_number: String,
-    info: DealData,
-}
-
-impl DealCreated {
-    pub const EVENT_NAME: &str = "DealCreated";
-
-    pub fn new(block_number: String, info: DealData) -> Self {
-        Self { block_number, info }
-    }
-
-    pub fn topic() -> String {
-        let sig = DealData::signature();
-        let hash = ethabi::long_signature(Self::EVENT_NAME, &sig);
-        format!("0x{}", hex::encode(hash.as_bytes()))
-    }
-}
-
-#[derive(Debug, PartialEq)]
-#[marine]
-pub struct U256 {
-    bytes: Vec<u8>,
-}
-
-impl U256 {
-    pub fn from_bytes(bs: &[u8; 32]) -> Self {
-        U256 { bytes: bs.to_vec() }
-    }
-
-    pub fn to_eth(&self) -> ethabi::ethereum_types::U256 {
-        ethabi::ethereum_types::U256::from_little_endian(&self.bytes)
-    }
-}
+use super::*;
 
 /// Corresponding Solidity type:
 /// ```solidity
@@ -67,7 +19,7 @@ impl U256 {
 /// ```
 #[derive(Debug)]
 #[marine]
-pub struct DealData {
+pub struct DealCreatedData {
     /// Address of newly created deal contract
     deal_id: String,
     /// Token used to pay for the deal
@@ -90,7 +42,23 @@ pub struct DealData {
     epoch: u64,
 }
 
-impl DealData {
+#[marine]
+pub struct DealCreated {
+    block_number: String,
+    info: DealCreatedData,
+}
+
+impl DealCreated {
+    pub const EVENT_NAME: &str = "DealCreated";
+}
+
+impl ChainData for DealCreatedData {
+    fn topic() -> String {
+        let sig = Self::signature();
+        let hash = ethabi::long_signature(DealCreated::EVENT_NAME, &sig);
+        format!("0x{}", hex::encode(hash.as_bytes()))
+    }
+
     fn signature() -> Vec<ParamType> {
         vec![
             ParamType::Address,                            // deal
@@ -105,68 +73,58 @@ impl DealData {
             ParamType::Uint(256),                          // epoch
         ]
     }
-}
 
-/// Parse data from chain. Accepts data with and without "0x" prefix.
-pub fn parse_chain_deal_data(data: &str) -> Result<DealData, DealParseError> {
-    let data = data.strip_prefix("0x").unwrap_or(data);
-    if data.is_empty() {
-        return Err(DealParseError::Empty);
+    /// Parse data from chain. Accepts data with and without "0x" prefix.
+    fn parse(data: &str) -> Result<DealCreatedData, DealParseError> {
+        let data_tokens = parse_chain_data(data, Self::signature())?;
+        let deal_data: Option<DealCreatedData> = try {
+            let deal_id = data_tokens[0].to_string();
+            let payment_token = data_tokens[1].to_string();
+
+            let price_per_epoch = U256::from_eth(data_tokens[2].clone().into_uint()?);
+            let required_stake = U256::from_eth(data_tokens[3].clone().into_uint()?);
+
+            let min_workers = data_tokens[4].clone().into_uint()?.as_u64();
+            let max_workers_per_provider = data_tokens[5].clone().into_uint()?.as_u64();
+            let target_workers = data_tokens[6].clone().into_uint()?.as_u64();
+
+            let app_cid = data_tokens[7].clone().into_string()?;
+            let effector_wasms_cids = data_tokens[8]
+                .clone()
+                .into_array()?
+                .into_iter()
+                .map(|x| x.into_string())
+                .collect::<Option<_>>()?;
+            let epoch = data_tokens[9].clone().into_uint()?.as_u64();
+
+            DealCreatedData {
+                deal_id,
+                payment_token,
+                price_per_epoch,
+                required_stake,
+                min_workers,
+                max_workers_per_provider,
+                target_workers,
+                app_cid,
+                effector_wasms_cids,
+                epoch,
+            }
+        };
+        deal_data.ok_or_else(|| {
+            DealParseError::InternalError("parsed data doesn't correspond expected signature")
+        })
     }
-    let data = hex::decode(data)?;
-    let types = DealData::signature();
-    let result = ethabi::decode(&types, &data)?;
-
-    let deal_data: Option<DealData> = try {
-        let deal_id = result[0].to_string();
-        let payment_token = result[1].to_string();
-
-        let price_per_epoch = convert_to_bytes(result[2].clone().into_uint()?);
-        let required_stake = convert_to_bytes(result[3].clone().into_uint()?);
-
-        let min_workers = result[4].clone().into_uint()?.as_u64();
-        let max_workers_per_provider = result[5].clone().into_uint()?.as_u64();
-        let target_workers = result[6].clone().into_uint()?.as_u64();
-
-        let app_cid = result[7].clone().into_string()?;
-        let effector_wasms_cids = result[8]
-            .clone()
-            .into_array()?
-            .into_iter()
-            .map(|x| x.into_string())
-            .collect::<Option<_>>()?;
-        let epoch = result[9].clone().into_uint()?.as_u64();
-
-        DealData {
-            deal_id,
-            payment_token,
-            price_per_epoch,
-            required_stake,
-            min_workers,
-            max_workers_per_provider,
-            target_workers,
-            app_cid,
-            effector_wasms_cids,
-            epoch,
-        }
-    };
-    deal_data.ok_or_else(|| {
-        DealParseError::InternalError("parsed data doesn't correspond expected signature")
-    })
 }
 
-fn convert_to_bytes(num: ethabi::ethereum_types::U256) -> U256 {
-    let bytes = num
-        .0
-        .iter()
-        .flat_map(|x| x.to_le_bytes())
-        .collect::<Vec<_>>();
-    U256 { bytes }
+impl ChainEvent<DealCreatedData> for DealCreated {
+    fn new(block_number: String, info: DealCreatedData) -> Self {
+        Self { block_number, info }
+    }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::{parse_chain_deal_data, DealParseError};
+    use crate::{parse_chain_deal_created_data, DealParseError};
     use std::assert_matches::assert_matches;
 
     // Cannot now provide an example of encoded data with effectors

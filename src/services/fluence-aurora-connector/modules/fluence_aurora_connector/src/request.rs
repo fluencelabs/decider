@@ -5,7 +5,7 @@ use serde_json::json;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-pub enum Error {
+pub enum RequestError {
     #[error("`curl` returned error: {0}")]
     CurlError(String),
     #[error(
@@ -21,8 +21,8 @@ pub fn get_logs(
     address: String,
     topics: Vec<String>,
     from_block: String,
-) -> Result<JsonRpcResp<Vec<GetLogsResp>>, Error> {
-    use Error::*;
+) -> Result<JsonRpcResp<Vec<GetLogsResp>>, RequestError> {
+    use RequestError::*;
 
     // Create a JSON RPC request
     let req = GetLogsReq {
