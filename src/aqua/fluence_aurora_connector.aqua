@@ -1,9 +1,21 @@
 module FluenceAuroraConnector declares *
 
+data DealChangedData:
+  app_cid: string
+
+data DealChanged:
+  block_number: string
+  info: DealChangedData
+
+data DealChangedResult:
+  error: []string
+  success: bool
+  result: []DealChanged
+
 data U256:
   bytes: []u8
 
-data DealData:
+data DealCreatedData:
   deal_id: string
   payment_token: string
   price_per_epoch: U256
@@ -17,7 +29,7 @@ data DealData:
 
 data DealCreated:
   block_number: string
-  info: DealData
+  info: DealCreatedData
 
 data DealCreatedResult:
   error: []string
@@ -38,4 +50,5 @@ data Env:
 
 service FluenceAuroraConnector:
   get_env() -> Env
+  poll_deal_change(net: string, address: string, from_block: string) -> DealChangedResult
   poll_deals(net: string, address: string, from_block: string) -> DealCreatedResult
