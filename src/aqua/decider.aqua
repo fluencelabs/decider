@@ -257,7 +257,6 @@ func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: s
     -- And proccess the deals from now on ignoring deals from the past.
     from_block_init: *string
     counter <- get_counter(spell_id)
-    RunConsoleAny.print([spell_id, counter])
     if counter > 1 == false:
         bnumber  <- FluenceAuroraConnector.latest_block_number(info.net)
         if bnumber.success:
