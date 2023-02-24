@@ -46,7 +46,3 @@ jobs:
         with:
           name: decider.tar.gz
           path: decider.tar.gz
-
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3

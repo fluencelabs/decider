@@ -19,14 +19,10 @@ SCRIPT_DIR="$(pwd)"
 )
 (
     echo "*** copy wasm files ***"
-    cd ../src/services/fluence-aurora-connector/modules/
+    cd ..
     pwd
-    ls -alh
-    ls -alh fluence_aurora_connector/target
-    ls -alh fluence_aurora_connector/target/wasm32-wasi
-    ls -alh fluence_aurora_connector/target/wasm32-wasi/release/
-    cp fluence_aurora_connector/target/wasm32-wasi/release/fluence_aurora_connector.wasm "$SCRIPT_DIR"
-    cp curl_adapter/target/wasm32-wasi/release/curl_adapter.wasm "$SCRIPT_DIR"
+    cp target/wasm32-wasi/release/fluence_aurora_connector.wasm "$SCRIPT_DIR"
+    cp target/wasm32-wasi/release/curl_adapter.wasm "$SCRIPT_DIR"
 )
 
 (
