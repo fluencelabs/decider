@@ -2,8 +2,8 @@
     "listener_id": "connector",
     "info": {
       "net": "testnet",
-      "address": "0x5858103A51dd9FF771e5744C43f821162aB8eb1f"
+      "address": "0x5f6815ff1c371640883e49dDCbf04573B69568Ed"
     },
-    "from_block": "earliest",
+    "from_block": "0x1edd4c4",
     "worker_ipfs": "/dns4/ipfs.fluence.dev/tcp/5001"
 }

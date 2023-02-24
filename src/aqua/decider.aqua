@@ -173,29 +173,6 @@ func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
                 result <<- true
     <- settings, result!
 
--- 
--- The decider stores state of all processed deals:
--- * `skipped` means that the decider decided not to join the deal and won't join it.
--- * `joining` means that the deal started processing but wasn't processed 
--- func mark_deal_joining(spell_id: string, deal_id: string):
---     Spell spell_id
---     Spell.set_string(deal_id, "joining")
--- 
--- func mark_deal_joined(spell_id: string, deal_id: string):
---     Spell spell_id
---     Spell.set_string(deal_id, "joined")
--- 
--- func mark_deal_skipped(spell_id: string, deal_id: string):
---     Spell spell_id
---     Spell.set_string(deal_id, "skipped")
--- 
--- func get_deal_status(spell_id: string, deal_id: string) -> string:
---     Spell spell_id
---     status <- Spell.get_string(deal_id)
---     <- status.str
-
----- The decider itself resides below
-
 -- TODO: implement it when we decide what the algo should be there
 func decide(deal: DealCreatedData) -> bool:
     <- true
@@ -329,8 +306,11 @@ func poll_new_deals(spell_id: string, listener_id: string, info: AuroraInfo, fro
 
     
 func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string):
+    -- Find new deals and create workers
+    try:
+        poll_new_deals(spell_id, listener_id, info, from_block)
+
+    -- TODO: I wonder what will happen when the decider join _many_ deals?
+    --       Will it be able to check them on time?
     -- Update existing deals
     poll_deal_changes(spell_id, listener_id, info.net)
-
-    -- Find new deals and create workers
-    poll_new_deals(spell_id, listener_id, info, from_block)
