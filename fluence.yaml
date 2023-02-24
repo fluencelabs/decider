@@ -9,9 +9,9 @@ aquaInputPath: src/aqua/main.aqua
 dependencies:
   npm:
     "@fluencelabs/aqua-lib": 0.6.0
-    "@fluencelabs/spell": 0.3.6
+    "@fluencelabs/spell": 0.5.1
     "@fluencelabs/aqua": 0.9.5
-    "@fluencelabs/installation-spell": 0.3.6
+    "@fluencelabs/installation-spell": 0.5.1
     "@fluencelabs/aqua-ipfs": 0.5.9
   cargo:
     marine: 0.12.5

@@ -87,14 +87,50 @@ pub fn get_env() -> Env {
 fn nets() -> HashMap<&'static str, &'static str> {
     HashMap::from([
         ("testnet", "https://aged-tiniest-scion.matic-testnet.quiknode.pro/08133c1e70a6ec1e7a75545a1254d85640a6251d/"),
-        (
-            "polygon-testnet",
-            "https://endpoints.omniatech.io/v1/matic/mumbai/public",
-        ),
+        ("polygon-testnet", "https://endpoints.omniatech.io/v1/matic/mumbai/public"),
         ("aurora-testnet", "https://testnet.aurora.dev"),
         // Note: cool for debugging, but do we want to leave it here?
         ("local", "http://localhost:8545"),
     ])
+}
+
+#[marine]
+pub struct BlockNumberResult {
+    success: bool,
+    result: String,
+}
+
+#[marine]
+pub fn latest_block_number(net: String) -> BlockNumberResult {
+    let url = match get_url(&net) {
+        Err(_err) => {
+            // TODO: right now we allow to use URL directly for emergency cases.
+            // return DealCreatedResult::error(err);
+            net
+        }
+        Ok(url) => url,
+    };
+
+    let result = match get_block_number(url) {
+        Err(err) => {
+            log::debug!(target: "connector", "request error: {:?}", err);
+            return BlockNumberResult { success: false, result: String::new() };
+        },
+        Ok(result) => result
+    };
+    log::debug!(target: "connector", "request result: {:?}", result);
+    let result = match result.get_result() {
+        Err(_) => { return BlockNumberResult { success: false, result: String::new() }; },
+        Ok(result) => result
+    };
+
+    let hex_num = result.trim_start_matches("0x");
+    if u64::from_str_radix(&hex_num, 16).is_err() {
+        log::debug!(target: "connector", "{:?} isn't a hex number", result);
+        return BlockNumberResult { success: false, result: String::new() };
+    }
+
+    BlockNumberResult { success: true, result }
 }
 
 fn get_url(net: &str) -> Result<String, String> {
@@ -141,7 +177,6 @@ pub fn latest_block_number(net: String) -> BlockNumberResult {
     let url = match get_url(&net) {
         Err(_err) => {
             // TODO: right now we allow to use URL directly for emergency cases.
-            // return DealCreatedResult::error(err);
             net
         }
         Ok(url) => url,
