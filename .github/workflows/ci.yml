@@ -23,6 +23,9 @@ jobs:
         with:
           node-version: "16"
 
+      - name: Setup Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
       - name: Install fluence-cli
         run: npm i -g @fluencelabs/cli@unstable
 

@@ -55,6 +55,14 @@ jobs:
       - name: Setup Rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: Install fluence-cli
+        run: npm i -g @fluencelabs/cli@unstable
+
       - name: Create builtin distribution package
         run: ./builtin-package/package.sh
 
