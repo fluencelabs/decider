@@ -1,5 +1,5 @@
 {
-  "name": "registry",
+  "name": "connector",
   "dependencies": [
     "name:curl_adapter",
     "name:fluence_aurora_connector"
