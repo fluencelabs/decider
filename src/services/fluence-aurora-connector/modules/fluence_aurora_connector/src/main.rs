@@ -167,36 +167,6 @@ pub fn blocks_diff(from: String, to: String) -> u64 {
 }
 
 #[marine]
-pub struct BlockNumberResult {
-    success: bool,
-    result: String,
-}
-
-#[marine]
-pub fn latest_block_number(net: String) -> BlockNumberResult {
-    let url = match get_url(&net) {
-        Err(_err) => {
-            // TODO: right now we allow to use URL directly for emergency cases.
-            net
-        }
-        Ok(url) => url,
-    };
-
-    let result: Result<String, Error> = try {
-        let result = get_block_number(url)?;
-        log::debug!("request result: {:?}", result);
-        result.get_result()?
-    };
-    match result {
-        Ok(result) => BlockNumberResult { success: true, result },
-        Err(err) => {
-            log::warn!("can't get block number: {}", err.to_string());
-            BlockNumberResult { success: false, result: String::new() }
-        }
-    }
-}
-
-#[marine]
 pub struct DealCreatedResult {
     error: Vec<String>,
     success: bool,

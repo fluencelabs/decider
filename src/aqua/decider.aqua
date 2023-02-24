@@ -85,7 +85,7 @@ service JsonDealState("json"):
 func store_deal_state(spell_id: string, deal_id: string, state: DealState):
     Spell spell_id
     msg <- Json.stringify(state)
-    Spell.list_push_string(deal_id, msg)
+    Spell.set_string(deal_id, msg)
 
 -- Stores info about created deals in the decider's KV
 data JoinedDeal:
@@ -304,7 +304,7 @@ func poll_new_deals(spell_id: string, listener_id: string, info: AuroraInfo, fro
     if counter > 1 == false:
         bnumber  <- FluenceAuroraConnector.latest_block_number(info.net)
         if bnumber.success:
-            bnumber_str <- Json.stringify(deal.block_number)
+            bnumber_str <- Json.stringify(bnumber.result)
             Spell.set_string("from_block", bnumber_str) 
             from_block_init <<- bnumber.result
     from_block_init <<- from_block
