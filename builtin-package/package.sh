@@ -30,7 +30,7 @@ SCRIPT_DIR="$(pwd)"
     cd ..
     mkdir -p connector
     cp -rf builtin-package/ connector
-    tar --exclude="package.sh" -f decider.tar.gz -zcv ./connector
+    tar --exclude="package.sh" -f connector.tar.gz -zcv ./connector
     rm -rf connector
 )
 
