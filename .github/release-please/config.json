@@ -5,8 +5,8 @@
   "bump-patch-for-minor-pre-major": true,
   "packages": {
     ".": {
-      "package-name": "connector",
-      "component": "connector"
+      "package-name": "decider",
+      "component": "decider"
     }
   }
 }

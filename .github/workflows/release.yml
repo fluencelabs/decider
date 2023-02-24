@@ -38,7 +38,7 @@ jobs:
           RELEASE_PLEASE_OUTPUT: ${{ toJSON(steps.release.outputs) }}
         run: echo "${RELEASE_PLEASE_OUTPUT}" | jq
 
-  connector:
+  decider:
     runs-on: builder
 
     needs: release-please
@@ -62,22 +62,22 @@ jobs:
         id: sha
         run: |
           # Calculate sha256
-          du -hs connector.tar.gz
-          sha256sum connector.tar.gz
-          sha=($(sha256sum connector.tar.gz))
+          du -hs decider.tar.gz
+          sha256sum decider.tar.gz
+          sha=($(sha256sum decider.tar.gz))
           echo "sha256=${sha}" >> $GITHUB_OUTPUT
 
       - name: Upload package to checks
         uses: actions/upload-artifact@v3
         with:
-          name: connector.tar.gz
-          path: connector.tar.gz
+          name: decider.tar.gz
+          path: decider.tar.gz
 
       - name: Upload package to release
         if: needs.release-please.outputs.release-created
         uses: softprops/action-gh-release@v1
         with:
-          files: connector.tar.gz
+          files: decider.tar.gz
           tag_name: ${{ needs.release-please.outputs.tag-name }}
 
       - name: Update version in node-distro repo
@@ -89,9 +89,9 @@ jobs:
           ref: "main"
           token: ${{ secrets.PERSONAL_TOKEN }}
           inputs: '{
-            "name": "connector",
+            "name": "decider",
             "version": "${{ needs.release-please.outputs.version }}",
-            "url": "https://github.com/fluencelabs/control-plane/releases/download/${{ needs.release-please.outputs.tag-name }}/connector.tar.gz",
+            "url": "https://github.com/fluencelabs/control-plane/releases/download/${{ needs.release-please.outputs.tag-name }}/decider.tar.gz",
             "sha256": "${{ steps.sha.outputs.sha256 }}"
           }'
 
@@ -102,7 +102,7 @@ jobs:
 
     needs:
       - release-please
-      - connector
+      - decider
 
     permissions:
       contents: read

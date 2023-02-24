@@ -11,7 +11,7 @@ env:
   CI: true
 
 jobs:
-  connector:
+  decider:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
           node-version: "16"
 
       - name: Install fluence-cli
-        run: npm i -g fluencelabs/cli
+        run: npm i -g fluencelabs/cli@unstable
 
       - name: Create builtin distribution package
         run: ./builtin-package/package.sh
@@ -33,13 +33,13 @@ jobs:
         id: sha
         run: |
           # Calculate sha256
-          du -hs connector.tar.gz
-          sha256sum connector.tar.gz
-          sha=($(sha256sum connector.tar.gz))
+          du -hs decider.tar.gz
+          sha256sum decider.tar.gz
+          sha=($(sha256sum decider.tar.gz))
           echo "sha256=${sha}" >> $GITHUB_OUTPUT
 
       - name: Upload package to checks
         uses: actions/upload-artifact@v3
         with:
-          name: connector.tar.gz
-          path: connector.tar.gz
+          name: decider.tar.gz
+          path: decider.tar.gz
