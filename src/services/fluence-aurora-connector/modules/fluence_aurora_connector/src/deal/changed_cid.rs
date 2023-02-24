@@ -9,7 +9,7 @@ use marine_rs_sdk::marine;
 #[derive(Debug)]
 #[marine]
 pub struct DealChangedData {
-    ///
+    /// New CID for the deal
     app_cid: String,
 }
 
