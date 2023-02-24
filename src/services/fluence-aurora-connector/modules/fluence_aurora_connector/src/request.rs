@@ -16,6 +16,31 @@ pub enum Error {
     OtherError(String),
 }
 
+pub fn get_block_number(
+    url: String,
+) -> Result<JsonRpcResp<String>, Error> {
+    use Error::*;
+
+    let req = json!(BlockNumberReq::to_jsonrpc());
+    let req = serde_json::to_string(&req).unwrap();
+    log::debug!("request: {}", req);
+    // Make a request
+    let result = curl_request(curl_params(url, req)).into_std();
+    let result = match result {
+        None => {
+            return Err(OtherError(
+                "curl output is not a valid UTF-8 string".to_string(),
+            ));
+        }
+        Some(Err(err)) => return Err(CurlError(err)),
+        Some(Ok(result)) => result,
+    };
+    match serde_json::from_str(&result) {
+        Err(err) => Err(ParseError(err, result)),
+        Ok(result) => Ok(result),
+    }
+}
+
 pub fn get_logs(
     url: String,
     address: String,

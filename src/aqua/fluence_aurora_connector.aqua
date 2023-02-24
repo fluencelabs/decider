@@ -1,5 +1,9 @@
 module FluenceAuroraConnector declares *
 
+data BlockNumberResult:
+  success: bool
+  result: string
+
 data U256:
   bytes: []u8
 
@@ -38,4 +42,5 @@ data Env:
 
 service FluenceAuroraConnector:
   get_env() -> Env
+  latest_block_number(net: string) -> BlockNumberResult
   poll_deals(net: string, address: string, from_block: string) -> DealCreatedResult

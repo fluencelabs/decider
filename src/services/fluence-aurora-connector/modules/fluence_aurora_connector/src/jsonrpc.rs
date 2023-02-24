@@ -43,6 +43,20 @@ impl<T> JsonRpcResp<T> {
     }
 }
 
+
+pub struct BlockNumberReq;
+
+impl BlockNumberReq {
+    pub fn to_jsonrpc() -> JsonRpcReq<Vec<()>> {
+        JsonRpcReq {
+            jsonrpc: JSON_RPC_VERSION.to_string(),
+            id: 0,
+            method: "eth_blockNumber".to_string(),
+            params: vec![],
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetLogsReq {
