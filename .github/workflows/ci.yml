@@ -24,7 +24,7 @@ jobs:
           node-version: "16"
 
       - name: Install fluence-cli
-        run: npm i -g fluencelabs/cli@unstable
+        run: npm i -g @fluencelabs/cli@unstable
 
       - name: Create builtin distribution package
         run: ./builtin-package/package.sh
