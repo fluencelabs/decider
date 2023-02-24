@@ -11,7 +11,7 @@ env:
   CI: true
 
 jobs:
-  decider:
+  connector:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,13 +36,13 @@ jobs:
         id: sha
         run: |
           # Calculate sha256
-          du -hs decider.tar.gz
-          sha256sum decider.tar.gz
-          sha=($(sha256sum decider.tar.gz))
+          du -hs connector.tar.gz
+          sha256sum connector.tar.gz
+          sha=($(sha256sum connector.tar.gz))
           echo "sha256=${sha}" >> $GITHUB_OUTPUT
 
       - name: Upload package to checks
         uses: actions/upload-artifact@v3
         with:
-          name: decider.tar.gz
-          path: decider.tar.gz
+          name: connector.tar.gz
+          path: connector.tar.gz

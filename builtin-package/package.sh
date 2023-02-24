@@ -28,10 +28,10 @@ SCRIPT_DIR="$(pwd)"
 (
     echo "*** create builtin distribution package ***"
     cd ..
-    mkdir -p decider
-    cp -rf builtin-package/ decider
-    tar --exclude="package.sh" -f decider.tar.gz -zcv ./decider
-    rm -rf decider
+    mkdir -p connector
+    cp -rf builtin-package/ connector
+    tar --exclude="package.sh" -f decider.tar.gz -zcv ./connector
+    rm -rf connector
 )
 
 echo "*** done ***"

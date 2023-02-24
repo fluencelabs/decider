@@ -28,7 +28,7 @@
       "clock": {
         "start_sec": 1,
         "end_sec": 0,
-        "period_sec": 60
+        "period_sec": 121
       },
       "connections": {
         "connect": false,
