@@ -213,22 +213,14 @@ func process_deal(spell_id: string, deal: DealCreated):
         else:
             log(spell_id, ["couldn't join the deal", deal.info.deal_id])
 
-<<<<<<< HEAD
-func need_update_from_block(listener_id: string, net: string, from_block: string, to_block: string) -> bool:
-=======
 func need_update_from_block(listener_id: string, net: string, to_block: string) -> bool:
->>>>>>> main
     need_update: *bool
     FluenceAuroraConnector listener_id
     result <- FluenceAuroraConnector.latest_block_number(net)
     if result.success:
         latest_block = result.result
         -- if to_block is less then latest block, move from_block to to_block
-<<<<<<< HEAD
-        -- diff = result.result - to_block 
-=======
         -- diff = latest_block - to_block 
->>>>>>> main
         diff <- FluenceAuroraConnector.blocks_diff(to_block, latest_block)
         RunConsoleAny.print(["diff", to_block, latest_block, diff])
         if diff == 0:
@@ -277,7 +269,7 @@ func poll_deal_changes(spell_id: string, listener_id: string, net: string):
                     else:
                         -- If we found no deals, we check if need to move the from_block forward
                         -- We need to do it in case if no deals were done in range of 10000 blocks
-                        need_update <- need_update_from_block(listener_id, net, deal_state.from_block, result.to_block)
+                        need_update <- need_update_from_block(listener_id, net, result.to_block)
                         if need_update:
                             new_deal_state2 = DealState(from_block = result.to_block, app_cid = deal_state.app_cid)
                             store_deal_state(spell_id, joined_deal.deal_id, new_deal_state2)
