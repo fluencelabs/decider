@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/fluencelabs/decider/compare/connector-v0.4.1...connector-v0.4.2) (2023-02-27)
+
+
+### Bug Fixes
+
+* **builtin:** build builtin package with a single level directory structure ([#16](https://github.com/fluencelabs/decider/issues/16)) ([6beb2f7](https://github.com/fluencelabs/decider/commit/6beb2f7e6d1304e04ad21fac8cc55a520c7ab1e2))
+
 ## [0.4.1](https://github.com/fluencelabs/decider/compare/connector-v0.4.0...connector-v0.4.1) (2023-02-27)
 
 
