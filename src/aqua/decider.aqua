@@ -75,10 +75,23 @@ data WorkerArgs:
     -- IPFS API where the related CID resides
     ipfs: string
 
+data DealState:
+  from_block: string
+  app_cid: string
+
+service JsonDealState("json"):
+  parse(str: string) -> DealState
+
+func store_deal_state(spell_id: string, deal_id: string, state: DealState):
+    Spell spell_id
+    msg <- Json.stringify(state)
+    Spell.set_string(deal_id, msg)
+
 -- Stores info about created deals in the decider's KV
 data JoinedDeal:
   deal_id: string
   spell_id: string
+  worker_id: string
 
 service JsonJoinedDeal("json"):
   parse(str: string) -> JoinedDeal
@@ -160,55 +173,31 @@ func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
                 result <<- true
     <- settings, result!
 
--- 
--- The decider stores state of all processed deals:
--- * `skipped` means that the decider decided not to join the deal and won't join it.
--- * `joining` means that the deal started processing but wasn't processed 
-func mark_deal_joining(spell_id: string, deal_id: string):
-    Spell spell_id
-    Spell.set_string(deal_id, "joining")
-
-func mark_deal_joined(spell_id: string, deal_id: string):
-    Spell spell_id
-    Spell.set_string(deal_id, "joined")
-
-func mark_deal_skipped(spell_id: string, deal_id: string):
-    Spell spell_id
-    Spell.set_string(deal_id, "skipped")
-
-func get_deal_status(spell_id: string, deal_id: string) -> string:
-    Spell spell_id
-    status <- Spell.get_string(deal_id)
-    <- status.str
-
----- The decider itself resides below
-
 -- TODO: implement it when we decide what the algo should be there
-func decide(deal: DealData) -> bool:
+func decide(deal: DealCreatedData) -> bool:
     <- true
 
 -- 
-func join_deal(spell_id: string, deal: DealData) -> bool:
+func join_deal(spell_id: string, block_number: string, deal: DealCreatedData) -> bool:
     settings, is_ok <- get_worker_settings(spell_id)
     status: *bool
     if is_ok == false:
         status <<- false
     else:
-        mark_deal_joining(spell_id, deal.deal_id)
         try:
             worker_id <- Worker.create(deal.deal_id)
             on worker_id:
                 args = WorkerArgs(deal_id = deal.deal_id, worker_def_cid = deal.app_cid, ipfs = settings!.worker_ipfs)
                 worker_spell_id <- PeerSpell.install(settings!.worker_script, args, settings!.worker_config)
                 log(spell_id, ["created worker for deal", deal.deal_id, "spell_id", worker_spell_id, "worker_id", worker_id])
-                mark_deal_joined(spell_id, deal.deal_id)
-                joined_deal = JoinedDeal(deal_id = deal.deal_id, spell_id = worker_spell_id)
+                joined_deal = JoinedDeal(deal_id = deal.deal_id, spell_id = worker_spell_id, worker_id = worker_id)
                 store_joined_deal(spell_id, joined_deal)
+                deal_state = DealState(from_block = block_number, app_cid = deal.app_cid)
+                store_deal_state(spell_id, deal.deal_id, deal_state)
                 status <<- true
 
         catch e:
             log(spell_id, ["cannot create worker", deal.deal_id, e.message, "; skip"])
-            mark_deal_joined(spell_id, deal.deal_id)
             status <<- false
 
     <- status!
@@ -216,19 +205,74 @@ func join_deal(spell_id: string, deal: DealData) -> bool:
 func process_deal(spell_id: string, deal: DealCreated):
     if decide(deal.info) == false:
         log(spell_id, ["skipping deal for deal id", deal.info.deal_id, "from_block", deal.block_number])
-        mark_deal_skipped(spell_id, deal.info.deal_id)
     else:
         log(spell_id, ["joining the deal", deal.info.deal_id, "from_block", deal.block_number])
-        is_ok <- join_deal(spell_id, deal.info)
+        is_ok <- join_deal(spell_id, deal.block_number, deal.info)
         if is_ok:
             log(spell_id, ["joined the deal", deal.info.deal_id])
         else:
             log(spell_id, ["couldn't join the deal", deal.info.deal_id])
 
--- To update the last seen from_block 
--- We store the last seen block to reduce the number of deals the poller provides us
-data Update:
-  from_block: string
+func need_update_from_block(listener_id: string, net: string, to_block: string) -> bool:
+    need_update: *bool
+    FluenceAuroraConnector listener_id
+    result <- FluenceAuroraConnector.latest_block_number(net)
+    if result.success:
+        latest_block = result.result
+        -- if to_block is less then latest block, move from_block to to_block
+        -- diff = latest_block - to_block 
+        diff <- FluenceAuroraConnector.blocks_diff(to_block, latest_block)
+        RunConsoleAny.print(["diff", to_block, latest_block, diff])
+        if diff == 0:
+            need_update <<- false
+        else:
+            need_update <<- true
+    else:
+        need_update <<- false
+    <- need_update!
+
+-- func poll_deal_changes(spell_id: string, listener_id: string, net: string):
+--     FluenceAuroraConnector listener_id
+--     Spell spell_id
+--     -- Get a list of all known deals
+--     list <- Spell.list_get_strings("joined_deals")
+--     if list.success:
+--         for str <- list.strings:
+--             joined_deal <- JsonJoinedDeal.parse(str)
+--             -- Get detailed state of the deal
+--             deal_str, is_ok <- get_string(spell_id, joined_deal.deal_id)
+--             if is_ok == false:
+--                 log(spell_id, ["found joined_deal, but not saved state", joined_deal.deal_id])
+--             else:
+--                 deal_state <- JsonDealState.parse(deal_str!)
+--                 -- Find updates for the deals
+--                 deal_address <- Op.concat_strings("0x", joined_deal.deal_id)
+--                 result <- FluenceAuroraConnector.poll_deal_change(net, deal_address, deal_state.from_block)
+--                 if result.success == false:
+--                     log(spell_id, ["can't retrieve deal changes", joined_deal.deal_id, deal_state.from_block])
+--                 else:
+--                     -- Find how many changes are there
+--                     number_of_changes = result.result.length
+--                     if number_of_changes > 0:
+--                         log(spell_id, ["sending the latest update to the worker", joined_deal.worker_id, joined_deal.spell_id, "for deal", joined_deal.deal_id])
+--                         -- Take the latest change to apply it.
+--                         latest_deal_update = result.result[number_of_changes - 1]
+--                         app_cid <- Json.stringify(latest_deal_update.info.app_cid)
+--                         -- send to worker
+--                         on joined_deal.worker_id:
+--                             Spell joined_deal.spell_id
+--                             Spell.set_string("worker_def_cid", app_cid)
+-- 
+--                         -- Update the deal
+--                         new_deal_state = DealState(from_block = latest_deal_update.block_number, app_cid = latest_deal_update.info.app_cid)
+--                         store_deal_state(spell_id, joined_deal.deal_id, new_deal_state)
+--                     else:
+--                         -- If we found no deals, we check if need to move the from_block forward
+--                         -- We need to do it in case if no deals were done in range of 10000 blocks
+--                         need_update <- need_update_from_block(listener_id, net, result.to_block)
+--                         if need_update:
+--                             new_deal_state2 = DealState(from_block = result.to_block, app_cid = deal_state.app_cid)
+--                             store_deal_state(spell_id, joined_deal.deal_id, new_deal_state2)
 
 -- Data we need to poll new deals from aurora
 data AuroraInfo:
@@ -239,42 +283,63 @@ data AuroraInfo:
   -- Chain contract address
   address: string
 
-func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string) -> Update: 
-    FluenceAuroraConnector listener_id
-    update: *Update
+func get_counter(spell_id: string) -> u32:
+    Spell spell_id
+    result: *u32
+    counter <- Spell.get_u32("counter")
+    if counter.success:
+        result <<- counter.num
+    else:
+        result <<- 0
+    <- result!
 
-    result <- FluenceAuroraConnector.poll_deals(info.net, info.address, from_block)
+func poll_new_deals(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string): 
+    FluenceAuroraConnector listener_id
+    Spell spell_id
+
+    -- On the first iteration of the spell obtain the number of the latest block in the chain
+    -- And proccess the deals from now on ignoring deals from the past.
+    from_block_init: *string
+    counter <- get_counter(spell_id)
+    if counter > 1 == false:
+        bnumber  <- FluenceAuroraConnector.latest_block_number(info.net)
+        if bnumber.success:
+            log(spell_id, ["update from_block to the latest block: [init, new]", from_block, bnumber.result])
+            bnumber_str <- Json.stringify(bnumber.result)
+            Spell.set_string("from_block", bnumber_str) 
+            from_block_init <<- bnumber.result
+    from_block_init <<- from_block
+    real_from_block = from_block_init[0]
+
+    result <- FluenceAuroraConnector.poll_deals(info.net, info.address, real_from_block)
     if result.success == false:
         log_err(spell_id, result.error!)    
-        update <<- Update(from_block = from_block)
     else:
         for deal <- result.result:
             log(spell_id, ["found deal", deal.info.deal_id])
-            status <- get_deal_status(spell_id, deal.info.deal_id)
-            if status == "joined":
-                log(spell_id, ["skip joined deal", deal.info.deal_id])
+            if is_worker_created(spell_id, deal.info.deal_id):
+                log(spell_id, ["worker for deal", deal.info.deal_id, "already created"])
             else:
-                if status == "skipped":
-                    log(spell_id, ["skip skipped deal", deal.info.deal_id])
-                else:
-                    if status == "joining":
-                        log(spell_id, ["try to restore old deal in joining state", deal.info.deal_id])
-                        if is_worker_created(spell_id, deal.info.deal_id):
-                            log(spell_id, ["worker for the deal was already created, mark as joined", deal.info.deal_id])
-                            mark_deal_joined(spell_id, deal.info.deal_id)
-                        else:
-                            -- Do not recreate, just skip for now to avoid recreating workers.
-                            -- log(spell_id, ["no worker found, continue processing deal", deal.info.deal_id])
-                            -- process_deal(spell_id, deal)
-                            -- DEBUG:
-                            log(spell_id, ["worker was marked as joining already", deal.info.deal_id, "skip it"])
-                    else:
-                        log(spell_id, ["will process deal", deal.info.deal_id])
-                        process_deal(spell_id, deal)
-        deals_num <- OpExt.array_length(result.result)
-        if deals_num > 0:
-            new_from_block = result.result[deals_num - 1].block_number
-            update <<- Update(from_block = new_from_block)
-        else:
-            update <<- Update(from_block = from_block)
-    <- update!
+                process_deal(spell_id, deal)
+            new_from_block <- Json.stringify(deal.block_number)
+            Spell.set_string("from_block", new_from_block) 
+        -- If we found no deals, we check if need to move the from_block forward
+        -- We need to do it in case if no deals were done in range of 10000 blocks
+        if result.result.length == 0:
+            need_update <- need_update_from_block(listener_id, info.net, result.to_block)
+            if need_update:
+                log(spell_id, ["updating outdated from_block: [previous from_block, new_from_block]", from_block, result.to_block])
+                to_block_str <- Json.stringify(result.to_block)
+                Spell.set_string("from_block", to_block_str)
+
+    
+func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string):
+    -- Find new deals and create workers
+    --try:
+    poll_new_deals(spell_id, listener_id, info, from_block)
+
+    -- TODO: 
+    -- 1. I wonder what will happen when the decider join _many_ deals?
+    --    Will it be able to check them on time?
+    -- Update existing deals
+    -- poll_deal_changes(spell_id, listener_id, info.net)

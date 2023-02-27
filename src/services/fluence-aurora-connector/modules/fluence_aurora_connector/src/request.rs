@@ -5,7 +5,7 @@ use serde_json::json;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-pub enum Error {
+pub enum RequestError {
     #[error("`curl` returned error: {0}")]
     CurlError(String),
     #[error(
@@ -16,20 +16,46 @@ pub enum Error {
     OtherError(String),
 }
 
+pub fn get_block_number(
+    url: String,
+) -> Result<JsonRpcResp<String>, RequestError> {
+    use RequestError::*;
+
+    let req = json!(BlockNumberReq::to_jsonrpc());
+    let req = serde_json::to_string(&req).unwrap();
+    log::debug!("request: {}", req);
+    // Make a request
+    let result = curl_request(curl_params(url, req)).into_std();
+    let result = match result {
+        None => {
+            return Err(OtherError(
+                "curl output is not a valid UTF-8 string".to_string(),
+            ));
+        }
+        Some(Err(err)) => return Err(CurlError(err)),
+        Some(Ok(result)) => result,
+    };
+    match serde_json::from_str(&result) {
+        Err(err) => Err(ParseError(err, result)),
+        Ok(result) => Ok(result),
+    }
+}
+
 pub fn get_logs(
     url: String,
     address: String,
     topics: Vec<String>,
     from_block: String,
-) -> Result<JsonRpcResp<Vec<GetLogsResp>>, Error> {
-    use Error::*;
+    to_block: String,
+) -> Result<JsonRpcResp<Vec<GetLogsResp>>, RequestError> {
+    use RequestError::*;
 
     // Create a JSON RPC request
     let req = GetLogsReq {
         address,
         topics,
         from_block,
-        to_block: "latest".to_string(),
+        to_block,
     };
     let req = json!(req.to_jsonrpc());
     let req = serde_json::to_string(&req).unwrap();
