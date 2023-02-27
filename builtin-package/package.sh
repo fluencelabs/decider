@@ -19,16 +19,16 @@ SCRIPT_DIR="$(pwd)"
 )
 (
     echo "*** copy wasm files ***"
-    cd ../src/services/fluence-aurora-connector/modules/
-    cp fluence_aurora_connector/target/wasm32-wasi/release/fluence_aurora_connector.wasm "$SCRIPT_DIR"
-    cp curl_adapter/target/wasm32-wasi/release/curl_adapter.wasm "$SCRIPT_DIR"
+    cd ..
+    pwd
+    cp target/wasm32-wasi/release/fluence_aurora_connector.wasm "$SCRIPT_DIR"
+    cp target/wasm32-wasi/release/curl_adapter.wasm "$SCRIPT_DIR"
 )
 
 (
     echo "*** create builtin distribution package ***"
     cd ..
-    mkdir -p connector
-    cp -rf builtin-package/ connector
+    cp -rf builtin-package connector
     tar --exclude="package.sh" -f connector.tar.gz -zcv ./connector
     rm -rf connector
 )
