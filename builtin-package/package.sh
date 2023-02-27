@@ -29,9 +29,9 @@ SCRIPT_DIR="$(pwd)"
     echo "*** create builtin distribution package ***"
     cd ..
     mkdir -p connector
-    cp -rf builtin-package/ connector
+    mv builtin-package connector
     tar --exclude="package.sh" -f connector.tar.gz -zcv ./connector
-    rm -rf connector
+    mv connector builtin-package
 )
 
 echo "*** done ***"
