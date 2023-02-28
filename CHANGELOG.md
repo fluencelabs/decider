@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/fluencelabs/decider/compare/connector-v0.4.2...connector-v0.4.3) (2023-02-28)
+
+
+### Bug Fixes
+
+* **decider:** Fix decider monitoring deals ([#18](https://github.com/fluencelabs/decider/issues/18)) ([57793fe](https://github.com/fluencelabs/decider/commit/57793fe6e2b9b7c2b3248114282716a6b266a991))
+
 ## [0.4.2](https://github.com/fluencelabs/decider/compare/connector-v0.4.1...connector-v0.4.2) (2023-02-27)
 
 
