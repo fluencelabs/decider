@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.4](https://github.com/fluencelabs/decider/compare/connector-v0.4.3...connector-v0.4.4) (2023-03-09)
+
+
+### Features
+
+* remove decider.json ([a161b97](https://github.com/fluencelabs/decider/commit/a161b970e5907c948c3e096336de0c07713fa33c))
+
 ## [0.4.3](https://github.com/fluencelabs/decider/compare/connector-v0.4.2...connector-v0.4.3) (2023-02-28)
 
 
