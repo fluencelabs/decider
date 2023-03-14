@@ -222,7 +222,6 @@ func is_less(listener_id: string, latest_block: string, to_block: string) -> boo
     -- if to_block is less then latest block, move from_block to to_block
     -- diff = latest_block - to_block
     diff <- FluenceAuroraConnector.blocks_diff(to_block, latest_block)
-    RunConsoleAny.print(["diff", to_block, latest_block, diff])
     if diff == 0:
         is <<- false
     else:
