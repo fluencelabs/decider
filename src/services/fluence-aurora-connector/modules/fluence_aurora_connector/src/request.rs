@@ -16,9 +16,7 @@ pub enum RequestError {
     OtherError(String),
 }
 
-pub fn get_block_number(
-    url: String,
-) -> Result<JsonRpcResp<String>, RequestError> {
+pub fn get_block_number(url: String) -> Result<JsonRpcResp<String>, RequestError> {
     use RequestError::*;
 
     let req = json!(BlockNumberReq::to_jsonrpc());
