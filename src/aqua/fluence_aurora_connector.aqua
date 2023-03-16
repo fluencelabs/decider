@@ -1,5 +1,3 @@
-module FluenceAuroraConnector declares *
-
 data BlockNumberResult:
   success: bool
   result: string
@@ -9,6 +7,7 @@ data DealChangedData:
   app_cid: string
 
 data DealChanged:
+  next_block_number: string
   block_number: string
   info: DealChangedData
 
@@ -36,6 +35,7 @@ data DealCreatedData:
 
 data DealCreated:
   block_number: string
+  next_block_number: string
   info: DealCreatedData
 
 data DealCreatedResult:
@@ -46,7 +46,6 @@ data DealCreatedResult:
 
 data DealInfo:
   worker_id: string
-  spell_id: string
   deal_id: string
 
 data DealUpdate:
@@ -72,7 +71,7 @@ data Env:
   nets: []Net
   events: []SupportedEvent
 
-service FluenceAuroraConnector:
+service FluenceAuroraConnector("fluence_aurora_connector"):
   blocks_diff(from: string, to: string) -> u64
   get_env() -> Env
   latest_block_number(net: string) -> BlockNumberResult

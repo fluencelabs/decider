@@ -273,7 +273,8 @@ func poll_deal_changes_batch(spell_id: string, listener_id: string, net: string)
                 log(spell_id, ["can't find state of the deal", joined_deal.deal_id, "; broken invariant, check poll_new_deals"])
             else:
                 deal_state <- JsonDealState.parse(deal_str!)
-                deals_update <<- DealUpdate(deal_info = joined_deal, from_block = deal_state.from_block)
+                deal_info = DealInfo(deal_id = joined_deal.deal_id, worker_id = joined_deal.worker_id)
+                deals_update <<- DealUpdate(deal_info = deal_info, from_block = deal_state.from_block)
 
         -- Find the latest updates for all deals
         updated_deals <- FluenceAuroraConnector.poll_deals_latest_update_batch(net, deals_update)
@@ -288,8 +289,10 @@ func poll_deal_changes_batch(spell_id: string, listener_id: string, net: string)
                         new_deal_state2 = DealState(from_block = updated_deal.to_block)
                         store_deal_state(spell_id, updated_deal.deal_info.deal_id, new_deal_state2)
             else:
+                log(spell_id, ["found update for deal", updated_deal.deal_info.deal_id, "from block", updated_deal.result!.block_number])
+
                 -- Update local info about the deal
-                new_deal_state = DealState(from_block = updated_deal.result!.block_number)
+                new_deal_state = DealState(from_block = updated_deal.result!.next_block_number)
                 store_deal_state(spell_id, updated_deal.deal_info.deal_id, new_deal_state)
 
                 -- Update app_cid of the deal on the corresponding worker spell
@@ -297,7 +300,7 @@ func poll_deal_changes_batch(spell_id: string, listener_id: string, net: string)
                 on updated_deal.deal_info.worker_id:
                     -- stringify app_cid to be able to use it as an argument of a spell
                     app_cid <- Json.stringify(updated_deal.result!.info.app_cid)
-                    Spell updated_deal.deal_info.spell_id
+                    Spell "worker-spell"
                     Spell.set_string("worker_def_cid", app_cid)
 
 -- Data we need to poll new deals from aurora
@@ -342,12 +345,12 @@ func poll_new_deals(spell_id: string, listener_id: string, info: AuroraInfo, fro
         log_err(spell_id, result.error!)    
     else:
         for deal <- result.result:
-            log(spell_id, ["found deal", deal.info.deal_id])
+            log(spell_id, ["found deal", deal.info.deal_id, "from block", deal.block_number])
             if is_worker_created(spell_id, deal.info.deal_id):
                 log(spell_id, ["worker for deal", deal.info.deal_id, "already created"])
             else:
                 process_deal(spell_id, deal)
-            new_from_block <- Json.stringify(deal.block_number)
+            new_from_block <- Json.stringify(deal.next_block_number)
             Spell.set_string("from_block", new_from_block) 
         -- If we found no deals, we check if need to move the from_block forward
         -- We need to do it in case if no deals were done in range of 10000 blocks

@@ -160,14 +160,22 @@ fn get_url(net: &str) -> Option<String> {
     nets().get(net).map(|x| String::from(*x))
 }
 
+fn hex_to_int(block: &str) -> Option<u64> {
+    let block = block.trim_start_matches("0x");
+    u64::from_str_radix(block, 16).ok()
+}
+
+fn int_to_hex(num: u64) -> String {
+    format!("{:#x}", num)
+}
+
 fn get_to_block(from_block: &str) -> String {
-    let from_block = from_block.trim_start_matches("0x");
     let to_block = try {
-        let from_block = u64::from_str_radix(from_block, 16).ok()?;
+        let from_block = hex_to_int(from_block)?;
         from_block.checked_add(9999)?
     };
     match to_block {
-        Some(to_block) => format!("{:#x}", to_block),
+        Some(to_block) => int_to_hex(to_block),
         None => "latest".to_string(),
     }
 }
@@ -175,11 +183,8 @@ fn get_to_block(from_block: &str) -> String {
 #[marine]
 pub fn blocks_diff(from: String, to: String) -> u64 {
     let diff: Option<u64> = try {
-        let from = from.trim_start_matches("0x");
-        let from = u64::from_str_radix(from, 16).ok()?;
-
-        let to = to.trim_start_matches("0x");
-        let to = u64::from_str_radix(to, 16).ok()?;
+        let from = hex_to_int(&from)?;
+        let to = hex_to_int(&to)?;
 
         to.checked_sub(from)?
     };
@@ -303,7 +308,7 @@ pub struct DealUpdate {
 #[marine]
 pub struct DealInfo {
     worker_id: String,
-    spell_id: String,
+    //spell_id: String,
     deal_id: String,
 }
 
@@ -358,9 +363,10 @@ pub fn poll_deals_latest_update_batch(
             to_block.clone(),
             DealChangedData::topic(),
         );
-        let result = match result {
+        match result {
             Err(err) => {
-                DealUpdatedBatchResult::error(to_block, deal.deal_info, err.to_string())
+                let result = DealUpdatedBatchResult::error(to_block, deal.deal_info, err.to_string());
+                results.push(result);
             }
             Ok(updates) => {
                 let parsed_latest_update = try {
@@ -370,13 +376,11 @@ pub fn poll_deals_latest_update_batch(
 
                 // the last element of the list is the latest deal update
                 if let Some(update) =  parsed_latest_update {
-                    DealUpdatedBatchResult::ok(to_block, deal.deal_info, update)
-                } else {
-                    DealUpdatedBatchResult::error(to_block, deal.deal_info, "updates not found".to_string())
+                    let result = DealUpdatedBatchResult::ok(to_block, deal.deal_info, update);
+                    results.push(result);
                 }
             }
         };
-        results.push(result);
     }
 
     results
@@ -416,7 +420,11 @@ fn parse_deal<U: ChainData, T: ChainEvent<U>>(deal: GetLogsResp) -> Option<T> {
             );
             None
         }
-        Ok(data) => Some(T::new(deal.block_number, data)),
+        Ok(data) => {
+            let block_number = hex_to_int(&deal.block_number)?;
+            let next_block_number = int_to_hex(block_number + 1);
+            Some(T::new(next_block_number, deal.block_number, data))
+        },
     }
 }
 

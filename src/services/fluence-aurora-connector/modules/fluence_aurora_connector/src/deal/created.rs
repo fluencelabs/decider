@@ -45,6 +45,8 @@ pub struct DealCreatedData {
 #[marine]
 pub struct DealCreated {
     block_number: String,
+    /// The number of the block next to the one of the deal
+    next_block_number: String,
     info: DealCreatedData,
 }
 
@@ -117,8 +119,8 @@ impl ChainData for DealCreatedData {
 }
 
 impl ChainEvent<DealCreatedData> for DealCreated {
-    fn new(block_number: String, info: DealCreatedData) -> Self {
-        Self { block_number, info }
+    fn new(next_block_number: String, block_number: String, info: DealCreatedData) -> Self {
+        Self { next_block_number, block_number, info }
     }
 }
 
