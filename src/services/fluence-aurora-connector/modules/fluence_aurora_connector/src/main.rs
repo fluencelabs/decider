@@ -365,7 +365,8 @@ pub fn poll_deals_latest_update_batch(
         );
         match result {
             Err(err) => {
-                let result = DealUpdatedBatchResult::error(to_block, deal.deal_info, err.to_string());
+                let result =
+                    DealUpdatedBatchResult::error(to_block, deal.deal_info, err.to_string());
                 results.push(result);
             }
             Ok(updates) => {
@@ -375,7 +376,7 @@ pub fn poll_deals_latest_update_batch(
                 };
 
                 // the last element of the list is the latest deal update
-                if let Some(update) =  parsed_latest_update {
+                if let Some(update) = parsed_latest_update {
                     let result = DealUpdatedBatchResult::ok(to_block, deal.deal_info, update);
                     results.push(result);
                 }
@@ -424,7 +425,7 @@ fn parse_deal<U: ChainData, T: ChainEvent<U>>(deal: GetLogsResp) -> Option<T> {
             let block_number = hex_to_int(&deal.block_number)?;
             let next_block_number = int_to_hex(block_number + 1);
             Some(T::new(next_block_number, deal.block_number, data))
-        },
+        }
     }
 }
 

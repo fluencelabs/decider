@@ -120,7 +120,11 @@ impl ChainData for DealCreatedData {
 
 impl ChainEvent<DealCreatedData> for DealCreated {
     fn new(next_block_number: String, block_number: String, info: DealCreatedData) -> Self {
-        Self { next_block_number, block_number, info }
+        Self {
+            next_block_number,
+            block_number,
+            info,
+        }
     }
 }
 
