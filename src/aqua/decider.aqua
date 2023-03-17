@@ -121,7 +121,7 @@ func is_worker_created(spell_id: string, deal_id: string) -> bool:
     else:
         if len > 1:
             workers_str <- Json.stringify(workers)
-            log_err(spell_id, Op.concat_strings("more than one worker for deal", deal_id))
+            spell_log(spell_id, ["more than one worker for deal", deal_id])
             result <<- false
         else:
             result <<- true
