@@ -4,15 +4,10 @@ use thiserror::Error;
 //
 const JSON_RPC_VERSION: &str = "2.0";
 
-// We don't id `id` field, but we need to verify the response.
-const JSON_RPC_ID: u32 = 0;
-
 #[derive(Debug, Error)]
 pub enum JsonRpcError {
     #[error("wrong JSON RPC version in the response: expected {JSON_RPC_VERSION}, got {0}")]
     WrongVersion(String),
-    #[error("wrong JSON RPC id in the response: expected {JSON_RPC_ID}, got {0}")]
-    WrongId(u32),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -35,10 +30,6 @@ impl<T> JsonRpcResp<T> {
         if self.jsonrpc != JSON_RPC_VERSION {
             return Err(JsonRpcError::WrongVersion(self.jsonrpc));
         }
-        if self.id != JSON_RPC_ID {
-            return Err(JsonRpcError::WrongId(self.id));
-        }
-
         Ok(self.result)
     }
 }
@@ -66,10 +57,10 @@ pub struct GetLogsReq {
 }
 
 impl GetLogsReq {
-    pub fn to_jsonrpc(self) -> JsonRpcReq<Vec<Self>> {
+    pub fn to_jsonrpc(self, id: u32) -> JsonRpcReq<Vec<Self>> {
         JsonRpcReq {
             jsonrpc: JSON_RPC_VERSION.to_string(),
-            id: 0,
+            id,
             method: "eth_getLogs".to_string(),
             params: vec![self],
         }
@@ -122,7 +113,7 @@ mod tests {
                 "0x04157dc3f231c23b7cbecbadb1af08b865aa2e8d6624fe39a72a17279da72278".to_string(),
             ],
         };
-        let jsonrpc_req = req.to_jsonrpc();
+        let jsonrpc_req = req.to_jsonrpc(0);
 
         assert_eq!(
             serde_json::to_string(&result).unwrap(),

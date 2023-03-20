@@ -59,6 +59,11 @@ data DealUpdatedBatchResult:
   to_block: string
   deal_info: DealInfo
 
+data DealsUpdatedBatchResult:
+  result: []DealUpdatedBatchResult
+  success: bool
+  error: []string
+
 data Net:
   name: string
   url: string
@@ -77,4 +82,4 @@ service FluenceAuroraConnector("fluence_aurora_connector"):
   latest_block_number(net: string) -> BlockNumberResult
   poll_deal_changed(net: string, deal_id: string, from_block: string) -> DealChangedResult
   poll_deals(net: string, address: string, from_block: string) -> DealCreatedResult
-  poll_deals_latest_update_batch(net: string, deals: []DealUpdate) -> []DealUpdatedBatchResult
+  poll_deals_latest_update_batch(net: string, deals: []DealUpdate) -> DealsUpdatedBatchResult

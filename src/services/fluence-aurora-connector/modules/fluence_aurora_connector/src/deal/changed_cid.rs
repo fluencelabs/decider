@@ -13,6 +13,7 @@ pub struct DealChangedData {
     app_cid: String,
 }
 
+#[derive(Debug)]
 #[marine]
 pub struct DealChanged {
     next_block_number: String,

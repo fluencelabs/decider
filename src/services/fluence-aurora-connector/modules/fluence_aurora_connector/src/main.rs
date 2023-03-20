@@ -19,7 +19,7 @@ use deal::ChainData;
 use deal::ChainEvent;
 use request::*;
 
-use jsonrpc::GetLogsResp;
+use jsonrpc::{GetLogsReq, GetLogsResp};
 
 module_manifest!();
 
@@ -299,12 +299,14 @@ pub fn poll_deal_changed(net: String, deal_id: String, from_block: String) -> De
     }
 }
 
+#[derive(Debug)]
 #[marine]
 pub struct DealUpdate {
     deal_info: DealInfo,
     from_block: String,
 }
 
+#[derive(Debug)]
 #[marine]
 pub struct DealInfo {
     worker_id: String,
@@ -348,44 +350,123 @@ impl DealUpdatedBatchResult {
 }
 
 #[marine]
-pub fn poll_deals_latest_update_batch(
-    net: String,
-    deals: Vec<DealUpdate>,
-) -> Vec<DealUpdatedBatchResult> {
-    let mut results = Vec::new();
-    for deal in deals {
-        let to_block = get_to_block(&deal.from_block);
-        let address = format!("0x{}", deal.deal_info.deal_id);
-        let result = poll(
-            net.clone(),
-            address,
-            deal.from_block,
-            to_block.clone(),
-            DealChangedData::topic(),
-        );
-        match result {
-            Err(err) => {
-                let result =
-                    DealUpdatedBatchResult::error(to_block, deal.deal_info, err.to_string());
-                results.push(result);
-            }
-            Ok(updates) => {
-                let parsed_latest_update = try {
-                    let update = updates.into_iter().filter(|deal| !deal.removed).last()?;
-                    parse_deal::<DealChangedData, DealChanged>(update)?
-                };
+pub struct DealsUpdatedBatchResult {
+    result: Vec<DealUpdatedBatchResult>,
+    success: bool,
+    error: Vec<String>,
+}
 
-                // the last element of the list is the latest deal update
-                if let Some(update) = parsed_latest_update {
-                    let result = DealUpdatedBatchResult::ok(to_block, deal.deal_info, update);
-                    results.push(result);
-                }
-            }
-        };
+impl DealsUpdatedBatchResult {
+    fn ok(result: Vec<DealUpdatedBatchResult>) -> Self {
+        Self {
+            success: true,
+            error: vec![],
+            result,
+        }
     }
 
-    results
+    fn error(err: String) -> Self {
+        Self {
+            success: false,
+            error: vec![err],
+            result: vec![],
+        }
+    }
 }
+
+#[marine]
+pub fn poll_deals_latest_update_batch(net: String, deals: Vec<DealUpdate>) -> DealsUpdatedBatchResult {
+    let url = match get_url(&net) {
+        None => {
+            return DealsUpdatedBatchResult::error(Error::NetworkTypeError(net).to_string());
+        }
+        Some(url) => url,
+    };
+
+    if deals.is_empty() {
+        return DealsUpdatedBatchResult::ok(Vec::new());
+    }
+
+    let mut updated_deals = Vec::new();
+    let reqs = deals
+        .iter()
+        .enumerate()
+        .map(|(idx, deal)| {
+            let to_block = get_to_block(&deal.from_block);
+            let address = format!("0x{}", deal.deal_info.deal_id);
+            let req = GetLogsReq {
+                address,
+                topics: vec![DealChangedData::topic()],
+                from_block: deal.from_block.clone(),
+                to_block,
+            };
+            req.to_jsonrpc(idx as u32)
+        })
+        .collect::<Vec<_>>();
+    let result = get_logs_batch(url, reqs);
+    match result {
+        Err(err) => {
+            return DealsUpdatedBatchResult::error(err.to_string());
+        }
+        Ok(results) => {
+            for (deal, result) in std::iter::zip(deals, results) {
+                let to_block = get_to_block(&deal.from_block);
+                match result.get_result() {
+                    Err(err) => {
+                        let result =
+                            DealUpdatedBatchResult::error(to_block, deal.deal_info, err.to_string());
+                        updated_deals.push(result);
+                    },
+                    Ok(result) => {
+                        let latest_update: Option<DealChanged> = try {
+                            let update = result.into_iter().filter(|deal| !deal.removed).last()?;
+                            parse_deal::<DealChangedData, DealChanged>(update)?
+                        };
+                        if let Some(update) = latest_update {
+                            let result = DealUpdatedBatchResult::ok(to_block, deal.deal_info, update);
+                            updated_deals.push(result);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    DealsUpdatedBatchResult::ok(updated_deals)
+}
+
+/*
+for deal in deals {
+    let to_block = get_to_block(&deal.from_block);
+    let address = format!("0x{}", deal.deal_info.deal_id);
+    let result = poll(
+        net.clone(),
+        address,
+        deal.from_block,
+        to_block.clone(),
+        DealChangedData::topic(),
+    );
+    match result {
+        Err(err) => {
+            let result =
+                DealUpdatedBatchResult::error(to_block, deal.deal_info, err.to_string());
+            results.push(result);
+        }
+        Ok(updates) => {
+            let parsed_latest_update = try {
+                let update = updates.into_iter().filter(|deal| !deal.removed).last()?;
+                parse_deal::<DealChangedData, DealChanged>(update)?
+            };
+
+            // the last element of the list is the latest deal update
+            if let Some(update) = parsed_latest_update {
+                let result = DealUpdatedBatchResult::ok(to_block, deal.deal_info, update);
+                results.push(result);
+            }
+        }
+    };
+}
+*/
 
 fn poll(
     net: String,

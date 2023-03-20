@@ -42,6 +42,7 @@ pub struct DealCreatedData {
     epoch: u64,
 }
 
+#[derive(Debug)]
 #[marine]
 pub struct DealCreated {
     block_number: String,
@@ -130,7 +131,7 @@ impl ChainEvent<DealCreatedData> for DealCreated {
 
 #[cfg(test)]
 mod test {
-    use crate::{parse_chain_deal_created_data, DealParseError};
+    use crate::*;
     use std::assert_matches::assert_matches;
 
     // Cannot now provide an example of encoded data with effectors
@@ -155,7 +156,7 @@ mod test {
     fn test_chain_parsing_ok_empty_effectors() {
         let data = "0x00000000000000000000000094952482aa36dc9ec113bbba0df49284ecc071e20000000000000000000000005f7a3a2dab601ee4a1970b53088bebca176e13f40000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000de0b6b3a7640000000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000009896800000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001a00000000000000000000000000000000000000000000000000000000000554509000000000000000000000000000000000000000000000000000000000000002e516d5758616131534b41445274774e7472773278714a5556447864734472536d4a635542614a7946324c353476500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 
-        let result = parse_chain_deal_data(data);
+        let result = DealCreatedData::parse(data);
         assert!(result.is_ok(), "can't parse data: {:?}", result);
         let result = result.unwrap();
         assert_eq!(result.deal_id, "94952482aa36dc9ec113bbba0df49284ecc071e2");
@@ -186,19 +187,19 @@ mod test {
     #[test]
     fn test_chain_parsing_fail_empty() {
         let data = "";
-        let result = parse_chain_deal_data(data);
+        let result = DealCreatedData::parse(data);
         assert!(result.is_err());
-        assert_matches!(result, Err(DealParseError::Empty));
+        assert_matches!(result, Err(deal::DealParseError::Empty));
     }
 
     #[test]
     fn test_chain_parsing_fail_something() {
         let data = "0x1234567890";
-        let result = parse_chain_deal_data(data);
+        let result = DealCreatedData::parse(data);
         assert!(result.is_err());
         assert_matches!(
             result,
-            Err(DealParseError::EthError(ethabi::Error::InvalidData))
+            Err(deal::DealParseError::EthError(ethabi::Error::InvalidData))
         );
     }
 }
