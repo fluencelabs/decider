@@ -140,7 +140,7 @@ data WorkerSettings:
 func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
     Spell spell_id
     log = (msg: ⊤):
-            spell_log(spell_id, [msg])
+        spell_log(spell_id, [msg])
 
     result: *bool
     settings: *WorkerSettings
@@ -178,7 +178,7 @@ func decide(deal: DealCreatedData) -> bool:
 -- 
 func join_deal(spell_id: string, block_number: string, deal: DealCreatedData) -> bool:
     log = (msg: []⊤):
-            spell_log(spell_id, msg)
+        spell_log(spell_id, msg)
 
     settings, is_ok <- get_worker_settings(spell_id)
     status: *bool
@@ -205,7 +205,7 @@ func join_deal(spell_id: string, block_number: string, deal: DealCreatedData) ->
 
 func process_deal(spell_id: string, deal: DealCreated):
     log = (msg: []⊤):
-            spell_log(spell_id, msg)
+        spell_log(spell_id, msg)
 
     if decide(deal.info) == false:
         log(["skipping deal for deal id", deal.info.deal_id, "from_block", deal.block_number])
@@ -258,7 +258,7 @@ func poll_deal_changes_batch(spell_id: string, listener_id: string, net: string)
     FluenceAuroraConnector listener_id
     Spell spell_id
     log = (msg: []⊤):
-            spell_log(spell_id, msg)
+        spell_log(spell_id, msg)
 
     -- Find the latest block on chain
     latest_block, is_block_ok <- get_latest_block(listener_id, net)
@@ -286,7 +286,7 @@ func poll_deal_changes_batch(spell_id: string, listener_id: string, net: string)
         -- Update all deals with new info
         for updated_deal <- updated_deals:
             if updated_deal.success == false:
-                log(["can't update deal", updated_deal.deal_info.deal_id, updated_deal.error])
+                log(["error retrieving deal update", updated_deal.deal_info.deal_id, updated_deal.error])
                 if is_block_ok:
                     if is_less(listener_id, latest_block!, updated_deal.to_block):
                         log(["update from_block: [new from_block, latest_block]", updated_deal.to_block, latest_block])
@@ -330,7 +330,7 @@ func poll_new_deals(spell_id: string, listener_id: string, info: AuroraInfo, fro
     FluenceAuroraConnector listener_id
     Spell spell_id
     log = (msg: []⊤):
-            spell_log(spell_id, msg)
+        spell_log(spell_id, msg)
 
     -- On the first iteration of the spell obtain the number of the latest block in the chain
     -- And proccess the deals from now on ignoring deals from the past.
