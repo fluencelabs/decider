@@ -76,7 +76,7 @@ data Env:
   nets: []Net
   events: []SupportedEvent
 
-service FluenceAuroraConnector("fluence_aurora_connector"):
+service FluenceAuroraConnector("connector"):
   blocks_diff(from: string, to: string) -> u64
   get_env() -> Env
   latest_block_number(net: string) -> BlockNumberResult
