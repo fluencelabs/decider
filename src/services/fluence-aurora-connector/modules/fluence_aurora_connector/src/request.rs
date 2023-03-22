@@ -16,9 +16,7 @@ pub enum RequestError {
     OtherError(String),
 }
 
-pub fn get_block_number(
-    url: String,
-) -> Result<JsonRpcResp<String>, RequestError> {
+pub fn get_block_number(url: String) -> Result<JsonRpcResp<String>, RequestError> {
     use RequestError::*;
 
     let req = json!(BlockNumberReq::to_jsonrpc());
@@ -41,6 +39,33 @@ pub fn get_block_number(
     }
 }
 
+pub fn get_logs_batch(
+    url: String,
+    reqs: Vec<JsonRpcReq<Vec<GetLogsReq>>>,
+) -> Result<Vec<JsonRpcResp<Vec<GetLogsResp>>>, RequestError> {
+    use RequestError::*;
+    let req = json!(reqs);
+    let req =
+        serde_json::to_string(&req).expect("can't convert get_logs_batch JRPC request to JSON");
+    log::debug!("request: {}", req);
+    let result = curl_request(curl_params(url, req)).into_std();
+    let result = match result {
+        None => {
+            return Err(OtherError(
+                "curl output is not a valid UTF-8 string".to_string(),
+            ));
+        }
+        Some(Err(err)) => return Err(CurlError(err)),
+        Some(Ok(result)) => result,
+    };
+    // Parse the result. Note that errors in a JSON RPC request will result in
+    // a HTML in a response.
+    match serde_json::from_str(&result) {
+        Err(err) => Err(ParseError(err, result)),
+        Ok(result) => Ok(result),
+    }
+}
+
 pub fn get_logs(
     url: String,
     address: String,
@@ -57,8 +82,8 @@ pub fn get_logs(
         from_block,
         to_block,
     };
-    let req = json!(req.to_jsonrpc());
-    let req = serde_json::to_string(&req).unwrap();
+    let req = json!(req.to_jsonrpc(0));
+    let req = serde_json::to_string(&req).expect("can't convert get_logs JRPC request to JSON");
     log::debug!("request: {}", req);
     // Make a request
     let result = curl_request(curl_params(url, req)).into_std();

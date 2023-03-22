@@ -19,7 +19,7 @@ use deal::ChainData;
 use deal::ChainEvent;
 use request::*;
 
-use jsonrpc::GetLogsResp;
+use jsonrpc::{GetLogsReq, GetLogsResp};
 
 module_manifest!();
 
@@ -29,6 +29,8 @@ enum Error {
     RequestError(#[from] request::RequestError),
     #[error(transparent)]
     JsonRpcError(#[from] jsonrpc::JsonRpcError),
+    #[error("unsupported network type: {0}")]
+    NetworkTypeError(String),
 }
 
 pub fn main() {
@@ -98,56 +100,82 @@ fn nets() -> HashMap<&'static str, &'static str> {
 pub struct BlockNumberResult {
     success: bool,
     result: String,
+    error: Vec<String>,
+}
+
+impl BlockNumberResult {
+    fn ok(result: String) -> Self {
+        Self {
+            success: true,
+            error: vec![],
+            result,
+        }
+    }
+
+    fn error(err_msg: String) -> Self {
+        Self {
+            success: false,
+            error: vec![err_msg],
+            result: String::new(),
+        }
+    }
 }
 
 #[marine]
 pub fn latest_block_number(net: String) -> BlockNumberResult {
     let url = match get_url(&net) {
-        Err(_err) => {
-            // TODO: right now we allow to use URL directly for emergency cases.
-            // return DealCreatedResult::error(err);
-            net
+        None => {
+            return BlockNumberResult::error(Error::NetworkTypeError(net).to_string());
         }
-        Ok(url) => url,
+        Some(url) => url,
     };
 
     let result = match get_block_number(url) {
         Err(err) => {
             log::debug!(target: "connector", "request error: {:?}", err);
-            return BlockNumberResult { success: false, result: String::new() };
-        },
-        Ok(result) => result
+            return BlockNumberResult::error(err.to_string());
+        }
+        Ok(result) => result,
     };
     log::debug!(target: "connector", "request result: {:?}", result);
     let result = match result.get_result() {
-        Err(_) => { return BlockNumberResult { success: false, result: String::new() }; },
-        Ok(result) => result
+        Err(err) => {
+            return BlockNumberResult::error(err.to_string());
+        }
+        Ok(result) => result,
     };
 
     let hex_num = result.trim_start_matches("0x");
     if u64::from_str_radix(&hex_num, 16).is_err() {
         log::debug!(target: "connector", "{:?} isn't a hex number", result);
-        return BlockNumberResult { success: false, result: String::new() };
+        return BlockNumberResult::error(format!(
+            "can't parse a block: {:?} isn't a hex number",
+            result
+        ));
     }
-
-    BlockNumberResult { success: true, result }
+    BlockNumberResult::ok(result)
 }
 
-fn get_url(net: &str) -> Result<String, String> {
-    nets()
-        .get(net)
-        .map(|x| String::from(*x))
-        .ok_or_else(|| format!("unknown net: {}", net))
+fn get_url(net: &str) -> Option<String> {
+    nets().get(net).map(|x| String::from(*x))
+}
+
+fn hex_to_int(block: &str) -> Option<u64> {
+    let block = block.trim_start_matches("0x");
+    u64::from_str_radix(block, 16).ok()
+}
+
+fn int_to_hex(num: u64) -> String {
+    format!("{:#x}", num)
 }
 
 fn get_to_block(from_block: &str) -> String {
-    let from_block = from_block.trim_start_matches("0x");
     let to_block = try {
-        let from_block = u64::from_str_radix(from_block, 16).ok()?;
+        let from_block = hex_to_int(from_block)?;
         from_block.checked_add(9999)?
     };
     match to_block {
-        Some(to_block) => format!("{:#x}", to_block),
+        Some(to_block) => int_to_hex(to_block),
         None => "latest".to_string(),
     }
 }
@@ -155,11 +183,8 @@ fn get_to_block(from_block: &str) -> String {
 #[marine]
 pub fn blocks_diff(from: String, to: String) -> u64 {
     let diff: Option<u64> = try {
-        let from = from.trim_start_matches("0x");
-        let from = u64::from_str_radix(from, 16).ok()?;
-
-        let to = to.trim_start_matches("0x");
-        let to = u64::from_str_radix(to, 16).ok()?;
+        let from = hex_to_int(&from)?;
+        let to = hex_to_int(&to)?;
 
         to.checked_sub(from)?
     };
@@ -204,7 +229,13 @@ impl DealCreatedResult {
 #[marine]
 pub fn poll_deals(net: String, address: String, from_block: String) -> DealCreatedResult {
     let to_block = get_to_block(&from_block);
-    let result = poll(net, address, from_block, to_block.clone(), DealCreatedData::topic());
+    let result = poll(
+        net,
+        address,
+        from_block,
+        to_block.clone(),
+        DealCreatedData::topic(),
+    );
     match result {
         Err(err) => return DealCreatedResult::error(err.to_string()),
         Ok(deals) => {
@@ -220,24 +251,27 @@ pub struct DealChangedResult {
     success: bool,
     result: Vec<DealChanged>,
     to_block: String,
+    deal_id: String,
 }
 
 impl DealChangedResult {
-    fn ok(result: Vec<DealChanged>, to_block: String) -> Self {
+    fn ok(deal_id: String, result: Vec<DealChanged>, to_block: String) -> Self {
         Self {
             success: true,
             error: vec![],
             result,
             to_block,
+            deal_id,
         }
     }
 
-    fn error(err_msg: String) -> Self {
+    fn error(deal_id: String, err_msg: String) -> Self {
         Self {
             success: false,
             error: vec![err_msg],
             result: vec![],
             to_block: String::new(),
+            deal_id,
         }
     }
 }
@@ -246,16 +280,166 @@ impl DealChangedResult {
 // `address` -- address of the deal we are modifying
 // `from_block` -- from which block to poll deals
 #[marine]
-pub fn poll_deal_change(net: String, address: String, from_block: String) -> DealChangedResult {
+pub fn poll_deal_changed(net: String, deal_id: String, from_block: String) -> DealChangedResult {
+    let address = format!("0x{}", deal_id);
     let to_block = get_to_block(&from_block);
-    let result = poll(net, address, from_block, to_block.clone(), DealChangedData::topic());
+    let result = poll(
+        net,
+        address,
+        from_block,
+        to_block.clone(),
+        DealChangedData::topic(),
+    );
     match result {
-        Err(err) => return DealChangedResult::error(err.to_string()),
+        Err(err) => return DealChangedResult::error(deal_id, err.to_string()),
         Ok(deals) => {
             let changed_deals = parse_deals::<DealChangedData, DealChanged>(deals);
-            DealChangedResult::ok(changed_deals, to_block)
+            DealChangedResult::ok(deal_id, changed_deals, to_block)
         }
     }
+}
+
+#[derive(Debug)]
+#[marine]
+pub struct DealUpdate {
+    deal_info: DealInfo,
+    from_block: String,
+}
+
+#[derive(Debug)]
+#[marine]
+pub struct DealInfo {
+    worker_id: String,
+    //spell_id: String,
+    deal_id: String,
+}
+
+#[marine]
+pub struct DealUpdatedBatchResult {
+    success: bool,
+    /// optional error
+    error: Vec<String>,
+    /// optional result (present if success is true)
+    result: Vec<DealChanged>,
+    /// The request checked blocks from `from_block` to `to_block`
+    to_block: String,
+    /// Return deal info to be able to find which deal to update
+    deal_info: DealInfo,
+}
+
+impl DealUpdatedBatchResult {
+    fn ok(to_block: String, deal_info: DealInfo, update: DealChanged) -> Self {
+        Self {
+            success: true,
+            error: vec![],
+            result: vec![update],
+            to_block,
+            deal_info,
+        }
+    }
+
+    fn error(to_block: String, deal_info: DealInfo, err: String) -> Self {
+        Self {
+            success: false,
+            error: vec![err],
+            result: vec![],
+            to_block,
+            deal_info,
+        }
+    }
+}
+
+#[marine]
+pub struct DealsUpdatedBatchResult {
+    result: Vec<DealUpdatedBatchResult>,
+    success: bool,
+    error: Vec<String>,
+}
+
+impl DealsUpdatedBatchResult {
+    fn ok(result: Vec<DealUpdatedBatchResult>) -> Self {
+        Self {
+            success: true,
+            error: vec![],
+            result,
+        }
+    }
+
+    fn error(err: String) -> Self {
+        Self {
+            success: false,
+            error: vec![err],
+            result: vec![],
+        }
+    }
+}
+
+#[marine]
+pub fn poll_deals_latest_update_batch(
+    net: String,
+    deals: Vec<DealUpdate>,
+) -> DealsUpdatedBatchResult {
+    let url = match get_url(&net) {
+        None => {
+            return DealsUpdatedBatchResult::error(Error::NetworkTypeError(net).to_string());
+        }
+        Some(url) => url,
+    };
+
+    if deals.is_empty() {
+        return DealsUpdatedBatchResult::ok(Vec::new());
+    }
+
+    let mut updated_deals = Vec::new();
+    let reqs = deals
+        .iter()
+        .enumerate()
+        .map(|(idx, deal)| {
+            let to_block = get_to_block(&deal.from_block);
+            let address = format!("0x{}", deal.deal_info.deal_id);
+            let req = GetLogsReq {
+                address,
+                topics: vec![DealChangedData::topic()],
+                from_block: deal.from_block.clone(),
+                to_block,
+            };
+            req.to_jsonrpc(idx as u32)
+        })
+        .collect::<Vec<_>>();
+    let result = get_logs_batch(url, reqs);
+    match result {
+        Err(err) => {
+            return DealsUpdatedBatchResult::error(err.to_string());
+        }
+        Ok(results) => {
+            for (deal, result) in std::iter::zip(deals, results) {
+                let to_block = get_to_block(&deal.from_block);
+                match result.get_result() {
+                    Err(err) => {
+                        let result = DealUpdatedBatchResult::error(
+                            to_block,
+                            deal.deal_info,
+                            err.to_string(),
+                        );
+                        updated_deals.push(result);
+                    }
+                    Ok(result) => {
+                        let latest_update: Option<DealChanged> = try {
+                            let update = result.into_iter().filter(|deal| !deal.removed).last()?;
+                            parse_deal::<DealChangedData, DealChanged>(update)?
+                        };
+                        if let Some(update) = latest_update {
+                            let result =
+                                DealUpdatedBatchResult::ok(to_block, deal.deal_info, update);
+                            updated_deals.push(result);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    DealsUpdatedBatchResult::ok(updated_deals)
 }
 
 fn poll(
@@ -266,12 +450,10 @@ fn poll(
     topic: String,
 ) -> Result<Vec<GetLogsResp>, Error> {
     let url = match get_url(&net) {
-        Err(_err) => {
-            // TODO: right now we allow to use URL directly for emergency cases.
-            // return DealCreatedResult::error(err);
-            net
+        None => {
+            return Err(Error::NetworkTypeError(net));
         }
-        Ok(url) => url,
+        Some(url) => url,
     };
 
     log::debug!("sending request to {}", url);
@@ -281,26 +463,31 @@ fn poll(
     Ok(deals)
 }
 
+fn parse_deal<U: ChainData, T: ChainEvent<U>>(deal: GetLogsResp) -> Option<T> {
+    log::debug!("Parse block {:?}", deal.block_number);
+    match U::parse(&deal.data) {
+        Err(err) => {
+            // Here we ignore blocks we cannot parse.
+            // Is it okay? We can't send warning
+            log::warn!(target: "connector",
+                "Cannot parse data of deal from block {}: {:?}",
+                deal.block_number,
+                err.to_string()
+            );
+            None
+        }
+        Ok(data) => {
+            let block_number = hex_to_int(&deal.block_number)?;
+            let next_block_number = int_to_hex(block_number + 1);
+            Some(T::new(next_block_number, deal.block_number, data))
+        }
+    }
+}
+
 fn parse_deals<U: ChainData, T: ChainEvent<U>>(deals: Vec<GetLogsResp>) -> Vec<T> {
     deals
         .into_iter()
         .filter(|deal| !deal.removed)
-        .filter_map(|deal| {
-            log::debug!("Parse block {:?}", deal.block_number);
-            let data = U::parse(&deal.data);
-            match data {
-                Err(err) => {
-                    // Here we ignore blocks we cannot parse.
-                    // Is it okay? We can't send warning
-                    log::warn!(target: "connector",
-                        "Cannot parse data of deal from block {}: {:?}",
-                        deal.block_number,
-                        err.to_string()
-                    );
-                    None
-                }
-                Ok(data) => Some(T::new(deal.block_number, data)),
-            }
-        })
+        .filter_map(|deal| parse_deal::<U, T>(deal))
         .collect()
 }

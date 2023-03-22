@@ -7,7 +7,7 @@ use marine_rs_sdk::marine;
 use thiserror::Error;
 
 pub trait ChainEvent<ChainData> {
-    fn new(block_number: String, data: ChainData) -> Self;
+    fn new(next_block_number: String, block_number: String, data: ChainData) -> Self;
 }
 
 pub trait ChainData {

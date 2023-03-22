@@ -13,8 +13,10 @@ pub struct DealChangedData {
     app_cid: String,
 }
 
+#[derive(Debug)]
 #[marine]
 pub struct DealChanged {
+    next_block_number: String,
     block_number: String,
     info: DealChangedData,
 }
@@ -50,7 +52,11 @@ impl ChainData for DealChangedData {
 }
 
 impl ChainEvent<DealChangedData> for DealChanged {
-    fn new(block_number: String, info: DealChangedData) -> Self {
-        Self { block_number, info }
+    fn new(next_block_number: String, block_number: String, info: DealChangedData) -> Self {
+        Self {
+            next_block_number,
+            block_number,
+            info,
+        }
     }
 }

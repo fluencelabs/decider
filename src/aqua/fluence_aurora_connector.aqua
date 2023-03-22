@@ -1,13 +1,13 @@
-module FluenceAuroraConnector declares *
-
 data BlockNumberResult:
   success: bool
   result: string
+  error: []string
 
 data DealChangedData:
   app_cid: string
 
 data DealChanged:
+  next_block_number: string
   block_number: string
   info: DealChangedData
 
@@ -16,6 +16,7 @@ data DealChangedResult:
   success: bool
   result: []DealChanged
   to_block: string
+  deal_id: string
 
 data U256:
   bytes: []u8
@@ -34,6 +35,7 @@ data DealCreatedData:
 
 data DealCreated:
   block_number: string
+  next_block_number: string
   info: DealCreatedData
 
 data DealCreatedResult:
@@ -41,6 +43,26 @@ data DealCreatedResult:
   success: bool
   result: []DealCreated
   to_block: string
+
+data DealInfo:
+  worker_id: string
+  deal_id: string
+
+data DealUpdate:
+  deal_info: DealInfo
+  from_block: string
+
+data DealUpdatedBatchResult:
+  success: bool
+  error: []string
+  result: []DealChanged
+  to_block: string
+  deal_info: DealInfo
+
+data DealsUpdatedBatchResult:
+  result: []DealUpdatedBatchResult
+  success: bool
+  error: []string
 
 data Net:
   name: string
@@ -54,9 +76,10 @@ data Env:
   nets: []Net
   events: []SupportedEvent
 
-service FluenceAuroraConnector:
+service FluenceAuroraConnector("connector"):
   blocks_diff(from: string, to: string) -> u64
   get_env() -> Env
   latest_block_number(net: string) -> BlockNumberResult
-  poll_deal_change(net: string, address: string, from_block: string) -> DealChangedResult
+  poll_deal_changed(net: string, deal_id: string, from_block: string) -> DealChangedResult
   poll_deals(net: string, address: string, from_block: string) -> DealCreatedResult
+  poll_deals_latest_update_batch(net: string, deals: []DealUpdate) -> DealsUpdatedBatchResult

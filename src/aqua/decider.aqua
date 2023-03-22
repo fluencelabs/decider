@@ -49,22 +49,18 @@ func get_string(spell_id: string, key: string) -> ?string, bool:
 service RunConsoleMany("run-console"):
    print(title: string, msg: []string)
 
+service RunConsoleManyAny("run-console"):
+   print(title: string, msg: []⊤)
+
 service RunConsoleAny("run-console"):
    print(msg: []⊤)
 
-func log(spell_id: string, msg: []string):
+func spell_log(spell_id: string, msg: []⊤):
     title <- OpExt.concat_strings("decider <", spell_id, ">")
-    RunConsoleMany.print(title, msg)
+    RunConsoleManyAny.print(title, msg)
     msg_str <- Json.stringify(msg)
     Spell spell_id
     Spell.list_push_string("logs", msg_str)
-
--- Report error both in peer logs and in the spell's KV
-func log_err(spell_id: string, error_msg: string):
-    title <- OpExt.concat_strings("decider <", spell_id, ">")
-    RunConsoleMany.print(title, [error_msg])
-    Spell spell_id
-    Spell.list_push_string("logged_errors", error_msg)
 
 -- Arguments of the worker
 data WorkerArgs:
@@ -77,7 +73,6 @@ data WorkerArgs:
 
 data DealState:
   from_block: string
-  app_cid: string
 
 service JsonDealState("json"):
   parse(str: string) -> DealState
@@ -101,35 +96,14 @@ func store_joined_deal(spell_id: string, joined_deal: JoinedDeal):
     msg <- Json.stringify(joined_deal)
     Spell.list_push_string("joined_deals", msg)
 
--- Find the worker for the corresponding deal.
--- We check all deals because we can't interrupt for-loop in aqua, but it's a nice
--- oportunity to check if the invariant (one worker per deal) is broken
-func find_worker_by_deal(spell_id: string, deal_id: string) -> []string:
-    result: *string
-
-    Spell spell_id
-    list <- Spell.list_get_strings("joined_deals")
-    if list.success:
-        for str <- list.strings:
-            joined_deal <- JsonJoinedDeal.parse(str)
-            if joined_deal.deal_id == deal_id:
-                result <<- joined_deal.spell_id
-    <- result
-
 -- Check if a worker for a deal is already created
 func is_worker_created(spell_id: string, deal_id: string) -> bool:
-    workers <- find_worker_by_deal(spell_id, deal_id)
-    len <- Op.array_length(workers)
     result: *bool
-    if len == 0:
+    try:
+        worker_id <- Worker.get_peer_id(deal_id)
+        result <<- true
+    otherwise:
         result <<- false
-    else:
-        if len > 1:
-            workers_str <- Json.stringify(workers)
-            log_err(spell_id, Op.concat_strings("more than one worker for deal", deal_id))
-            result <<- false
-        else:
-            result <<- true
     <- result!
 
 -- Settings of the worker for the decider
@@ -144,6 +118,9 @@ data WorkerSettings:
 -- Parse worker-settings from the decider's KV
 func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
     Spell spell_id
+    log = (msg: ⊤):
+        spell_log(spell_id, [msg])
+
     result: *bool
     settings: *WorkerSettings
 
@@ -153,15 +130,15 @@ func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
 
     -- :c
     if is_ok1 == false:
-        log_err(spell_id, "worker_script doesn't set")
+        log("worker_script doesn't set")
         result <<- false
     else:
         if is_ok2 == false:
-            log_err(spell_id, "worker_config doesn't set")
+            log("worker_config doesn't set")
             result <<- false
         else:
             if is_ok3 == false:
-                log_err(spell_id, "worker_ipfs doesn't set")
+                log("worker_ipfs doesn't set")
                 result <<- false
             else:
                 worker_script <- Json.parse(worker_script_str!)
@@ -179,6 +156,9 @@ func decide(deal: DealCreatedData) -> bool:
 
 -- 
 func join_deal(spell_id: string, block_number: string, deal: DealCreatedData) -> bool:
+    log = (msg: []⊤):
+        spell_log(spell_id, msg)
+
     settings, is_ok <- get_worker_settings(spell_id)
     status: *bool
     if is_ok == false:
@@ -189,90 +169,129 @@ func join_deal(spell_id: string, block_number: string, deal: DealCreatedData) ->
             on worker_id:
                 args = WorkerArgs(deal_id = deal.deal_id, worker_def_cid = deal.app_cid, ipfs = settings!.worker_ipfs)
                 worker_spell_id <- PeerSpell.install(settings!.worker_script, args, settings!.worker_config)
-                log(spell_id, ["created worker for deal", deal.deal_id, "spell_id", worker_spell_id, "worker_id", worker_id])
+                log(["created worker for deal", deal.deal_id, "spell_id", worker_spell_id, "worker_id", worker_id])
                 joined_deal = JoinedDeal(deal_id = deal.deal_id, spell_id = worker_spell_id, worker_id = worker_id)
                 store_joined_deal(spell_id, joined_deal)
-                deal_state = DealState(from_block = block_number, app_cid = deal.app_cid)
+                deal_state = DealState(from_block = block_number)
                 store_deal_state(spell_id, deal.deal_id, deal_state)
                 status <<- true
 
         catch e:
-            log(spell_id, ["cannot create worker", deal.deal_id, e.message, "; skip"])
+            log(["cannot create worker", deal.deal_id, e.message, "; skip"])
             status <<- false
 
     <- status!
 
 func process_deal(spell_id: string, deal: DealCreated):
+    log = (msg: []⊤):
+        spell_log(spell_id, msg)
+
     if decide(deal.info) == false:
-        log(spell_id, ["skipping deal for deal id", deal.info.deal_id, "from_block", deal.block_number])
+        log(["skipping deal for deal id", deal.info.deal_id, "from_block", deal.block_number])
     else:
-        log(spell_id, ["joining the deal", deal.info.deal_id, "from_block", deal.block_number])
+        log(["joining the deal", deal.info.deal_id, "from_block", deal.block_number])
         is_ok <- join_deal(spell_id, deal.block_number, deal.info)
         if is_ok:
-            log(spell_id, ["joined the deal", deal.info.deal_id])
+            log(["joined the deal", deal.info.deal_id])
         else:
-            log(spell_id, ["couldn't join the deal", deal.info.deal_id])
+            log(["couldn't join the deal", deal.info.deal_id])
 
+func get_latest_block(listener_id: string, net: string) -> ?string, bool:
+    FluenceAuroraConnector listener_id
+    is_ok: *bool
+    block: *string
+
+    result <- FluenceAuroraConnector.latest_block_number(net)
+    if result.success == false:
+        is_ok <<- false
+    else:
+        block <<- result.result
+        is_ok <<- true
+
+    <- block, is_ok!
+
+-- Check if our local upper bound (to_block) until which we check new deals is outdated 
+-- aka less then the latest block of the chain. 
+func is_to_block_outdated(listener_id: string, latest_block: string, to_block: string) -> bool:
+    FluenceAuroraConnector listener_id
+    is: *bool
+
+    -- diff = latest_block - to_block
+    diff <- FluenceAuroraConnector.blocks_diff(to_block, latest_block)
+    if diff == 0:
+        is <<- false
+    else:
+        is <<- true
+    <- is!
+
+-- Check to the to_block is less than latest_block from chain.
+-- That would meen that polling this range [from_block, to_block] won't give us new updated anymore 
+-- and we need to move the range to be able to find updates.
 func need_update_from_block(listener_id: string, net: string, to_block: string) -> bool:
     need_update: *bool
-    FluenceAuroraConnector listener_id
-    result <- FluenceAuroraConnector.latest_block_number(net)
-    if result.success:
-        latest_block = result.result
-        -- if to_block is less then latest block, move from_block to to_block
-        -- diff = latest_block - to_block 
-        diff <- FluenceAuroraConnector.blocks_diff(to_block, latest_block)
-        RunConsoleAny.print(["diff", to_block, latest_block, diff])
-        if diff == 0:
-            need_update <<- false
-        else:
-            need_update <<- true
+
+    result, is_ok <- get_latest_block(listener_id, net)
+    if is_ok:
+        -- if to_block is less then latest block, we need to update from_block and set it to to_block
+        need_update <<- is_to_block_outdated(listener_id, result!, to_block)
     else:
         need_update <<- false
     <- need_update!
 
--- func poll_deal_changes(spell_id: string, listener_id: string, net: string):
---     FluenceAuroraConnector listener_id
---     Spell spell_id
---     -- Get a list of all known deals
---     list <- Spell.list_get_strings("joined_deals")
---     if list.success:
---         for str <- list.strings:
---             joined_deal <- JsonJoinedDeal.parse(str)
---             -- Get detailed state of the deal
---             deal_str, is_ok <- get_string(spell_id, joined_deal.deal_id)
---             if is_ok == false:
---                 log(spell_id, ["found joined_deal, but not saved state", joined_deal.deal_id])
---             else:
---                 deal_state <- JsonDealState.parse(deal_str!)
---                 -- Find updates for the deals
---                 deal_address <- Op.concat_strings("0x", joined_deal.deal_id)
---                 result <- FluenceAuroraConnector.poll_deal_change(net, deal_address, deal_state.from_block)
---                 if result.success == false:
---                     log(spell_id, ["can't retrieve deal changes", joined_deal.deal_id, deal_state.from_block])
---                 else:
---                     -- Find how many changes are there
---                     number_of_changes = result.result.length
---                     if number_of_changes > 0:
---                         log(spell_id, ["sending the latest update to the worker", joined_deal.worker_id, joined_deal.spell_id, "for deal", joined_deal.deal_id])
---                         -- Take the latest change to apply it.
---                         latest_deal_update = result.result[number_of_changes - 1]
---                         app_cid <- Json.stringify(latest_deal_update.info.app_cid)
---                         -- send to worker
---                         on joined_deal.worker_id:
---                             Spell joined_deal.spell_id
---                             Spell.set_string("worker_def_cid", app_cid)
--- 
---                         -- Update the deal
---                         new_deal_state = DealState(from_block = latest_deal_update.block_number, app_cid = latest_deal_update.info.app_cid)
---                         store_deal_state(spell_id, joined_deal.deal_id, new_deal_state)
---                     else:
---                         -- If we found no deals, we check if need to move the from_block forward
---                         -- We need to do it in case if no deals were done in range of 10000 blocks
---                         need_update <- need_update_from_block(listener_id, net, result.to_block)
---                         if need_update:
---                             new_deal_state2 = DealState(from_block = result.to_block, app_cid = deal_state.app_cid)
---                             store_deal_state(spell_id, joined_deal.deal_id, new_deal_state2)
+func poll_deal_changes_batch(spell_id: string, listener_id: string, net: string):
+    FluenceAuroraConnector listener_id
+    Spell spell_id
+    log = (msg: []⊤):
+        spell_log(spell_id, msg)
+
+    -- Find the latest block on chain
+    latest_block, is_block_ok <- get_latest_block(listener_id, net)
+
+    -- Get all known deals
+    list <- Spell.list_get_strings("joined_deals")
+    if list.success == false:
+        log(["can't restrive joined deals", list.error])
+    else:
+        -- Collect info about all known deals
+        deals_update: *DealUpdate
+        for joined_deal_str <- list.strings:
+            joined_deal <- JsonJoinedDeal.parse(joined_deal_str)
+            deal_str, is_ok <- get_string(spell_id, joined_deal.deal_id) 
+            if is_ok == false:
+                log(["can't find state of the deal", joined_deal.deal_id, "; broken invariant, check poll_new_deals"])
+            else:
+                deal_state <- JsonDealState.parse(deal_str!)
+                deal_info = DealInfo(deal_id = joined_deal.deal_id, worker_id = joined_deal.worker_id)
+                deals_update <<- DealUpdate(deal_info = deal_info, from_block = deal_state.from_block)
+
+        -- Find the latest updates for all deals
+        updated_deals <- FluenceAuroraConnector.poll_deals_latest_update_batch(net, deals_update)
+        if updated_deals.success == false:
+            log(["can't download deals updates", updated_deals.error!])
+        else:
+            -- Update all deals with new info
+            for updated_deal <- updated_deals.result:
+                if updated_deal.success == false:
+                    log(["error retrieving deal update", updated_deal.deal_info.deal_id, updated_deal.error])
+                    if is_block_ok:
+                        if is_to_block_outdated(listener_id, latest_block!, updated_deal.to_block):
+                            log(["update from_block: [new from_block, latest_block]", updated_deal.to_block, latest_block])
+                            new_deal_state2 = DealState(from_block = updated_deal.to_block)
+                            store_deal_state(spell_id, updated_deal.deal_info.deal_id, new_deal_state2)
+                else:
+                    log(["found update for deal", updated_deal.deal_info.deal_id, "from block", updated_deal.result!.block_number])
+
+                    -- Update local info about the deal
+                    new_deal_state = DealState(from_block = updated_deal.result!.next_block_number)
+                    store_deal_state(spell_id, updated_deal.deal_info.deal_id, new_deal_state)
+
+                    -- Update app_cid of the deal on the corresponding worker spell
+                    log(["sending the latest update to the worker", updated_deal.deal_info])
+                    on updated_deal.deal_info.worker_id:
+                        -- stringify app_cid to be able to use it as an argument of a spell
+                        app_cid <- Json.stringify(updated_deal.result!.info.app_cid)
+                        Spell "worker-spell"
+                        Spell.set_string("worker_def_cid", app_cid)
 
 -- Data we need to poll new deals from aurora
 data AuroraInfo:
@@ -296,6 +315,8 @@ func get_counter(spell_id: string) -> u32:
 func poll_new_deals(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string): 
     FluenceAuroraConnector listener_id
     Spell spell_id
+    log = (msg: []⊤):
+        spell_log(spell_id, msg)
 
     -- On the first iteration of the spell obtain the number of the latest block in the chain
     -- And proccess the deals from now on ignoring deals from the past.
@@ -304,7 +325,7 @@ func poll_new_deals(spell_id: string, listener_id: string, info: AuroraInfo, fro
     if counter > 1 == false:
         bnumber  <- FluenceAuroraConnector.latest_block_number(info.net)
         if bnumber.success:
-            log(spell_id, ["update from_block to the latest block: [init, new]", from_block, bnumber.result])
+            log(["update from_block to the latest block: [init, new]", from_block, bnumber.result])
             bnumber_str <- Json.stringify(bnumber.result)
             Spell.set_string("from_block", bnumber_str) 
             from_block_init <<- bnumber.result
@@ -313,33 +334,32 @@ func poll_new_deals(spell_id: string, listener_id: string, info: AuroraInfo, fro
 
     result <- FluenceAuroraConnector.poll_deals(info.net, info.address, real_from_block)
     if result.success == false:
-        log_err(spell_id, result.error!)    
+        log(["can't receive info about new deals", result.error!])
     else:
         for deal <- result.result:
-            log(spell_id, ["found deal", deal.info.deal_id])
+            log(["found deal", deal.info.deal_id, "from block", deal.block_number])
             if is_worker_created(spell_id, deal.info.deal_id):
-                log(spell_id, ["worker for deal", deal.info.deal_id, "already created"])
+                log(["worker for deal", deal.info.deal_id, "already created"])
             else:
                 process_deal(spell_id, deal)
-            new_from_block <- Json.stringify(deal.block_number)
+            new_from_block <- Json.stringify(deal.next_block_number)
             Spell.set_string("from_block", new_from_block) 
         -- If we found no deals, we check if need to move the from_block forward
         -- We need to do it in case if no deals were done in range of 10000 blocks
         if result.result.length > 1 == false:
             need_update <- need_update_from_block(listener_id, info.net, result.to_block)
             if need_update:
-                log(spell_id, ["updating outdated from_block: [previous from_block, new_from_block]", from_block, result.to_block])
+                log(["updating outdated from_block: [previous from_block, new_from_block]", from_block, result.to_block])
                 to_block_str <- Json.stringify(result.to_block)
                 Spell.set_string("from_block", to_block_str)
 
     
 func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string):
     -- Find new deals and create workers
-    --try:
-    poll_new_deals(spell_id, listener_id, info, from_block)
+    try:
+        poll_new_deals(spell_id, listener_id, info, from_block)
 
-    -- TODO: 
-    -- 1. I wonder what will happen when the decider join _many_ deals?
-    --    Will it be able to check them on time?
+    -- TODO: I wonder what will happen when the decider join _many_ deals?
+    --       Will it be able to check them on time?
     -- Update existing deals
-    -- poll_deal_changes(spell_id, listener_id, info.net)
+    poll_deal_changes_batch(spell_id, listener_id, info.net)
