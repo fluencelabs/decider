@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.4](https://github.com/fluencelabs/decider/compare/connector-v0.4.3...connector-v0.4.4) (2023-03-23)
+
+
+### Features
+
+* **decider, connector:** poll new-app-cid events [fixes NET-384] ([#8](https://github.com/fluencelabs/decider/issues/8)) ([bc0d221](https://github.com/fluencelabs/decider/commit/bc0d22117750af0fe9eb1d9c23d247de48d6c85f))
+* **decider:** update installation spell to 0.5.6 ([#21](https://github.com/fluencelabs/decider/issues/21)) ([4fbf58f](https://github.com/fluencelabs/decider/commit/4fbf58ff59e2915ca0fb6b47fa8b60578190a290))
+* remove decider.json ([a161b97](https://github.com/fluencelabs/decider/commit/a161b970e5907c948c3e096336de0c07713fa33c))
+
 ## [0.4.3](https://github.com/fluencelabs/decider/compare/connector-v0.4.2...connector-v0.4.3) (2023-02-28)
 
 
