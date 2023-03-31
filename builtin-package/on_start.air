@@ -6,7 +6,7 @@
         (call relay ("op" "noop") [])
       )
       (xor
-        (match with_decider "true"
+        (match join_all_deals "true"
           (seq
             (call relay ("spell" "install") [script dat cfg] id)
             (call relay ("srv" "add_alias") ["decider" id])
