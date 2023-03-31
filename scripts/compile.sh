@@ -28,7 +28,7 @@ echo "create initial data for decider"
 
 # Need json with:
 # "script": decider script
-# "with_decider": "$FLUENCE_ENV_CONNECTOR_JOIN_ALL_DEALS"
+# "join_all_deals": "$FLUENCE_ENV_CONNECTOR_JOIN_ALL_DEALS"
 # "cfg": decider cfg
 # "dat":
 #     "listener_id": aurora listener service
@@ -39,5 +39,5 @@ echo "create initial data for decider"
 #      "worker_script": worker.aqua script
 #      "worker_config": periodic worker config worker_config.json
 #      "worker_ipfs": IPFS API address from which to get apps
-jq -s --arg script "$(cat $dir/decider.main.air | awk '{$1=$1};1')" '{ "script": $script, "with_decider": "$FLUENCE_ENV_CONNECTOR_JOIN_ALL_DEALS", "cfg": .[0], "dat": .[1]}' "$decider_config" "$dir"/init.json > decider.json
+jq -s --arg script "$(cat $dir/decider.main.air | awk '{$1=$1};1')" '{ "script": $script, "join_all_deals": "$FLUENCE_ENV_CONNECTOR_JOIN_ALL_DEALS", "cfg": .[0], "dat": .[1]}' "$decider_config" "$dir"/init.json > decider.json
 echo "Compiled to decider.json"
