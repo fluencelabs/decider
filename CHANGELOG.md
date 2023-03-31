@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.5](https://github.com/fluencelabs/decider/compare/connector-v0.4.4...connector-v0.4.5) (2023-03-31)
+
+
+### Features
+
+* **decider:** add env variable to include/exclude decider [NET-426] ([#22](https://github.com/fluencelabs/decider/issues/22)) ([9cf1309](https://github.com/fluencelabs/decider/commit/9cf13091978a53c387e44b018e1cdaa983020175))
+
 ## [0.4.4](https://github.com/fluencelabs/decider/compare/connector-v0.4.3...connector-v0.4.4) (2023-03-23)
 
 
