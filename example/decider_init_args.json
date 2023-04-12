@@ -1,9 +1,9 @@
 {
     "listener_id": "connector",
     "info": {
-      "net": "testnet",
-      "address": "0x5f6815ff1c371640883e49dDCbf04573B69568Ed"
+      "net": "aurora-testnet",
+      "address": "0xb497e025D3095A197E30Ca84DEc36a637E649868"
     },
-    "from_block": "0x1edd4c4",
+    "from_block": "0x75f3fbc",
     "worker_ipfs": "/dns4/ipfs.fluence.dev/tcp/5001"
 }
