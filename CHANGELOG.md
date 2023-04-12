@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.6](https://github.com/fluencelabs/decider/compare/connector-v0.4.5...connector-v0.4.6) (2023-04-12)
+
+
+### Features
+
+* update network to aurora testnet ([#26](https://github.com/fluencelabs/decider/issues/26)) ([efefa71](https://github.com/fluencelabs/decider/commit/efefa710c39c7cda111b4344b98782d279dede73))
+
 ## [0.4.5](https://github.com/fluencelabs/decider/compare/connector-v0.4.4...connector-v0.4.5) (2023-03-31)
 
 
