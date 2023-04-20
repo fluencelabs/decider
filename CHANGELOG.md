@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.7](https://github.com/fluencelabs/decider/compare/connector-v0.4.6...connector-v0.4.7) (2023-04-20)
+
+
+### Bug Fixes
+
+* **deps:** update config ([#31](https://github.com/fluencelabs/decider/issues/31)) ([8de8f7b](https://github.com/fluencelabs/decider/commit/8de8f7b4232a03f1d86046ed1445219540a5b731))
+
 ## [0.4.6](https://github.com/fluencelabs/decider/compare/connector-v0.4.5...connector-v0.4.6) (2023-04-12)
 
 
