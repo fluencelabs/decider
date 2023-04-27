@@ -1,8 +1,8 @@
 {
     "listener_id": "connector",
     "info": {
-      "net": "aurora-testnet",
-      "address": "0xb497e025D3095A197E30Ca84DEc36a637E649868"
+      "net": "$FLUENCE_ENV_CONNECTOR_NET",
+      "address": "$FLUENCE_ENV_CONNECTOR_CONTRACT_ADDRESS"
     },
     "from_block": "0x75f3fbc",
     "worker_ipfs": "/dns4/ipfs.fluence.dev/tcp/5001"
