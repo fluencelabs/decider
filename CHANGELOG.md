@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.8](https://github.com/fluencelabs/decider/compare/connector-v0.4.7...connector-v0.4.8) (2023-04-27)
+
+
+### Features
+
+* **builtin:** set net and contract address via env variables [NET-460] ([#33](https://github.com/fluencelabs/decider/issues/33)) ([9164529](https://github.com/fluencelabs/decider/commit/9164529d6ff9d5b7d30db11110cf8e4295e33a8c))
+
+
+### Bug Fixes
+
+* **deps:** update rust crate marine-rs-sdk-test to 0.9.0 ([#24](https://github.com/fluencelabs/decider/issues/24)) ([8a06acf](https://github.com/fluencelabs/decider/commit/8a06acf6f90ea966cfe9bed00fd7d63146cda55e))
+
 ## [0.4.7](https://github.com/fluencelabs/decider/compare/connector-v0.4.6...connector-v0.4.7) (2023-04-20)
 
 
