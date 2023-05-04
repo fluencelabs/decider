@@ -50,3 +50,6 @@ jobs:
         with:
           name: connector.tar.gz
           path: connector.tar.gz
+
+      - name: Build distro
+        run: ./build.sh
