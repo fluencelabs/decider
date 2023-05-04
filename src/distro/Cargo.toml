@@ -4,6 +4,7 @@ version = "0.4.8"
 edition = "2021"
 build = "built.rs"
 include = [ "/src", "build.rs", "Cargo.toml" ]
+license = "Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
