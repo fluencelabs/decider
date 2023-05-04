@@ -31,7 +31,7 @@ jobs:
         run: npm i -g @fluencelabs/cli@unstable
 
       - name: Install ipfs
-        uses: ibnesayeed/setup-ipfs@master
+        uses: ibnesayeed/setup-ipfs@0.6.0
 
       - name: Create builtin distribution package
         run: ./builtin-package/package.sh
