@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.9](https://github.com/fluencelabs/decider/compare/connector-v0.4.8...connector-v0.4.9) (2023-05-08)
+
+
+### Features
+
+* **builtin-package:** use new blueprint ([#36](https://github.com/fluencelabs/decider/issues/36)) ([224978d](https://github.com/fluencelabs/decider/commit/224978d3e22137447d751ce416f465dd41172182))
+
 ## [0.4.8](https://github.com/fluencelabs/decider/compare/connector-v0.4.7...connector-v0.4.8) (2023-04-27)
 
 
