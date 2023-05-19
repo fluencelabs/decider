@@ -10,7 +10,6 @@ use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::WasmLoggerBuilder;
 
-use std::collections::HashMap;
 use thiserror::Error;
 
 use deal::changed_cid::*;
@@ -29,20 +28,10 @@ enum Error {
     RequestError(#[from] request::RequestError),
     #[error(transparent)]
     JsonRpcError(#[from] jsonrpc::JsonRpcError),
-    #[error("unsupported network type: {0}")]
-    NetworkTypeError(String),
 }
 
 pub fn main() {
     WasmLoggerBuilder::new().build().unwrap();
-}
-
-#[marine]
-pub struct Net {
-    /// Short name for the net. Can be used in `poll` calls.
-    name: String,
-    /// URL of the net
-    url: String,
 }
 
 #[marine]
@@ -56,8 +45,6 @@ pub struct SupportedEvent {
 /// Service configuration.
 #[marine]
 pub struct Env {
-    /// List of allowed networks.
-    nets: Vec<Net>,
     /// List of polled events with
     events: Vec<SupportedEvent>,
 }
@@ -65,13 +52,6 @@ pub struct Env {
 // TODO: allow owners to configure the service
 #[marine]
 pub fn get_env() -> Env {
-    let nets = nets()
-        .into_iter()
-        .map(|(name, url)| Net {
-            name: name.to_string(),
-            url: url.to_string(),
-        })
-        .collect::<_>();
     let events = vec![
         SupportedEvent {
             name: DealCreated::EVENT_NAME.to_string(),
@@ -82,18 +62,7 @@ pub fn get_env() -> Env {
             topic: DealChangedData::topic(),
         },
     ];
-    Env { nets, events }
-}
-
-// Nets we allow to poll.
-fn nets() -> HashMap<&'static str, &'static str> {
-    HashMap::from([
-        ("testnet", "https://aged-tiniest-scion.matic-testnet.quiknode.pro/08133c1e70a6ec1e7a75545a1254d85640a6251d/"),
-        ("polygon-testnet", "https://endpoints.omniatech.io/v1/matic/mumbai/public"),
-        ("aurora-testnet", "https://testnet.aurora.dev"),
-        // Note: cool for debugging, but do we want to leave it here?
-        ("local", "http://localhost:8545"),
-    ])
+    Env { events }
 }
 
 #[marine]
@@ -122,15 +91,8 @@ impl BlockNumberResult {
 }
 
 #[marine]
-pub fn latest_block_number(net: String) -> BlockNumberResult {
-    let url = match get_url(&net) {
-        None => {
-            return BlockNumberResult::error(Error::NetworkTypeError(net).to_string());
-        }
-        Some(url) => url,
-    };
-
-    let result = match get_block_number(url) {
+pub fn latest_block_number(api_endpoint: String) -> BlockNumberResult {
+    let result = match get_block_number(api_endpoint) {
         Err(err) => {
             log::debug!(target: "connector", "request error: {:?}", err);
             return BlockNumberResult::error(err.to_string());
@@ -156,9 +118,6 @@ pub fn latest_block_number(net: String) -> BlockNumberResult {
     BlockNumberResult::ok(result)
 }
 
-fn get_url(net: &str) -> Option<String> {
-    nets().get(net).map(|x| String::from(*x))
-}
 
 fn hex_to_int(block: &str) -> Option<u64> {
     let block = block.trim_start_matches("0x");
@@ -376,16 +335,9 @@ impl DealsUpdatedBatchResult {
 
 #[marine]
 pub fn poll_deals_latest_update_batch(
-    net: String,
+    api_endpoint: String,
     deals: Vec<DealUpdate>,
 ) -> DealsUpdatedBatchResult {
-    let url = match get_url(&net) {
-        None => {
-            return DealsUpdatedBatchResult::error(Error::NetworkTypeError(net).to_string());
-        }
-        Some(url) => url,
-    };
-
     if deals.is_empty() {
         return DealsUpdatedBatchResult::ok(Vec::new());
     }
@@ -406,7 +358,7 @@ pub fn poll_deals_latest_update_batch(
             req.to_jsonrpc(idx as u32)
         })
         .collect::<Vec<_>>();
-    let result = get_logs_batch(url, reqs);
+    let result = get_logs_batch(api_endpoint, reqs);
     match result {
         Err(err) => {
             return DealsUpdatedBatchResult::error(err.to_string());
@@ -443,21 +395,14 @@ pub fn poll_deals_latest_update_batch(
 }
 
 fn poll(
-    net: String,
+    api_endpoint: String,
     address: String,
     from_block: String,
     to_block: String,
     topic: String,
 ) -> Result<Vec<GetLogsResp>, Error> {
-    let url = match get_url(&net) {
-        None => {
-            return Err(Error::NetworkTypeError(net));
-        }
-        Some(url) => url,
-    };
-
-    log::debug!("sending request to {}", url);
-    let value = get_logs(url, address, vec![topic], from_block, to_block)?;
+    log::debug!("sending request to {}", api_endpoint);
+    let value = get_logs(api_endpoint, address, vec![topic], from_block, to_block)?;
     log::debug!("request result: {:?}", value);
     let deals = value.get_result()?;
     Ok(deals)
