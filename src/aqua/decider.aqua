@@ -295,9 +295,7 @@ func poll_deal_changes_batch(spell_id: string, listener_id: string, net: string)
 
 -- Data we need to poll new deals from aurora
 data AuroraInfo:
-  -- Refers to which network to use:
-  -- * testnet (refers to Aurora Testnet)
-  -- * local (refers to the default local port)
+  -- Refers to which api endpoint to poll
   api_endpoint: string
   -- Chain contract address
   address: string
