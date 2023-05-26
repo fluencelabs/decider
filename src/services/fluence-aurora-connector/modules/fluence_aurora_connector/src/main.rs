@@ -53,10 +53,10 @@ pub struct SupportedEvent {
     topic: String,
 }
 
-/// Service configuration.
+/// Service configuration
 #[marine]
 pub struct Env {
-    /// List of allowed networks.
+    /// List of allowed networks
     nets: Vec<Net>,
     /// List of polled events with
     events: Vec<SupportedEvent>,
