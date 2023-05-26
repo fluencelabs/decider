@@ -310,7 +310,6 @@ pub struct DealUpdate {
 #[marine]
 pub struct DealInfo {
     worker_id: String,
-    //spell_id: String,
     deal_id: String,
 }
 
