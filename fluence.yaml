@@ -11,7 +11,7 @@ dependencies:
     "@fluencelabs/aqua-lib": 0.7.0
     "@fluencelabs/spell": 0.5.12
     "@fluencelabs/aqua": 0.10.3
-    "@fluencelabs/installation-spell": 0.5.11
+    "@fluencelabs/installation-spell": 0.5.12
     "@fluencelabs/aqua-ipfs": 0.5.10
   cargo:
     marine: 0.12.5
