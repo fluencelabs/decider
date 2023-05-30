@@ -16,6 +16,7 @@ log = "0.4.17"
 thiserror = "1.0.38"
 ethabi = "18.0.0"
 hex = "0.4.3"
+url = "2.3.1"
 
 [dev-dependencies]
 marine-rs-sdk-test = "0.9.0"

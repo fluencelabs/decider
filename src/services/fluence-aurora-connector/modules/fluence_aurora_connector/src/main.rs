@@ -45,11 +45,10 @@ pub struct SupportedEvent {
 /// Service configuration
 #[marine]
 pub struct Env {
-    /// List of polled events with
+    /// List of polled events with topics
     events: Vec<SupportedEvent>,
 }
 
-// TODO: allow owners to configure the service
 #[marine]
 pub fn get_env() -> Env {
     let events = vec![
@@ -92,6 +91,10 @@ impl BlockNumberResult {
 
 #[marine]
 pub fn latest_block_number(api_endpoint: String) -> BlockNumberResult {
+    if let Err(err) = check_url(&api_endpoint) {
+        return BlockNumberResult::error(err.to_string());
+    }
+
     let result = match get_block_number(api_endpoint) {
         Err(err) => {
             log::debug!(target: "connector", "request error: {:?}", err);
@@ -182,14 +185,18 @@ impl DealCreatedResult {
 //       Don't see this functionallity in eth_getLogs
 // TODO: need to restrict who can use this service to its spell.
 //
-// `net` -- network type to poll (right now it's possible to pass any URL for emergency cases)
+// `api_endpoint` -- api endpoint to poll (right now it's possible to pass any URL for emergency cases)
 // `address` -- address of the deal contract
 // `from_block` -- from which block to poll deals
 #[marine]
-pub fn poll_deals(net: String, address: String, from_block: String) -> DealCreatedResult {
+pub fn poll_deals(api_endpoint: String, address: String, from_block: String) -> DealCreatedResult {
+    if let Err(err) = check_url(&api_endpoint) {
+        return DealCreatedResult::error(err.to_string());
+    }
+
     let to_block = get_to_block(&from_block);
     let result = poll(
-        net,
+        api_endpoint,
         address,
         from_block,
         to_block.clone(),
@@ -235,15 +242,19 @@ impl DealChangedResult {
     }
 }
 
-// `net` -- network type to poll (right now it's possible to pass any URL for emergency cases)
+// `api_endpoint` -- api endpoint to poll (right now it's possible to pass any URL for emergency cases)
 // `address` -- address of the deal we are modifying
 // `from_block` -- from which block to poll deals
 #[marine]
-pub fn poll_deal_changed(net: String, deal_id: String, from_block: String) -> DealChangedResult {
+pub fn poll_deal_changed(api_endpoint: String, deal_id: String, from_block: String) -> DealChangedResult {
+    if let Err(err) = check_url(&api_endpoint) {
+        return DealChangedResult::error(deal_id, err.to_string());
+    }
+
     let address = format!("0x{}", deal_id);
     let to_block = get_to_block(&from_block);
     let result = poll(
-        net,
+        api_endpoint,
         address,
         from_block,
         to_block.clone(),
@@ -337,6 +348,10 @@ pub fn poll_deals_latest_update_batch(
     api_endpoint: String,
     deals: Vec<DealUpdate>,
 ) -> DealsUpdatedBatchResult {
+    if let Err(err) = check_url(&api_endpoint) {
+        return DealsUpdatedBatchResult::error(err.to_string());
+    }
+
     if deals.is_empty() {
         return DealsUpdatedBatchResult::ok(Vec::new());
     }
