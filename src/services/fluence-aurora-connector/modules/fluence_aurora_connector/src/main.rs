@@ -183,7 +183,7 @@ impl DealCreatedResult {
 
 // TODO: How to set an upper limit for how many responses to return?
 //       Don't see this functionallity in eth_getLogs
-// TODO: need to restrict who can use this service to its spell.
+// TODO: need to restrict who can use this service to its spell
 //
 // `api_endpoint` -- api endpoint to poll (right now it's possible to pass any URL for emergency cases)
 // `address` -- address of the deal contract

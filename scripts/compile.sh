@@ -35,7 +35,7 @@ echo "create initial data for decider"
 #     "info":
 #     	 "api_endpoint": net api endpoint from which to poll
 #     	 "address": contract address
-#      "from_block": "latest"
+#      "from_block": "$FLUENCE_ENV_CONNECTOR_FROM_BLOCK"
 #      "worker_script": worker.aqua script
 #      "worker_config": periodic worker config worker_config.json
 #      "worker_ipfs": IPFS API address from which to get apps

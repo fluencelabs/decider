@@ -4,6 +4,6 @@
       "api_endpoint": "$FLUENCE_ENV_CONNECTOR_API_ENDPOINT",
       "address": "$FLUENCE_ENV_CONNECTOR_CONTRACT_ADDRESS"
     },
-    "from_block": "0x75f3fbc",
+    "from_block": "$FLUENCE_ENV_CONNECTOR_FROM_BLOCK",
     "worker_ipfs": "/dns4/ipfs.fluence.dev/tcp/5001"
 }
