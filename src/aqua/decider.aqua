@@ -154,7 +154,6 @@ func get_worker_settings(spell_id: string) ->  ?WorkerSettings, bool:
 func decide(deal: DealCreatedData) -> bool:
     <- true
 
---
 func join_deal(spell_id: string, block_number: string, deal: DealCreatedData) -> bool:
     log = (msg: []⊤):
         spell_log(spell_id, msg)
