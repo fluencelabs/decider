@@ -3,6 +3,7 @@ use marine_rs_sdk::marine;
 use marine_rs_sdk::MountedBinaryResult;
 use serde_json::json;
 use thiserror::Error;
+use url::Url;
 
 #[derive(Debug, Error)]
 pub enum RequestError {
@@ -14,6 +15,12 @@ pub enum RequestError {
     ParseError(serde_json::Error, String),
     #[error("error occured with `curl`: {0}")]
     OtherError(String),
+    #[error("invalid URL: {0}")]
+    ParseUrlError(#[source] url::ParseError),
+}
+
+pub fn check_url(url: &str) -> Result<(), RequestError> {
+    Url::parse(url).map_err(RequestError::ParseUrlError).map(|_| ())
 }
 
 pub fn get_block_number(url: String) -> Result<JsonRpcResp<String>, RequestError> {
@@ -108,7 +115,7 @@ pub fn get_logs(
 fn curl_params(url: String, data: String) -> Vec<String> {
     let params = vec![
         url.as_str(),
-        // To avoid unneccessary data in stderr
+        // To avoid unnecessary data in stderr
         "--no-progress-meter",
         "-X", "POST",
         "-H", "Content-Type: application/json",

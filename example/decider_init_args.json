@@ -1,7 +1,7 @@
 {
     "listener_id": "connector",
     "info": {
-      "net": "$FLUENCE_ENV_CONNECTOR_NET",
+      "api_endpoint": "$FLUENCE_ENV_CONNECTOR_API_ENDPOINT",
       "address": "$FLUENCE_ENV_CONNECTOR_CONTRACT_ADDRESS"
     },
     "from_block": "0x75f3fbc",

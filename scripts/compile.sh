@@ -33,7 +33,7 @@ echo "create initial data for decider"
 # "dat":
 #     "listener_id": aurora listener service
 #     "info":
-#     	 "net": net from which to poll
+#     	 "api_endpoint": net api endpoint from which to poll
 #     	 "address": contract address
 #      "from_block": "latest"
 #      "worker_script": worker.aqua script
