@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.12](https://github.com/fluencelabs/decider/compare/connector-v0.4.11...connector-v0.4.12) (2023-05-30)
+
+
+### Features
+
+* pass api endpoint via env [NET-479] ([#39](https://github.com/fluencelabs/decider/issues/39)) ([75aea7e](https://github.com/fluencelabs/decider/commit/75aea7e8dc6e4d098ff1efe48d700006677a19bb))
+
 ## [0.4.11](https://github.com/fluencelabs/decider/compare/connector-v0.4.10...connector-v0.4.11) (2023-05-26)
 
 
