@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.13](https://github.com/fluencelabs/decider/compare/connector-v0.4.12...connector-v0.4.13) (2023-05-30)
+
+
+### Features
+
+* **decider:** add FLUENCE_ENV_CONNECTOR_FROM_BLOCK env variable ([#46](https://github.com/fluencelabs/decider/issues/46)) ([cd79d62](https://github.com/fluencelabs/decider/commit/cd79d62f461609cbd3a92afcc6ffd02e0225c5c7))
+
 ## [0.4.12](https://github.com/fluencelabs/decider/compare/connector-v0.4.11...connector-v0.4.12) (2023-05-30)
 
 
