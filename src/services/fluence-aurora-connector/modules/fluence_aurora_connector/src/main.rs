@@ -42,7 +42,7 @@ pub struct SupportedEvent {
     topic: String,
 }
 
-/// Service configuration.
+/// Service configuration
 #[marine]
 pub struct Env {
     /// List of polled events with
@@ -269,7 +269,6 @@ pub struct DealUpdate {
 #[marine]
 pub struct DealInfo {
     worker_id: String,
-    //spell_id: String,
     deal_id: String,
 }
 

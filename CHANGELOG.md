@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.11](https://github.com/fluencelabs/decider/compare/connector-v0.4.10...connector-v0.4.11) (2023-05-26)
+
+
+### Features
+
+* **installation-spell:** ACTUALLY UPDATE IT ([#43](https://github.com/fluencelabs/decider/issues/43)) ([bbb3809](https://github.com/fluencelabs/decider/commit/bbb3809eb414363fd9a93727c05a69c2c98b7fd0))
+
+## [0.4.10](https://github.com/fluencelabs/decider/compare/connector-v0.4.9...connector-v0.4.10) (2023-05-26)
+
+
+### Features
+
+* trigger connector update ([#41](https://github.com/fluencelabs/decider/issues/41)) ([d17d0aa](https://github.com/fluencelabs/decider/commit/d17d0aa1d6c6fd7e0787f4d3b074a66b6fe2f00b))
+
 ## [0.4.9](https://github.com/fluencelabs/decider/compare/connector-v0.4.8...connector-v0.4.9) (2023-05-08)
 
 
