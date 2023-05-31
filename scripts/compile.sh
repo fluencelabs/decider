@@ -33,7 +33,7 @@ echo "create initial data for decider"
 # "dat":
 #     "listener_id": aurora listener service
 #     "info":
-#     	 "api_endpoint": net api endpoint from which to poll
+#     	 "api_endpoint": api endpoint from which to poll
 #     	 "address": contract address
 #      "from_block": "$FLUENCE_ENV_CONNECTOR_FROM_BLOCK"
 #      "worker_script": worker.aqua script

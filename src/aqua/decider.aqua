@@ -5,7 +5,7 @@
 import "@fluencelabs/spell/api.aqua"
 import "@fluencelabs/spell/spell_service.aqua"
 import "@fluencelabs/aqua-lib/builtin.aqua"
-import "./fluence_aurora_connector.aqua"
+import "services.aqua"
 
 -- Worker API
 service Worker("worker"):
@@ -195,12 +195,12 @@ func process_deal(spell_id: string, deal: DealCreated):
         else:
             log(["couldn't join the deal", deal.info.deal_id])
 
-func get_latest_block(listener_id: string, net: string) -> ?string, bool:
+func get_latest_block(listener_id: string, api_endpoint: string) -> ?string, bool:
     FluenceAuroraConnector listener_id
     is_ok: *bool
     block: *string
 
-    result <- FluenceAuroraConnector.latest_block_number(net)
+    result <- FluenceAuroraConnector.latest_block_number(api_endpoint)
     if result.success == false:
         is_ok <<- false
     else:
@@ -226,10 +226,10 @@ func is_to_block_outdated(listener_id: string, latest_block: string, to_block: s
 -- Check to the to_block is less than latest_block from chain.
 -- That would meen that polling this range [from_block, to_block] won't give us new updated anymore
 -- and we need to move the range to be able to find updates.
-func need_update_from_block(listener_id: string, net: string, to_block: string) -> bool:
+func need_update_from_block(listener_id: string, api_endpoint: string, to_block: string) -> bool:
     need_update: *bool
 
-    result, is_ok <- get_latest_block(listener_id, net)
+    result, is_ok <- get_latest_block(listener_id, api_endpoint)
     if is_ok:
         -- if to_block is less then latest block, we need to update from_block and set it to to_block
         need_update <<- is_to_block_outdated(listener_id, result!, to_block)
@@ -237,14 +237,14 @@ func need_update_from_block(listener_id: string, net: string, to_block: string) 
         need_update <<- false
     <- need_update!
 
-func poll_deal_changes_batch(spell_id: string, listener_id: string, net: string):
+func poll_deal_changes_batch(spell_id: string, listener_id: string, api_endpoint: string):
     FluenceAuroraConnector listener_id
     Spell spell_id
     log = (msg: []⊤):
         spell_log(spell_id, msg)
 
     -- Find the latest block on chain
-    latest_block, is_block_ok <- get_latest_block(listener_id, net)
+    latest_block, is_block_ok <- get_latest_block(listener_id, api_endpoint)
 
     -- Get all known deals
     list <- Spell.list_get_strings("joined_deals")
@@ -264,7 +264,7 @@ func poll_deal_changes_batch(spell_id: string, listener_id: string, net: string)
                 deals_update <<- DealUpdate(deal_info = deal_info, from_block = deal_state.from_block)
 
         -- Find the latest updates for all deals
-        updated_deals <- FluenceAuroraConnector.poll_deals_latest_update_batch(net, deals_update)
+        updated_deals <- FluenceAuroraConnector.poll_deals_latest_update_batch(api_endpoint, deals_update)
         if updated_deals.success == false:
             log(["can't download deals updates", updated_deals.error!])
         else:

@@ -92,6 +92,7 @@ pub fn get_logs(
     let req = json!(req.to_jsonrpc(0));
     let req = serde_json::to_string(&req).expect("can't convert get_logs JRPC request to JSON");
     log::debug!("request: {}", req);
+
     // Make a request
     let result = curl_request(curl_params(url, req)).into_std();
     let result = match result {
