@@ -195,8 +195,7 @@ func process_deal(spell_id: string, deal: DealCreated):
         else:
             log(["couldn't join the deal", deal.info.deal_id])
 
-func get_latest_block(listener_id: string, api_endpoint: string) -> ?string, bool:
-    FluenceAuroraConnector listener_id
+func get_latest_block(api_endpoint: string) -> ?string, bool:
     is_ok: *bool
     block: *string
 
@@ -209,10 +208,9 @@ func get_latest_block(listener_id: string, api_endpoint: string) -> ?string, boo
 
     <- block, is_ok!
 
--- Check if our local upper bound (to_block) until which we check new deals is outdated
--- aka less then the latest block of the chain.
-func is_to_block_outdated(listener_id: string, latest_block: string, to_block: string) -> bool:
-    FluenceAuroraConnector listener_id
+-- Check if our local upper bound (to_block) until which we check new deals is outdated 
+-- aka less then the latest block of the chain. 
+func is_to_block_outdated(latest_block: string, to_block: string) -> bool:
     is: *bool
 
     -- diff = latest_block - to_block
@@ -226,25 +224,24 @@ func is_to_block_outdated(listener_id: string, latest_block: string, to_block: s
 -- Check to the to_block is less than latest_block from chain.
 -- That would meen that polling this range [from_block, to_block] won't give us new updated anymore
 -- and we need to move the range to be able to find updates.
-func need_update_from_block(listener_id: string, api_endpoint: string, to_block: string) -> bool:
+func need_update_from_block(api_endpoint: string, to_block: string) -> bool:
     need_update: *bool
 
-    result, is_ok <- get_latest_block(listener_id, api_endpoint)
+    result, is_ok <- get_latest_block(api_endpoint)
     if is_ok:
         -- if to_block is less then latest block, we need to update from_block and set it to to_block
-        need_update <<- is_to_block_outdated(listener_id, result!, to_block)
+        need_update <<- is_to_block_outdated(result!, to_block)
     else:
         need_update <<- false
     <- need_update!
 
-func poll_deal_changes_batch(spell_id: string, listener_id: string, api_endpoint: string):
-    FluenceAuroraConnector listener_id
+func poll_deal_changes_batch(spell_id: string, api_endpoint: string):
     Spell spell_id
     log = (msg: []⊤):
         spell_log(spell_id, msg)
 
     -- Find the latest block on chain
-    latest_block, is_block_ok <- get_latest_block(listener_id, api_endpoint)
+    latest_block, is_block_ok <- get_latest_block(api_endpoint)
 
     -- Get all known deals
     list <- Spell.list_get_strings("joined_deals")
@@ -273,7 +270,7 @@ func poll_deal_changes_batch(spell_id: string, listener_id: string, api_endpoint
                 if updated_deal.success == false:
                     log(["error retrieving deal update", updated_deal.deal_info.deal_id, updated_deal.error])
                     if is_block_ok:
-                        if is_to_block_outdated(listener_id, latest_block!, updated_deal.to_block):
+                        if is_to_block_outdated(latest_block!, updated_deal.to_block):
                             log(["update from_block: [new from_block, latest_block]", updated_deal.to_block, latest_block])
                             new_deal_state2 = DealState(from_block = updated_deal.to_block)
                             store_deal_state(spell_id, updated_deal.deal_info.deal_id, new_deal_state2)
@@ -309,8 +306,7 @@ func get_counter(spell_id: string) -> u32:
         result <<- 0
     <- result!
 
-func poll_new_deals(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string):
-    FluenceAuroraConnector listener_id
+func poll_new_deals(spell_id: string, info: AuroraInfo, from_block: string): 
     Spell spell_id
     log = (msg: []⊤):
         spell_log(spell_id, msg)
@@ -344,19 +340,18 @@ func poll_new_deals(spell_id: string, listener_id: string, info: AuroraInfo, fro
         -- If we found no deals, we check if need to move the from_block forward
         -- We need to do it in case if no deals were done in range of 10000 blocks
         if result.result.length > 1 == false:
-            need_update <- need_update_from_block(listener_id, info.api_endpoint, result.to_block)
+            need_update <- need_update_from_block(info.api_endpoint, result.to_block)
             if need_update:
                 log(["updating outdated from_block: [previous from_block, new_from_block]", from_block, result.to_block])
                 to_block_str <- Json.stringify(result.to_block)
                 Spell.set_string("from_block", to_block_str)
 
-
-func main(spell_id: string, listener_id: string, info: AuroraInfo, from_block: string):
+func main(spell_id: string, info: AuroraInfo, from_block: string):
     -- Find new deals and create workers
     try:
-        poll_new_deals(spell_id, listener_id, info, from_block)
+        poll_new_deals(spell_id, info, from_block)
 
     -- TODO: I wonder what will happen when the decider join _many_ deals?
     --       Will it be able to check them on time?
     -- Update existing deals
-    poll_deal_changes_batch(spell_id, listener_id, info.api_endpoint)
+    poll_deal_changes_batch(spell_id, info.api_endpoint)
