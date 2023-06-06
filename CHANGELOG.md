@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.14](https://github.com/fluencelabs/decider/compare/connector-v0.4.13...connector-v0.4.14) (2023-06-06)
+
+
+### Bug Fixes
+
+* **decider:** fix args naming ([#48](https://github.com/fluencelabs/decider/issues/48)) ([a8dea61](https://github.com/fluencelabs/decider/commit/a8dea61d5b2f706c71e04371990dd4e0f4562655))
+* **deps:** update installation-spell to 0.5.14 ([#50](https://github.com/fluencelabs/decider/issues/50)) ([5501c4d](https://github.com/fluencelabs/decider/commit/5501c4def4d75ba374e24254b1b0050f99717b4e))
+* **deps:** update rust crate marine-rs-sdk-test to 0.10.0 ([#38](https://github.com/fluencelabs/decider/issues/38)) ([bb8712b](https://github.com/fluencelabs/decider/commit/bb8712b7504235bae00d76a22eba5970d86a8dbd))
+
 ## [0.4.13](https://github.com/fluencelabs/decider/compare/connector-v0.4.12...connector-v0.4.13) (2023-05-30)
 
 
