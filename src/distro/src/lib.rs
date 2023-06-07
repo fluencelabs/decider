@@ -71,7 +71,7 @@ pub fn decider_spell(config: DeciderConfig) -> DistrSpell {
             "worker_ipfs" => json!(config.worker_ipfs_multiaddr),
             "from_block" => json!(config.chain_contract_block_hex),
             "info" => json!( {
-                "net": config.chain_network,
+                "api_endpoint": config.chain_network,
                 "address": config.chain_contract_addr,
             }),
         },
