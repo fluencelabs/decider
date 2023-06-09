@@ -38,6 +38,48 @@ jobs:
           RELEASE_PLEASE_OUTPUT: ${{ toJSON(steps.release.outputs) }}
         run: echo "${RELEASE_PLEASE_OUTPUT}" | jq
 
+  bump-version:
+    if: needs.release-please.outputs.pr != null
+    runs-on: builder
+    needs:
+      - release-please
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ fromJson(needs.release-please.outputs.pr).headBranchName }}
+
+      - name: Get version
+        id: version
+        run: |
+          version="$(jq -r '.[]' .github/release-please/manifest.json)"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+
+      - name: Setup Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Install cargo-edit
+        uses: baptiste0928/cargo-install@v1.3.0
+        with:
+          crate: cargo-edit
+
+      - name: Set version in service
+        working-directory: src/distro
+        run: cargo set-version ${{ steps.version.outputs.version }}
+
+      - name: Commit version bump
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "chore: Bump version to ${{ steps.version.outputs.version }}"
+          branch: ${{ fromJson(needs.release-please.outputs.pr).headBranchName }}
+          commit_user_name: fluencebot
+          commit_user_email: devops@fluence.one
+          commit_author: fluencebot <devops@fluence.one>
+
   connector:
     runs-on: builder
 
@@ -105,6 +147,41 @@ jobs:
             "url": "https://github.com/fluencelabs/control-plane/releases/download/${{ needs.release-please.outputs.tag-name }}/connector.tar.gz",
             "sha256": "${{ steps.sha.outputs.sha256 }}"
           }'
+
+      - name: Import secrets
+        uses: hashicorp/vault-action@v2.4.3
+        with:
+          url: https://vault.fluence.dev
+          path: jwt/github
+          role: ci
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          exportToken: false
+          secrets: |
+            kv/npmjs/fluencebot token | NODE_AUTH_TOKEN ;
+            kv/crates.io/fluencebot token | CARGO_REGISTRY_TOKEN
+
+      - name: Setup Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Install cargo-workspaces
+        uses: baptiste0928/cargo-install@v2.0.0
+        with:
+          crate: cargo-workspaces
+          version: v0.2.37
+
+      - name: Build distro
+        run: ./build.sh
+
+      - name: Publish to crates.io
+        run: |
+          cargo ws publish \
+            --no-git-commit \
+            --allow-dirty \
+            --from-git \
+            --skip-published \
+            --yes
 
   slack:
     if: always()
