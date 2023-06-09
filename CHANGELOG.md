@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.15](https://github.com/fluencelabs/decider/compare/connector-v0.4.14...connector-v0.4.15) (2023-06-09)
+
+
+### Features
+
+* add distro crate [fixes NET-464]  ([#51](https://github.com/fluencelabs/decider/issues/51)) ([f240ca4](https://github.com/fluencelabs/decider/commit/f240ca4fc1f63e36e7a85b72ced098dc1fe28ed4))
+
 ## [0.4.14](https://github.com/fluencelabs/decider/compare/connector-v0.4.13...connector-v0.4.14) (2023-06-06)
 
 
