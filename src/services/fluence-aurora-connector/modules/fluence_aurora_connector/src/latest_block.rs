@@ -1,7 +1,7 @@
 use marine_rs_sdk::marine;
 
 use crate::curl::send_jsonrpc;
-use crate::hex::{hex_to_int, int_to_hex};
+use crate::hex::hex_to_int;
 use crate::jsonrpc::block_number::{BlockNumberReq, BlockNumberResult};
 use crate::jsonrpc::request::check_url;
 
@@ -11,7 +11,7 @@ pub fn latest_block_number(api_endpoint: String) -> BlockNumberResult {
         return BlockNumberResult::error(err.to_string());
     }
 
-    let result = match send_jsonrpc(api_endpoint, BlockNumberReq::new()) {
+    let result = match send_jsonrpc::<_, String>(api_endpoint, BlockNumberReq::new()) {
         Err(err) => {
             log::debug!(target: "connector", "request error: {:?}", err);
             return BlockNumberResult::error(err.to_string());

@@ -1,14 +1,6 @@
-use marine_rs_sdk::marine;
-use marine_rs_sdk::MountedBinaryResult;
-use serde_json::json;
+use crate::jsonrpc::JsonRpcError;
 use thiserror::Error;
 use url::Url;
-
-use crate::chain::{JsonRpcReq, JsonRpcResp};
-use crate::curl::{curl, send_jsonrpc, send_jsonrpc_batch};
-use crate::jsonrpc::block_number::BlockNumberReq;
-use crate::jsonrpc::get_logs::{GetLogsReq, GetLogsResp};
-use crate::jsonrpc::*;
 
 #[derive(Debug, Error)]
 pub enum RequestError {
@@ -24,6 +16,8 @@ pub enum RequestError {
     ParseUrlError(#[source] url::ParseError),
     #[error("error serializing JsonRpc request: {0}")]
     RpcSerializeError(serde_json::Error),
+    #[error("json rpc error: {0}")]
+    JsonRpcError(#[from] JsonRpcError),
 }
 
 /// Returns `Err` if `url` is not a valid URL

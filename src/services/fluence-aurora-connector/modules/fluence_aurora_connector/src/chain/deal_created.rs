@@ -1,6 +1,9 @@
 use ethabi::param_type::ParamType;
+use marine_rs_sdk::marine;
 
-use super::*;
+use crate::chain::chain_data::{parse_chain_data, ChainData, DealParseError};
+use crate::chain::chain_event::ChainEvent;
+use crate::chain::u256::U256;
 
 /// Corresponding Solidity type:
 /// ```solidity
@@ -131,8 +134,9 @@ impl ChainEvent<DealCreatedData> for DealCreated {
 
 #[cfg(test)]
 mod test {
-    use crate::*;
     use std::assert_matches::assert_matches;
+
+    use crate::*;
 
     // Cannot now provide an example of encoded data with effectors
     // #[test]

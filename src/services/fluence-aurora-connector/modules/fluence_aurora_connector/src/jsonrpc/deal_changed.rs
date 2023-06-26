@@ -1,9 +1,10 @@
 use marine_rs_sdk::marine;
 
+use crate::chain::chain_data::ChainData;
 use crate::chain::deal_changed::{DealChanged, DealChangedData};
-use crate::chain::JsonRpcReq;
 use crate::hex::{hex_to_int, int_to_hex};
 use crate::jsonrpc::get_logs::GetLogsReq;
+use crate::jsonrpc::JsonRpcReq;
 
 const DEFAULT_BLOCK_RANGE: u64 = 9999;
 
@@ -37,17 +38,15 @@ pub struct DealInfo {
     pub deal_id: String,
 }
 
-/// Optionals in AIR and marine are represented with Vec
-/// Some(x) is [x], None is []
-type AirOption<T> = Vec<T>;
-
 #[marine]
 pub struct DealChangedResult {
     pub success: bool,
     /// optional error
     pub error: Vec<String>,
     /// optional result (present if success is true)
-    pub result: AirOption<DealChanged>,
+    /// Optionals in AIR and marine are represented with Vec
+    /// Some(x) is [x], None is []
+    pub result: Vec<DealChanged>,
     /// The request checked blocks from `from_block` to `to_block`
     pub to_block: String,
     /// Return chain info to be able to find which chain to update
@@ -107,7 +106,7 @@ impl MultipleDealsChanged {
     }
 }
 
-pub fn deal_changed_req(deal: &DealUpdate, idx: usize) -> JsonRpcReq<Vec<GetLogsReq>> {
+pub fn deal_changed_req(deal: &DealUpdate, idx: usize) -> JsonRpcReq<GetLogsReq> {
     let to_block = default_to_block(&deal.from_block);
     let address = format!("0x{}", deal.deal_info.deal_id);
     let req = GetLogsReq {
@@ -120,7 +119,7 @@ pub fn deal_changed_req(deal: &DealUpdate, idx: usize) -> JsonRpcReq<Vec<GetLogs
     req.to_jsonrpc(idx as u32)
 }
 
-pub fn deal_changed_req_batch(deals: &[DealUpdate]) -> Vec<JsonRpcReq<Vec<GetLogsReq>>> {
+pub fn deal_changed_req_batch(deals: &[DealUpdate]) -> Vec<JsonRpcReq<GetLogsReq>> {
     deals
         .iter()
         .enumerate()

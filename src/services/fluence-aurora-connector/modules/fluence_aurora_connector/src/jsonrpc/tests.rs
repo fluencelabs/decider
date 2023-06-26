@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::chain::JsonRpcReq;
+use crate::jsonrpc::JsonRpcReq;
 
 use super::*;
 
@@ -24,7 +24,7 @@ fn test_get_logs_request() {
     "id": 0
 }"#;
 
-    let result: serde_json::Result<JsonRpcReq<Vec<GetLogsReq>>> = serde_json::from_str(request);
+    let result: serde_json::Result<JsonRpcReq<GetLogsReq>> = serde_json::from_str(request);
     assert!(result.is_ok(), "cannot parse request");
     let result = result.unwrap();
 

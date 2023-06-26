@@ -3,9 +3,9 @@ use marine_rs_sdk::MountedBinaryResult;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
-use crate::chain::{JsonRpcReq, JsonRpcResp};
 use crate::jsonrpc::request::RequestError;
 use crate::jsonrpc::request::RequestError::{CurlError, OtherError, ParseError, RpcSerializeError};
+use crate::jsonrpc::{JsonRpcReq, JsonRpcResp};
 
 #[marine]
 #[link(wasm_import_module = "curl_adapter")]
@@ -34,7 +34,7 @@ fn curl_params(url: String, data: String) -> Vec<String> {
 
 pub fn curl(url: String, data: String) -> Result<String, RequestError> {
     let params = curl_params(url, data);
-    let result = unsafe { curl_request(params) };
+    let result = curl_request(params);
 
     match result.into_std() {
         None => {

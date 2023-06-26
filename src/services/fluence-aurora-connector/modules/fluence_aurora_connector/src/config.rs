@@ -1,3 +1,4 @@
+use crate::chain::chain_data::ChainData;
 use crate::chain::deal_changed::{DealChanged, DealChangedData};
 use crate::chain::deal_created::{DealCreated, DealCreatedData};
 use marine_rs_sdk::marine;

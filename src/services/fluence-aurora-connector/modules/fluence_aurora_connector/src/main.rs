@@ -9,23 +9,19 @@ use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::WasmLoggerBuilder;
 use thiserror::Error;
 
-use hex::{hex_to_int, int_to_hex};
 use jsonrpc::request;
 use jsonrpc::request::*;
 
-use crate::chain::deal::parse_log;
-use crate::chain::deal::parse_logs;
+use crate::chain::chain_data::ChainData;
 use crate::chain::deal_changed::*;
 use crate::chain::deal_created::*;
-use crate::chain::ChainData;
-use crate::chain::ChainEvent;
-use crate::curl::{send_jsonrpc, send_jsonrpc_batch};
+use crate::chain::log::{parse_logs, Log};
+use crate::curl::send_jsonrpc_batch;
 use crate::jsonrpc::deal_changed::{
-    deal_changed_req_batch, default_to_block, DealChangedResult, DealChangedResult, DealUpdate,
-    MultipleDealsChanged,
+    deal_changed_req_batch, default_to_block, DealChangedResult, DealUpdate, MultipleDealsChanged,
 };
 use crate::jsonrpc::deal_created::DealCreatedResult;
-use crate::jsonrpc::get_logs::{get_logs, GetLogsReq, GetLogsResp};
+use crate::jsonrpc::get_logs::{get_logs, GetLogsReq};
 
 mod chain;
 mod config;
@@ -108,7 +104,7 @@ pub fn poll_deals_latest_update_batch(
     }
 
     let batch = deal_changed_req_batch(&deals);
-    let responses = send_jsonrpc_batch::<_, DealChanged>(api_endpoint, batch);
+    let responses = send_jsonrpc_batch::<GetLogsReq, Vec<Log>>(api_endpoint, batch);
     let responses = match responses {
         Err(err) => return MultipleDealsChanged::error(err.to_string()),
         Ok(r) => r,
@@ -124,12 +120,10 @@ pub fn poll_deals_latest_update_batch(
                 updated_deals.push(result);
             }
             Ok(result) => {
-                let latest_update: Option<DealChanged> = try {
-                    let changed = result.into_iter().filter(|deal| !deal.removed).last()?;
-                    parse_log::<DealChangedData, DealChanged>(changed)?
-                };
-                if let Some(update) = latest_update {
-                    let result = DealChangedResult::ok(to_block, deal.deal_info, update);
+                let last_log = result.into_iter().filter(|deal| !deal.removed).last();
+                let change = last_log.and_then(parse_deal_changed);
+                if let Some(change) = change {
+                    let result = DealChangedResult::ok(to_block, deal.deal_info, change);
                     updated_deals.push(result);
                 }
             }

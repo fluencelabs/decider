@@ -1,12 +1,12 @@
-use crate::chain::JsonRpcReq;
-use crate::hex::{hex_to_int, int_to_hex};
-use crate::jsonrpc::request::check_url;
 use marine_rs_sdk::marine;
+
+use crate::jsonrpc::JsonRpcReq;
+use crate::jsonrpc::JSON_RPC_VERSION;
 
 pub struct BlockNumberReq;
 
 impl BlockNumberReq {
-    pub fn new() -> JsonRpcReq<Vec<()>> {
+    pub fn new() -> JsonRpcReq<()> {
         JsonRpcReq {
             jsonrpc: JSON_RPC_VERSION.to_string(),
             id: 0,
