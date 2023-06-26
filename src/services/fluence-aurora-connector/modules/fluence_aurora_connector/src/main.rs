@@ -74,9 +74,9 @@ pub fn poll_deal_created(
     );
     match result {
         Err(err) => return DealCreatedResult::error(err.to_string()),
-        Ok(deals) => {
-            let changed_deals = parse_logs::<DealCreatedData, DealCreated>(deals);
-            DealCreatedResult::ok(changed_deals, to_block)
+        Ok(logs) => {
+            let created_deals = parse_logs::<DealCreatedData, DealCreated>(logs);
+            DealCreatedResult::ok(created_deals, to_block)
         }
     }
 }
@@ -92,10 +92,10 @@ pub fn poll_deal_created(
 // ) -> DealChangedResult
 
 #[marine]
-pub fn poll_deals_latest_update_batch(
-    api_endpoint: String,
-    deals: Vec<DealUpdate>,
-) -> MultipleDealsChanged {
+/// RENAMED
+/// old name `poll_deals_latest_update_batch` was confusing, and using `update` wording which I removed
+/// new name `poll_deal_changes` is shorter and is similar to `poll_deal_created`
+pub fn poll_deal_changes(api_endpoint: String, deals: Vec<DealUpdate>) -> MultipleDealsChanged {
     if let Err(err) = check_url(&api_endpoint) {
         return MultipleDealsChanged::error(err.to_string());
     }
