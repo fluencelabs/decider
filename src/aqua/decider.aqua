@@ -5,6 +5,8 @@
 import "@fluencelabs/spell/api.aqua"
 import "@fluencelabs/spell/spell_service.aqua"
 import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/aqua-lib/binary.aqua"
+import "@fluencelabs/aqua-lib/math.aqua"
 import "services.aqua"
 
 -- Worker API
@@ -306,16 +308,28 @@ func get_counter(spell_id: string) -> u32:
         result <<- 0
     <- result!
 
+
+func eq(a: string, b: string) -> bool:
+   result: *bool
+   if a == b:
+      result <<- true
+   else:
+      result <<- false
+   <- result!
+
 func poll_new_deals(spell_id: string, info: AuroraInfo, from_block: string): 
     Spell spell_id
     log = (msg: []⊤):
         spell_log(spell_id, msg)
 
-    -- On the first iteration of the spell obtain the number of the latest block in the chain
-    -- And proccess the deals from now on ignoring deals from the past.
+    -- Obtain the number of the latest block in the chain on the first iteration
+    -- (therefore proccess the deals from now on ignoring deals from the past), or
+    -- when the from_block is "latest" (also can lead to ignoring some deals)
     from_block_init: *string
     counter <- get_counter(spell_id)
-    if counter > 1 == false:
+    is_first_iteration <- Compare.lte(counter, 1)
+    is_latest <- eq(from_block, "latest")
+    if or(is_first_iteration, is_latest):
         bnumber  <- FluenceAuroraConnector.latest_block_number(info.api_endpoint)
         if bnumber.success:
             log(["update from_block to the latest block: [init, new]", from_block, bnumber.result])
