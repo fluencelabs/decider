@@ -9,7 +9,7 @@ use marine_rs_sdk::marine;
 #[derive(Debug)]
 #[marine]
 pub struct DealChangedData {
-    /// New CID for the deal
+    /// New CID for the chain
     app_cid: String,
 }
 
@@ -42,7 +42,7 @@ impl ChainData for DealChangedData {
     fn parse(data: &str) -> Result<DealChangedData, DealParseError> {
         let data_tokens = parse_chain_data(data, Self::signature())?;
         let deal_data: Option<DealChangedData> = try {
-            let app_cid = data_tokens[0].clone().into_string()?;
+            let app_cid = data_tokens.first()?.into_string()?;
             DealChangedData { app_cid }
         };
         deal_data.ok_or_else(|| {

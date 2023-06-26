@@ -5,7 +5,7 @@ use super::*;
 /// Corresponding Solidity type:
 /// ```solidity
 ///event DealCreated(
-///    address deal,
+///    address chain,
 ///    address paymentToken,
 ///    uint256 pricePerEpoch,
 ///    uint256 requiredStake,
@@ -20,13 +20,13 @@ use super::*;
 #[derive(Debug)]
 #[marine]
 pub struct DealCreatedData {
-    /// Address of newly created deal contract
+    /// Address of newly created chain contract
     deal_id: String,
-    /// Token used to pay for the deal
+    /// Token used to pay for the chain
     payment_token: String,
     /// How much to pay per epoch
     price_per_epoch: U256,
-    /// How much a peer should pay to join the deal
+    /// How much a peer should pay to join the chain
     required_stake: U256,
     /// Minimum required workers
     min_workers: u64,
@@ -46,7 +46,7 @@ pub struct DealCreatedData {
 #[marine]
 pub struct DealCreated {
     block_number: String,
-    /// The number of the block next to the one of the deal
+    /// The number of the block next to the one of the chain
     next_block_number: String,
     info: DealCreatedData,
 }
@@ -64,7 +64,7 @@ impl ChainData for DealCreatedData {
 
     fn signature() -> Vec<ParamType> {
         vec![
-            ParamType::Address,                            // deal
+            ParamType::Address,                            // chain
             ParamType::Address,                            // paymentToken
             ParamType::Uint(256),                          // pricePerEpoch
             ParamType::Uint(256),                          // requiredStake

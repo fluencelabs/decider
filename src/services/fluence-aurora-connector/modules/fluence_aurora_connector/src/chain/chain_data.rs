@@ -1,14 +1,5 @@
-pub mod changed_cid;
-pub mod created;
-
-use ethabi::param_type::ParamType;
-use ethabi::Token;
-use marine_rs_sdk::marine;
+use ethabi::{ParamType, Token};
 use thiserror::Error;
-
-pub trait ChainEvent<ChainData> {
-    fn new(next_block_number: String, block_number: String, data: ChainData) -> Self;
-}
 
 pub trait ChainData {
     fn signature() -> Vec<ParamType>;
@@ -41,29 +32,4 @@ pub(crate) fn parse_chain_data(
     }
     let data = hex::decode(data)?;
     Ok(ethabi::decode(&signature, &data)?)
-}
-
-#[derive(Debug, PartialEq)]
-#[marine]
-pub struct U256 {
-    bytes: Vec<u8>,
-}
-
-impl U256 {
-    pub fn from_bytes(bs: &[u8; 32]) -> Self {
-        U256 { bytes: bs.to_vec() }
-    }
-
-    pub fn to_eth(&self) -> ethabi::ethereum_types::U256 {
-        ethabi::ethereum_types::U256::from_little_endian(&self.bytes)
-    }
-
-    pub fn from_eth(num: ethabi::ethereum_types::U256) -> U256 {
-        let bytes = num
-            .0
-            .iter()
-            .flat_map(|x| x.to_le_bytes())
-            .collect::<Vec<_>>();
-        U256 { bytes }
-    }
 }
