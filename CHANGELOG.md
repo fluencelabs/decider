@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.16](https://github.com/fluencelabs/decider/compare/connector-v0.4.15...connector-v0.4.16) (2023-06-26)
+
+
+### Bug Fixes
+
+* find latest block when from_block is latest ([#57](https://github.com/fluencelabs/decider/issues/57)) ([0bded86](https://github.com/fluencelabs/decider/commit/0bded86f808aa0d2b71ba2a1967b0021f40cecfb))
+
 ## [0.4.15](https://github.com/fluencelabs/decider/compare/connector-v0.4.14...connector-v0.4.15) (2023-06-09)
 
 
