@@ -70,5 +70,5 @@ service FluenceAuroraConnector:
   blocks_diff(from: string, to: string) -> u64
   get_env() -> Env
   latest_block_number(api_endpoint: string) -> BlockNumberResult
+  poll_deal_changes(api_endpoint: string, deals: []DealUpdate) -> MultipleDealsChanged
   poll_deal_created(api_endpoint: string, address: string, from_block: string) -> DealCreatedResult
-  poll_deals_latest_update_batch(api_endpoint: string, deals: []DealUpdate) -> MultipleDealsChanged
