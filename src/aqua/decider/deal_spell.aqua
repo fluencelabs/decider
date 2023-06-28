@@ -3,6 +3,6 @@ import "@fluencelabs/installation-spell/src/aqua/deal_spell.aqua"
 service Console("run-console"):
    print(msg: []string)
 
-func main(spell_id: string, ipfs: string, deal_id: string, worker_def_cid: string):
+func main(spell_id: SpellId, ipfs: string, deal_id: DealId, worker_def_cid: string):
     Console.print(["worker", spell_id, deal_id, worker_def_cid, ipfs])
     deal_install(ipfs, worker_def_cid, deal_id)

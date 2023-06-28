@@ -1,0 +1,9 @@
+func main(spell_id: SpellId, info: AuroraInfo, from_block: string):
+    -- Find new deals and create workers
+    try:
+        poll_new_deals(spell_id, info, from_block)
+
+    -- TODO: I wonder what will happen when the decider join _many_ deals?
+    --       Will it be able to check them on time?
+    -- Update existing deals
+    poll_deal_changes_batch(spell_id, info.api_endpoint)

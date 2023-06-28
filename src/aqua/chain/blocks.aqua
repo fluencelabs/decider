@@ -1,0 +1,39 @@
+func get_latest_block(api_endpoint: string) -> ?string, bool:
+    is_ok: *bool
+    block: *string
+
+    result <- FluenceAuroraConnector.latest_block_number(api_endpoint)
+    if result.success == false:
+        is_ok <<- false
+    else:
+        block <<- result.result
+        is_ok <<- true
+
+    <- block, is_ok!
+
+-- Check if our local upper bound (to_block) until which we check new deals is outdated
+-- aka less then the latest block of the chain.
+func is_to_block_outdated(latest_block: string, to_block: string) -> bool:
+    is: *bool
+
+    -- diff = latest_block - to_block
+    diff <- FluenceAuroraConnector.blocks_diff(to_block, latest_block)
+    if diff == 0:
+        is <<- false
+    else:
+        is <<- true
+    <- is!
+
+-- Check if `to_block` is less than `latest_block` from chain.
+-- If less, polling the range [from_block, to_block] won't yield new updates
+-- and we need to move the range to be able to find updates.
+func need_update_from_block(api_endpoint: string, to_block: string) -> bool:
+    need_update: *bool
+
+    result, is_ok <- get_latest_block(api_endpoint)
+    if is_ok:
+        -- if to_block is less then latest block, we need to update from_block and set it to to_block
+        need_update <<- is_to_block_outdated(result!, to_block)
+    else:
+        need_update <<- false
+    <- need_update!

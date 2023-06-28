@@ -87,7 +87,7 @@ pub fn poll_deal_created(
 // #[marine]
 // pub fn poll_deal_changed(
 //     api_endpoint: String,
-//     deal_id: String,
+//     deal_id: DealId,
 //     from_block: String,
 // ) -> DealChangedResult
 

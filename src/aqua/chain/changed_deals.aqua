@@ -1,0 +1,58 @@
+module ChangedDeals declares poll_deal_changes_batch
+
+import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
+import SpellId from "../fluence/spell.aqua"
+
+func poll_deal_changes_batch(spell_id: SpellId, api_endpoint: string):
+    Spell spell_id
+    log = (msg: []⊤):
+        spell_log(spell_id, msg)
+
+    -- Find the latest block on chain
+    latest_block, is_block_ok <- get_latest_block(api_endpoint)
+
+    -- Get all known deals
+    list <- Spell.list_get_strings("joined_deals")
+    if list.success == false:
+        log(["can't restrive joined deals", list.error])
+    else:
+        -- Collect info about all known deals
+        deals_update: *DealUpdate
+        for joined_deal_str <- list.strings:
+            joined_deal <- JsonJoinedDeal.parse(joined_deal_str)
+            deal_str, is_ok <- get_string(spell_id, joined_deal.deal_id)
+            if is_ok == false:
+                log(["can't find state of the deal", joined_deal.deal_id, "; broken invariant, check poll_new_deals"])
+            else:
+                deal_state <- JsonDealState.parse(deal_str!)
+                deal_info = DealInfo(deal_id = joined_deal.deal_id, worker_id = joined_deal.worker_id)
+                deals_update <<- DealUpdate(deal_info = deal_info, from_block = deal_state.from_block)
+
+        -- Find the latest updates for all deals
+        updated_deals <- FluenceAuroraConnector.poll_deal_changes(api_endpoint, deals_update)
+        if updated_deals.success == false:
+            log(["can't download deals updates", updated_deals.error!])
+        else:
+            -- Update all deals with new info
+            for updated_deal <- updated_deals.result:
+                if updated_deal.success == false:
+                    log(["error retrieving deal update", updated_deal.deal_info.deal_id, updated_deal.error])
+                    if is_block_ok:
+                        if is_to_block_outdated(latest_block!, updated_deal.to_block):
+                            log(["update from_block: [new from_block, latest_block]", updated_deal.to_block, latest_block])
+                            new_deal_state2 = DealState(from_block = updated_deal.to_block)
+                            store_deal_state(spell_id, updated_deal.deal_info.deal_id, new_deal_state2)
+                else:
+                    log(["found update for deal", updated_deal.deal_info.deal_id, "from block", updated_deal.result!.block_number])
+
+                    -- Update local info about the deal
+                    new_deal_state = DealState(from_block = updated_deal.result!.next_block_number)
+                    store_deal_state(spell_id, updated_deal.deal_info.deal_id, new_deal_state)
+
+                    -- Update app_cid of the deal on the corresponding worker spell
+                    log(["sending the latest update to the worker", updated_deal.deal_info])
+                    on updated_deal.deal_info.worker_id:
+                        -- stringify app_cid to be able to use it as an argument of a spell
+                        app_cid <- Json.stringify(updated_deal.result!.info.app_cid)
+                        Spell "worker-spell"
+                        Spell.set_string("worker_def_cid", app_cid)

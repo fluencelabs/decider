@@ -24,7 +24,7 @@ use crate::chain::u256::U256;
 #[marine]
 pub struct DealCreatedData {
     /// Address of newly created deal contract
-    deal_id: String,
+    deal_id: DealId,
     /// Token used to pay for the deal
     payment_token: String,
     /// How much to pay per epoch

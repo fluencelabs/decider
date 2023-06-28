@@ -1,0 +1,36 @@
+module Peer declares Worker, Json, OpExt, JsonTriggerConfig, is_worker_created
+
+import TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
+import DealId from "../decider/deal_storage.aqua"
+import SpellId from "../fluence/spell.aqua"
+
+
+-- Worker API
+service Worker("worker"):
+  -- throws exception if the worker already exists
+  create(deal_id: DealId) -> string
+  -- throws exception if the worker doesn't exist
+  get_peer_id(deal_id: DealId) -> string
+
+-- Extentions of the aqua lib
+service Json("json"):
+  parse(str: string) -> string
+  stringify(obj: ⊤) -> string
+
+service OpExt("op"):
+  concat_strings(a1: string, a2: string, a3: string) -> string
+  array_length(array: ⊤) -> u32
+
+service JsonTriggerConfig("json"):
+  parse(str: string) -> TriggerConfig
+
+
+-- Check if a worker for a deal is already created
+func is_worker_created(spell_id: SpellId, deal_id: DealId) -> bool:
+    result: *bool
+    try:
+        worker_id <- Worker.get_peer_id(deal_id)
+        result <<- true
+    otherwise:
+        result <<- false
+    <- result!

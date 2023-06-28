@@ -1,0 +1,58 @@
+module DealStorage declares DealId, DealState, JoinedDeal, JsonDealState, JsonJoinedDeal, store_deal_state, get_deal_state, store_joined_deal, get_joined_deals
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+import or, not from "@fluencelabs/aqua-lib/binary.aqua"
+
+import Json from "../fluence/peer.aqua"
+import spell_log from "../fluence/spell.aqua"
+
+-- import DealId from "../decider/deal_storage.aqua"
+alias DealId: string
+
+data DealState:
+  from_block: string
+
+data JoinedDeal:
+  deal_id: DealId
+  spell_id: SpellId
+  worker_id: WorkerId
+
+
+service JsonDealState("json"):
+  parse(str: string) -> DealState
+
+service JsonJoinedDeal("json"):
+  parse(str: string) -> JoinedDeal
+
+
+func store_deal_state(decider_id: SpellId, deal_id: DealId, state: DealState):
+  Spell decider_id
+  json <- Json.stringify(state)
+  Spell.set_string(deal_id, json)
+
+func get_deal_state(decider_id: SpellId, deal_id: DealId) -> ?DealState:
+  Spell decider_id
+  state: ?DealState
+
+  json <- Spell.get_string(deal_id)
+  if and(json.success, not(json.absent)):
+    try:
+      state <- JsonDealState.parse(json.str)
+    catch e:
+      spell_log(decider_id, ["failed to parse deal state from json", deal_id, e])
+  else:
+    spell_log(decider_id, ["deal state not found", deal_id, "error", json.error])
+
+  <- state
+
+
+func store_joined_deal(decider_id: SpellId, deal_id: DealId, deal_spell_id: SpellId, worker_id: WorkerId):
+  Spell decider_id
+  deal = JoinedDeal(deal_id = deal_id, spell_id = deal_spell_id, worker_id = worker_id)
+  msg <- Json.stringify(deal)
+  Spell.list_push_string("joined_deals", msg)
+
+func get_joined_deals(decider_id: SpellId) -> []JoinedDeal:
+  Spell decider_id
+
+  list <- Spell.list_get_strings("joined_deals")

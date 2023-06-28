@@ -1,0 +1,44 @@
+module Spell declares get_string, spell_log, get_counter, SpellId
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+import RunConsoleManyAny from "../debug.aqua"
+import OpExt, Json from "peer.aqua"
+
+alias SpellId: string
+
+-- Wrapper over spell.get_string to get a string from spell's KV with reduced amount of if-else's
+func get_string(spell_id: SpellId, key: string) -> ?string, bool:
+    Spell spell_id
+
+    status: *bool
+    result: *string
+
+    value <- Spell.get_string(key)
+    if value.success == false:
+       status <<- false
+    else:
+       if value.absent:
+          status <<- false
+       else:
+          result <<- value.str
+          status <<- true
+    <- result, status!
+
+
+func spell_log(spell_id: SpellId, msg: []⊤):
+    title <- OpExt.concat_strings("decider <", spell_id, ">")
+    RunConsoleManyAny.print(title, msg)
+    msg_str <- Json.stringify(msg)
+    Spell spell_id
+    Spell.list_push_string("logs", msg_str)
+
+
+func get_counter(spell_id: SpellId) -> u32:
+    Spell spell_id
+    result: *u32
+    counter <- Spell.get_u32("counter")
+    if counter.success:
+        result <<- counter.num
+    else:
+        result <<- 0
+    <- result!
