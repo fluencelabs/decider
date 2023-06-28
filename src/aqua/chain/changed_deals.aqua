@@ -1,7 +1,10 @@
 module ChangedDeals declares poll_deal_changes_batch
 
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
-import SpellId from "../fluence/spell.aqua"
+import SpellId from "../types.aqua"
+import spell_log from "../fluence/spell.aqua"
+import get_latest_block from "../chain/blocks.aqua"
+import JsonJoinedDeal from "../chain/changed_deals.aqua"
 
 func poll_deal_changes_batch(spell_id: SpellId, api_endpoint: string):
     Spell spell_id

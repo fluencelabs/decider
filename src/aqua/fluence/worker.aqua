@@ -1,11 +1,10 @@
-module Worker declares WorkerId, WorkerArgs, WorkerSettings, get_worker_settings
+module Worker declares WorkerArgs, WorkerSettings, get_worker_settings, is_worker_created
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
 
 import spell_log, get_string from "../fluence/spell.aqua"
 import Worker, Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
-
-alias WorkerId: string
+import DealId, SpellId from "../types.aqua"
 
 -- Arguments of the worker
 data WorkerArgs:
@@ -59,3 +58,13 @@ func get_worker_settings(spell_id: SpellId) ->  ?WorkerSettings, bool:
                 settings <<- ws
                 result <<- true
     <- settings, result!
+
+-- Check if a worker for a deal is already created
+func is_worker_created(spell_id: SpellId, deal_id: DealId) -> bool:
+    result: *bool
+    try:
+        worker_id <- Worker.get_peer_id(deal_id)
+        result <<- true
+    otherwise:
+        result <<- false
+    <- result!

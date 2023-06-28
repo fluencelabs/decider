@@ -1,10 +1,9 @@
-module Spell declares get_string, spell_log, get_counter, SpellId
+module Spell declares get_string, spell_log, get_counter
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 import RunConsoleManyAny from "../debug.aqua"
+import SpellId from "../types.aqua"
 import OpExt, Json from "peer.aqua"
-
-alias SpellId: string
 
 -- Wrapper over spell.get_string to get a string from spell's KV with reduced amount of if-else's
 func get_string(spell_id: SpellId, key: string) -> ?string, bool:

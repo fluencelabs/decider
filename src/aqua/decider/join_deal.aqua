@@ -1,0 +1,71 @@
+module JoinDeal declares join_deal, process_deal
+
+-- Plan:
+-- * Support CID updates
+-- * Implement decide function
+--
+import "@fluencelabs/spell/api.aqua"
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
+import "@fluencelabs/aqua-lib/binary.aqua"
+import "@fluencelabs/aqua-lib/math.aqua"
+-- import "fluence_aurora_connector.aqua"
+import "services.aqua"
+
+import Worker, Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
+import spell_log, get_string from "../fluence/spell.aqua"
+import get_worker_settings, WorkerArgs from "../fluence/worker.aqua"
+import JoinedDeal, DealState, store_joined_deal, store_deal_state from "../decider/deal_storage.aqua"
+import decide from "../decider/decider.aqua"
+import DealId, SpellId, WorkerId, CID from "../types.aqua"
+
+func install_deal_spell(deal_id: DealId, cid: CID, ipfs: string, script: string, trigger: TriggerConfig) -> string:
+    args = WorkerArgs(deal_id = deal_id, worker_def_cid = cid, ipfs = ipfs)
+    worker_spell_id <- PeerSpell.install(script, args, trigger)
+    <- worker_spell_id
+
+func join_deal(spell_id: SpellId, block_number: string, deal: DealCreatedData) -> bool:
+    log = (msg: []⊤):
+        spell_log(spell_id, msg)
+
+    settings, is_ok <- get_worker_settings(spell_id)
+    status: *bool
+    if is_ok == false:
+        log(["error reading worker settings, doing nothing"])
+        status <<- false
+    else:
+        deal_id = deal.deal_id
+        try:
+            worker_id <- Worker.create(deal_id)
+            on worker_id:
+                ipfs = settings!.worker_ipfs
+                script = settings!.worker_script
+                trigger = settings!.worker_config
+                deal_spell <- install_deal_spell(deal_id, deal.app_cid, ipfs, script, trigger)
+                log(["created worker for deal", deal_id, "spell_id", deal_spell, "worker_id", worker_id])
+
+                store_joined_deal(spell_id, deal_id, deal_spell, worker_id)
+
+                deal_state = DealState(from_block = block_number)
+                store_deal_state(spell_id, deal_id, deal_state)
+                status <<- true
+
+        catch e:
+            log(["cannot create worker", deal_id, e.message, "; skip"])
+            status <<- false
+
+    <- status!
+
+func process_deal(spell_id: SpellId, deal: DealCreated):
+    log = (msg: []⊤):
+        spell_log(spell_id, msg)
+
+    if decide(deal.info):
+        log(["joining the deal", deal.info.deal_id, "from_block", deal.block_number])
+        is_ok <- join_deal(spell_id, deal.block_number, deal.info)
+        if is_ok:
+            log(["joined the deal", deal.info.deal_id])
+        else:
+            log(["couldn't join the deal", deal.info.deal_id])
+    else:
+        log(["skipping deal for deal id", deal.info.deal_id, "from_block", deal.block_number])

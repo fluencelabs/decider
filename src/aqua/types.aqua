@@ -1,0 +1,7 @@
+module Types declares DealId, SpellId, WorkerId, CID
+
+-- import DealId from "../types.aqua"
+alias DealId: string
+alias SpellId: string
+alias WorkerId: string
+alias CID: string

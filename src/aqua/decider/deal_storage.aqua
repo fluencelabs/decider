@@ -1,13 +1,12 @@
-module DealStorage declares DealId, DealState, JoinedDeal, JsonDealState, JsonJoinedDeal, store_deal_state, get_deal_state, store_joined_deal, get_joined_deals
+module DealStorage declares DealState, JoinedDeal, JsonDealState, JsonJoinedDeal, store_deal_state, get_deal_state, store_joined_deal, get_joined_deals
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
-import or, not from "@fluencelabs/aqua-lib/binary.aqua"
+import or, not, and from "@fluencelabs/aqua-lib/binary.aqua"
 
 import Json from "../fluence/peer.aqua"
 import spell_log from "../fluence/spell.aqua"
+import DealId, SpellId, WorkerId from "../types.aqua"
 
--- import DealId from "../decider/deal_storage.aqua"
-alias DealId: string
 
 data DealState:
   from_block: string
@@ -56,3 +55,4 @@ func get_joined_deals(decider_id: SpellId) -> []JoinedDeal:
   Spell decider_id
 
   list <- Spell.list_get_strings("joined_deals")
+  <- []

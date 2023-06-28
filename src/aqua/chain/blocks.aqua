@@ -1,3 +1,7 @@
+module Blocks declares get_latest_block, is_to_block_outdated, need_update_from_block
+
+import FluenceAuroraConnector from "services.aqua"
+
 func get_latest_block(api_endpoint: string) -> ?string, bool:
     is_ok: *bool
     block: *string

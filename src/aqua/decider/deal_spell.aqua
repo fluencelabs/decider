@@ -1,4 +1,8 @@
+module DealSpell declares main
+
 import "@fluencelabs/installation-spell/src/aqua/deal_spell.aqua"
+
+import SpellId, DealId from "../types.aqua"
 
 service Console("run-console"):
    print(msg: []string)

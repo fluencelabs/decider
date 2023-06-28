@@ -5,9 +5,12 @@ import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 import FluenceAuroraConnector from "services.aqua"
 
 import AuroraInfo from "aurora.aqua"
-import spell_log from "../fluence/spell.aqua"
+import spell_log, get_counter from "../fluence/spell.aqua"
+import is_worker_created from "../fluence/worker.aqua"
 import Json from "../fluence/peer.aqua"
-import process_deal from "../decider/decider.aqua"
+import process_deal from "../decider/join_deal.aqua"
+import SpellId from "../types.aqua"
+import need_update_from_block from "../chain/blocks.aqua"
 
 use "../strings.aqua"
 
