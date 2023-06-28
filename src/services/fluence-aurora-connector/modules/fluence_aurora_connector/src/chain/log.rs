@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 pub struct Log {
     // Log arguments
     pub data: String,
-    // The block number with the chain.
+    // The block number that contains this log
     pub block_number: String,
     // true when the log was removed, due to a chain reorganization. false if its a valid log.
     pub removed: bool,

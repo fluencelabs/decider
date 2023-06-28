@@ -124,6 +124,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "built"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5b9c056b9ed43aee5e064b683aa1ec783e19c6acec7559e3ae931b7490472fbe"
+dependencies = [
+ "cargo-lock",
+]
+
+[[package]]
 name = "bumpalo"
 version = "3.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -217,6 +226,18 @@ dependencies = [
  "once_cell",
  "rustix 0.37.19",
  "winx",
+]
+
+[[package]]
+name = "cargo-lock"
+version = "8.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "031718ddb8f78aa5def78a09e90defe30151d1f6c672f937af4dd916429ed996"
+dependencies = [
+ "semver",
+ "serde",
+ "toml",
+ "url",
 ]
 
 [[package]]
@@ -485,6 +506,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "decider-distro"
+version = "0.4.16"
+dependencies = [
+ "built",
+ "fluence-spell-dtos",
+ "maplit",
+ "serde_json",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -620,6 +651,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "eyre"
+version = "0.6.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4c2b6b5a29c02cdc822728b7d7b8ae1bab3e3b05d44522770ddd49722eeac7eb"
+dependencies = [
+ "indenter",
+ "once_cell",
+]
+
+[[package]]
 name = "fallible-iterator"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -687,6 +728,19 @@ dependencies = [
  "serde",
  "variant_count",
  "wast 8.0.0",
+]
+
+[[package]]
+name = "fluence-spell-dtos"
+version = "0.5.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "881d131b2a14052874645e459ee63486f18ea689bb78481dd43df32ac707da6a"
+dependencies = [
+ "eyre",
+ "marine-rs-sdk",
+ "marine-sqlite-connector",
+ "serde",
+ "thiserror",
 ]
 
 [[package]]
@@ -921,6 +975,12 @@ dependencies = [
  "quote",
  "syn 1.0.109",
 ]
+
+[[package]]
+name = "indenter"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce23b50ad8242c51a442f3ff322d56b02f08852c77e4c0b4d3fd684abc89c683"
 
 [[package]]
 name = "indexmap"
@@ -1344,6 +1404,16 @@ dependencies = [
  "thiserror",
  "toml",
  "wasmer-interface-types-fl",
+]
+
+[[package]]
+name = "marine-sqlite-connector"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64ebecc037ef73b87d4e7f71d9925f0457230d22f1bdabbc5c962ec34932e88e"
+dependencies = [
+ "bytesize",
+ "marine-rs-sdk",
 ]
 
 [[package]]
@@ -1880,6 +1950,9 @@ name = "semver"
 version = "1.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bebd363326d05ec3e2f532ab7660680f3b02130d780c299bca73469d521bc0ed"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "serde"

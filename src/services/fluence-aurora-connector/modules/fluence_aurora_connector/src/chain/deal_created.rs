@@ -8,7 +8,7 @@ use crate::chain::u256::U256;
 /// Corresponding Solidity type:
 /// ```solidity
 ///event DealCreated(
-///    address chain,
+///    address deal,
 ///    address paymentToken,
 ///    uint256 pricePerEpoch,
 ///    uint256 requiredStake,
@@ -23,13 +23,13 @@ use crate::chain::u256::U256;
 #[derive(Debug)]
 #[marine]
 pub struct DealCreatedData {
-    /// Address of newly created chain contract
+    /// Address of newly created deal contract
     deal_id: String,
-    /// Token used to pay for the chain
+    /// Token used to pay for the deal
     payment_token: String,
     /// How much to pay per epoch
     price_per_epoch: U256,
-    /// How much a peer should pay to join the chain
+    /// How much a peer should pay to join the deal
     required_stake: U256,
     /// Minimum required workers
     min_workers: u64,
@@ -67,7 +67,7 @@ impl ChainData for DealCreatedData {
 
     fn signature() -> Vec<ParamType> {
         vec![
-            ParamType::Address,                            // chain
+            ParamType::Address,                            // deal
             ParamType::Address,                            // paymentToken
             ParamType::Uint(256),                          // pricePerEpoch
             ParamType::Uint(256),                          // requiredStake

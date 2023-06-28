@@ -12,7 +12,7 @@ use crate::chain::log::{parse_log, Log};
 #[derive(Debug)]
 #[marine]
 pub struct DealChangedData {
-    /// New CID for the chain
+    /// New CID for the deal
     app_cid: String,
 }
 
