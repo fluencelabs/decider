@@ -1,59 +1,192 @@
+module NewDeals declares poll_new_deals
+
 import Compare from "@fluencelabs/aqua-lib/math.aqua"
-import or from "@fluencelabs/aqua-lib/binary.aqua"
+import or, not from "@fluencelabs/aqua-lib/binary.aqua"
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 
-import FluenceAuroraConnector from "services.aqua"
+import FluenceAuroraConnector, DealCreated from "services.aqua"
 
 import AuroraInfo from "aurora.aqua"
-import spell_log, get_counter from "../fluence/spell.aqua"
+import spell_log, get_counter, get_string from "../fluence/spell.aqua"
 import is_worker_created from "../fluence/worker.aqua"
 import Json from "../fluence/peer.aqua"
-import process_deal from "../decider/join_deal.aqua"
+import join_deal from "../decider/join_deal.aqua"
 import SpellId from "../types.aqua"
 import need_update_from_block from "../chain/blocks.aqua"
 
 use "../strings.aqua"
 
+-- func update_latest(spell_id: string, api_endpoint: string) -> ?string:
+--     Spell spell_id
+--     latest: ?string
 
-func poll_new_deals(spell_id: SpellId, info: AuroraInfo, from_block: string):
-    Spell spell_id
-    log = (msg: []⊤):
-        spell_log(spell_id, msg)
+--     if bnumber.success:
+--         spell_log(spell_id, ["latest block is", bnumber.result])
+--         bnumber_str <- Json.stringify(bnumber.result)
+--         Spell.set_string("latest_block", bnumber_str)
+--         latest <<- bnumber.result
+--     else:
+--         spell_log(spell_id, ["error updating latest block", bnumber.error])
+--     <- latest
 
-    -- Obtain the number of the latest block in the chain on the first iteration
-    -- (therefore proccess the deals from now on ignoring deals from the past), or
-    -- when the from_block is "latest" (also can lead to ignoring some deals)
-    from_block_init: *string
-    counter <- get_counter(spell_id)
-    is_first_iteration <- Compare.lte(counter, 1)
-    is_latest <- Strings.eq(from_block, "latest")
-    if or(is_first_iteration, is_latest):
-        bnumber  <- FluenceAuroraConnector.latest_block_number(info.api_endpoint)
-        if bnumber.success:
-            log(["update from_block to the latest block: [init, new]", from_block, bnumber.result])
-            bnumber_str <- Json.stringify(bnumber.result)
-            Spell.set_string("from_block", bnumber_str)
-            from_block_init <<- bnumber.result
-    from_block_init <<- from_block
-    real_from_block = from_block_init[0]
+-- Filter-based impl
 
-    result <- FluenceAuroraConnector.poll_deal_created(info.api_endpoint, info.address, real_from_block)
-    if result.success == false:
-        log(["can't receive info about new deals", result.error!])
+-- func create_filter(spell_id: SpellId, chain: AuroraInfo, from_block: string) -> ?string:
+--     -- get existing filter id from kv
+--     -- or create a new filter
+--     -- and save filter id to kv
+--     <- nil
+
+-- func poll_filter(filter: string, chain: AuroraInfo) -> []DealCreated, ?string:
+--     <- nil, nil
+
+-- -- TODO: maybe remove 'from_block' from args? maybe we need it only once
+-- func poll_new_deals(spell_id: SpellId, chain: AuroraInfo, from_block: string):
+--     filter <- create_filter(spell_id, chain, from_block)
+--     logs, error <- poll_filter(filter!, chain)
+--     if error != nil:
+--         new_filter <- create_filter(spell_id, chain, from_block)
+--         logs, error <- poll_filter(filter!, chain)
+--         if error != nil:
+--             log(["error polling log filter"])
+
+--     for log <- logs:
+--         deal_id = log.info.deal_id
+--         if is_worker_created(spell_id, deal_id):
+--             deal_log(spell_id, deal_id, "worker for deal is already created")
+--         else:
+--             join_deal(spell_id, log)
+
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------ newLogs based impl
+------------------------------------------------------------------------------------------
+
+-- Get latest block number from RPC
+func get_latest(spell_id: SpellId, chain: AuroraInfo) -> ?string:
+    latest: ?string
+    r <- FluenceAuroraConnector.latest_block_number(chain.api_endpoint)
+    if r.success:
+        latest <<- r.result
     else:
-        for deal <- result.result:
-            log(["found deal", deal.info.deal_id, "from block", deal.block_number])
-            if is_worker_created(spell_id, deal.info.deal_id):
-                log(["worker for deal", deal.info.deal_id, "already created"])
-            else:
-                process_deal(spell_id, deal)
-            new_from_block <- Json.stringify(deal.next_block_number)
-            Spell.set_string("from_block", new_from_block)
-        -- If we found no deals, we check if need to move the from_block forward
-        -- We need to do it in case if no deals were done in range of 10000 blocks
-        if result.result.length > 1 == false:
-            need_update <- need_update_from_block(info.api_endpoint, result.to_block)
-            if need_update:
-                log(["updating outdated from_block: [previous from_block, new_from_block]", from_block, result.to_block])
-                to_block_str <- Json.stringify(result.to_block)
-                Spell.set_string("from_block", to_block_str)
+        spell_log(spell_id, ["error retrieving latest block number", r.error])
+    <- latest
+
+
+-- `last seen block` is a block for which all events have been processed
+func get_last_seen(spell_id: SpellId) -> ?string:
+    Spell spell_id
+    last_seen, ok <- get_string(spell_id, "last_seen_block")
+    <- last_seen
+
+func save_last_seen(spell_id: SpellId, hex: string):
+    Spell spell_id
+    r <- Spell.set_string("last_seen_block", hex)
+    if r.success == false:
+        spell_log(spell_id, ["error saving last_seen_block", r.error])
+
+-- read `from_block` from KV
+-- `from_block` is usually set as a port of `init data` for `decider`
+func get_from_block(spell_id: SpellId) -> string:
+    Spell spell_id
+    from_block: *string
+
+    maybe_from_block, ok <- get_string(spell_id, "from_block")
+    if maybe_from_block == nil:
+        -- if `from_block` is not set, use "latest" as default
+        from_block <<- "latest"
+    else:
+        from_block <<- maybe_from_block!
+
+    <- from_block!
+
+-- Evaluate 'latest' or 'earliest' in the `from_block` to actual hex value
+-- "latest" => latest block on chain
+-- "earliest" => 0x0
+func evaluate_from_block(spell_id: SpellId, chain: AuroraInfo) -> ?string:
+    left: ?string
+    from_block <- get_from_block(spell_id)
+    if from_block == "latest":
+        latest <- get_latest(spell_id, chain)
+        if latest != nil:
+            left <<- latest!
+        -- if `get_latest` fails, there's nothing we can do, so return `nil`
+    else:
+        if from_block == "earliest":
+            left <<- "0x0"
+        else:
+            left <<- from_block
+    <- left
+
+-- initialize `last seen` to the value of `from_block`, so that polls start from that value as a left boundary
+-- NOTE: `from_block` is passed as a part of decider's `init data`
+func initialize_last_seen(spell_id: SpellId, chain: AuroraInfo) -> ?string:
+    from_block <- evaluate_from_block(spell_id, chain)
+    if from_block != nil:
+        save_last_seen(spell_id, from_block!)
+    <- from_block
+
+-- return a value to use as a left boundary in `eth_newLogs`
+-- it usually equals to `last seen block`, except on first iteration it is equal to evaluated `from_block`
+func get_left_boundary(spell_id: SpellId, chain: AuroraInfo) -> ?string:
+    left: ?string
+
+    -- load "last seen" block number
+    -- `last seen block` is initialized to the first `left boundary` this function returns
+    -- After that, `last seen block` is set to the block number of every next processed Log
+    maybe_last_seen <- get_last_seen(spell_id)
+    if maybe_last_seen == nil:
+        -- When have not yet seen any blocks, initialize `last seen` to `from_block`
+        last_seen <- initialize_last_seen(spell_id, chain)
+        if last_seen != nil:
+            left <<- last_seen!
+        -- if `initialize_last_seen` returned `nil`, just bubble that `nil`
+    else:
+        left <<- maybe_last_seen!
+    <- left
+
+func join_deals(spell_id: SpellId, logs: []DealCreated):
+    Spell spell_id
+
+    -- TODO: I assume that `logs` are sorted by `block_number`. Is that a correct assumption?
+    for log <- logs:
+        deal_id = log.info.deal_id
+        if is_worker_created(spell_id, deal_id):
+            deal_log(spell_id, deal_id, "worker for deal is already created")
+        else:
+            join_deal(spell_id, log)
+            -- Use `log.block_number - 1` as a `last seen block`
+            -- Can not use `log.block_number` because it is unknown if there are more events from that block in `logs`
+            -- If a log from block N is received, then the whole `N-1` block was processed, so save it as the `last seen`
+            last_seen <- FluenceAuroraConnector.hex_sub(log.block_number, 1)
+            -- Set `last seen block` to the `log.block_number - 1`
+            -- This way, if particle has timed out during process of a log, `last seen block` would not be updated
+            -- And we will try all events from that block again
+            save_last_seen(spell_id, last_seen)
+
+func poll_logs(spell_id: SpellId, chain: AuroraInfo, left: string) -> []DealCreated:
+    result <- FluenceAuroraConnector.poll_deal_created(chain.api_endpoint, chain.address, left)
+    if result.success == false:
+        spell_log(spell_id, ["error polling deal created events", result.error])
+
+    logs = result.result
+    <- logs
+
+func get_logs(spell_id: SpellId, chain: AuroraInfo) -> []DealCreated:
+    Spell spell_id
+    logs: ?[]DealCreated
+
+    -- retrieve block number to poll from
+    left <- get_left_boundary(spell_id, chain)
+    if left != nil:
+        logs <<- poll_logs(spell_id, chain, left!)
+    else:
+        -- if it's not possible to retrieve `left boundary`, then it's not possible to `poll_logs`
+        spell_log(spell_id, ["get_left_boundary returns nil, unable to proceed"])
+        logs <<- nil
+    <- logs!
+
+func poll_new_deals(spell_id: SpellId, chain: AuroraInfo):
+    logs <- get_logs(spell_id, chain)
+    if logs != nil:
+        join_deals(spell_id, logs)

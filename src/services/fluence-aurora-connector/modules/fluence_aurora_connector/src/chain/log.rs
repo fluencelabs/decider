@@ -28,7 +28,7 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(deal: Log) -> Option<T> {
             // Here we ignore blocks we cannot parse.
             // Is it okay? We can't send warning
             log::warn!(target: "connector",
-                "Cannot parse data of chain from block {}: {:?}",
+                "Cannot parse deal log from block {}: {:?}",
                 deal.block_number,
                 err.to_string()
             );

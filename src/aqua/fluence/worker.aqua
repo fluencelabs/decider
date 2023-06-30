@@ -17,12 +17,12 @@ data WorkerArgs:
 
 -- Settings of the worker for the decider
 data WorkerSettings:
-  -- Trigger config of the worker
-  worker_config: TriggerConfig
-  -- Worker's AIR script
-  worker_script: string
-  -- IPFS API for the worker to pull info from
-  worker_ipfs: string
+    -- Trigger config of the worker
+    worker_config: TriggerConfig
+    -- Worker's AIR script
+    worker_script: string
+    -- IPFS API for the worker to pull info from
+    worker_ipfs: string
 
 -- Parse worker-settings from the decider's KV
 func get_worker_settings(spell_id: SpellId) ->  ?WorkerSettings, bool:
@@ -39,15 +39,15 @@ func get_worker_settings(spell_id: SpellId) ->  ?WorkerSettings, bool:
 
     -- :c
     if is_ok1 == false:
-        log("worker_script is not set")
+        log("get_worker_settings: worker_script is not set")
         result <<- false
     else:
         if is_ok2 == false:
-            log("worker_config is not set")
+            log("get_worker_settings: worker_config is not set")
             result <<- false
         else:
             if is_ok3 == false:
-                log("worker_ipfs is not set")
+                log("get_worker_settings: worker_ipfs is not set")
                 result <<- false
             else:
                 worker_script <- Json.parse(worker_script_str!)

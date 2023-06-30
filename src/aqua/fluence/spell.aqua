@@ -1,9 +1,24 @@
-module Spell declares get_string, spell_log, get_counter
+module Spell declares get_string, spell_log, get_counter, deal_log
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
+import Op from "@fluencelabs/aqua-lib/builtin.aqua"
 import RunConsoleManyAny from "../debug.aqua"
-import SpellId from "../types.aqua"
+import SpellId, DealId from "../types.aqua"
 import OpExt, Json from "peer.aqua"
+
+func spell_log(spell_id: SpellId, msg: ⊤):
+    co RunConsoleManyAny.print("decider", msg)
+    msg_str <- Json.stringify(msg)
+    Spell spell_id
+    Spell.list_push_string("logs", msg_str)
+
+func deal_log(spell_id: SpellId, deal_id: DealId, msg: ⊤):
+    title <- OpExt.concat_strings("decider deal_id=", deal_id, ": ")
+    co RunConsoleManyAny.print(title, msg)
+    msg_str <- Json.stringify(msg)
+    msg_full <- Op.concat_strings(title, msg_str)
+    Spell spell_id
+    Spell.list_push_string("logs", msg_full)
 
 -- Wrapper over spell.get_string to get a string from spell's KV with reduced amount of if-else's
 func get_string(spell_id: SpellId, key: string) -> ?string, bool:
@@ -14,22 +29,15 @@ func get_string(spell_id: SpellId, key: string) -> ?string, bool:
 
     value <- Spell.get_string(key)
     if value.success == false:
-       status <<- false
+        spell_log(spell_id, ["get_string failed", key, value.error])
+        status <<- false
     else:
-       if value.absent:
-          status <<- false
-       else:
-          result <<- value.str
-          status <<- true
+        if value.absent:
+            status <<- false
+        else:
+            result <<- value.str
+            status <<- true
     <- result, status!
-
-
-func spell_log(spell_id: SpellId, msg: []⊤):
-    title <- OpExt.concat_strings("decider <", spell_id, ">")
-    RunConsoleManyAny.print(title, msg)
-    msg_str <- Json.stringify(msg)
-    Spell spell_id
-    Spell.list_push_string("logs", msg_str)
 
 
 func get_counter(spell_id: SpellId) -> u32:

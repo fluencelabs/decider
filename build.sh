@@ -9,8 +9,8 @@ DISTRO_DIR=src/distro/decider-spell
 mkdir -p "$DISTRO_DIR"
 
 # compile aqua file
-fluence aqua -i src/aqua/worker.aqua -o "$DISTRO_DIR" --air
-fluence aqua -i src/aqua/decider.aqua -o "$DISTRO_DIR" --air
+fluence aqua --import src/aqua --import src/aqua/decider --import src/aqua/chain --import src/aqua/fluence -i src/aqua/decider/deal_spell.aqua -o "$DISTRO_DIR" --air
+fluence aqua --import src/aqua --import src/aqua/decider --import src/aqua/chain --import src/aqua/fluence -i src/aqua/decider/main.aqua -o "$DISTRO_DIR" --air
 
 # compile connector
 fluence build
