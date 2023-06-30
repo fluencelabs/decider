@@ -1,66 +1,17 @@
 module NewDeals declares poll_new_deals
 
-import Compare from "@fluencelabs/aqua-lib/math.aqua"
 import or, not from "@fluencelabs/aqua-lib/binary.aqua"
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 
 import FluenceAuroraConnector, DealCreated from "services.aqua"
 
 import AuroraInfo from "aurora.aqua"
-import spell_log, get_counter, get_string from "../fluence/spell.aqua"
+import deal_log, spell_log, get_counter, get_string from "../fluence/spell.aqua"
 import is_worker_created from "../fluence/worker.aqua"
 import Json from "../fluence/peer.aqua"
 import join_deal from "../decider/join_deal.aqua"
 import SpellId from "../types.aqua"
 import need_update_from_block from "../chain/blocks.aqua"
-
-use "../strings.aqua"
-
--- func update_latest(spell_id: string, api_endpoint: string) -> ?string:
---     Spell spell_id
---     latest: ?string
-
---     if bnumber.success:
---         spell_log(spell_id, ["latest block is", bnumber.result])
---         bnumber_str <- Json.stringify(bnumber.result)
---         Spell.set_string("latest_block", bnumber_str)
---         latest <<- bnumber.result
---     else:
---         spell_log(spell_id, ["error updating latest block", bnumber.error])
---     <- latest
-
--- Filter-based impl
-
--- func create_filter(spell_id: SpellId, chain: AuroraInfo, from_block: string) -> ?string:
---     -- get existing filter id from kv
---     -- or create a new filter
---     -- and save filter id to kv
---     <- nil
-
--- func poll_filter(filter: string, chain: AuroraInfo) -> []DealCreated, ?string:
---     <- nil, nil
-
--- -- TODO: maybe remove 'from_block' from args? maybe we need it only once
--- func poll_new_deals(spell_id: SpellId, chain: AuroraInfo, from_block: string):
---     filter <- create_filter(spell_id, chain, from_block)
---     logs, error <- poll_filter(filter!, chain)
---     if error != nil:
---         new_filter <- create_filter(spell_id, chain, from_block)
---         logs, error <- poll_filter(filter!, chain)
---         if error != nil:
---             log(["error polling log filter"])
-
---     for log <- logs:
---         deal_id = log.info.deal_id
---         if is_worker_created(spell_id, deal_id):
---             deal_log(spell_id, deal_id, "worker for deal is already created")
---         else:
---             join_deal(spell_id, log)
-
-
-------------------------------------------------------------------------------------------
------------------------------------------------------------------------- newLogs based impl
-------------------------------------------------------------------------------------------
 
 -- Get latest block number from RPC
 func get_latest(spell_id: SpellId, chain: AuroraInfo) -> ?string:

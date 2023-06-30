@@ -34,8 +34,8 @@ pub fn default_to_block(from_block: &str) -> String {
 #[derive(Debug)]
 #[marine]
 pub struct DealInfo {
-    pub worker_id: WorkerId,
-    pub deal_id: DealId,
+    pub worker_id: String,
+    pub deal_id: String,
 }
 
 #[marine]

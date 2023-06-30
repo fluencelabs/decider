@@ -4,10 +4,10 @@ import poll_new_deals from "../chain/new_deals.aqua"
 import poll_deal_changes_batch from "../chain/changed_deals.aqua"
 
 
-func main(spell_id: SpellId, info: AuroraInfo, from_block: string):
+func main(spell_id: SpellId, info: AuroraInfo):
     -- Find new deals and create workers
     try:
-        poll_new_deals(spell_id, info, from_block)
+        poll_new_deals(spell_id, info)
 
     -- TODO: I wonder what will happen when the decider join _many_ deals?
     --       Will it be able to check them on time?
