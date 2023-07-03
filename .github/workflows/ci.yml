@@ -1,0 +1,27 @@
+name: "ci"
+
+on:
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - ".github/**"
+      - "!.github/workflows/ci.yml"
+      - "!.github/workflows/snapshot.yml"
+  push:
+    branches:
+      - "main"
+    paths-ignore:
+      - "**.md"
+      - ".github/**"
+      - "!.github/workflows/ci.yml"
+      - "!.github/workflows/snapshot.yml"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  spell:
+    uses: ./.github/workflows/snapshot.yml
+    with:
+      ref: ${{ github.ref }}
