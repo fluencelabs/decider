@@ -1,6 +1,8 @@
 module DealSpell declares main
 
-import "@fluencelabs/installation-spell/src/aqua/deal_spell.aqua"
+export main
+
+import deal_install from "@fluencelabs/installation-spell/src/aqua/deal_spell.aqua"
 
 import SpellId, DealId from "../types.aqua"
 

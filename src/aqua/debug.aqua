@@ -1,7 +1,5 @@
 module Debug declares RunConsoleAny, RunConsoleMany, RunConsoleManyAny
 
-import "services.aqua"
-
 -- Debug outputs
 service RunConsoleMany("run-console"):
    print(title: string, msg: []string)

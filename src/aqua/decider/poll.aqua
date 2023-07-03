@@ -1,8 +1,11 @@
+module Poll declares main
+
+export main
+
 import SpellId from "../types.aqua"
 import AuroraInfo from "../chain/aurora.aqua"
 import poll_new_deals from "../chain/new_deals.aqua"
 import poll_deal_changes_batch from "../chain/changed_deals.aqua"
-
 
 func main(spell_id: SpellId, chain: AuroraInfo):
     -- Find new deals and create workers

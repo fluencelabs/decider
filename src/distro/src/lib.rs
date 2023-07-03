@@ -8,8 +8,8 @@ const CONNECTOR: &'static [u8] =
 const CURL_ADAPTER: &'static [u8] = include_bytes!("../decider-spell/curl_adapter.wasm");
 const CONFIG: &'static [u8] = include_bytes!("../decider-spell/Config.toml");
 
-const DECIDER_SPELL: &'static str = include_str!("../decider-spell/decider.main.air");
-const WORKER_SPELL: &'static str = include_str!("../decider-spell/worker.main.air");
+const DECIDER_SPELL: &'static str = include_str!("../decider-spell/deal_spell/deal_spell.main.air");
+const WORKER_SPELL: &'static str = include_str!("../decider-spell/poll/poll.main.air");
 
 pub mod build_info {
     include!(concat!(env!("OUT_DIR"), "/built.rs"));

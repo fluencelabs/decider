@@ -1,7 +1,0 @@
-module Decider declares decide
-
-import DealCreatedData from "services.aqua"
-
--- TODO: implement it when we decide what the algo should be there
-func decide(deal: DealCreatedData) -> bool:
-    <- true

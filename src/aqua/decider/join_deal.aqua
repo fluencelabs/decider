@@ -1,22 +1,15 @@
 module JoinDeal declares join_deal
 
--- Plan:
--- * Support CID updates
--- * Implement decide function
---
-import "@fluencelabs/spell/api.aqua"
-import "@fluencelabs/aqua-lib/builtin.aqua"
+import PeerSpell from "@fluencelabs/spell/api.aqua"
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
-import "@fluencelabs/aqua-lib/binary.aqua"
-import "@fluencelabs/aqua-lib/math.aqua"
-import "services.aqua"
 
-import Worker, Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
-import spell_log, deal_log, get_string from "../fluence/spell.aqua"
+import Worker from "../fluence/peer.aqua"
+import deal_log from "../fluence/spell.aqua"
 import get_worker_settings, WorkerArgs from "../fluence/worker.aqua"
-import JoinedDeal, DealState, store_joined_deal, store_deal_state from "../decider/deal_storage.aqua"
-import decide from "../decider/decider.aqua"
-import DealId, SpellId, WorkerId, CID from "../types.aqua"
+import DealState, store_joined_deal, store_deal_state from "../decider/deal_storage.aqua"
+import DealId, SpellId, CID from "../types.aqua"
+
+import DealCreated from "services.aqua"
 
 func install_deal_spell(deal_id: DealId, cid: CID, ipfs: string, script: string, trigger: TriggerConfig) -> string:
     args = WorkerArgs(deal_id = deal_id, worker_def_cid = cid, ipfs = ipfs)

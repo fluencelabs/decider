@@ -16,22 +16,24 @@ func get_latest(spell_id: SpellId, chain: AuroraInfo) -> ?string:
         spell_log(spell_id, ["error retrieving latest block number", r.error])
     <- latest
 
-func lte(spell_id: string, to_block: string, latest_block: string) -> ?bool:
+-- implements Less Than or Equal for two hex strings, i.e. `hex_a <= hex_b`
+-- returns nil if either `hex_a` or `hex_b` is an invalid hex
+func lte(spell_id: string, hex_a: string, hex_b: string) -> ?bool:
     less: ?bool
 
-    cmp <- FluenceAuroraConnector.hex_cmp(to_block, latest_block)
+    cmp <- FluenceAuroraConnector.hex_cmp(hex_a, hex_b)
     if cmp.success:
-        -- `to_block` is less than `latest_block`
+        -- `hex_a` is less than `hex_b`
         if cmp.ordering == -1:
             less <<- true
-        -- `to_block` equals to `latest_block`
+        -- `hex_a` equals to `hex_b`
         if cmp.ordering == 0:
             less <<- true
-        -- `to_block` is greater than `latest_block`
+        -- `hex_a` is greater than `hex_b`
         if cmp.ordering == 1:
             less <<- false
     else:
-        spell_log(spell_id, ["hex_cmp returned error", cmp.error])
+        spell_log(spell_id, ["hex_cmp error", cmp.error])
 
     <- less
 
