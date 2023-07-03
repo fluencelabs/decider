@@ -1,43 +1,50 @@
-module Blocks declares get_latest_block, is_to_block_outdated, need_update_from_block
+module Blocks declares get_latest, lte
+
+import get_string, spell_log from "../fluence/spell.aqua"
+import AuroraInfo from "../chain/aurora.aqua"
+import SpellId from "../types.aqua"
 
 import FluenceAuroraConnector from "services.aqua"
 
-func get_latest_block(api_endpoint: string) -> ?string, bool:
-    is_ok: *bool
-    block: *string
-
-    result <- FluenceAuroraConnector.latest_block_number(api_endpoint)
-    if result.success == false:
-        is_ok <<- false
+-- Get latest block number from RPC
+func get_latest(spell_id: SpellId, chain: AuroraInfo) -> ?string:
+    latest: ?string
+    r <- FluenceAuroraConnector.latest_block_number(chain.api_endpoint)
+    if r.success:
+        latest <<- r.result
     else:
-        block <<- result.result
-        is_ok <<- true
+        spell_log(spell_id, ["error retrieving latest block number", r.error])
+    <- latest
 
-    <- block, is_ok!
+func lte(spell_id: string, to_block: string, latest_block: string) -> ?bool:
+    less: ?bool
 
--- Check if our local upper bound (to_block) until which we check new deals is outdated
--- aka less then the latest block of the chain.
-func is_to_block_outdated(latest_block: string, to_block: string) -> bool:
-    is: *bool
-
-    -- diff = latest_block - to_block
-    diff <- FluenceAuroraConnector.blocks_diff(to_block, latest_block)
-    if diff == 0:
-        is <<- false
+    cmp <- FluenceAuroraConnector.hex_cmp(to_block, latest_block)
+    if cmp.success:
+        -- `to_block` is less than `latest_block`
+        if cmp.ordering == -1:
+            less <<- true
+        -- `to_block` equals to `latest_block`
+        if cmp.ordering == 0:
+            less <<- true
+        -- `to_block` is greater than `latest_block`
+        if cmp.ordering == 1:
+            less <<- false
     else:
-        is <<- true
-    <- is!
+        spell_log(spell_id, ["hex_cmp returned error", cmp.error])
+
+    <- less
 
 -- Check if `to_block` is less than `latest_block` from chain.
 -- If less, polling the range [from_block, to_block] won't yield new updates
 -- and we need to move the range to be able to find updates.
-func need_update_from_block(api_endpoint: string, to_block: string) -> bool:
-    need_update: *bool
+-- func need_update_from_block(api_endpoint: string, to_block: string) -> bool:
+--     need_update: *bool
 
-    result, is_ok <- get_latest_block(api_endpoint)
-    if is_ok:
-        -- if to_block is less then latest block, we need to update from_block and set it to to_block
-        need_update <<- is_to_block_outdated(result!, to_block)
-    else:
-        need_update <<- false
-    <- need_update!
+--     result, is_ok <- get_latest_block(api_endpoint)
+--     if is_ok:
+--         -- if to_block is less then latest block, we need to update from_block and set it to to_block
+--         need_update <<- lte(result!, to_block)
+--     else:
+--         need_update <<- false
+--     <- need_update!

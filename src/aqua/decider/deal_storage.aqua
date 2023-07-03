@@ -4,8 +4,10 @@ import Spell from "@fluencelabs/spell/spell_service.aqua"
 import or, not, and from "@fluencelabs/aqua-lib/binary.aqua"
 
 import Json from "../fluence/peer.aqua"
-import spell_log from "../fluence/spell.aqua"
+import spell_log, get_string, deal_log from "../fluence/spell.aqua"
 import DealId, SpellId, WorkerId from "../types.aqua"
+
+import DealInfo, DealUpdate from "services.aqua"
 
 
 data DealState:
@@ -51,8 +53,31 @@ func store_joined_deal(decider_id: SpellId, deal_id: DealId, deal_spell_id: Spel
   msg <- Json.stringify(deal)
   Spell.list_push_string("joined_deals", msg)
 
-func get_joined_deals(decider_id: SpellId) -> []JoinedDeal:
-  Spell decider_id
+func get_joined_deals(spell_id: SpellId) -> ?[]DealUpdate:
+    Spell spell_id
 
-  list <- Spell.list_get_strings("joined_deals")
-  <- []
+    deals: ?[]DealUpdate
+
+    -- Get all known deals
+    list <- Spell.list_get_strings("joined_deals")
+    if list.success == false:
+        spell_log(spell_id, ["can't restrive joined deals", list.error])
+    else:
+        -- Collect info about all known deals
+        deal_updates: *DealUpdate
+        for joined_deal_str <- list.strings:
+            try:
+                joined_deal <- JsonJoinedDeal.parse(joined_deal_str)
+                deal_id = joined_deal.deal_id
+                deal_str, is_ok <- get_string(spell_id, deal_id)
+                if is_ok == false:
+                    deal_log(spell_id, deal_id, ["error retrieving deal state from KV"])
+                else:
+                    deal_state <- JsonDealState.parse(deal_str!)
+                    deal_info = DealInfo(deal_id = deal_id, worker_id = joined_deal.worker_id)
+                    deal_updates <<- DealUpdate(deal_info = deal_info, from_block = deal_state.from_block)
+            catch e:
+                spell_log(spell_id, ["error processing JoinedDeal", joined_deal_str, e])
+        deals <<- deal_updates
+
+    <- deals

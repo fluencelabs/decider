@@ -2,65 +2,77 @@ module ChangedDeals declares poll_deal_changes_batch
 
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 
-import spell_log, get_string from "../fluence/spell.aqua"
+import deal_log, spell_log, get_string from "../fluence/spell.aqua"
 import Json from "../fluence/peer.aqua"
-import get_latest_block, is_to_block_outdated from "../chain/blocks.aqua"
-import JsonJoinedDeal, JsonDealState, DealState, store_deal_state from "../decider/deal_storage.aqua"
-import SpellId from "../types.aqua"
+import AuroraInfo from "../chain/aurora.aqua"
+import JsonJoinedDeal, JsonDealState, DealState, store_deal_state, get_joined_deals from "../decider/deal_storage.aqua"
+import SpellId, DealId from "../types.aqua"
 
-import DealInfo, DealUpdate, FluenceAuroraConnector from "services.aqua"
+import DealInfo, DealUpdate, FluenceAuroraConnector, DealChangedResult from "services.aqua"
 
+use "../chain/blocks.aqua" as Blocks
 
-func poll_deal_changes_batch(spell_id: SpellId, api_endpoint: string):
-    Spell spell_id
-    log = (msg: []⊤):
-        spell_log(spell_id, msg)
+func get_deal_changes(spell_id: SpellId, api_endpoint: string) -> ?[]DealChangedResult:
+    changes: ?[]DealChangedResult
 
-    -- Find the latest block on chain
-    latest_block, is_block_ok <- get_latest_block(api_endpoint)
-
-    -- Get all known deals
-    list <- Spell.list_get_strings("joined_deals")
-    if list.success == false:
-        log(["can't restrive joined deals", list.error])
-    else:
-        -- Collect info about all known deals
-        deals_update: *DealUpdate
-        for joined_deal_str <- list.strings:
-            joined_deal <- JsonJoinedDeal.parse(joined_deal_str)
-            deal_str, is_ok <- get_string(spell_id, joined_deal.deal_id)
-            if is_ok == false:
-                log(["can't find state of the deal", joined_deal.deal_id, "; broken invariant, check poll_new_deals"])
-            else:
-                deal_state <- JsonDealState.parse(deal_str!)
-                deal_info = DealInfo(deal_id = joined_deal.deal_id, worker_id = joined_deal.worker_id)
-                deals_update <<- DealUpdate(deal_info = deal_info, from_block = deal_state.from_block)
-
-        -- Find the latest updates for all deals
-        updated_deals <- FluenceAuroraConnector.poll_deal_changes(api_endpoint, deals_update)
-        if updated_deals.success == false:
-            log(["can't download deals updates", updated_deals.error!])
+    deals <- get_joined_deals(spell_id)
+    if deals != nil:
+        -- Poll for the last logs about deal changes
+        poll_result <- FluenceAuroraConnector.poll_deal_changes(api_endpoint, deals!)
+        if poll_result.success:
+            changes <<- poll_result.changes
         else:
-            -- Update all deals with new info
-            for updated_deal <- updated_deals.result:
-                if updated_deal.success == false:
-                    log(["error retrieving deal update", updated_deal.deal_info.deal_id, updated_deal.error])
-                    if is_block_ok:
-                        if is_to_block_outdated(latest_block!, updated_deal.to_block):
-                            log(["update from_block: [new from_block, latest_block]", updated_deal.to_block, latest_block])
-                            new_deal_state2 = DealState(from_block = updated_deal.to_block)
-                            store_deal_state(spell_id, updated_deal.deal_info.deal_id, new_deal_state2)
-                else:
-                    log(["found update for deal", updated_deal.deal_info.deal_id, "from block", updated_deal.result!.block_number])
+            spell_log(spell_id, ["error retrieving deal changes from chain", poll_result.error!])
 
-                    -- Update local info about the deal
-                    new_deal_state = DealState(from_block = updated_deal.result!.next_block_number)
-                    store_deal_state(spell_id, updated_deal.deal_info.deal_id, new_deal_state)
+    <- changes
 
-                    -- Update app_cid of the deal on the corresponding worker spell
-                    log(["sending the latest update to the worker", updated_deal.deal_info])
-                    on updated_deal.deal_info.worker_id:
-                        -- stringify app_cid to be able to use it as an argument of a spell
-                        app_cid <- Json.stringify(updated_deal.result!.info.app_cid)
-                        Spell "worker-spell"
-                        Spell.set_string("worker_def_cid", app_cid)
+-- Move beginning of the block range to be `min(right boundary, latest_block)`
+func move_block_range(spell_id: SpellId, deal_id: DealId, right_boundary: string, latest: string):
+    less_or_equal <- Blocks.lte(spell_id, right_boundary, latest)
+    if less_or_equal != nil:
+        if less_or_equal! == true:
+            -- if right_boundary <= latest_block, use `right_boundary` as the next `from_block`
+            deal_log(spell_id, deal_id, ["update from_block: [new from_block, latest_block]", right_boundary, latest])
+            store_deal_state(spell_id, deal_id, DealState(from_block = right_boundary))
+        else:
+            -- if right_boundary > latest_block, use `latest_block` as the next `from_block`
+            deal_log(spell_id, deal_id, ["update from_block: [new from_block, latest_block]", latest, latest])
+            store_deal_state(spell_id, deal_id, DealState(from_block = latest))
+
+-- Update app_cid of the deal on the corresponding worker spell
+func update_worker(spell_id: SpellId, change: DealChangedResult):
+    deal_id = change.deal_info.deal_id
+    worker_id = change.deal_info.worker_id
+    deal_log(spell_id, deal_id, ["sending the latest update to the worker", change.deal_info])
+    on worker_id:
+        -- stringify app_cid to be able to use it as an argument of a spell
+        app_cid <- Json.stringify(change.result!.info.app_cid)
+        Spell "worker-spell"
+        Spell.set_string("worker_def_cid", app_cid)
+
+func poll_deal_changes_batch(spell_id: SpellId, chain: AuroraInfo):
+    Spell spell_id
+
+    changes <- get_deal_changes(spell_id, chain.api_endpoint)
+    if changes != nil:
+        -- Find the latest block on chain
+        -- TODO: we need it only if there are failures among `changes`, but there's no way to express that in Aqua, AFAIK
+        latest_block <- Blocks.get_latest(spell_id, chain)
+
+        -- Update all deals with new info
+        for change <- changes!:
+            deal_id = change.deal_info.deal_id
+
+            if change.success:
+                deal_log(spell_id, deal_id, ["found a deal changed log on block", change.result!.block_number])
+
+                -- Update app_cid of the deal on the corresponding worker spell
+                update_worker(spell_id, change)
+
+                -- Move block range so that log's block becomes new left boundary
+                log_block = change.result!.block_number
+                store_deal_state(spell_id, deal_id, DealState(from_block = log_block))
+            else:
+                deal_log(spell_id, deal_id, ["error retrieving deal change", change.error])
+                if latest_block != nil:
+                    move_block_range(spell_id, deal_id, change.to_block, latest_block!)

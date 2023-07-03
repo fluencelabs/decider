@@ -36,16 +36,3 @@ pub fn latest_block_number(api_endpoint: String) -> BlockNumberResult {
     }
     BlockNumberResult::ok(result)
 }
-
-#[marine]
-/// Calculates a difference between two hex strings as u64 number
-/// Returns 0 on overflow
-pub fn blocks_diff(from: String, to: String) -> u64 {
-    let diff: Option<u64> = try {
-        let from = hex_to_int(&from)?;
-        let to = hex_to_int(&to)?;
-
-        to.checked_sub(from)?
-    };
-    diff.unwrap_or(0)
-}

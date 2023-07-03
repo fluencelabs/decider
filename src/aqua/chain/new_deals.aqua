@@ -10,19 +10,8 @@ import deal_log, spell_log, get_counter, get_string from "../fluence/spell.aqua"
 import is_worker_created from "../fluence/worker.aqua"
 import Json from "../fluence/peer.aqua"
 import join_deal from "../decider/join_deal.aqua"
+import get_latest from "../chain/blocks.aqua"
 import SpellId from "../types.aqua"
-import need_update_from_block from "../chain/blocks.aqua"
-
--- Get latest block number from RPC
-func get_latest(spell_id: SpellId, chain: AuroraInfo) -> ?string:
-    latest: ?string
-    r <- FluenceAuroraConnector.latest_block_number(chain.api_endpoint)
-    if r.success:
-        latest <<- r.result
-    else:
-        spell_log(spell_id, ["error retrieving latest block number", r.error])
-    <- latest
-
 
 -- `last seen block` is a block for which all events have been processed
 func get_last_seen(spell_id: SpellId) -> ?string:
@@ -122,6 +111,8 @@ func poll_logs(spell_id: SpellId, chain: AuroraInfo, left: string) -> []DealCrea
         spell_log(spell_id, ["error polling deal created events", result.error])
 
     logs = result.result
+    co spell_log(spell_id, ["number of logs returned by poll:", logs.length])
+
     <- logs
 
 func get_logs(spell_id: SpellId, chain: AuroraInfo) -> []DealCreated:

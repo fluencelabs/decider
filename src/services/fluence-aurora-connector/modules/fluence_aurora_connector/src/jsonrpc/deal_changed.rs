@@ -79,7 +79,7 @@ impl DealChangedResult {
 
 #[marine]
 pub struct MultipleDealsChanged {
-    pub result: Vec<DealChangedResult>,
+    pub changes: Vec<DealChangedResult>,
     pub success: bool,
     pub error: Vec<String>,
 }
@@ -93,7 +93,7 @@ impl MultipleDealsChanged {
         Self {
             success: true,
             error: vec![],
-            result,
+            changes: result,
         }
     }
 
@@ -101,7 +101,7 @@ impl MultipleDealsChanged {
         Self {
             success: false,
             error: vec![err],
-            result: vec![],
+            changes: vec![],
         }
     }
 }
