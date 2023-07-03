@@ -82,7 +82,6 @@ jobs:
         run: ./build.sh
 
       - name: Import secrets
-        if: inputs.snapshot == true
         uses: hashicorp/vault-action@v2.5.0
         with:
           url: https://vault.fluence.dev
@@ -96,12 +95,10 @@ jobs:
             kv/cargo-registry/users/ci token | CARGO_REGISTRIES_FLUENCE_TOKEN
 
       - name: Generate snapshot version
-        if: inputs.snapshot == true
         id: version
         uses: fluencelabs/github-actions/generate-snapshot-id@main
 
       - name: Publish crate snapshots
-        if: inputs.snapshot == true
         id: snapshot
         uses: fluencelabs/github-actions/cargo-publish-snapshot@main
         with:
