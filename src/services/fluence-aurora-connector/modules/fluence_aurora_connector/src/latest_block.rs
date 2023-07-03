@@ -1,7 +1,6 @@
 use marine_rs_sdk::marine;
 
 use crate::curl::send_jsonrpc;
-use crate::hex::hex_to_int;
 use crate::jsonrpc::block_number::{BlockNumberReq, BlockNumberResult};
 use crate::jsonrpc::request::check_url;
 
