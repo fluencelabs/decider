@@ -50,6 +50,8 @@ jobs:
       - name: Install fluence-cli
         run: npm i -g @fluencelabs/cli@unstable
 
+      - run: fluence dep i --no-input
+
       - name: Set dependencies
         if: inputs.cargo-dependencies != 'null'
         uses: fluencelabs/github-actions/cargo-set-dependency@main
