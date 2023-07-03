@@ -105,15 +105,16 @@ func join_deals(spell_id: SpellId, logs: []DealCreated):
         if is_worker_created(spell_id, deal_id):
             deal_log(spell_id, deal_id, "worker for deal is already created")
         else:
-            join_deal(spell_id, log)
             -- Use `log.block_number - 1` as a `last seen block`
             -- Can not use `log.block_number` because it is unknown if there are more events from that block in `logs`
             -- If a log from block N is received, then the whole `N-1` block was processed, so save it as the `last seen`
-            last_seen <- FluenceAuroraConnector.hex_sub(log.block_number, 1)
-            -- Set `last seen block` to the `log.block_number - 1`
-            -- This way, if particle has timed out during process of a log, `last seen block` would not be updated
-            -- And we will try all events from that block again
-            save_last_seen(spell_id, last_seen)
+            prev_block <- FluenceAuroraConnector.hex_sub(log.block_number, 1)
+            if prev_block.success:
+                join_deal(spell_id, log)
+                -- Set `last seen block` to the `log.block_number - 1`
+                -- This way, if particle has timed out during process of a log, `last seen block` would not be updated
+                -- And we will try all events from that block again
+                save_last_seen(spell_id, prev_block.diff!)
 
 func poll_logs(spell_id: SpellId, chain: AuroraInfo, left: string) -> []DealCreated:
     result <- FluenceAuroraConnector.poll_deal_created(chain.api_endpoint, chain.address, left)
