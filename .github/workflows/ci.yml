@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  spell:
+  distro:
     uses: ./.github/workflows/snapshot.yml
     with:
       ref: ${{ github.ref }}
