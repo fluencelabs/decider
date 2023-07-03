@@ -50,27 +50,6 @@ jobs:
       - name: Install fluence-cli
         run: npm i -g @fluencelabs/cli@unstable
 
-      - name: Install ipfs
-        uses: nahsi/setup-ipfs@v1
-
-      - name: Create builtin distribution package
-        run: ./builtin-package/package.sh
-
-      - name: Calculate SHA256
-        id: sha
-        run: |
-          # Calculate sha256
-          du -hs connector.tar.gz
-          sha256sum connector.tar.gz
-          sha=($(sha256sum connector.tar.gz))
-          echo "sha256=${sha}" >> $GITHUB_OUTPUT
-
-      - name: Upload package to checks
-        uses: actions/upload-artifact@v3
-        with:
-          name: connector.tar.gz
-          path: connector.tar.gz
-
       - name: Set dependencies
         if: inputs.cargo-dependencies != 'null'
         uses: fluencelabs/github-actions/cargo-set-dependency@main
@@ -104,3 +83,24 @@ jobs:
         with:
           id: ${{ steps.version.outputs.id }}
           path: src/distro
+
+      - name: Install ipfs
+        uses: nahsi/setup-ipfs@v1
+
+      - name: Create builtin distribution package
+        run: ./builtin-package/package.sh
+
+      - name: Calculate SHA256
+        id: sha
+        run: |
+          # Calculate sha256
+          du -hs connector.tar.gz
+          sha256sum connector.tar.gz
+          sha=($(sha256sum connector.tar.gz))
+          echo "sha256=${sha}" >> $GITHUB_OUTPUT
+
+      - name: Upload package to checks
+        uses: actions/upload-artifact@v3
+        with:
+          name: connector.tar.gz
+          path: connector.tar.gz
