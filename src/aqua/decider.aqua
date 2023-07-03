@@ -7,7 +7,7 @@ import "@fluencelabs/spell/spell_service.aqua"
 import "@fluencelabs/aqua-lib/builtin.aqua"
 import "@fluencelabs/aqua-lib/binary.aqua"
 import "@fluencelabs/aqua-lib/math.aqua"
-import "services.aqua"
+-- import "services.aqua"
 
 -- Worker API
 service Worker("worker"):
