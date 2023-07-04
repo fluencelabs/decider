@@ -12,7 +12,6 @@ src/ts/src/aqua
 src/js/src/aqua
 
 src/air
-# TODO: what is this directory?
 src/distro/decider-spell/
 
 # builtin package artifacts
