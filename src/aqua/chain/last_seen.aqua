@@ -1,6 +1,6 @@
 -- LastSeen is a block number
 -- If all logs from a block are processed, such a block is called LastSeen
-module LastSeen declares get, save, init, increase
+module LastSeen declares get, save, init, gt_set, increase
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 
@@ -35,7 +35,15 @@ func init(spell_id: SpellId, chain: AuroraInfo) -> ?string:
 
 -- Set value of LastSeen to `new_hex` iff `new_hex > known_hex`
 -- This is needed to guarantee monotonic increase in LastSeen, ie it will never decrease
-func increase(spell_id: SpellId, new_hex: string, known_hex: string):
+func gt_set(spell_id: SpellId, new_hex: string, known_hex: string):
     greater <- Blocks.gt(spell_id, new_hex, known_hex)
     if greater == [true]:
         save(spell_id, new_hex)
+
+-- Set value of LastSeen to `hex` iff `hex > current last seen`
+func increase(spell_id: SpellId, hex: string):
+    current <- get(spell_id)
+    if current != nil:
+        gt_set(spell_id, hex, current!)
+    else:
+        save(spell_id, hex)

@@ -20,7 +20,7 @@ func get_deal_changes(spell_id: SpellId, api_endpoint: string) -> ?[]DealChanged
         -- Poll for the last logs about deal changes
         poll_result <- FluenceAuroraConnector.poll_deal_changes(api_endpoint, deals!)
         if poll_result.success:
-            spell_log(spell_id, ["number of deal changes from poll:", poll_result.changes.length])
+            spell_log(spell_id, ["deal changes from poll:", poll_result.changes.length])
             changes <<- poll_result.changes
         else:
             spell_log(spell_id, ["error retrieving deal changes from chain", poll_result.error!])
@@ -44,22 +44,18 @@ func move_block_range(spell_id: SpellId, deal_id: DealId, right_boundary: string
 func update_worker(spell_id: SpellId, change: DealChangedResult):
     deal_id = change.deal_info.deal_id
     worker_id = change.deal_info.worker_id
-    deal_log(spell_id, deal_id, ["sending the latest update to the worker", change.deal_info])
+    app_cid <- Json.stringify(change.result!.info.app_cid)
+    deal_log(spell_id, deal_id, ["sending the latest update to the worker", worker_id, app_cid])
     on worker_id:
         -- stringify app_cid to be able to use it as an argument of a spell
-        app_cid <- Json.stringify(change.result!.info.app_cid)
         Spell "worker-spell"
         Spell.set_string("worker_def_cid", app_cid)
 
-func poll_deal_changes_batch(spell_id: SpellId, chain: AuroraInfo):
+func poll_deal_changes_batch(spell_id: SpellId, chain: AuroraInfo, latest_block: string):
     Spell spell_id
 
     changes <- get_deal_changes(spell_id, chain.api_endpoint)
     if changes != nil:
-        -- Find the latest block on chain
-        -- TODO: we need it only if there are failures among `changes`, but there's no way to express that in Aqua, AFAIK
-        latest_block <- Blocks.get_latest(spell_id, chain)
-
         -- Update all deals with new info
         for change <- changes!:
             deal_id = change.deal_info.deal_id
@@ -75,5 +71,4 @@ func poll_deal_changes_batch(spell_id: SpellId, chain: AuroraInfo):
                 store_deal_state(spell_id, deal_id, DealState(from_block = log_block))
             else:
                 deal_log(spell_id, deal_id, ["error retrieving deal change", change.error])
-                if latest_block != nil:
-                    move_block_range(spell_id, deal_id, change.to_block, latest_block!)
+                move_block_range(spell_id, deal_id, change.to_block, latest_block)

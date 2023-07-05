@@ -1,5 +1,5 @@
 use marine_rs_sdk::marine;
-use std::cmp::Ordering;
+use std::cmp::{Ordering, min};
 
 /// Convert hex string to u64
 pub fn hex_to_int(hex: &str) -> Option<u64> {
@@ -96,4 +96,71 @@ pub fn hex_cmp(hex_a: &str, hex_b: &str) -> HexCmp {
         success: int_a.is_some() && int_b.is_some(),
         error: hex_cmp_error(hex_a, int_a.is_some(), hex_b, int_b.is_some()),
     }
+}
+
+#[marine]
+pub struct HexAdd {
+    pub hex: Vec<String>,
+    pub success: bool
+}
+
+impl HexAdd {
+    pub fn error() -> Self {
+        Self {
+            hex: vec![],
+            success: false,
+        }
+    }
+
+    pub fn success(hex: String) -> Self {
+        Self {
+            hex: vec![hex],
+            success: true,
+        }
+    }
+}
+
+#[marine]
+pub fn hex_add(hex: &str, add: u32) -> HexAdd {
+    if let Some(int) = hex_to_int(hex) {
+        let hex = int + add as u64;
+        let hex = int_to_hex(hex);
+        HexAdd::success(hex)
+    } else {
+        HexAdd::error()
+    }
+}
+
+#[marine]
+pub struct HexMin {
+    pub hex: Vec<String>,
+    pub success: bool
+}
+
+impl HexMin {
+    pub fn error() -> Self {
+        Self {
+            hex: vec![],
+            success: false,
+        }
+    }
+
+    pub fn success(hex: String) -> Self {
+        Self {
+            hex: vec![hex],
+            success: true,
+        }
+    }
+}
+
+#[marine]
+pub fn hex_min(hex_a: &str, hex_b: &str) -> HexMin {
+    let min: Option<_> = try {
+        let a = hex_to_int(hex_a)?;
+        let b = hex_to_int(hex_b)?;
+        let min = min(a, b);
+        int_to_hex(min)
+    };
+
+    min.map(HexMin::success).unwrap_or(HexMin::error())
 }

@@ -13,6 +13,10 @@ import join_deal from "../decider/join_deal.aqua"
 import SpellId from "../types.aqua"
 
 use "last_seen.aqua" as LastSeen
+use "../hex.aqua" as Hex
+
+-- TODO: maybe it's easier to do all calculations in u64, and convert to hex only in JSONRPC?
+
 
 -- return a value to use as a left boundary in `eth_newLogs`
 -- it usually equals to `last seen block`, except on first iteration it is equal to evaluated `from_block`
@@ -30,7 +34,15 @@ func get_left_boundary(spell_id: SpellId, chain: AuroraInfo) -> ?string:
             left <<- last_seen!
         -- if `LastSeen.init` returned `nil`, just bubble up that `nil` by returning it
     else:
-        left <<- maybe_last_seen!
+        last_seen = maybe_last_seen!
+        -- since we have seen all logs in the `last_seen` block,
+        -- use `last_seen + 1` as the left boundary
+        next <- Hex.inc(spell_id, last_seen)
+        if next != nil:
+            left <<- next!
+        else:
+            -- if for some reason `hex_add` failed, use `last_seen` as left boundary
+            left <<- last_seen
     <- left
 
 func join_deals(spell_id: SpellId, logs: []DealCreated, left: string):
@@ -47,35 +59,48 @@ func join_deals(spell_id: SpellId, logs: []DealCreated, left: string):
         -- Use `log.block_number - 1` as a `last seen block`
         -- Can not use `log.block_number` because it is unknown if there are more events from that block in `logs`
         -- If a log from block N is received, then the whole `N-1` block was processed, so save it as the `last seen`
-        prev_block <- FluenceAuroraConnector.hex_sub(log.block_number, 1)
-        if prev_block.success:
-            -- Set `last seen block` to the `log.block_number - 1`
+        prev_block <- Hex.dec(spell_id, log.block_number)
+        if prev_block != nil:
+            -- Set `last seen block` to the `log.block_number - 1` (if it is > `left`)
             -- This way, if particle has timed out during process of a log, `last seen block` would not be updated
             -- And we will try all events from that block again
-            LastSeen.increase(spell_id, prev_block.diff!, left)
-        else:
-            deal_log(spell_id, deal_id, ["error in hex_sub", prev_block])
+            LastSeen.gt_set(spell_id, prev_block!, left)
 
-    -- after we have processed all logs, we can conclude
-    -- that we have seen all logs in mentioned blocks
-    LastSeen.save(spell_id, logs[logs.length - 1].block_number)
+data Poll:
+    logs: []DealCreated
+    to_block: string
 
-func poll_logs(spell_id: SpellId, chain: AuroraInfo, left: string) -> []DealCreated:
+func poll_logs(spell_id: SpellId, chain: AuroraInfo, left: string) -> Poll:
     result <- FluenceAuroraConnector.poll_deal_created(chain.api_endpoint, chain.address, left)
     if result.success == false:
         spell_log(spell_id, ["error polling deal created events", result.error])
 
     logs = result.result
-    spell_log(spell_id, ["number of created deals from poll:", logs.length, "from block:", left])
+    spell_log(spell_id, ["created deals from poll:", logs.length, "from block:", left])
 
-    <- logs
+    <- Poll(logs = logs, to_block = result.to_block)
 
-func poll_new_deals(spell_id: SpellId, chain: AuroraInfo):
+func poll_new_deals(spell_id: SpellId, chain: AuroraInfo, latest_block: string):
     -- retrieve block number to poll from
     left <- get_left_boundary(spell_id, chain)
     if left != nil:
-        logs <- poll_logs(spell_id, chain, left!)
-        join_deals(spell_id, logs, left!)
+        poll <- poll_logs(spell_id, chain, left!)
+        join_deals(spell_id, poll.logs, left!)
+
+        -- after we have processed all logs from poll, we can conclude
+        -- that we have seen all logs until `min(latest_block, to_block)`
+        -- if `to_block >= latest_block` then we have seen up until `latest_block`
+        -- if `to_block < latest_block`, then we have seen up until `to_block`
+        last_seen <- Hex.min(spell_id, latest_block, poll.to_block)
+
+        if last_seen != nil:
+            -- use `increase` to protect against overwriting `current last seen` with a lower value
+            -- since `last seen` is updated on every processed log,
+            -- `current last seen` equals to the block of the latest processed log,
+            -- can be sure `increase` won't overwrite LastSeen
+            -- even if `latest_block` < `block of the last processed log`
+            LastSeen.increase(spell_id, last_seen!)
+
     else:
         -- if it's not possible to retrieve `left boundary`, then it's not possible to `poll_logs`
         spell_log(spell_id, ["get_left_boundary returns nil, unable to proceed"])

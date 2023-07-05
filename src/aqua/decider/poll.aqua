@@ -8,13 +8,16 @@ import poll_new_deals from "../chain/new_deals.aqua"
 import poll_deal_changes_batch from "../chain/changed_deals.aqua"
 import spell_log from "../fluence/spell.aqua"
 
-func main(spell_id: SpellId, chain: AuroraInfo):
-    spell_log(spell_id, "decider starts")
-    -- Find new deals and create workers
-    try:
-        poll_new_deals(spell_id, chain)
+use "../chain/blocks.aqua" as Blocks
 
-    -- TODO: I wonder what will happen when the decider join _many_ deals?
-    --       Will it be able to check them on time?
-    -- Update existing deals
-    poll_deal_changes_batch(spell_id, chain)
+func main(spell_id: SpellId, chain: AuroraInfo):
+    -- Get the latest block number from chain
+    latest_block <- Blocks.get_latest(spell_id, chain)
+
+    if latest_block != nil:
+        try:
+            -- Find new deals and create workers
+            poll_new_deals(spell_id, chain, latest_block!)
+
+        -- Update existing deals
+        poll_deal_changes_batch(spell_id, chain, latest_block!)
