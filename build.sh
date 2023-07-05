@@ -8,12 +8,12 @@ DISTRO_DIR=src/distro/decider-spell
 
 mkdir -p "$DISTRO_DIR"
 
+fluence dep i
+# compile connector
+fluence build
 # compile aqua file
 fluence aqua -i src/aqua/worker.aqua -o "$DISTRO_DIR" --air
 fluence aqua -i src/aqua/decider.aqua -o "$DISTRO_DIR" --air
-
-# compile connector
-fluence build
 
 cp target/wasm32-wasi/release/fluence_aurora_connector.wasm src/distro/decider-spell/
 cp target/wasm32-wasi/release/curl_adapter.wasm src/distro/decider-spell/
