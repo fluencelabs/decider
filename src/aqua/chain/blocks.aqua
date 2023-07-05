@@ -1,4 +1,4 @@
-module Blocks declares get_latest, lte
+module Blocks declares get_latest, lte, gt
 
 import get_string, spell_log from "../fluence/spell.aqua"
 import AuroraInfo from "../chain/aurora.aqua"
@@ -19,23 +19,43 @@ func get_latest(spell_id: SpellId, chain: AuroraInfo) -> ?string:
 -- implements Less Than or Equal for two hex strings, i.e. `hex_a <= hex_b`
 -- returns nil if either `hex_a` or `hex_b` is an invalid hex
 func lte(spell_id: string, hex_a: string, hex_b: string) -> ?bool:
-    less: ?bool
+    lte: ?bool
 
     cmp <- FluenceAuroraConnector.hex_cmp(hex_a, hex_b)
     if cmp.success:
         -- `hex_a` is less than `hex_b`
         if cmp.ordering == -1:
-            less <<- true
+            lte <<- true
         -- `hex_a` equals to `hex_b`
         if cmp.ordering == 0:
-            less <<- true
+            lte <<- true
         -- `hex_a` is greater than `hex_b`
         if cmp.ordering == 1:
-            less <<- false
+            lte <<- false
     else:
         spell_log(spell_id, ["hex_cmp error", cmp.error])
 
-    <- less
+    <- lte
+
+-- `hex_a > hex_b`
+func gt(spell_id: string, hex_a: string, hex_b: string) -> ?bool:
+    gt: ?bool
+
+    cmp <- FluenceAuroraConnector.hex_cmp(hex_a, hex_b)
+    if cmp.success:
+        -- `hex_a` is less than `hex_b`
+        if cmp.ordering == -1:
+            gt <<- false
+        -- `hex_a` equals to `hex_b`
+        if cmp.ordering == 0:
+            gt <<- false
+        -- `hex_a` is greater than `hex_b`
+        if cmp.ordering == 1:
+            gt <<- true
+    else:
+        spell_log(spell_id, ["hex_cmp error", cmp.error])
+
+    <- gt
 
 -- Check if `to_block` is less than `latest_block` from chain.
 -- If less, polling the range [from_block, to_block] won't yield new updates

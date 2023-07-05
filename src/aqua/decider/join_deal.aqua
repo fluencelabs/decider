@@ -19,13 +19,13 @@ func install_deal_spell(deal_id: DealId, cid: CID, ipfs: string, script: string,
 func join_deal(spell_id: SpellId, deal: DealCreated):
     deal_id = deal.info.deal_id
 
-    log = (msg: []⊤):
+    log = (msg: ⊤):
         deal_log(spell_id, deal_id, msg)
 
     log(["joining the deal", deal.info.deal_id, "from_block", deal.block_number])
     settings, is_ok <- get_worker_settings(spell_id)
     if is_ok == false:
-        log(["error reading worker settings, deal join failed", deal_id])
+        log("error reading worker settings, deal join failed")
     else:
         try:
             worker_id <- Worker.create(deal_id)
@@ -43,7 +43,7 @@ func join_deal(spell_id: SpellId, deal: DealCreated):
 
                 deal_state = DealState(from_block = deal.block_number)
                 store_deal_state(spell_id, deal_id, deal_state)
-                log(["joined the deal", deal.info.deal_id])
+                log("joined the deal")
 
         catch e:
             log(["cannot create worker, deal join failed", e.message])

@@ -1,0 +1,42 @@
+-- LastSeen is a block number
+-- If all logs from a block are processed, such a block is called LastSeen
+module LastSeen declares get, save, init, increase
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+
+import spell_log, get_string from "../fluence/spell.aqua"
+import SpellId from "../types.aqua"
+import AuroraInfo from "../chain/aurora.aqua"
+import evaluate_from_block from "../chain/from_block.aqua"
+
+use "../chain/blocks.aqua" as Blocks
+
+-- `last seen block` is a block for which all events have been processed
+func get(spell_id: SpellId) -> ?string:
+    Spell spell_id
+    last_seen, ok <- get_string(spell_id, "last_seen_block")
+    <- last_seen
+
+func save(spell_id: SpellId, hex: string):
+    Spell spell_id
+    r <- Spell.set_string("last_seen_block", hex)
+    if r.success:
+        spell_log(spell_id, ["saved last seen", hex])
+    else:
+        spell_log(spell_id, ["error saving last_seen_block", r.error])
+
+-- initialize `last seen` to the value of `from_block`, so that polls start from that value as a left boundary
+-- NOTE: `from_block` is passed as a part of decider's `init data`
+func init(spell_id: SpellId, chain: AuroraInfo) -> ?string:
+    from_block <- evaluate_from_block(spell_id, chain)
+    if from_block != nil:
+        save(spell_id, from_block!)
+    <- from_block
+
+-- Set value of LastSeen to `new_hex` iff `new_hex > known_hex`
+-- This is needed to guarantee monotonic increase in LastSeen, ie it will never decrease
+func increase(spell_id: SpellId, new_hex: string, known_hex: string):
+    greater <- Blocks.gt(spell_id, new_hex, known_hex)
+    spell_log(spell_id, ["new", new_hex, "known", known_hex, "greater", greater])
+    if greater == [true]:
+        save(spell_id, new_hex)

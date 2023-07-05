@@ -41,7 +41,7 @@ enum Error {
 }
 
 pub fn main() {
-    WasmLoggerBuilder::new().build().unwrap();
+    WasmLoggerBuilder::new().with_log_level(log::LevelFilter::Trace).build().unwrap();
 }
 
 // TODO: How to set an upper limit for how many responses to return?
