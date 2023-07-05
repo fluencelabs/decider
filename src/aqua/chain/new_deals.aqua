@@ -66,7 +66,7 @@ func poll_logs(spell_id: SpellId, chain: AuroraInfo, left: string) -> []DealCrea
         spell_log(spell_id, ["error polling deal created events", result.error])
 
     logs = result.result
-    spell_log(spell_id, ["number of logs returned by poll:", logs.length, "from block:", left])
+    spell_log(spell_id, ["number of created deals from poll:", logs.length, "from block:", left])
 
     <- logs
 

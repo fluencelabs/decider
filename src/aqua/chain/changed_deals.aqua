@@ -20,6 +20,7 @@ func get_deal_changes(spell_id: SpellId, api_endpoint: string) -> ?[]DealChanged
         -- Poll for the last logs about deal changes
         poll_result <- FluenceAuroraConnector.poll_deal_changes(api_endpoint, deals!)
         if poll_result.success:
+            spell_log(spell_id, ["number of deal changes from poll:", poll_result.changes.length])
             changes <<- poll_result.changes
         else:
             spell_log(spell_id, ["error retrieving deal changes from chain", poll_result.error!])
