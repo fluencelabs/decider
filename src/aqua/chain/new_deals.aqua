@@ -75,7 +75,7 @@ func poll_logs(spell_id: SpellId, chain: ChainInfo, left: string) -> Poll:
     if result.success == false:
         spell_log(spell_id, ["error polling deal created events", result.error])
 
-    logs = result.result
+    logs = result.logs
     spell_log(spell_id, ["created deals from poll:", logs.length, "from block:", left])
 
     <- Poll(logs = logs, right_boundary = result.right_boundary)

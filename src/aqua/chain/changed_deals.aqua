@@ -32,7 +32,7 @@ func get_deal_changes(spell_id: SpellId, api_endpoint: string) -> ?[]DealChanged
 func update_worker(spell_id: SpellId, change: DealChangedResult):
     deal_id = change.deal_info.deal_id
     worker_id = change.deal_info.worker_id
-    app_cid <- Json.stringify(change.result!.info.app_cid)
+    app_cid <- Json.stringify(change.log!.info.app_cid)
     deal_log(spell_id, deal_id, ["sending the latest update to the worker", worker_id, app_cid])
     on worker_id:
         -- stringify app_cid to be able to use it as an argument of a spell
@@ -57,13 +57,13 @@ func poll_deal_changes_batch(spell_id: SpellId, chain: ChainInfo, latest_block: 
             deal_id = change.deal_info.deal_id
 
             if change.success:
-                deal_log(spell_id, deal_id, ["found a deal changed log on block", change.result!.block_number])
+                deal_log(spell_id, deal_id, ["found a deal changed log on block", change.log!.block_number])
 
                 -- Update app_cid of the deal on the corresponding worker spell
                 update_worker(spell_id, change)
 
                 -- Move block range so that log's block becomes new left boundary
-                log_block = change.result!.block_number
+                log_block = change.log!.block_number
                 store_deal_state(spell_id, deal_id, DealState(left_boundary = log_block))
             else:
                 deal_log(spell_id, deal_id, ["error retrieving deal change", change.error])

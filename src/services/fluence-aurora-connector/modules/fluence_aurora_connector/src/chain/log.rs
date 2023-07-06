@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::chain::chain_data::{parse_chain_data, ChainData};
 use crate::chain::chain_event::ChainEvent;
-use crate::hex::{hex_to_int, int_to_hex};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

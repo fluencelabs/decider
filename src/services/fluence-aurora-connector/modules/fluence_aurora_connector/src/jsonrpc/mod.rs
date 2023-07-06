@@ -3,11 +3,13 @@ use thiserror::Error;
 
 pub mod block_number;
 pub mod deal_changed;
+pub mod deal_changed_batch;
 pub mod deal_created;
+pub mod deal_matched;
 pub mod get_logs;
-
 pub mod request;
 pub mod right_boundary;
+
 #[cfg(test)]
 mod tests;
 

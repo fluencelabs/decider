@@ -1,23 +1,22 @@
 use marine_rs_sdk::marine;
 
 use crate::chain::chain_data::ChainData;
-use crate::chain::deal_created::{DealCreated, DealCreatedData};
 use crate::chain::log::parse_logs;
+use crate::chain::matched::{DealMatched, Match};
 use crate::jsonrpc::deal_changed::default_right_boundary;
 use crate::jsonrpc::get_logs::get_logs;
 use crate::jsonrpc::request::check_url;
 
 #[marine]
-pub struct DealCreatedResult {
+pub struct MatchedResult {
     error: Vec<String>,
     success: bool,
-    logs: Vec<DealCreated>,
-    /// The response contains logs for blocks from `left_boundary` to `right_boundary`
+    logs: Vec<DealMatched>,
     right_boundary: String,
 }
 
-impl DealCreatedResult {
-    pub fn ok(logs: Vec<DealCreated>, right_boundary: String) -> Self {
+impl MatchedResult {
+    pub fn ok(logs: Vec<DealMatched>, right_boundary: String) -> Self {
         Self {
             success: true,
             error: vec![],
@@ -44,13 +43,13 @@ impl DealCreatedResult {
 // `address`      -- address of the chain contract
 // `left_boundary`   -- from which block to poll deals
 #[marine]
-pub fn poll_deal_created(
+pub fn poll_deal_matches(
     api_endpoint: String,
     address: String,
     left_boundary: String,
-) -> DealCreatedResult {
+) -> MatchedResult {
     if let Err(err) = check_url(&api_endpoint) {
-        return DealCreatedResult::error(err.to_string());
+        return MatchedResult::error(err.to_string());
     }
 
     let right_boundary = default_right_boundary(&left_boundary);
@@ -59,13 +58,13 @@ pub fn poll_deal_created(
         address,
         left_boundary,
         right_boundary.clone(),
-        DealCreatedData::topic(),
+        Match::topic(),
     );
     match result {
-        Err(err) => return DealCreatedResult::error(err.to_string()),
+        Err(err) => return MatchedResult::error(err.to_string()),
         Ok(logs) => {
-            let created_deals = parse_logs::<DealCreatedData, DealCreated>(logs);
-            DealCreatedResult::ok(created_deals, right_boundary)
+            let created_deals = parse_logs::<Match, DealMatched>(logs);
+            MatchedResult::ok(created_deals, right_boundary)
         }
     }
 }

@@ -5,7 +5,12 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/fluence.md
 
 version: 2
-aquaInputPath: src/aqua/main.aqua
+aquaInputPath: src/aqua/decider/poll.aqua
+aquaImports:
+  - src/aqua
+  - src/aqua/decider
+  - src/aqua/chain
+  - src/aqua/fluence
 dependencies:
   npm:
     "@fluencelabs/aqua-lib": 0.7.1

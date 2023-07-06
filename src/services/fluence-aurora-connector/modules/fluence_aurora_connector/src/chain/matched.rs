@@ -23,6 +23,7 @@ use crate::chain::u256::U256;
 /// ```
 
 #[derive(Debug, Clone)]
+#[marine]
 struct CIDV1 {
     prefixes: Vec<u8>,
     hash: Vec<u8>,
@@ -30,7 +31,7 @@ struct CIDV1 {
 
 #[derive(Debug)]
 #[marine]
-pub struct MatchedData {
+pub struct Match {
     compute_provider: String,
     deal: String,
     joined_workers: U256,
@@ -40,21 +41,19 @@ pub struct MatchedData {
 
 #[derive(Debug)]
 #[marine]
-pub struct Matched {
+pub struct DealMatched {
     block_number: String,
-    /// The number of the block next to the one of the deal
-    next_block_number: String,
-    info: MatchedData,
+    info: Match,
 }
 
-impl Matched {
+impl DealMatched {
     pub const EVENT_NAME: &'static str = "Matched";
 }
 
-impl ChainData for MatchedData {
+impl ChainData for Match {
     fn topic() -> String {
         let sig = Self::signature();
-        let hash = ethabi::long_signature(Matched::EVENT_NAME, &sig);
+        let hash = ethabi::long_signature(DealMatched::EVENT_NAME, &sig);
         format!("0x{}", hex::encode(hash.as_bytes()))
     }
 
@@ -80,7 +79,7 @@ impl ChainData for MatchedData {
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
     fn parse(data_tokens: Vec<Token>) -> Result<Self, DealParseError> {
-        let deal_data: Option<MatchedData> = try {
+        let deal_data: Option<Match> = try {
             let mut data_tokens = data_tokens.into_iter();
             let compute_provider = data_tokens.next()?.to_string();
             let deal = data_tokens.next()?.to_string();
@@ -93,7 +92,7 @@ impl ChainData for MatchedData {
                 hash: app_cid.next()?.into_fixed_bytes()?,
             };
 
-            MatchedData {
+            Match {
                 compute_provider,
                 deal,
                 joined_workers,
@@ -107,12 +106,8 @@ impl ChainData for MatchedData {
     }
 }
 
-impl ChainEvent<MatchedData> for Matched {
-    fn new(next_block_number: String, block_number: String, info: MatchedData) -> Self {
-        Self {
-            next_block_number,
-            block_number,
-            info,
-        }
+impl ChainEvent<Match> for DealMatched {
+    fn new(block_number: String, info: Match) -> Self {
+        Self { block_number, info }
     }
 }
