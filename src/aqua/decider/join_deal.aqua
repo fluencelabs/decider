@@ -41,7 +41,7 @@ func join_deal(spell_id: SpellId, deal: DealCreated):
 
                 store_joined_deal(spell_id, deal_id, deal_spell, worker_id)
 
-                deal_state = DealState(from_block = deal.block_number)
+                deal_state = DealState(left_boundary = deal.block_number)
                 store_deal_state(spell_id, deal_id, deal_state)
                 log("joined the deal")
 

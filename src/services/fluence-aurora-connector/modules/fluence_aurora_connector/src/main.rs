@@ -18,7 +18,7 @@ use crate::chain::deal_created::*;
 use crate::chain::log::{parse_logs, Log};
 use crate::curl::send_jsonrpc_batch;
 use crate::jsonrpc::deal_changed::{
-    deal_changed_req_batch, default_to_block, DealChangedResult, DealUpdate, MultipleDealsChanged,
+    deal_changed_req_batch, default_right_boundary, DealChangedResult, DealUpdate, MultipleDealsChanged,
 };
 use crate::jsonrpc::deal_created::DealCreatedResult;
 use crate::jsonrpc::get_logs::{get_logs, GetLogsReq};
@@ -50,33 +50,30 @@ pub fn main() {
 //
 // `api_endpoint` -- api endpoint to poll (right now it's possible to pass any URL for emergency cases)
 // `address`      -- address of the chain contract
-// `from_block`   -- from which block to poll deals
+// `left_boundary`   -- from which block to poll deals
 #[marine]
-/// RENAMING
-/// Old name: `poll_deals`, it was too generic
-/// New name: `poll_deal_created`, is more specific
 pub fn poll_deal_created(
     api_endpoint: String,
     address: String,
-    from_block: String,
+    left_boundary: String,
 ) -> DealCreatedResult {
     if let Err(err) = check_url(&api_endpoint) {
         return DealCreatedResult::error(err.to_string());
     }
 
-    let to_block = default_to_block(&from_block);
+    let right_boundary = default_right_boundary(&left_boundary);
     let result = get_logs(
         api_endpoint,
         address,
-        from_block,
-        to_block.clone(),
+        left_boundary,
+        right_boundary.clone(),
         DealCreatedData::topic(),
     );
     match result {
         Err(err) => return DealCreatedResult::error(err.to_string()),
         Ok(logs) => {
             let created_deals = parse_logs::<DealCreatedData, DealCreated>(logs);
-            DealCreatedResult::ok(created_deals, to_block)
+            DealCreatedResult::ok(created_deals, right_boundary)
         }
     }
 }
@@ -88,7 +85,7 @@ pub fn poll_deal_created(
 // pub fn poll_deal_changed(
 //     api_endpoint: String,
 //     deal_id: DealId,
-//     from_block: String,
+//     left_boundary: String,
 // ) -> DealChangedResult
 
 #[marine]
@@ -113,7 +110,7 @@ pub fn poll_deal_changes(api_endpoint: String, deals: Vec<DealUpdate>) -> Multip
     let mut updated_deals = Vec::new();
 
     for (deal, result) in zip(deals, responses) {
-        let to_block = default_to_block(&deal.from_block);
+        let to_block = default_right_boundary(&deal.left_boundary);
         match result.get_result() {
             Err(err) => {
                 let result = DealChangedResult::error(to_block, deal.deal_info, err.to_string());

@@ -34,11 +34,11 @@ func move_block_range(spell_id: SpellId, deal_id: DealId, right_boundary: string
         if less_or_equal! == true:
             -- if right_boundary <= latest_block, use `right_boundary` as the next `from_block`
             deal_log(spell_id, deal_id, ["update from_block: [new from_block, latest_block]", right_boundary, latest])
-            store_deal_state(spell_id, deal_id, DealState(from_block = right_boundary))
+            store_deal_state(spell_id, deal_id, DealState(left_boundary = right_boundary))
         else:
             -- if right_boundary > latest_block, use `latest_block` as the next `from_block`
             deal_log(spell_id, deal_id, ["update from_block: [new from_block, latest_block]", latest, latest])
-            store_deal_state(spell_id, deal_id, DealState(from_block = latest))
+            store_deal_state(spell_id, deal_id, DealState(left_boundary = latest))
 
 -- Update app_cid of the deal on the corresponding worker spell
 func update_worker(spell_id: SpellId, change: DealChangedResult):
@@ -68,7 +68,7 @@ func poll_deal_changes_batch(spell_id: SpellId, chain: AuroraInfo, latest_block:
 
                 -- Move block range so that log's block becomes new left boundary
                 log_block = change.result!.block_number
-                store_deal_state(spell_id, deal_id, DealState(from_block = log_block))
+                store_deal_state(spell_id, deal_id, DealState(left_boundary = log_block))
             else:
                 deal_log(spell_id, deal_id, ["error retrieving deal change", change.error])
-                move_block_range(spell_id, deal_id, change.to_block, latest_block)
+                move_block_range(spell_id, deal_id, change.right_boundary, latest_block)

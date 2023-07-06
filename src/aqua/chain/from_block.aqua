@@ -8,7 +8,7 @@ import Json from "../fluence/peer.aqua"
 import get_latest from "../chain/blocks.aqua"
 import AuroraInfo from "../chain/aurora.aqua"
 
--- read `from_block` from KV
+-- read `init_data.from_block` from KV
 -- `from_block` is usually set as a port of `init data` for `decider`
 func get_from_block(spell_id: SpellId) -> string:
     Spell spell_id

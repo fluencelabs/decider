@@ -6,27 +6,28 @@ use crate::hex::{hex_to_int, int_to_hex};
 use crate::jsonrpc::get_logs::GetLogsReq;
 use crate::jsonrpc::JsonRpcReq;
 
-const DEFAULT_BLOCK_RANGE: u64 = 9999;
+// TODO: make it configurable
+const DEFAULT_BLOCK_RANGE: u64 = 500;
 
 #[derive(Debug)]
 #[marine]
 /// RENAME: why is it called `DealUpate`?
 pub struct DealUpdate {
     pub deal_info: DealInfo,
-    pub from_block: String,
+    pub left_boundary: String,
 }
 
-/// Default value for `to_block` in chain polling
+/// Default value for `right_boundary` in chain polling
 ///
-/// Calculated based on `from_block` by adding `DEFAULT_BLOCK_RANGE`
-/// If `from_block` is not a hex string, return `"latest"`
-pub fn default_to_block(from_block: &str) -> String {
-    let to_block = try {
-        let from_block = hex_to_int(from_block)?;
-        from_block.checked_add(DEFAULT_BLOCK_RANGE)?
+/// Calculated based on `left_boundary` by adding `DEFAULT_BLOCK_RANGE`
+/// If `left_boundary` is not a hex string, return `"latest"`
+pub fn default_right_boundary(left_boundary: &str) -> String {
+    let right_boundary = try {
+        let left_boundary = hex_to_int(left_boundary)?;
+        left_boundary.checked_add(DEFAULT_BLOCK_RANGE)?
     };
-    match to_block {
-        Some(to_block) => int_to_hex(to_block),
+    match right_boundary {
+        Some(right_boundary) => int_to_hex(right_boundary),
         None => "latest".to_string(),
     }
 }
@@ -47,31 +48,31 @@ pub struct DealChangedResult {
     /// Optionals in AIR and marine are represented with Vec
     /// Some(x) is [x], None is []
     pub result: Vec<DealChanged>,
-    /// The request checked blocks from `from_block` to `to_block`
-    pub to_block: String,
+    /// The response contains logs for blocks from `left_boundary` to `right_boundary`
+    pub right_boundary: String,
     /// Return chain info to be able to find which chain to update
     pub deal_info: DealInfo,
 }
 
 impl DealChangedResult {
-    pub fn ok(to_block: String, deal_info: DealInfo, change: DealChanged) -> Self {
+    pub fn ok(right_boundary: String, deal_info: DealInfo, change: DealChanged) -> Self {
         Self {
             success: true,
             error: vec![],
             // Optionals in AIR and marine are represented with Vec. Some(x) is [x]
             result: vec![change],
-            to_block,
+            right_boundary,
             deal_info,
         }
     }
 
-    pub fn error(to_block: String, deal_info: DealInfo, err: String) -> Self {
+    pub fn error(right_boundary: String, deal_info: DealInfo, err: String) -> Self {
         Self {
             success: false,
             error: vec![err],
             // Optionals in AIR and marine are represented with Vec. None is []
             result: vec![],
-            to_block,
+            right_boundary,
             deal_info,
         }
     }
@@ -107,13 +108,13 @@ impl MultipleDealsChanged {
 }
 
 pub fn deal_changed_req(deal: &DealUpdate, idx: usize) -> JsonRpcReq<GetLogsReq> {
-    let to_block = default_to_block(&deal.from_block);
+    let right_boundary = default_right_boundary(&deal.left_boundary);
     let address = format!("0x{}", deal.deal_info.deal_id);
     let req = GetLogsReq {
         address,
         topics: vec![DealChangedData::topic()],
-        from_block: deal.from_block.clone(),
-        to_block,
+        from_block: deal.left_boundary.clone(),
+        to_block: right_boundary,
     };
 
     req.to_jsonrpc(idx as u32)

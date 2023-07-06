@@ -11,7 +11,7 @@ import DealInfo, DealUpdate from "services.aqua"
 
 
 data DealState:
-  from_block: string
+  left_boundary: string
 
 data JoinedDeal:
   deal_id: DealId
@@ -75,7 +75,7 @@ func get_joined_deals(spell_id: SpellId) -> ?[]DealUpdate:
                 else:
                     deal_state <- JsonDealState.parse(deal_str!)
                     deal_info = DealInfo(deal_id = deal_id, worker_id = joined_deal.worker_id)
-                    deal_updates <<- DealUpdate(deal_info = deal_info, from_block = deal_state.from_block)
+                    deal_updates <<- DealUpdate(deal_info = deal_info, left_boundary = deal_state.left_boundary)
             catch e:
                 spell_log(spell_id, ["error processing JoinedDeal", joined_deal_str, e])
         deals <<- deal_updates

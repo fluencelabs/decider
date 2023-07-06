@@ -6,16 +6,16 @@ pub struct DealCreatedResult {
     error: Vec<String>,
     success: bool,
     result: Vec<DealCreated>,
-    to_block: String,
+    right_boundary: String,
 }
 
 impl DealCreatedResult {
-    pub fn ok(result: Vec<DealCreated>, to_block: String) -> Self {
+    pub fn ok(result: Vec<DealCreated>, right_boundary: String) -> Self {
         Self {
             success: true,
             error: vec![],
             result,
-            to_block,
+            right_boundary,
         }
     }
 
@@ -24,7 +24,7 @@ impl DealCreatedResult {
             success: false,
             error: vec![err_msg],
             result: vec![],
-            to_block: String::new(),
+            right_boundary: String::new(),
         }
     }
 }
