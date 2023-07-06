@@ -2,54 +2,26 @@ name: "ci"
 
 on:
   pull_request:
+    paths-ignore:
+      - "**.md"
+      - ".github/**"
+      - "!.github/workflows/ci.yml"
+      - "!.github/workflows/snapshot.yml"
+  push:
+    branches:
+      - "main"
+    paths-ignore:
+      - "**.md"
+      - ".github/**"
+      - "!.github/workflows/ci.yml"
+      - "!.github/workflows/snapshot.yml"
 
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 
-env:
-  FORCE_COLOR: true
-  CI: true
-
 jobs:
-  connector:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-
-      - name: Setup Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-
-      - name: Install fluence-cli
-        run: npm i -g @fluencelabs/cli@unstable
-
-      - name: Install ipfs
-        uses: nahsi/setup-ipfs@v1
-
-      - name: Create builtin distribution package
-        run: ./builtin-package/package.sh
-
-      - name: Calculate SHA256
-        id: sha
-        run: |
-          # Calculate sha256
-          du -hs connector.tar.gz
-          sha256sum connector.tar.gz
-          sha=($(sha256sum connector.tar.gz))
-          echo "sha256=${sha}" >> $GITHUB_OUTPUT
-
-      - name: Upload package to checks
-        uses: actions/upload-artifact@v3
-        with:
-          name: connector.tar.gz
-          path: connector.tar.gz
-
-      - name: Build distro
-        run: ./build.sh
+  distro:
+    uses: ./.github/workflows/snapshot.yml
+    with:
+      ref: ${{ github.ref }}
