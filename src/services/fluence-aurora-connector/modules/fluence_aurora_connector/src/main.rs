@@ -18,7 +18,7 @@ use crate::chain::deal_created::*;
 use crate::chain::log::{parse_logs, Log};
 use crate::curl::send_jsonrpc_batch;
 use crate::jsonrpc::deal_changed::{
-    deal_changed_req_batch, default_right_boundary, DealChangedResult, DealUpdate, MultipleDealsChanged,
+    deal_changed_req_batch, default_right_boundary, DealChangedResult, DealChangesReq, MultipleDealsChanged,
 };
 use crate::jsonrpc::deal_created::DealCreatedResult;
 use crate::jsonrpc::get_logs::{get_logs, GetLogsReq};
@@ -78,21 +78,8 @@ pub fn poll_deal_created(
     }
 }
 
-/// REMOVAL
-/// I have removed `poll_deal_changed` because no one is using it
-/// But it makes overall code more complex
-// #[marine]
-// pub fn poll_deal_changed(
-//     api_endpoint: String,
-//     deal_id: DealId,
-//     left_boundary: String,
-// ) -> DealChangedResult
-
 #[marine]
-/// RENAMED
-/// old name `poll_deals_latest_update_batch` was confusing, and using `update` wording which I removed
-/// new name `poll_deal_changes` is shorter and is similar to `poll_deal_created`
-pub fn poll_deal_changes(api_endpoint: String, deals: Vec<DealUpdate>) -> MultipleDealsChanged {
+pub fn poll_deal_changes(api_endpoint: String, deals: Vec<DealChangesReq>) -> MultipleDealsChanged {
     if let Err(err) = check_url(&api_endpoint) {
         return MultipleDealsChanged::error(err.to_string());
     }

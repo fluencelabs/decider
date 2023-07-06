@@ -12,7 +12,7 @@ const DEFAULT_BLOCK_RANGE: u64 = 500;
 #[derive(Debug)]
 #[marine]
 /// RENAME: why is it called `DealUpate`?
-pub struct DealUpdate {
+pub struct DealChangesReq {
     pub deal_info: DealInfo,
     pub left_boundary: String,
 }
@@ -107,7 +107,7 @@ impl MultipleDealsChanged {
     }
 }
 
-pub fn deal_changed_req(deal: &DealUpdate, idx: usize) -> JsonRpcReq<GetLogsReq> {
+pub fn deal_changed_req(deal: &DealChangesReq, idx: usize) -> JsonRpcReq<GetLogsReq> {
     let right_boundary = default_right_boundary(&deal.left_boundary);
     let address = format!("0x{}", deal.deal_info.deal_id);
     let req = GetLogsReq {
@@ -120,7 +120,7 @@ pub fn deal_changed_req(deal: &DealUpdate, idx: usize) -> JsonRpcReq<GetLogsReq>
     req.to_jsonrpc(idx as u32)
 }
 
-pub fn deal_changed_req_batch(deals: &[DealUpdate]) -> Vec<JsonRpcReq<GetLogsReq>> {
+pub fn deal_changed_req_batch(deals: &[DealChangesReq]) -> Vec<JsonRpcReq<GetLogsReq>> {
     deals
         .iter()
         .enumerate()

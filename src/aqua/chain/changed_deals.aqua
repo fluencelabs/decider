@@ -8,7 +8,7 @@ import AuroraInfo from "../chain/aurora.aqua"
 import JsonJoinedDeal, JsonDealState, DealState, store_deal_state, get_joined_deals from "../decider/deal_storage.aqua"
 import SpellId, DealId from "../types.aqua"
 
-import DealInfo, DealUpdate, FluenceAuroraConnector, DealChangedResult from "services.aqua"
+import DealInfo, DealChangesReq, FluenceAuroraConnector, DealChangedResult from "services.aqua"
 
 use "../chain/blocks.aqua" as Blocks
 use "../hex.aqua" as Hex
