@@ -11,6 +11,7 @@ import SpellId, DealId from "../types.aqua"
 import DealInfo, DealUpdate, FluenceAuroraConnector, DealChangedResult from "services.aqua"
 
 use "../chain/blocks.aqua" as Blocks
+use "../hex.aqua" as Hex
 
 func get_deal_changes(spell_id: SpellId, api_endpoint: string) -> ?[]DealChangedResult:
     changes: ?[]DealChangedResult
@@ -27,19 +28,6 @@ func get_deal_changes(spell_id: SpellId, api_endpoint: string) -> ?[]DealChanged
 
     <- changes
 
--- Move beginning of the block range to be `min(right boundary, latest_block)`
-func move_block_range(spell_id: SpellId, deal_id: DealId, right_boundary: string, latest: string):
-    less_or_equal <- Blocks.lte(spell_id, right_boundary, latest)
-    if less_or_equal != nil:
-        if less_or_equal! == true:
-            -- if right_boundary <= latest_block, use `right_boundary` as the next `from_block`
-            deal_log(spell_id, deal_id, ["update from_block: [new from_block, latest_block]", right_boundary, latest])
-            store_deal_state(spell_id, deal_id, DealState(left_boundary = right_boundary))
-        else:
-            -- if right_boundary > latest_block, use `latest_block` as the next `from_block`
-            deal_log(spell_id, deal_id, ["update from_block: [new from_block, latest_block]", latest, latest])
-            store_deal_state(spell_id, deal_id, DealState(left_boundary = latest))
-
 -- Update app_cid of the deal on the corresponding worker spell
 func update_worker(spell_id: SpellId, change: DealChangedResult):
     deal_id = change.deal_info.deal_id
@@ -50,6 +38,14 @@ func update_worker(spell_id: SpellId, change: DealChangedResult):
         -- stringify app_cid to be able to use it as an argument of a spell
         Spell "worker-spell"
         Spell.set_string("worker_def_cid", app_cid)
+
+-- Move left boundary of the deal's block range to be `min(right boundary, latest_block) + 1`
+func move_left_boundary(spell_id: SpellId, deal_id: DealId, right_boundary: string, latest: string):
+    min <- Hex.min(spell_id, right_boundary, latest)
+    if min != nil:
+        left <- Hex.inc(spell_id, min!)
+        if left != nil:
+            store_deal_state(spell_id, deal_id, DealState(left_boundary = left!))
 
 func poll_deal_changes_batch(spell_id: SpellId, chain: AuroraInfo, latest_block: string):
     Spell spell_id
@@ -71,4 +67,11 @@ func poll_deal_changes_batch(spell_id: SpellId, chain: AuroraInfo, latest_block:
                 store_deal_state(spell_id, deal_id, DealState(left_boundary = log_block))
             else:
                 deal_log(spell_id, deal_id, ["error retrieving deal change", change.error])
-                move_block_range(spell_id, deal_id, change.right_boundary, latest_block)
+
+        -- After we have processed all poll logs, we can conclude that we have seen
+        -- all logs from all blocks in range [deal.left, min(change.right, latest_block)]
+        -- so we move `left_boundary` for each deal to the next block after `min`
+        -- so that on the next iteration, poll will request logs from `min(change.right, latest_block) + 1`
+        for change <- changes! par:
+            deal_id = change.deal_info.deal_id
+            move_left_boundary(spell_id, deal_id, change.right_boundary, latest_block)

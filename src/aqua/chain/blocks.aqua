@@ -56,17 +56,3 @@ func gt(spell_id: string, hex_a: string, hex_b: string) -> ?bool:
         spell_log(spell_id, ["hex_cmp error", cmp.error])
 
     <- gt
-
--- Check if `to_block` is less than `latest_block` from chain.
--- If less, polling the range [from_block, to_block] won't yield new updates
--- and we need to move the range to be able to find updates.
--- func need_update_from_block(api_endpoint: string, to_block: string) -> bool:
---     need_update: *bool
-
---     result, is_ok <- get_latest_block(api_endpoint)
---     if is_ok:
---         -- if to_block is less then latest block, we need to update from_block and set it to to_block
---         need_update <<- lte(result!, to_block)
---     else:
---         need_update <<- false
---     <- need_update!

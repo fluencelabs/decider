@@ -28,6 +28,8 @@ service JsonJoinedDeal("json"):
 
 func store_deal_state(decider_id: SpellId, deal_id: DealId, state: DealState):
   Spell decider_id
+  deal_log(decider_id, deal_id, ["store left boundary", state.left_boundary])
+
   json <- Json.stringify(state)
   Spell.set_string(deal_id, json)
 
