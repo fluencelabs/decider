@@ -11,7 +11,6 @@ const DEFAULT_BLOCK_RANGE: u64 = 500;
 
 #[derive(Debug)]
 #[marine]
-/// RENAME: why is it called `DealUpate`?
 pub struct DealChangesReq {
     pub deal_info: DealInfo,
     pub left_boundary: String,
