@@ -18,7 +18,8 @@ use crate::chain::deal_created::*;
 use crate::chain::log::{parse_logs, Log};
 use crate::curl::send_jsonrpc_batch;
 use crate::jsonrpc::deal_changed::{
-    deal_changed_req_batch, default_right_boundary, DealChangedResult, DealChangesReq, MultipleDealsChanged,
+    deal_changed_req_batch, default_right_boundary, DealChangedResult, DealChangesReq,
+    MultipleDealsChanged,
 };
 use crate::jsonrpc::deal_created::DealCreatedResult;
 use crate::jsonrpc::get_logs::{get_logs, GetLogsReq};
@@ -29,6 +30,8 @@ mod curl;
 mod hex;
 mod jsonrpc;
 mod latest_block;
+mod matches;
+mod web3;
 
 module_manifest!();
 
@@ -41,7 +44,10 @@ enum Error {
 }
 
 pub fn main() {
-    WasmLoggerBuilder::new().with_log_level(log::LevelFilter::Trace).build().unwrap();
+    WasmLoggerBuilder::new()
+        .with_log_level(log::LevelFilter::Trace)
+        .build()
+        .unwrap();
 }
 
 // TODO: How to set an upper limit for how many responses to return?
