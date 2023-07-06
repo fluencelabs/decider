@@ -29,8 +29,8 @@ pub fn latest_block_number(api_endpoint: String) -> BlockNumberResult {
     if u64::from_str_radix(&hex_num, 16).is_err() {
         log::debug!(target: "connector", "{:?} isn't a hex number", result);
         return BlockNumberResult::error(format!(
-            "can't parse a block: {:?} isn't a hex number",
-            result
+            "can't parse a block number {}: {:?} isn't a hex number",
+            hex_num, result
         ));
     }
     BlockNumberResult::ok(result)

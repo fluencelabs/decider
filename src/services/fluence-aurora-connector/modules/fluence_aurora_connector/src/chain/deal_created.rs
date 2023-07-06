@@ -136,7 +136,7 @@ impl ChainEvent<DealCreatedData> for DealCreated {
 mod test {
     use std::assert_matches::assert_matches;
 
-    use crate::*;
+    use crate::{*, chain::chain_data::DealParseError};
 
     // Cannot now provide an example of encoded data with effectors
     // #[test]
@@ -193,7 +193,7 @@ mod test {
         let data = "";
         let result = DealCreatedData::parse(data);
         assert!(result.is_err());
-        assert_matches!(result, Err(deal::DealParseError::Empty));
+        assert_matches!(result, Err(DealParseError::Empty));
     }
 
     #[test]
@@ -203,7 +203,7 @@ mod test {
         assert!(result.is_err());
         assert_matches!(
             result,
-            Err(deal::DealParseError::EthError(ethabi::Error::InvalidData))
+            Err(DealParseError::EthError(ethabi::Error::InvalidData))
         );
     }
 }
