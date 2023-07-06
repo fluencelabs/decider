@@ -48,7 +48,6 @@ func get_deal_state(decider_id: SpellId, deal_id: DealId) -> ?DealState:
 
   <- state
 
-
 func store_joined_deal(decider_id: SpellId, deal_id: DealId, deal_spell_id: SpellId, worker_id: WorkerId):
   Spell decider_id
   deal = JoinedDeal(deal_id = deal_id, spell_id = deal_spell_id, worker_id = worker_id)
