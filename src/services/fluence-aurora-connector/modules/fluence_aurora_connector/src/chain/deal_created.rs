@@ -1,7 +1,8 @@
 use ethabi::param_type::ParamType;
+use ethabi::Token;
 use marine_rs_sdk::marine;
 
-use crate::chain::chain_data::{parse_chain_data, ChainData, DealParseError};
+use crate::chain::chain_data::{ChainData, DealParseError};
 use crate::chain::chain_event::ChainEvent;
 use crate::chain::u256::U256;
 
@@ -79,8 +80,7 @@ impl ChainData for DealCreatedData {
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
-    fn parse(data: &str) -> Result<DealCreatedData, DealParseError> {
-        let data_tokens = parse_chain_data(data, Self::signature())?;
+    fn parse(data_tokens: Vec<Token>) -> Result<Self, DealParseError> {
         let deal_data: Option<DealCreatedData> = try {
             let deal_id = data_tokens[0].to_string();
             let payment_token = data_tokens[1].to_string();

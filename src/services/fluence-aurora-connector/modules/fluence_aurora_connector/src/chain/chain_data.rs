@@ -3,7 +3,7 @@ use thiserror::Error;
 
 pub trait ChainData {
     fn signature() -> Vec<ParamType>;
-    fn parse(data: &str) -> Result<Self, DealParseError>
+    fn parse(data_tokens: Vec<Token>) -> Result<Self, DealParseError>
     where
         Self: Sized;
     fn topic() -> String;

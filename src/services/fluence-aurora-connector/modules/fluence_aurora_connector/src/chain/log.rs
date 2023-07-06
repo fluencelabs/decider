@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::chain::chain_data::ChainData;
+use crate::chain::chain_data::{parse_chain_data, ChainData};
 use crate::chain::chain_event::ChainEvent;
+use crate::hex::{hex_to_int, int_to_hex};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -21,19 +22,20 @@ pub fn parse_logs<U: ChainData, T: ChainEvent<U>>(logs: Vec<Log>) -> Vec<T> {
         .collect()
 }
 
-pub fn parse_log<U: ChainData, T: ChainEvent<U>>(log: Log) -> Option<T> {
-    log::debug!("Parse log from block {:?}", log.block_number);
-    match U::parse(&log.data) {
+pub fn parse_log<U: ChainData, T: ChainEvent<U>>(deal: Log) -> Option<T> {
+    log::debug!("Parse log from block {:?}", deal.block_number);
+    let tokens = parse_chain_data(&deal.data, U::signature());
+    match tokens.and_then(U::parse) {
         Err(err) => {
             // Here we ignore blocks we cannot parse.
             // Is it okay? We can't send warning
             log::warn!(target: "connector",
                 "Cannot parse deal log from block {}: {:?}",
-                log.block_number,
+                deal.block_number,
                 err.to_string()
             );
             None
         }
-        Ok(data) => Some(T::new(log.block_number, data)),
+        Ok(data) => Some(T::new(deal.block_number, data)),
     }
 }
