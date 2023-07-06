@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-set -efu
+set -o pipefail -o nounset -o errexit
 
-dir="./src/air/"
+dir="./src/air"
 
 # example/periodic.json or example/oneshot.json
 decider_config="$1"
@@ -17,7 +17,7 @@ fluence aqua -i src/aqua/decider/deal_spell.aqua -o "$dir/deal_spell" --air
 echo "compiled deal spell"
 
 # compile decider/poll.aqua to decider/poll.main.air
-fluence aqua -i src/aqua/decider/poll.aqua -o "$dir/poll" --air
+fluence aqua --import src/aqua/decider -i src/aqua/decider/poll.aqua -o "$dir/poll" --air
 # fluence aqua -i src/aqua/decider.aqua -o "$dir" --air
 echo "compiled decider's poll"
 
