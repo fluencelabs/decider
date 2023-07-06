@@ -69,13 +69,13 @@ pub struct HexCmp {
 }
 
 fn hex_cmp_error(hex_a: &str, a_ok: bool, hex_b: &str, b_ok: bool) -> String {
-    let a = if a_ok {
+    let a = if !a_ok {
         format!("first argument is not a valid hex: {}\n", hex_a)
     } else {
         String::new()
     };
 
-    let b = if b_ok {
+    let b = if !b_ok {
         format!("second argument is not a valid hex: {}\n", hex_b)
     } else {
         String::new()
@@ -86,6 +86,7 @@ fn hex_cmp_error(hex_a: &str, a_ok: bool, hex_b: &str, b_ok: bool) -> String {
 
 #[marine]
 pub fn hex_cmp(hex_a: &str, hex_b: &str) -> HexCmp {
+    println!("args: {:?} {:?}", hex_a, hex_b);
     let int_a = hex_to_int(hex_a);
     let int_b = hex_to_int(hex_b);
 
@@ -163,4 +164,27 @@ pub fn hex_min(hex_a: &str, hex_b: &str) -> HexMin {
     };
 
     min.map(HexMin::success).unwrap_or(HexMin::error())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::hex_cmp;
+
+    #[test]
+    fn cmp_hex() {
+        let cmp = hex_cmp("0xf", "0x9");
+        assert_eq!(cmp.ordering, 1);
+        assert!(cmp.success);
+        assert!(cmp.error.is_empty());
+
+        let cmp = hex_cmp("0x9", "0xf");
+        assert_eq!(cmp.ordering, -1);
+        assert!(cmp.success);
+        assert!(cmp.error.is_empty());
+
+        let cmp = hex_cmp("0xf", "0xf");
+        assert_eq!(cmp.ordering, 0);
+        assert!(cmp.success);
+        assert!(cmp.error.is_empty());
+    }
 }
