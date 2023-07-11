@@ -12,6 +12,7 @@ pub struct MatchedResult {
     error: Vec<String>,
     success: bool,
     logs: Vec<DealMatched>,
+    /// The response contains logs for blocks from `left_boundary` to `right_boundary`
     right_boundary: String,
 }
 
