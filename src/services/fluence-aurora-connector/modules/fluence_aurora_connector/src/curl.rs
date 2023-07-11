@@ -67,8 +67,10 @@ pub fn send_jsonrpc_batch<Req: Serialize, Resp: DeserializeOwned>(
     reqs: Vec<JsonRpcReq<Req>>,
 ) -> Result<Vec<JsonRpcResp<Resp>>, RequestError> {
     let reqs = serde_json::json!(reqs);
+    log::debug!("json rpc batch request: {}", reqs);
     let params = serde_json::to_string(&reqs).map_err(RpcSerializeError)?;
     let result = curl(url, params)?;
+    log::debug!("json rpc batch response: {}", result);
 
     // Parse the result. Note that errors in a JSON RPC request will result in
     // a HTML in a response.
