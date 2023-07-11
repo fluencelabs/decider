@@ -5,7 +5,7 @@ import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 
 import FluenceAuroraConnector, DealCreated from "services.aqua"
 
-import AuroraInfo from "aurora.aqua"
+import ChainInfo from "../chain/chain.aqua"
 import deal_log, spell_log, get_counter, get_string from "../fluence/spell.aqua"
 import is_worker_created from "../fluence/worker.aqua"
 import Json from "../fluence/peer.aqua"
@@ -20,7 +20,7 @@ use "../hex.aqua" as Hex
 
 -- return a value to use as a left boundary in `eth_newLogs`
 -- it usually equals to `last seen block + 1`, except on first iteration it is equal to evaluated `from_block`
-func get_left_boundary(spell_id: SpellId, chain: AuroraInfo) -> ?string:
+func get_left_boundary(spell_id: SpellId, chain: ChainInfo) -> ?string:
     left: ?string
 
     -- load "last seen" block number
@@ -70,7 +70,7 @@ data Poll:
     logs: []DealCreated
     right_boundary: string
 
-func poll_logs(spell_id: SpellId, chain: AuroraInfo, left: string) -> Poll:
+func poll_logs(spell_id: SpellId, chain: ChainInfo, left: string) -> Poll:
     result <- FluenceAuroraConnector.poll_deal_created(chain.api_endpoint, chain.address, left)
     if result.success == false:
         spell_log(spell_id, ["error polling deal created events", result.error])
@@ -80,7 +80,7 @@ func poll_logs(spell_id: SpellId, chain: AuroraInfo, left: string) -> Poll:
 
     <- Poll(logs = logs, right_boundary = result.right_boundary)
 
-func poll_new_deals(spell_id: SpellId, chain: AuroraInfo, latest_block: string):
+func poll_new_deals(spell_id: SpellId, chain: ChainInfo, latest_block: string):
     -- retrieve block number to poll from
     left <- get_left_boundary(spell_id, chain)
     if left != nil:

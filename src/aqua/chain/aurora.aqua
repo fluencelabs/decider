@@ -1,8 +1,0 @@
-module Aurora declares AuroraInfo
-
--- Data we need to poll new deals from aurora
-data AuroraInfo:
-  -- Refers to which api endpoint to poll
-  api_endpoint: string
-  -- Chain contract address
-  address: string

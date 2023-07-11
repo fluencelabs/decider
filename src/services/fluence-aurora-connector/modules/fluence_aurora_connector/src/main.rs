@@ -18,10 +18,11 @@ use crate::chain::deal_created::*;
 use crate::chain::log::{parse_logs, Log};
 use crate::curl::send_jsonrpc_batch;
 use crate::jsonrpc::deal_changed::{
-    deal_changed_req_batch, default_right_boundary, DealChangedResult, DealChangesReq, MultipleDealsChanged,
+    deal_changed_req_batch, DealChangedResult, DealChangesReq, MultipleDealsChanged,
 };
 use crate::jsonrpc::deal_created::DealCreatedResult;
 use crate::jsonrpc::get_logs::{get_logs, GetLogsReq};
+use crate::jsonrpc::right_boundary::default_right_boundary;
 
 mod chain;
 mod config;
@@ -41,7 +42,10 @@ enum Error {
 }
 
 pub fn main() {
-    WasmLoggerBuilder::new().with_log_level(log::LevelFilter::Trace).build().unwrap();
+    WasmLoggerBuilder::new()
+        .with_log_level(log::LevelFilter::Trace)
+        .build()
+        .unwrap();
 }
 
 // TODO: How to set an upper limit for how many responses to return?
@@ -97,17 +101,18 @@ pub fn poll_deal_changes(api_endpoint: String, deals: Vec<DealChangesReq>) -> Mu
     let mut updated_deals = Vec::new();
 
     for (deal, result) in zip(deals, responses) {
-        let to_block = default_right_boundary(&deal.left_boundary);
+        let right_boundary = default_right_boundary(&deal.left_boundary);
         match result.get_result() {
             Err(err) => {
-                let result = DealChangedResult::error(to_block, deal.deal_info, err.to_string());
+                let result =
+                    DealChangedResult::error(right_boundary, deal.deal_info, err.to_string());
                 updated_deals.push(result);
             }
             Ok(result) => {
                 let last_log = result.into_iter().filter(|deal| !deal.removed).last();
                 let change = last_log.and_then(parse_deal_changed);
                 if let Some(change) = change {
-                    let result = DealChangedResult::ok(to_block, deal.deal_info, change);
+                    let result = DealChangedResult::ok(right_boundary, deal.deal_info, change);
                     updated_deals.push(result);
                 }
             }

@@ -1,13 +1,13 @@
 module Blocks declares get_latest, lte, gt
 
 import get_string, spell_log from "../fluence/spell.aqua"
-import AuroraInfo from "../chain/aurora.aqua"
+import ChainInfo from "../chain/chain.aqua"
 import SpellId from "../types.aqua"
 
 import FluenceAuroraConnector from "services.aqua"
 
 -- Get latest block number from RPC
-func get_latest(spell_id: SpellId, chain: AuroraInfo) -> ?string:
+func get_latest(spell_id: SpellId, chain: ChainInfo) -> ?string:
     latest: ?string
     r <- FluenceAuroraConnector.latest_block_number(chain.api_endpoint)
     if r.success:

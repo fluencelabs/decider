@@ -86,7 +86,6 @@ fn hex_cmp_error(hex_a: &str, a_ok: bool, hex_b: &str, b_ok: bool) -> String {
 
 #[marine]
 pub fn hex_cmp(hex_a: &str, hex_b: &str) -> HexCmp {
-    println!("args: {:?} {:?}", hex_a, hex_b);
     let int_a = hex_to_int(hex_a);
     let int_b = hex_to_int(hex_b);
 

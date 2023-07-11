@@ -5,6 +5,7 @@ import DealId, SpellId from "../types.aqua"
 
 
 -- Worker API
+-- TODO: use Worker from aqua-lib
 service Worker("worker"):
   -- throws exception if the worker already exists
   create(deal_id: DealId) -> string

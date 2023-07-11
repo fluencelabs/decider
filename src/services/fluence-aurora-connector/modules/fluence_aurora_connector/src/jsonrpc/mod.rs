@@ -7,6 +7,7 @@ pub mod deal_created;
 pub mod get_logs;
 
 pub mod request;
+pub mod right_boundary;
 #[cfg(test)]
 mod tests;
 

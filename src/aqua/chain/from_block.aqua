@@ -6,7 +6,7 @@ import SpellId from "../types.aqua"
 import spell_log, get_string from "../fluence/spell.aqua"
 import Json from "../fluence/peer.aqua"
 import get_latest from "../chain/blocks.aqua"
-import AuroraInfo from "../chain/aurora.aqua"
+import ChainInfo from "../chain/chain.aqua"
 
 -- read `init_data.from_block` from KV
 -- `from_block` is usually set as a port of `init data` for `decider`
@@ -27,7 +27,7 @@ func get_from_block(spell_id: SpellId) -> string:
 -- Evaluate 'latest' or 'earliest' in the `from_block` to actual hex value
 -- "latest" => latest block on chain
 -- "earliest" => 0x0
-func evaluate_from_block(spell_id: SpellId, chain: AuroraInfo) -> ?string:
+func evaluate_from_block(spell_id: SpellId, chain: ChainInfo) -> ?string:
     left: ?string
     from_block <- get_from_block(spell_id)
     if from_block == "latest":

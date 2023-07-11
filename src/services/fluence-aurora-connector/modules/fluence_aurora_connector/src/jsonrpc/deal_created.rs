@@ -6,6 +6,7 @@ pub struct DealCreatedResult {
     error: Vec<String>,
     success: bool,
     result: Vec<DealCreated>,
+    /// The response contains logs for blocks from `left_boundary` to `right_boundary`
     right_boundary: String,
 }
 
