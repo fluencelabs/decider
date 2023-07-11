@@ -19,7 +19,7 @@ impl BlockNumberReq {
 #[marine]
 pub struct BlockNumberResult {
     success: bool,
-    result: String,
+    number_hex: String,
     error: Vec<String>,
 }
 
@@ -28,7 +28,7 @@ impl BlockNumberResult {
         Self {
             success: true,
             error: vec![],
-            result,
+            number_hex: result,
         }
     }
 
@@ -36,7 +36,7 @@ impl BlockNumberResult {
         Self {
             success: false,
             error: vec![err_msg],
-            result: String::new(),
+            number_hex: String::new(),
         }
     }
 }

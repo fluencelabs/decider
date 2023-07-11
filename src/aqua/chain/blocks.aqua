@@ -9,11 +9,11 @@ import FluenceAuroraConnector from "services.aqua"
 -- Get latest block number from RPC
 func get_latest(spell_id: SpellId, chain: ChainInfo) -> ?string:
     latest: ?string
-    r <- FluenceAuroraConnector.latest_block_number(chain.api_endpoint)
-    if r.success:
-        latest <<- r.result
+    latest_block <- FluenceAuroraConnector.latest_block_number(chain.api_endpoint)
+    if latest_block.success:
+        latest <<- latest_block.number_hex
     else:
-        spell_log(spell_id, ["error retrieving latest block number", r.error])
+        spell_log(spell_id, ["error retrieving latest block number", latest_block.error])
     <- latest
 
 -- implements Less Than or Equal for two hex strings, i.e. `hex_a <= hex_b`
