@@ -1,7 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use crate::chain::chain_data::ChainData;
 use crate::chain::chain_event::ChainEvent;
-use crate::hex::{hex_to_int, int_to_hex};
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -34,10 +34,6 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(deal: Log) -> Option<T> {
             );
             None
         }
-        Ok(data) => {
-            let block_number = hex_to_int(&deal.block_number)?;
-            let next_block_number = int_to_hex(block_number + 1);
-            Some(T::new(next_block_number, deal.block_number, data))
-        }
+        Ok(data) => Some(T::new(deal.block_number, data)),
     }
 }
