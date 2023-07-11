@@ -100,9 +100,7 @@ impl ChainData for Match {
                 app_cid,
             }
         };
-        deal_data.ok_or_else(|| {
-            DealParseError::InternalError("parsed data doesn't correspond expected signature")
-        })
+        deal_data.ok_or_else(|| DealParseError::SignatureMismatch(Self::signature()))
     }
 }
 

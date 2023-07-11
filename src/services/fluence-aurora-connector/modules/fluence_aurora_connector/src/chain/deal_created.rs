@@ -81,6 +81,10 @@ impl ChainData for DealCreatedData {
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
     fn parse(data_tokens: Vec<Token>) -> Result<Self, DealParseError> {
+        if data_tokens.is_empty() {
+            return Err(DealParseError::Empty);
+        }
+
         let deal_data: Option<DealCreatedData> = try {
             let deal_id = data_tokens[0].to_string();
             let payment_token = data_tokens[1].to_string();
@@ -114,9 +118,7 @@ impl ChainData for DealCreatedData {
                 epoch,
             }
         };
-        deal_data.ok_or_else(|| {
-            DealParseError::InternalError("parsed data doesn't correspond expected signature")
-        })
+        deal_data.ok_or_else(|| DealParseError::SignatureMismatch(Self::signature()))
     }
 }
 
@@ -130,7 +132,12 @@ impl ChainEvent<DealCreatedData> for DealCreated {
 mod test {
     use std::assert_matches::assert_matches;
 
-    use crate::{chain::chain_data::DealParseError, *};
+    use ethabi::Token;
+
+    use crate::chain::chain_data::ChainData;
+    use crate::chain::chain_data::DealParseError;
+    use crate::chain::deal_created::{DealCreated, DealCreatedData};
+    use crate::chain::log::{parse_log, Log};
 
     // Cannot now provide an example of encoded data with effectors
     // #[test]
@@ -152,11 +159,17 @@ mod test {
 
     #[test]
     fn test_chain_parsing_ok_empty_effectors() {
-        let data = "0x00000000000000000000000094952482aa36dc9ec113bbba0df49284ecc071e20000000000000000000000005f7a3a2dab601ee4a1970b53088bebca176e13f40000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000de0b6b3a7640000000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000009896800000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001a00000000000000000000000000000000000000000000000000000000000554509000000000000000000000000000000000000000000000000000000000000002e516d5758616131534b41445274774e7472773278714a5556447864734472536d4a635542614a7946324c353476500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+        let data = "0x00000000000000000000000094952482aa36dc9ec113bbba0df49284ecc071e20000000000000000000000005f7a3a2dab601ee4a1970b53088bebca176e13f40000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000de0b6b3a7640000000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000009896800000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001a00000000000000000000000000000000000000000000000000000000000554509000000000000000000000000000000000000000000000000000000000000002e516d5758616131534b41445274774e7472773278714a5556447864734472536d4a635542614a7946324c353476500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".to_string();
+        let log = Log {
+            data,
+            block_number: "0x0".to_string(),
+            removed: false,
+            topics: vec![],
+        };
+        let result = parse_log::<DealCreatedData, DealCreated>(log);
 
-        let result = DealCreatedData::parse(data);
         assert!(result.is_ok(), "can't parse data: {:?}", result);
-        let result = result.unwrap();
+        let result = result.unwrap().info;
         assert_eq!(result.deal_id, "94952482aa36dc9ec113bbba0df49284ecc071e2");
         assert_eq!(
             result.payment_token,
@@ -184,15 +197,14 @@ mod test {
 
     #[test]
     fn test_chain_parsing_fail_empty() {
-        let data = "";
-        let result = DealCreatedData::parse(data);
+        let result = DealCreatedData::parse(vec![]);
         assert!(result.is_err());
         assert_matches!(result, Err(DealParseError::Empty));
     }
 
     #[test]
     fn test_chain_parsing_fail_something() {
-        let data = "0x1234567890";
+        let data = vec![Token::Bool(false)];
         let result = DealCreatedData::parse(data);
         assert!(result.is_err());
         assert_matches!(

@@ -42,14 +42,12 @@ impl ChainData for DealChangedData {
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
-    fn parse(data_tokens: Vec<Token>) -> Result<Self, DealParseError> {
+    fn parse(tokens: Vec<Token>) -> Result<Self, DealParseError> {
         let deal_data: Option<DealChangedData> = try {
-            let app_cid = data_tokens.into_iter().next()?.into_string()?;
+            let app_cid = tokens.into_iter().next()?.into_string()?;
             DealChangedData { app_cid }
         };
-        deal_data.ok_or_else(|| {
-            DealParseError::InternalError("parsed data doesn't correspond expected signature")
-        })
+        deal_data.ok_or_else(|| DealParseError::SignatureMismatch(Self::signature()))
     }
 }
 
@@ -60,5 +58,5 @@ impl ChainEvent<DealChangedData> for DealChanged {
 }
 
 pub fn parse_deal_changed(log: Log) -> Option<DealChanged> {
-    parse_log::<DealChangedData, DealChanged>(log)
+    parse_log::<DealChangedData, DealChanged>(log).ok()
 }

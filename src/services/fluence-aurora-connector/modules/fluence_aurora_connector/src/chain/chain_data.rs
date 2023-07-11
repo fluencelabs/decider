@@ -15,8 +15,8 @@ pub enum DealParseError {
     EthError(#[from] ethabi::Error),
     #[error(transparent)]
     HexError(#[from] hex::FromHexError),
-    #[error("internal error, please, contact developers: {0}")]
-    InternalError(&'static str),
+    #[error("parsed data doesn't correspond to the expected signature: {0:?}")]
+    SignatureMismatch(Vec<ParamType>),
     #[error("empty data, nothing to parse")]
     Empty,
 }
