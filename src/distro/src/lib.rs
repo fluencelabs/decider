@@ -1,10 +1,12 @@
-use maplit::hashmap;
 use std::collections::HashMap;
-use serde_json::{json, Value as JValue};
-use fluence_spell_dtos::trigger_config::TriggerConfig;
 
-const CONNECTOR: &'static [u8] =
-    include_bytes!("../decider-spell/fluence_aurora_connector.wasm");
+use fluence_spell_dtos::trigger_config::TriggerConfig;
+use maplit::hashmap;
+use serde_json::{json, Value as JValue};
+
+pub use build_info::PKG_VERSION as VERSION;
+
+const CONNECTOR: &'static [u8] = include_bytes!("../decider-spell/fluence_aurora_connector.wasm");
 const CURL_ADAPTER: &'static [u8] = include_bytes!("../decider-spell/curl_adapter.wasm");
 const CONFIG: &'static [u8] = include_bytes!("../decider-spell/Config.toml");
 
@@ -15,15 +17,13 @@ pub mod build_info {
     include!(concat!(env!("OUT_DIR"), "/built.rs"));
 }
 
-pub use build_info::PKG_VERSION as VERSION;
-
 pub struct DistrService {
-   pub name: &'static str,
-   pub config: &'static [u8],
-   pub modules: HashMap<&'static str, &'static [u8]>,
+    pub name: &'static str,
+    pub config: &'static [u8],
+    pub modules: HashMap<&'static str, &'static [u8]>,
 }
 
-pub fn connector_service_modules() ->  DistrService {
+pub fn connector_service_modules() -> DistrService {
     DistrService {
         // The name is used by the decider, so we don't need to explicitly pass the service id of the connector service
         // The name is taken from the config. Would be nice one day to automatically take it from the project itself.
@@ -32,7 +32,7 @@ pub fn connector_service_modules() ->  DistrService {
         modules: hashmap! {
             "fluence_aurora_connector" => CONNECTOR,
             "curl_adapter" => CURL_ADAPTER,
-        }
+        },
     }
 }
 
@@ -65,7 +65,7 @@ pub fn decider_spell(config: DeciderConfig) -> DistrSpell {
 
     DistrSpell {
         air: DECIDER_SPELL,
-        kv: hashmap!{
+        kv: hashmap! {
             "worker_script" => json!(WORKER_SPELL),
             "worker_config" => json!(worker_config),
             "worker_ipfs" => json!(config.worker_ipfs_multiaddr),

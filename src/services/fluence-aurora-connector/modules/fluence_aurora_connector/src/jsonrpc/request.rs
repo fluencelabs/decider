@@ -1,6 +1,7 @@
-use crate::jsonrpc::JsonRpcError;
 use thiserror::Error;
 use url::Url;
+
+use crate::jsonrpc::JsonRpcError;
 
 #[derive(Debug, Error)]
 pub enum RequestError {

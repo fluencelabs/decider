@@ -1,5 +1,6 @@
-use crate::chain::deal_created::DealCreated;
 use marine_rs_sdk::marine;
+
+use crate::chain::deal_created::DealCreated;
 
 #[marine]
 pub struct DealCreatedResult {
