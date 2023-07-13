@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.17](https://github.com/fluencelabs/decider/compare/connector-v0.4.16...connector-v0.4.17) (2023-07-13)
+
+
+### Bug Fixes
+
+* sort imports to trigger release ([#61](https://github.com/fluencelabs/decider/issues/61)) ([3a74db6](https://github.com/fluencelabs/decider/commit/3a74db6e211475ffb803573e1d45b71d511ec715))
+
 ## [0.4.16](https://github.com/fluencelabs/decider/compare/connector-v0.4.15...connector-v0.4.16) (2023-06-26)
 
 
