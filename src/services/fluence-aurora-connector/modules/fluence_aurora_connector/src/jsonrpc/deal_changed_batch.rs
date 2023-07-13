@@ -5,9 +5,10 @@ use marine_rs_sdk::marine;
 use crate::chain::deal_changed::parse_deal_changed;
 use crate::chain::log::Log;
 use crate::curl::send_jsonrpc_batch;
-use crate::jsonrpc::deal_changed::{default_right_boundary, DealChangedResult, DealChangesReq};
+use crate::jsonrpc::deal_changed::{DealChangedResult, DealChangesReq};
 use crate::jsonrpc::get_logs::GetLogsReq;
 use crate::jsonrpc::request::check_url;
+use crate::jsonrpc::right_boundary::default_right_boundary;
 use crate::jsonrpc::JsonRpcReq;
 
 #[marine]
