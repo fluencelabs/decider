@@ -1,4 +1,7 @@
-use crate::{jsonrpc::{JsonRpcReq, get_logs::GetLogsReq}, chain::log::Log};
+use crate::{
+    chain::log::Log,
+    jsonrpc::{get_logs::GetLogsReq, JsonRpcReq},
+};
 
 use super::*;
 

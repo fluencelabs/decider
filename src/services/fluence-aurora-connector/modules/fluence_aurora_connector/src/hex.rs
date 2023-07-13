@@ -1,5 +1,6 @@
+use std::cmp::{min, Ordering};
+
 use marine_rs_sdk::marine;
-use std::cmp::{Ordering, min};
 
 /// Convert hex string to u64
 pub fn hex_to_int(hex: &str) -> Option<u64> {
@@ -101,7 +102,7 @@ pub fn hex_cmp(hex_a: &str, hex_b: &str) -> HexCmp {
 #[marine]
 pub struct HexAdd {
     pub hex: Vec<String>,
-    pub success: bool
+    pub success: bool,
 }
 
 impl HexAdd {
@@ -134,7 +135,7 @@ pub fn hex_add(hex: &str, add: u32) -> HexAdd {
 #[marine]
 pub struct HexMin {
     pub hex: Vec<String>,
-    pub success: bool
+    pub success: bool,
 }
 
 impl HexMin {

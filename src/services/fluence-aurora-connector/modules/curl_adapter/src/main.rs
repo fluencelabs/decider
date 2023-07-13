@@ -1,7 +1,6 @@
 // #![allow(improper_ctypes)]
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
-
 use marine_rs_sdk::MountedBinaryResult;
 
 module_manifest!();
