@@ -21,19 +21,19 @@ pub fn parse_logs<U: ChainData, T: ChainEvent<U>>(logs: Vec<Log>) -> Vec<T> {
         .collect()
 }
 
-pub fn parse_log<U: ChainData, T: ChainEvent<U>>(deal: Log) -> Option<T> {
-    log::debug!("Parse block {:?}", deal.block_number);
-    match U::parse(&deal.data) {
+pub fn parse_log<U: ChainData, T: ChainEvent<U>>(log: Log) -> Option<T> {
+    log::debug!("Parse log from block {:?}", log.block_number);
+    match U::parse(&log.data) {
         Err(err) => {
             // Here we ignore blocks we cannot parse.
             // Is it okay? We can't send warning
             log::warn!(target: "connector",
                 "Cannot parse deal log from block {}: {:?}",
-                deal.block_number,
+                log.block_number,
                 err.to_string()
             );
             None
         }
-        Ok(data) => Some(T::new(deal.block_number, data)),
+        Ok(data) => Some(T::new(log.block_number, data)),
     }
 }
