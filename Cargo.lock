@@ -464,7 +464,7 @@ dependencies = [
 
 [[package]]
 name = "curl_adapter"
-version = "0.4.16"
+version = "0.4.17"
 dependencies = [
  "marine-rs-sdk",
  "marine-rs-sdk-test",
@@ -507,7 +507,7 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.4.16"
+version = "0.4.17"
 dependencies = [
  "built",
  "fluence-spell-dtos",
@@ -751,7 +751,7 @@ dependencies = [
 
 [[package]]
 name = "fluence_aurora_connector"
-version = "0.4.16"
+version = "0.4.17"
 dependencies = [
  "ethabi",
  "hex",
