@@ -13,3 +13,8 @@ src/js/src/aqua
 
 src/air
 src/distro/decider-spell/
+
+# builtin package artifacts
+connector/
+connector.tar.gz
+decider.json

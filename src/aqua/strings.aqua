@@ -1,0 +1,9 @@
+module Strings declares eq
+
+func eq(a: string, b: string) -> bool:
+   result: *bool
+   if a == b:
+      result <<- true
+   else:
+      result <<- false
+   <- result!

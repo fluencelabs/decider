@@ -1,0 +1,6 @@
+module Types declares DealId, SpellId, WorkerId, CID
+
+alias DealId: string
+alias SpellId: string
+alias WorkerId: string
+alias CID: string

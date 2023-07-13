@@ -1,6 +1,9 @@
-use super::*;
 use ethabi::param_type::ParamType;
 use marine_rs_sdk::marine;
+
+use crate::chain::chain_data::{parse_chain_data, ChainData, DealParseError};
+use crate::chain::chain_event::ChainEvent;
+use crate::chain::log::{parse_log, Log};
 
 /// Corresponding Solidity type:
 /// ```solidity
@@ -16,7 +19,6 @@ pub struct DealChangedData {
 #[derive(Debug)]
 #[marine]
 pub struct DealChanged {
-    next_block_number: String,
     block_number: String,
     info: DealChangedData,
 }
@@ -42,7 +44,7 @@ impl ChainData for DealChangedData {
     fn parse(data: &str) -> Result<DealChangedData, DealParseError> {
         let data_tokens = parse_chain_data(data, Self::signature())?;
         let deal_data: Option<DealChangedData> = try {
-            let app_cid = data_tokens[0].clone().into_string()?;
+            let app_cid = data_tokens.into_iter().next()?.into_string()?;
             DealChangedData { app_cid }
         };
         deal_data.ok_or_else(|| {
@@ -52,11 +54,11 @@ impl ChainData for DealChangedData {
 }
 
 impl ChainEvent<DealChangedData> for DealChanged {
-    fn new(next_block_number: String, block_number: String, info: DealChangedData) -> Self {
-        Self {
-            next_block_number,
-            block_number,
-            info,
-        }
+    fn new(block_number: String, info: DealChangedData) -> Self {
+        Self { block_number, info }
     }
+}
+
+pub fn parse_deal_changed(log: Log) -> Option<DealChanged> {
+    parse_log::<DealChangedData, DealChanged>(log)
 }
