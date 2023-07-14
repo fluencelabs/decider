@@ -2,7 +2,8 @@ use ethabi::param_type::ParamType;
 use ethabi::Token;
 use marine_rs_sdk::marine;
 
-use crate::chain::chain_data::{ChainData, DealParseError};
+use crate::chain::chain_data::EventField::NotIndexed;
+use crate::chain::chain_data::{ChainData, DealParseError, EventField};
 use crate::chain::chain_event::ChainEvent;
 use crate::chain::log::{parse_log, Log};
 
@@ -29,15 +30,13 @@ impl DealChanged {
 }
 
 impl ChainData for DealChangedData {
-    fn topic() -> String {
-        let sig = Self::signature();
-        let hash = ethabi::long_signature(DealChanged::EVENT_NAME, &sig);
-        format!("0x{}", hex::encode(hash.as_bytes()))
+    fn event_name() -> &'static str {
+        DealChanged::EVENT_NAME
     }
 
-    fn signature() -> Vec<ParamType> {
+    fn signature() -> Vec<EventField> {
         vec![
-            ParamType::String, // appCID
+            NotIndexed(ParamType::String), // appCID
         ]
     }
 

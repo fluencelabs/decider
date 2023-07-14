@@ -2,7 +2,8 @@ use ethabi::param_type::ParamType;
 use ethabi::Token;
 use marine_rs_sdk::marine;
 
-use crate::chain::chain_data::{ChainData, DealParseError};
+use crate::chain::chain_data::EventField::NotIndexed;
+use crate::chain::chain_data::{ChainData, DealParseError, EventField};
 use crate::chain::chain_event::ChainEvent;
 use crate::chain::u256::U256;
 
@@ -58,24 +59,22 @@ impl DealCreated {
 }
 
 impl ChainData for DealCreatedData {
-    fn topic() -> String {
-        let sig = Self::signature();
-        let hash = ethabi::long_signature(DealCreated::EVENT_NAME, &sig);
-        format!("0x{}", hex::encode(hash.as_bytes()))
+    fn event_name() -> &'static str {
+        DealCreated::EVENT_NAME
     }
 
-    fn signature() -> Vec<ParamType> {
+    fn signature() -> Vec<EventField> {
         vec![
-            ParamType::Address,                            // deal
-            ParamType::Address,                            // paymentToken
-            ParamType::Uint(256),                          // pricePerEpoch
-            ParamType::Uint(256),                          // requiredStake
-            ParamType::Uint(256),                          // minWorkers
-            ParamType::Uint(256),                          // maxWorkersPerProvider
-            ParamType::Uint(256),                          // targetWorkers
-            ParamType::String,                             // appCID
-            ParamType::Array(Box::new(ParamType::String)), // effectorWasmsCids
-            ParamType::Uint(256),                          // epoch
+            NotIndexed(ParamType::Address),                            // deal
+            NotIndexed(ParamType::Address),                            // paymentToken
+            NotIndexed(ParamType::Uint(256)),                          // pricePerEpoch
+            NotIndexed(ParamType::Uint(256)),                          // requiredStake
+            NotIndexed(ParamType::Uint(256)),                          // minWorkers
+            NotIndexed(ParamType::Uint(256)),                          // maxWorkersPerProvider
+            NotIndexed(ParamType::Uint(256)),                          // targetWorkers
+            NotIndexed(ParamType::String),                             // appCID
+            NotIndexed(ParamType::Array(Box::new(ParamType::String))), // effectorWasmsCids
+            NotIndexed(ParamType::Uint(256)),                          // epoch
         ]
     }
 

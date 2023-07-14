@@ -2,7 +2,8 @@ use ethabi::param_type::ParamType;
 use ethabi::Token;
 use marine_rs_sdk::marine;
 
-use crate::chain::chain_data::{ChainData, DealParseError};
+use crate::chain::chain_data::EventField::{Indexed, NotIndexed};
+use crate::chain::chain_data::{ChainData, DealParseError, EventField};
 use crate::chain::chain_event::ChainEvent;
 use crate::chain::u256::U256;
 
@@ -51,29 +52,27 @@ impl DealMatched {
 }
 
 impl ChainData for Match {
-    fn topic() -> String {
-        let sig = Self::signature();
-        let hash = ethabi::long_signature(DealMatched::EVENT_NAME, &sig);
-        format!("0x{}", hex::encode(hash.as_bytes()))
+    fn event_name() -> &'static str {
+        DealMatched::EVENT_NAME
     }
 
-    fn signature() -> Vec<ParamType> {
+    fn signature() -> Vec<EventField> {
         vec![
             // compute_provider
-            ParamType::Address,
+            Indexed(ParamType::Address),
             // deal
-            ParamType::Address,
+            NotIndexed(ParamType::Address),
             // joined_workers
-            ParamType::Uint(256),
+            NotIndexed(ParamType::Uint(256)),
             // deal_creation_block
-            ParamType::Uint(256),
+            NotIndexed(ParamType::Uint(256)),
             // app_cid
-            ParamType::Tuple(vec![
+            NotIndexed(ParamType::Tuple(vec![
                 // prefixes
                 ParamType::FixedBytes(4),
                 // hash
                 ParamType::FixedBytes(32),
-            ]),
+            ])),
         ]
     }
 
@@ -112,12 +111,10 @@ impl ChainEvent<Match> for DealMatched {
 
 #[cfg(test)]
 mod tests {
-    use crate::chain::chain_data::{parse_chain_data, ChainData};
-    use crate::chain::deal_matched::Match;
-    use crate::chain::log::Log;
+    use crate::chain::chain_data::ChainData;
+    use crate::chain::deal_matched::{DealMatched, Match};
+    use crate::chain::log::{parse_log, Log};
     use crate::jsonrpc::JsonRpcResp;
-    use ethabi::ParamType;
-    use ethabi::ParamType::Address;
 
     #[test]
     fn topic() {
@@ -152,21 +149,15 @@ mod tests {
         }
         "#;
 
-        let log: JsonRpcResp<Vec<Log>> = serde_json::from_str(jsonrpc).expect("invalid jsonrpc");
-        let data = &log.result[0].data;
-        let signature = Match::signature();
-
-        {
-            let data = hex::decode("00000000000000000000000099e28f59ddfe14ff4e598a3ba3928bbf87b3f2b30000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000004d0155122000000000000000000000000000000000000000000000000000000000ae5c519332925f31f747a4edd958fb5b0791b10383ec6d5e77e2264f211e09e3").expect("invalid hex in data");
-            let address = ethabi::decode(&[Address], &data[0..32]).expect("ethabi address fail");
-            println!("address {:?}", address);
-            let address = ethabi::decode(&[Address], &data[32..64]).expect("ethabi address fail");
-            println!("address {:?}", address);
-            // ethabi::decode(&signature, &data).expect("ethabi error");
-        }
-
-        // let tokens = parse_chain_data(data, signature);
-        // println!("tokens {:?}", tokens);
+        let logs: JsonRpcResp<Vec<Log>> = serde_json::from_str(jsonrpc).expect("invalid jsonrpc");
+        let log = logs.result[0].clone();
+        let m = parse_log::<Match, DealMatched>(log).expect("error parsing Match from log");
+        assert_eq!(m.block_number, "0x4e");
+        let m = m.info;
+        assert_eq!(
+            m.compute_provider,
+            "6f10e8209296ea9e556f80b0ff545d8175f271d0"
+        );
         // let tokens = tokens.unwrap();
         // let m = Match::parse(tokens);
         // println!("match {:?}", m)
