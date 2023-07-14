@@ -1,3 +1,4 @@
+use ethabi::Token;
 use marine_rs_sdk::marine;
 
 #[derive(Debug, PartialEq)]
@@ -22,5 +23,9 @@ impl U256 {
             .flat_map(|x| x.to_le_bytes())
             .collect::<Vec<_>>();
         U256 { bytes }
+    }
+
+    pub fn from_token(token: Token) -> Option<Self> {
+        token.into_uint().map(Self::from_eth)
     }
 }

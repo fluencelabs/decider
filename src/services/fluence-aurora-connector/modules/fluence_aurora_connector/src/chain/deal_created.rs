@@ -5,6 +5,7 @@ use marine_rs_sdk::marine;
 use crate::chain::chain_data::EventField::NotIndexed;
 use crate::chain::chain_data::{ChainData, DealParseError, EventField};
 use crate::chain::chain_event::ChainEvent;
+use crate::chain::data_tokens::next_opt;
 use crate::chain::u256::U256;
 
 /// Corresponding Solidity type:
@@ -79,45 +80,39 @@ impl ChainData for DealCreatedData {
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
-    fn parse(data_tokens: Vec<Token>) -> Result<Self, DealParseError> {
-        if data_tokens.is_empty() {
-            return Err(DealParseError::Empty);
-        }
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, DealParseError> {
+        let deal_id = next_opt(data_tokens, "deal_id", Token::into_string)?;
+        let payment_token = next_opt(data_tokens, "payment_token", Token::into_string)?;
 
-        let deal_data: Option<DealCreatedData> = try {
-            let deal_id = data_tokens[0].to_string();
-            let payment_token = data_tokens[1].to_string();
+        let price_per_epoch = next_opt(data_tokens, "price_per_epoch", U256::from_token)?;
+        let required_stake = next_opt(data_tokens, "required_stake", U256::from_token)?;
 
-            let price_per_epoch = U256::from_eth(data_tokens[2].clone().into_uint()?);
-            let required_stake = U256::from_eth(data_tokens[3].clone().into_uint()?);
+        let min_workers = next_opt(data_tokens, "min_workers", Token::into_uint)?.as_u64();
+        let max_workers_per_provider =
+            next_opt(data_tokens, "max_workers_per_provider", Token::into_uint)?.as_u64();
+        let target_workers = next_opt(data_tokens, "target_workers", Token::into_uint)?.as_u64();
 
-            let min_workers = data_tokens[4].clone().into_uint()?.as_u64();
-            let max_workers_per_provider = data_tokens[5].clone().into_uint()?.as_u64();
-            let target_workers = data_tokens[6].clone().into_uint()?.as_u64();
-
-            let app_cid = data_tokens[7].clone().into_string()?;
-            let effector_wasms_cids = data_tokens[8]
-                .clone()
-                .into_array()?
+        let app_cid = next_opt(data_tokens, "app_cid", Token::into_string)?;
+        let effector_wasms_cids = next_opt(data_tokens, "effector_wasms_cids", |t| {
+            t.into_array()?
                 .into_iter()
-                .map(|x| x.into_string())
-                .collect::<Option<_>>()?;
-            let epoch = data_tokens[9].clone().into_uint()?.as_u64();
+                .map(Token::into_string)
+                .collect()
+        })?;
+        let epoch = next_opt(data_tokens, "epoch", Token::into_uint)?.as_u64();
 
-            DealCreatedData {
-                deal_id,
-                payment_token,
-                price_per_epoch,
-                required_stake,
-                min_workers,
-                max_workers_per_provider,
-                target_workers,
-                app_cid,
-                effector_wasms_cids,
-                epoch,
-            }
-        };
-        deal_data.ok_or_else(|| DealParseError::SignatureMismatch(Self::signature()))
+        Ok(DealCreatedData {
+            deal_id,
+            payment_token,
+            price_per_epoch,
+            required_stake,
+            min_workers,
+            max_workers_per_provider,
+            target_workers,
+            app_cid,
+            effector_wasms_cids,
+            epoch,
+        })
     }
 }
 
@@ -196,14 +191,14 @@ mod test {
 
     #[test]
     fn test_chain_parsing_fail_empty() {
-        let result = DealCreatedData::parse(vec![]);
+        let result = DealCreatedData::parse(&mut std::iter::empty());
         assert!(result.is_err());
         assert_matches!(result, Err(DealParseError::Empty));
     }
 
     #[test]
     fn test_chain_parsing_fail_something() {
-        let data = vec![Token::Bool(false)];
+        let data = &mut vec![Token::Bool(false)].into_iter();
         let result = DealCreatedData::parse(data);
         assert!(result.is_err());
         assert_matches!(

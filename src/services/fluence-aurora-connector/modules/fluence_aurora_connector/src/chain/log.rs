@@ -67,7 +67,11 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(deal: Log) -> Result<T, DealPar
             }
         }
 
-        let log = U::parse(tokens)?;
+        if tokens.is_empty() {
+            return Err(DealParseError::Empty);
+        }
+
+        let log = U::parse(&mut tokens.into_iter())?;
         T::new(deal.block_number.clone(), log)
     };
 

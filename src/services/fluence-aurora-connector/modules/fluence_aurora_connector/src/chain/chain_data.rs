@@ -19,7 +19,7 @@ impl EventField {
 pub trait ChainData {
     fn event_name() -> &'static str;
     fn signature() -> Vec<EventField>;
-    fn parse(data_tokens: Vec<Token>) -> Result<Self, DealParseError>
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, DealParseError>
     where
         Self: Sized;
 

@@ -5,6 +5,7 @@ use marine_rs_sdk::marine;
 use crate::chain::chain_data::EventField::NotIndexed;
 use crate::chain::chain_data::{ChainData, DealParseError, EventField};
 use crate::chain::chain_event::ChainEvent;
+use crate::chain::data_tokens::next_opt;
 use crate::chain::log::{parse_log, Log};
 
 /// Corresponding Solidity type:
@@ -41,12 +42,9 @@ impl ChainData for DealChangedData {
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
-    fn parse(tokens: Vec<Token>) -> Result<Self, DealParseError> {
-        let deal_data: Option<DealChangedData> = try {
-            let app_cid = tokens.into_iter().next()?.into_string()?;
-            DealChangedData { app_cid }
-        };
-        deal_data.ok_or_else(|| DealParseError::SignatureMismatch(Self::signature()))
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, DealParseError> {
+        let app_cid = next_opt(data_tokens, "app_cid", |t| t.into_string())?;
+        Ok(DealChangedData { app_cid })
     }
 }
 

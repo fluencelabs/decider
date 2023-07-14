@@ -3,10 +3,10 @@ use ethabi::param_type::ParamType;
 use ethabi::Token;
 use marine_rs_sdk::marine;
 
-use crate::chain::chain_data::DealParseError::{InvalidParsedToken, MissingParsedToken};
 use crate::chain::chain_data::EventField::{Indexed, NotIndexed};
 use crate::chain::chain_data::{ChainData, DealParseError, EventField};
 use crate::chain::chain_event::ChainEvent;
+use crate::chain::data_tokens::next_opt;
 use crate::chain::u256::U256;
 
 /// Corresponding Solidity type:
@@ -79,41 +79,16 @@ impl ChainData for Match {
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
-    fn parse(data_tokens: Vec<Token>) -> Result<Self, DealParseError> {
-        // Take next token and parse it with `f`
-        fn next_opt<T>(
-            data_tokens: &mut impl Iterator<Item = Token>,
-            name: &'static str,
-            f: impl Fn(Token) -> Option<T>,
-        ) -> Result<T, DealParseError> {
-            let next = data_tokens.next().ok_or(MissingParsedToken(name))?;
-            let parsed = f(next).ok_or(InvalidParsedToken(name))?;
-
-            Ok(parsed)
-        }
-
-        // Take next token and parse it with `f`
-        fn next<T>(
-            data_tokens: &mut impl Iterator<Item = Token>,
-            name: &'static str,
-            f: impl Fn(Token) -> T,
-        ) -> Result<T, DealParseError> {
-            next_opt(data_tokens, name, |t| Some(f(t)))
-        }
-
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, DealParseError> {
         let tokens = &mut data_tokens.into_iter();
-        let compute_provider = next(tokens, "compute_provider", |t| t.to_string())?;
-        let deal = next(tokens, "deal", |t| t.to_string())?;
-        let joined_workers = next_opt(tokens, "joined_workers", |t| {
-            t.into_uint().map(U256::from_eth)
-        })?;
-        let deal_creation_block = next_opt(tokens, "deal_creation_block", |t| {
-            t.into_uint().map(U256::from_eth)
-        })?;
+        let compute_provider = next_opt(tokens, "compute_provider", Token::into_string)?;
+        let deal = next_opt(tokens, "deal", Token::into_string)?;
+        let joined_workers = next_opt(tokens, "joined_workers", U256::from_token)?;
+        let deal_creation_block = next_opt(tokens, "deal_creation_block", U256::from_token)?;
 
-        let app_cid = &mut next_opt(tokens, "app_cid", |t| t.into_tuple())?.into_iter();
-        let cid_prefixes = next_opt(app_cid, "app_cid.prefixes", |t| t.into_fixed_bytes())?;
-        let cid_hash = next_opt(app_cid, "app_cid.cid_hash", |t| t.into_fixed_bytes())?;
+        let app_cid = &mut next_opt(tokens, "app_cid", Token::into_tuple)?.into_iter();
+        let cid_prefixes = next_opt(app_cid, "app_cid.prefixes", Token::into_fixed_bytes)?;
+        let cid_hash = next_opt(app_cid, "app_cid.cid_hash", Token::into_fixed_bytes)?;
         let cid_bytes = [cid_prefixes, cid_hash].concat();
         let app_cid = Cid::read_bytes(cid_bytes.as_slice())?;
 
