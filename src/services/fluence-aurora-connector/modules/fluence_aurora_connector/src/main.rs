@@ -2,6 +2,8 @@
 #![feature(assert_matches)]
 #![feature(try_blocks)]
 
+extern crate core;
+
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::WasmLoggerBuilder;
 use thiserror::Error;
