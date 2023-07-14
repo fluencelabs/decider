@@ -55,6 +55,10 @@ pub enum DealParseError {
     Empty,
     #[error("invalid app_cid: {0:?}")]
     InvalidCID(#[from] cid::Error),
+    #[error("missing token for field '{0}'")]
+    MissingParsedToken(&'static str),
+    #[error("invalid token for field '{0}'")]
+    InvalidParsedToken(&'static str),
 }
 
 /// Parse data from chain. Accepts data with and without "0x" prefix.
