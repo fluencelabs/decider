@@ -158,8 +158,12 @@ mod tests {
             m.compute_provider,
             "6f10e8209296ea9e556f80b0ff545d8175f271d0"
         );
-        // let tokens = tokens.unwrap();
-        // let m = Match::parse(tokens);
-        // println!("match {:?}", m)
+        assert_eq!(
+            m.deal.to_lowercase(),
+            "99e28f59ddfe14ff4e598a3ba3928bbf87b3f2b3"
+        );
+        assert_eq!(m.joined_workers.to_eth().as_u32(), 3);
+        assert_eq!(m.deal_creation_block.to_eth().as_u32(), 77);
+        // TODO: check CID as well
     }
 }
