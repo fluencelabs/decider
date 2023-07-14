@@ -53,6 +53,8 @@ pub enum DealParseError {
     },
     #[error("empty data, nothing to parse")]
     Empty,
+    #[error("invalid app_cid: {0:?}")]
+    InvalidCID(#[from] cid::Error),
 }
 
 /// Parse data from chain. Accepts data with and without "0x" prefix.

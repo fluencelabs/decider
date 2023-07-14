@@ -1,3 +1,4 @@
+use cid::Cid;
 use ethabi::param_type::ParamType;
 use ethabi::Token;
 use marine_rs_sdk::marine;
@@ -37,7 +38,7 @@ pub struct Match {
     deal: String,
     joined_workers: U256,
     deal_creation_block: U256,
-    app_cid: CIDV1,
+    app_cid: Cid,
 }
 
 #[derive(Debug)]
@@ -78,7 +79,7 @@ impl ChainData for Match {
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
     fn parse(data_tokens: Vec<Token>) -> Result<Self, DealParseError> {
-        let deal_data: Option<Match> = try {
+        let parsed: Option<_> = try {
             let mut data_tokens = data_tokens.into_iter();
             let compute_provider = data_tokens.next()?.to_string();
             let deal = data_tokens.next()?.to_string();
@@ -86,20 +87,61 @@ impl ChainData for Match {
             let deal_creation_block = U256::from_eth(data_tokens.next()?.into_uint()?);
 
             let mut app_cid = data_tokens.next()?.into_tuple()?.into_iter();
-            let app_cid = CIDV1 {
-                prefixes: app_cid.next()?.into_fixed_bytes()?,
-                hash: app_cid.next()?.into_fixed_bytes()?,
-            };
+            let cid_prefixes = app_cid.next()?.into_fixed_bytes()?;
+            let cid_hash = app_cid.next()?.into_fixed_bytes()?;
+            let cid_bytes = [cid_prefixes, cid_hash].concat();
 
-            Match {
+            (
                 compute_provider,
                 deal,
                 joined_workers,
                 deal_creation_block,
-                app_cid,
-            }
+                cid_bytes,
+            )
         };
-        deal_data.ok_or_else(|| DealParseError::SignatureMismatch(Self::signature()))
+
+        match parsed {
+            Some((compute_provider, deal, joined_workers, deal_creation_block, cid_bytes)) => {
+                let app_cid = Cid::read_bytes(cid_bytes.as_slice())?;
+                Ok(Match {
+                    compute_provider,
+                    deal,
+                    joined_workers,
+                    deal_creation_block,
+                    app_cid,
+                })
+            }
+            None => Err(DealParseError::SignatureMismatch(Self::signature())),
+        }
+
+        // let parse: Option<_> = try {
+        //     let mut data_tokens = data_tokens.into_iter();
+        //     let compute_provider = data_tokens.next()?.to_string();
+        //     let deal = data_tokens.next()?.to_string();
+        //     let joined_workers = U256::from_eth(data_tokens.next()?.into_uint()?);
+        //     let deal_creation_block = U256::from_eth(data_tokens.next()?.into_uint()?);
+        //
+        //     let mut app_cid = data_tokens.next()?.into_tuple()?.into_iter();
+        //     let cid_prefixes = app_cid.next()?.into_fixed_bytes()?;
+        //     let cid_hash = app_cid.next()?.into_fixed_bytes()?;
+        //     let bytes = [cid_prefixes, cid_hash].concat();
+        //
+        //     move || -> Result<_, DealParseError> {
+        //         let app_cid = Cid::read_bytes(bytes.as_slice())?;
+        //
+        //         Ok(Match {
+        //             compute_provider,
+        //             deal,
+        //             joined_workers,
+        //             deal_creation_block,
+        //             app_cid,
+        //         })
+        //     }
+        // };
+        // let parse =
+        //     parse.ok_or_else(|| Err(DealParseError::SignatureMismatch(Self::signature())))?;
+
+        // parse()
     }
 }
 
@@ -164,6 +206,9 @@ mod tests {
         );
         assert_eq!(m.joined_workers.to_eth().as_u32(), 3);
         assert_eq!(m.deal_creation_block.to_eth().as_u32(), 77);
-        // TODO: check CID as well
+        assert_eq!(
+            m.app_cid.to_string(),
+            "bafkreifolrizgmusl4y7or5e5xmvr623a6i3ca4d5rwv457cezhschqj4m"
+        );
     }
 }
