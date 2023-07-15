@@ -1,8 +1,15 @@
 module Chain declares ChainInfo
 
+alias Address: string
+alias URL: string
+
 -- Data we need to poll new deals from aurora
 data ChainInfo:
   -- Refers to which api endpoint to poll
-  api_endpoint: string
+  api_endpoint: URL
+  -- Address of the deal factory contract
+  deal_factory: Address
   -- Chain contract address
-  address: string
+  matcher: Address
+  -- Provider wallet address
+  provider: Address

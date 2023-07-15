@@ -71,7 +71,7 @@ data Poll:
     right_boundary: string
 
 func poll_logs(spell_id: SpellId, chain: ChainInfo, left: string) -> Poll:
-    result <- FluenceAuroraConnector.poll_deal_created(chain.api_endpoint, chain.address, left)
+    result <- FluenceAuroraConnector.poll_deal_created(chain.api_endpoint, chain.deal_factory, left)
     if result.success == false:
         spell_log(spell_id, ["error polling deal created events", result.error])
 

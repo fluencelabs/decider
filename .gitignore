@@ -18,3 +18,5 @@ src/distro/decider-spell/
 connector/
 connector.tar.gz
 decider.json
+
+*.wasm
