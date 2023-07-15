@@ -1,7 +1,7 @@
 use ethabi::Token;
 use marine_rs_sdk::marine;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 #[marine]
 pub struct U256 {
     bytes: Vec<u8>,

@@ -59,7 +59,7 @@ pub fn poll_deal_created(
         address,
         left_boundary,
         right_boundary.clone(),
-        DealCreatedData::topic(),
+        vec![DealCreatedData::topic()],
     );
     match result {
         Err(err) => return DealCreatedResult::error(err.to_string()),

@@ -1,3 +1,5 @@
+modules_dir = "."
+
 [[module]]
 name = "curl_adapter"
 logger_enabled = true

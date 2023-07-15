@@ -37,7 +37,7 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(deal: Log) -> Result<T, DealPar
                 Indexed(_) => None,
             })
             .collect::<Vec<_>>();
-        let indexless = parse_chain_data(&deal.data, &indexless)?;
+        let indexless = parse_chain_data(deal.data, &indexless)?;
 
         let mut indexless = indexless.into_iter();
         let mut topics = deal.topics.into_iter().skip(1);
@@ -56,7 +56,7 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(deal: Log) -> Result<T, DealPar
                         position,
                         event_field: ef.clone(),
                     })?;
-                    let parsed = parse_chain_data(&topic, &[ef.clone().param_type()])?;
+                    let parsed = parse_chain_data(topic, &[ef.clone().param_type()])?;
                     debug_assert!(parsed.len() == 1, "parse of an indexed event fields yielded several tokens, expected a single one");
                     let token = parsed.into_iter().next().ok_or(MissingToken {
                         position,

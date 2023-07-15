@@ -31,11 +31,11 @@ pub fn get_logs(
     address: String,
     from_block: String,
     to_block: String,
-    topic: String,
+    topics: Vec<String>,
 ) -> Result<Vec<Log>, RequestError> {
     let req = GetLogsReq {
         address,
-        topics: vec![topic],
+        topics,
         from_block,
         to_block,
     };

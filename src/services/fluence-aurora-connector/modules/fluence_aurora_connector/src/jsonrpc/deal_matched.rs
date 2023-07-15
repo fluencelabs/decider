@@ -1,6 +1,6 @@
 use marine_rs_sdk::marine;
 
-use crate::chain::chain_data::ChainData;
+use crate::chain::chain_data::{unhex, ChainData};
 use crate::chain::deal_matched::{DealMatched, Match};
 use crate::chain::log::parse_logs;
 use crate::jsonrpc::get_logs::get_logs;
@@ -8,6 +8,7 @@ use crate::jsonrpc::request::check_url;
 use crate::jsonrpc::right_boundary::default_right_boundary;
 
 #[marine]
+#[derive(Clone, Debug)]
 pub struct MatchedResult {
     error: Vec<String>,
     success: bool,
@@ -48,24 +49,96 @@ pub fn poll_deal_matches(
     api_endpoint: String,
     address: String,
     left_boundary: String,
+    provider_address: String,
 ) -> MatchedResult {
     if let Err(err) = check_url(&api_endpoint) {
         return MatchedResult::error(err.to_string());
     }
 
     let right_boundary = default_right_boundary(&left_boundary);
-    let result = get_logs(
+    let logs = get_logs(
         api_endpoint,
         address,
         left_boundary,
         right_boundary.clone(),
-        Match::topic(),
+        vec![Match::topic(), unhex(provider_address)],
     );
-    match result {
+
+    match logs {
         Err(err) => return MatchedResult::error(err.to_string()),
         Ok(logs) => {
-            let created_deals = parse_logs::<Match, DealMatched>(logs);
-            MatchedResult::ok(created_deals, right_boundary)
+            let matches = parse_logs::<Match, DealMatched>(logs);
+            MatchedResult::ok(matches, right_boundary)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use marine_rs_sdk_test::marine_test;
+
+    #[marine_test(config_path = "../../../../../../../example/Config.toml")]
+    // modules_dir = "../../../../../../../target/wasm32-wasi/release/"
+    fn poll(connector: marine_test_env::fluence_aurora_connector::ModuleInterface) {
+        let jsonrpc = r#"
+        {
+            "jsonrpc": "2.0",
+            "id": 0,
+            "result": [
+                {
+                    "removed": false,
+                    "logIndex": "0xb",
+                    "transactionIndex": "0x0",
+                    "transactionHash": "0x1a7122fa7501f09f19f29451548e88adf7ec88c99d34b4abdd09b27dfdbd74f1",
+                    "blockHash": "0x1c6808f9f4f99bdad9a63601e07230b84effaec5aba724963ef17651131cf75d",
+                    "blockNumber": "0x4e",
+                    "address": "0x6328bb918a01603adc91eae689b848a9ecaef26d",
+                    "data": "0x00000000000000000000000099e28f59ddfe14ff4e598a3ba3928bbf87b3f2b30000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000004d0155122000000000000000000000000000000000000000000000000000000000ae5c519332925f31f747a4edd958fb5b0791b10383ec6d5e77e2264f211e09e3",
+                    "topics": [
+                        "0x8a2ecab128faa476aff507c7f34da3348b5c56e4a0401825f6919b4cc7b249f1",
+                        "0x0000000000000000000000006f10e8209296ea9e556f80b0ff545d8175f271d0"
+                    ]
+                }
+            ]
+        }
+        "#;
+
+        // Create a mock
+        let mut server = mockito::Server::new();
+        let url = server.url();
+        let mock = server
+            .mock("POST", "/")
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(jsonrpc)
+            .create();
+
+        let result = connector.poll_deal_matches(
+            url,
+            "0x6328bB918A01603adc91EaE689B848A9eCaEF26D".into(),
+            "0x0".into(),
+            "0x6f10e8209296ea9e556f80b0ff545d8175f271d0".into(),
+        );
+
+        assert!(result.success, "poll failed: {:?}", result);
+        assert_eq!(
+            result.logs.len(),
+            1,
+            "expected 1 logs, got {}",
+            result.logs.len()
+        );
+        let log = result.logs.into_iter().next().unwrap().info;
+        assert_eq!(
+            log.compute_provider.to_lowercase(),
+            "0x6f10e8209296ea9e556f80b0ff545d8175f271d0".to_lowercase()
+        );
+        assert_eq!(
+            log.deal.to_lowercase(),
+            "0x99e28F59DdfE14fF4e598a3Ba3928bbF87b3f2B3".to_lowercase()
+        );
+
+        // TODO: how to check request body?
+        // check that mock was called
+        mock.assert();
     }
 }

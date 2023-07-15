@@ -61,12 +61,17 @@ pub enum DealParseError {
     InvalidParsedToken(&'static str),
 }
 
+/// Remove "0x" prefix from string
+pub fn unhex(hex: String) -> String {
+    hex.strip_prefix("0x").map(String::from).unwrap_or(hex)
+}
+
 /// Parse data from chain. Accepts data with and without "0x" prefix.
-pub(crate) fn parse_chain_data(
-    data: &str,
+pub fn parse_chain_data(
+    data: String,
     signature: &[ParamType],
 ) -> Result<Vec<Token>, DealParseError> {
-    let data = data.strip_prefix("0x").unwrap_or(data);
+    let data = unhex(data);
     if data.is_empty() {
         return Err(DealParseError::Empty);
     }

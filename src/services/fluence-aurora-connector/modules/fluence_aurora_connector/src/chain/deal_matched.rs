@@ -32,17 +32,17 @@ struct CIDV1 {
     hash: Vec<u8>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[marine]
 pub struct Match {
     compute_provider: String,
     deal: String,
     joined_workers: U256,
     deal_creation_block: U256,
-    app_cid: Cid,
+    app_cid: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[marine]
 pub struct DealMatched {
     block_number: String,
@@ -81,8 +81,8 @@ impl ChainData for Match {
     /// Parse data from chain. Accepts data with and without "0x" prefix.
     fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, DealParseError> {
         let tokens = &mut data_tokens.into_iter();
-        let compute_provider = next_opt(tokens, "compute_provider", Token::into_string)?;
-        let deal = next_opt(tokens, "deal", Token::into_string)?;
+        let compute_provider = next_opt(tokens, "compute_provider", Token::into_address)?;
+        let deal = next_opt(tokens, "deal", Token::into_address)?;
         let joined_workers = next_opt(tokens, "joined_workers", U256::from_token)?;
         let deal_creation_block = next_opt(tokens, "deal_creation_block", U256::from_token)?;
 
@@ -90,11 +90,11 @@ impl ChainData for Match {
         let cid_prefixes = next_opt(app_cid, "app_cid.prefixes", Token::into_fixed_bytes)?;
         let cid_hash = next_opt(app_cid, "app_cid.cid_hash", Token::into_fixed_bytes)?;
         let cid_bytes = [cid_prefixes, cid_hash].concat();
-        let app_cid = Cid::read_bytes(cid_bytes.as_slice())?;
+        let app_cid = Cid::read_bytes(cid_bytes.as_slice())?.to_string();
 
         Ok(Match {
-            compute_provider,
-            deal,
+            compute_provider: format!("{compute_provider:#x}"),
+            deal: format!("{deal:#x}"),
             joined_workers,
             deal_creation_block,
             app_cid,
