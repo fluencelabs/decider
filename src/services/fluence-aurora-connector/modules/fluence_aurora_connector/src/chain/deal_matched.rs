@@ -36,7 +36,7 @@ struct CIDV1 {
 #[marine]
 pub struct Match {
     compute_provider: String,
-    deal: String,
+    deal_id: String,
     joined_workers: U256,
     deal_creation_block: U256,
     app_cid: String,
@@ -94,7 +94,7 @@ impl ChainData for Match {
 
         Ok(Match {
             compute_provider: format!("{compute_provider:#x}"),
-            deal: format!("{deal:#x}"),
+            deal_id: format!("{deal:#x}"),
             joined_workers,
             deal_creation_block,
             app_cid,
@@ -158,7 +158,7 @@ mod tests {
             "6f10e8209296ea9e556f80b0ff545d8175f271d0"
         );
         assert_eq!(
-            m.deal.to_lowercase(),
+            m.deal_id.to_lowercase(),
             "99e28f59ddfe14ff4e598a3ba3928bbf87b3f2b3"
         );
         assert_eq!(m.joined_workers.to_eth().as_u32(), 3);

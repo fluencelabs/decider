@@ -16,13 +16,11 @@ func install_deal_spell(deal_id: DealId, cid: CID, ipfs: string, script: string,
     worker_spell_id <- PeerSpell.install(script, args, trigger)
     <- worker_spell_id
 
-func join_deal(spell_id: SpellId, deal: DealCreated):
-    deal_id = deal.info.deal_id
-
+func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID):
     log = (msg: ⊤):
         deal_log(spell_id, deal_id, msg)
 
-    log(["joining a deal from_block", deal.block_number])
+    log(["joining a deal from_block", block])
     settings, is_ok <- get_worker_settings(spell_id)
     if is_ok == false:
         log("error reading worker settings, deal join failed")
@@ -35,13 +33,12 @@ func join_deal(spell_id: SpellId, deal: DealCreated):
                 ipfs = settings!.worker_ipfs
                 script = settings!.worker_script
                 trigger = settings!.worker_config
-                app_cid = deal.info.app_cid
                 deal_spell <- install_deal_spell(deal_id, app_cid, ipfs, script, trigger)
                 log(["created worker spell for deal", deal_spell])
 
                 store_joined_deal(spell_id, deal_id, deal_spell, worker_id)
 
-                deal_state = DealState(left_boundary = deal.block_number)
+                deal_state = DealState(left_boundary = block)
                 store_deal_state(spell_id, deal_id, deal_state)
                 log("joined the deal")
 

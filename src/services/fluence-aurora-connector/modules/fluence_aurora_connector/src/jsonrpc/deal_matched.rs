@@ -1,6 +1,7 @@
 use marine_rs_sdk::marine;
 
 use crate::chain::chain_data::{unhex, ChainData};
+use crate::chain::chain_info::ChainInfo;
 use crate::chain::deal_matched::{DealMatched, Match};
 use crate::chain::log::parse_logs;
 use crate::jsonrpc::get_logs::get_logs;
@@ -45,23 +46,18 @@ impl MatchedResult {
 // `address`      -- address of the chain contract
 // `left_boundary`   -- from which block to poll deals
 #[marine]
-pub fn poll_deal_matches(
-    api_endpoint: String,
-    address: String,
-    left_boundary: String,
-    provider_address: String,
-) -> MatchedResult {
-    if let Err(err) = check_url(&api_endpoint) {
+pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResult {
+    if let Err(err) = check_url(&chain.api_endpoint) {
         return MatchedResult::error(err.to_string());
     }
 
     let right_boundary = default_right_boundary(&left_boundary);
     let logs = get_logs(
-        api_endpoint,
-        address,
+        chain.api_endpoint,
+        chain.matcher,
         left_boundary,
         right_boundary.clone(),
-        vec![Match::topic(), unhex(provider_address)],
+        vec![Match::topic(), unhex(chain.provider)],
     );
 
     match logs {

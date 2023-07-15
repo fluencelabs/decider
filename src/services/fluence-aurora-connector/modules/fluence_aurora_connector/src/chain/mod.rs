@@ -1,5 +1,6 @@
 pub mod chain_data;
 pub mod chain_event;
+pub mod chain_info;
 pub mod data_tokens;
 pub mod deal_changed;
 pub mod deal_created;
