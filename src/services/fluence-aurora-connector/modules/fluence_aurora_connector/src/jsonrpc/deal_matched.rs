@@ -73,7 +73,7 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
 mod tests {
     use marine_rs_sdk_test::marine_test;
 
-    #[marine_test(config_path = "../../../../../../../example/Config.toml")]
+    #[marine_test(config_path = "../../../../../../../src/distro/decider-spell/Config.toml")]
     // modules_dir = "../../../../../../../target/wasm32-wasi/release/"
     fn poll(connector: marine_test_env::fluence_aurora_connector::ModuleInterface) {
         let jsonrpc = r#"
@@ -109,12 +109,13 @@ mod tests {
             .with_body(jsonrpc)
             .create();
 
-        let result = connector.poll_deal_matches(
-            url,
-            "0x6328bB918A01603adc91EaE689B848A9eCaEF26D".into(),
-            "0x0".into(),
-            "0x6f10e8209296ea9e556f80b0ff545d8175f271d0".into(),
-        );
+        let chain = marine_test_env::fluence_aurora_connector::ChainInfo {
+            api_endpoint: url,
+            deal_factory: "0x6328bB918A01603adc91EaE689B848A9eCaEF26D".into(),
+            matcher: "0x6f10e8209296ea9e556f80b0ff545d8175f271d0".into(),
+            provider: "0x0".to_string(),
+        };
+        let result = connector.poll_deal_matches(chain, "0x0".into());
 
         assert!(result.success, "poll failed: {:?}", result);
         assert_eq!(
@@ -129,7 +130,7 @@ mod tests {
             "0x6f10e8209296ea9e556f80b0ff545d8175f271d0".to_lowercase()
         );
         assert_eq!(
-            log.deal.to_lowercase(),
+            log.deal_id.to_lowercase(),
             "0x99e28F59DdfE14fF4e598a3Ba3928bbF87b3f2B3".to_lowercase()
         );
 
