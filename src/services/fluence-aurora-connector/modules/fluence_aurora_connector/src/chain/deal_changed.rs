@@ -55,5 +55,6 @@ impl ChainEvent<DealChangedData> for DealChanged {
 }
 
 pub fn parse_deal_changed(log: Log) -> Option<DealChanged> {
+    // TODO: should we communicate these failures to Aqua code?
     parse_log::<DealChangedData, DealChanged>(log).ok()
 }
