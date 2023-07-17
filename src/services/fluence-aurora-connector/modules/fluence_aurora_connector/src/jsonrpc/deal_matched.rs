@@ -73,11 +73,19 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
 
 #[cfg(test)]
 mod tests {
+    use log::LevelFilter::Debug;
     use marine_rs_sdk_test::marine_test;
 
+    const CONFIG_PATH: &str = "../../../../../../../src/distro/decider-spell/Config.toml";
+
+    // Set env RUST_LOGGER="mockito=debug" to enable Mockito's logs
     #[marine_test(config_path = "../../../../../../../src/distro/decider-spell/Config.toml")]
-    // modules_dir = "../../../../../../../target/wasm32-wasi/release/"
     fn poll(connector: marine_test_env::fluence_aurora_connector::ModuleInterface) {
+        let _ = ::env_logger::builder()
+            // .filter_module("mockito", Debug)
+            .is_test(true)
+            .try_init();
+
         let jsonrpc = r#"
         {
             "jsonrpc": "2.0",
