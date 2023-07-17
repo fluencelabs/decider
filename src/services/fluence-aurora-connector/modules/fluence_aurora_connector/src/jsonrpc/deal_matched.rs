@@ -52,12 +52,14 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
     }
 
     let right_boundary = default_right_boundary(&left_boundary);
+    // pad provider to 32 bytes
+    let provider = format!("0x{:0>64}", unhex(chain.provider));
     let logs = get_logs(
         chain.api_endpoint,
         chain.matcher,
         left_boundary,
         right_boundary.clone(),
-        vec![Match::topic(), unhex(chain.provider)],
+        vec![Match::topic(), provider],
     );
 
     match logs {
@@ -104,18 +106,29 @@ mod tests {
         let url = server.url();
         let mock = server
             .mock("POST", "/")
+            // expect to receive this exact body in POST
+            .match_body(r#"{"jsonrpc":"2.0","id":0,"method":"eth_getLogs","params":[{"fromBlock":"0x52","toBlock":"0x246","address":"0x6328bb918a01603adc91eae689b848a9ecaef26d","topics":["0x8a2ecab128faa476aff507c7f34da3348b5c56e4a0401825f6919b4cc7b249f1","0x0000000000000000000000006f10e8209296ea9e556f80b0ff545d8175f271d0"]}]}"#)
+            // expect exactly 1 POST request
+            .expect(1)
             .with_status(200)
             .with_header("content-type", "application/json")
             .with_body(jsonrpc)
             .create();
 
+        let invalid_mock = server
+            .mock("POST", "/")
+            .expect(0)
+            .with_status(404)
+            .with_body("invalid mock was hit. Check that request body matches 'match_body' clause'")
+            .create();
+
         let chain = marine_test_env::fluence_aurora_connector::ChainInfo {
             api_endpoint: url,
-            deal_factory: "0x6328bB918A01603adc91EaE689B848A9eCaEF26D".into(),
-            matcher: "0x6f10e8209296ea9e556f80b0ff545d8175f271d0".into(),
-            provider: "0x0".to_string(),
+            deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
+            matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
+            provider: "0x6f10e8209296ea9e556f80b0ff545d8175f271d0".to_string(),
         };
-        let result = connector.poll_deal_matches(chain, "0x0".into());
+        let result = connector.poll_deal_matches(chain, "0x52".into());
 
         assert!(result.success, "poll failed: {:?}", result);
         assert_eq!(
@@ -133,6 +146,9 @@ mod tests {
             log.deal_id.to_lowercase(),
             "0x99e28F59DdfE14fF4e598a3Ba3928bbF87b3f2B3".to_lowercase()
         );
+
+        // assert that there was no invalid requests
+        invalid_mock.assert();
 
         // TODO: how to check request body?
         // check that mock was called
