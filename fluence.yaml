@@ -5,12 +5,21 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/fluence.md
 
 version: 2
+# This is like the "main" Aqua file, but
+# mostly it just points to the vague location of the code
+#
+# Theoretically, only that file and its imports (including transitives) will be compiled.
+# But in practice it seems to be unstable, changing unpredictably.
 aquaInputPath: src/aqua/decider/poll.aqua
+
+# To fight the aforementioned unpredictability, I set these imports explicitly.
+# I consider this a temporary hack to hotfix bug with compilation scopes, until it is fixed.
 aquaImports:
   - src/aqua
   - src/aqua/decider
   - src/aqua/chain
   - src/aqua/fluence
+
 dependencies:
   npm:
     "@fluencelabs/aqua-ipfs": 0.5.17
@@ -21,23 +30,39 @@ dependencies:
   cargo:
     marine: 0.14.0
     mrepl: 0.21.3
+
+# Here I define services. Can have as many as I want. Right now it's just 'fluence_aurora_connector'.
 services:
+  # this is the service name, it can be anything. after deploy will become an alias.
   fluence_aurora_connector:
+    # this is the path to directory with 'service.yaml'
     get: src/services/fluence-aurora-connector
+
+# Here I define spells. Can have as many as I want, right now it's just 'decider'
 spells:
+  # spell name. after deploy will become an alias.
    decider:
+     # path to directory containing 'spell.yaml'
      get: src/aqua
+
+# Here I define workers. Can have as many as I want, right now it's just 'decider', that contains...
 workers:
+  # note that worker is named same as 'spell'. that's arbitrary, just my choice, doesn't mean anything. glad it works.
   decider:
     services:
+      # ... one service ...
       - fluence_aurora_connector
     spells:
+      # ... and one spell
       - decider
+
+# Here I define where to deploy workers.
 hosts:
+  # this is the _worker_ name
   decider:
     peerIds:
+      # that's where to deploy it
       - 12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ
-
 relays:
   - /ip4/0.0.0.0/tcp/9999/ws/p2p/12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ
   # - /dns4/stage.fluence.dev/tcp/19001/wss/p2p/12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv
