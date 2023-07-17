@@ -105,48 +105,9 @@ jobs:
       - name: Install fluence-cli
         run: npm i -g @fluencelabs/cli@unstable
 
+      # TODO: remove 'Install ipfs'?
       - name: Install ipfs
         uses: nahsi/setup-ipfs@v1
-
-      - name: Create builtin distribution package
-        run: ./builtin-package/package.sh
-
-      - name: Calculate SHA256
-        id: sha
-        run: |
-          # Calculate sha256
-          du -hs connector.tar.gz
-          sha256sum connector.tar.gz
-          sha=($(sha256sum connector.tar.gz))
-          echo "sha256=${sha}" >> $GITHUB_OUTPUT
-
-      - name: Upload package to checks
-        uses: actions/upload-artifact@v3
-        with:
-          name: connector.tar.gz
-          path: connector.tar.gz
-
-      - name: Upload package to release
-        if: needs.release-please.outputs.release-created
-        uses: softprops/action-gh-release@v1
-        with:
-          files: connector.tar.gz
-          tag_name: ${{ needs.release-please.outputs.tag-name }}
-
-      - name: Update version in node-distro repo
-        if: needs.release-please.outputs.release-created
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: update_service
-          repo: fluencelabs/node-distro
-          ref: "main"
-          token: ${{ secrets.PERSONAL_TOKEN }}
-          inputs: '{
-            "name": "connector",
-            "version": "${{ needs.release-please.outputs.version }}",
-            "url": "https://github.com/fluencelabs/control-plane/releases/download/${{ needs.release-please.outputs.tag-name }}/connector.tar.gz",
-            "sha256": "${{ steps.sha.outputs.sha256 }}"
-          }'
 
       - name: Import secrets
         uses: hashicorp/vault-action@v2.7.3
