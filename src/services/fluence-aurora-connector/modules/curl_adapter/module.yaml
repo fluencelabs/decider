@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../../../.fluence/schemas/module.yaml.json
+# yaml-language-server: $schema=../../../../../.fluence/schemas/module.json
 version: 0
 type: rust
 name: curl_adapter

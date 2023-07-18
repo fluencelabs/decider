@@ -89,8 +89,9 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(log: Log) -> Result<T, LogParse
             return Err(LogParseError::Empty);
         }
 
+        let block_number = log.block_number.clone();
         let log = U::parse(&mut tokens.into_iter())?;
-        T::new(log.block_number.clone(), log)
+        T::new(block_number, log)
     };
 
     if let Err(e) = result.as_ref() {

@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../.fluence/schemas/spell.json
+yaml-language-server: $schema=../../../.fluence/schemas/spell.yaml.json
+# Defines a spell. You can use `fluence spell new` command to generate a template for new spell
+# Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/spell.md
+version: 0
+aquaFilePath: ./decider/poll.aqua
+function: main
+clock:
+  periodSec: 60
+  endDelaySec: 1800
+initArgs:
+  # "worker_script" => json!(WORKER_SPELL),
+  # "worker_config" => json!(worker_config),
+  # "worker_ipfs" => json!(config.worker_ipfs_multiaddr),
+  # "from_block" => json!(config.chain_contract_block_hex),
+  # "info" => json!( {
+  #     "api_endpoint": config.chain_network,
+  #     "address": config.chain_contract_addr,
+  # }),
+  chain:
+    api_endpoint: http://127.0.0.1:8545
+    deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d"
+    matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d"
+    # worker_script will be set by a shell script
+    provider: "0x6f10e8209296ea9e556f80b0ff545d8175f271d0"
+  from_block: "0x0"
+  worker_ipfs: /dns4/ipfs.fluence.dev/tcp/5001
+  worker_config:
+    clock:
+      periodSec: 10
+  # worker_script will be set by a shell script
+  worker_script: |
+    (call %init_peer_id% ("run-console" "print") ["I did it!"])

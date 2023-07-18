@@ -27,6 +27,7 @@ func get_left_boundary(spell_id: SpellId, chain: ChainInfo) -> ?string:
     -- `last seen block` is initialized to the first `left boundary` this function returns
     -- After that, `last seen block` is set to the block number of every next processed Log
     maybe_last_seen <- LastSeen.get(spell_id)
+    spell_log(spell_id, ["maybe_last_seen is", maybe_last_seen])
     if maybe_last_seen == nil:
         -- When have not yet seen any blocks, initialize `last seen` to `init_data.from_block`
         last_seen <- LastSeen.init(spell_id, chain)
@@ -43,6 +44,8 @@ func get_left_boundary(spell_id: SpellId, chain: ChainInfo) -> ?string:
         else:
             -- if for some reason `hex_add` failed, use `last_seen` as left boundary
             left <<- last_seen
+
+    spell_log(spell_id, ["left boundary will be", left])
     <- left
 
 func join_deals(spell_id: SpellId, logs: []DealMatched, left: string):
@@ -78,8 +81,8 @@ func poll_logs(spell_id: SpellId, chain: ChainInfo, left: string) -> ?Poll:
         spell_log(spell_id, ["error polling deal created events", result.error])
     else:
         logs = result.logs
-        spell_log(spell_id, ["created deals from poll:", logs.length, "from block:", left])
-        poll <<- Poll(logs = [], right_boundary = result.right_boundary)
+        spell_log(spell_id, ["new deals from poll:", logs.length, "from block:", left])
+        poll <<- Poll(logs = logs, right_boundary = result.right_boundary)
 
     <- poll
 

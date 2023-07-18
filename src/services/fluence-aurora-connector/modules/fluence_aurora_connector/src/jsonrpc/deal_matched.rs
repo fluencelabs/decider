@@ -73,7 +73,6 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
 
 #[cfg(test)]
 mod tests {
-    use log::LevelFilter::Debug;
     use marine_rs_sdk_test::marine_test;
 
     const CONFIG_PATH: &str = "../../../../../../../src/distro/decider-spell/Config.toml";

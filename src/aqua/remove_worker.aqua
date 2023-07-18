@@ -1,0 +1,15 @@
+module RemoveWorker declares remove
+
+export remove
+
+import getWorkersInfo from "workers.aqua"
+import Worker from "@fluencelabs/aqua-lib/workers.aqua"
+
+
+func remove() -> string:
+    info <- getWorkersInfo()
+    decider = info.hosts.decider!
+    spell = decider.installationSpells[0]
+    on spell.hostId:
+        Worker.remove(spell.workerId)
+    <- "OK"

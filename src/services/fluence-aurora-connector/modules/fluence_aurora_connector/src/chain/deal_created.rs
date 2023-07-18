@@ -193,7 +193,7 @@ mod test {
     fn test_chain_parsing_fail_empty() {
         let result = DealCreatedData::parse(&mut std::iter::empty());
         assert!(result.is_err());
-        assert_matches!(result, Err(DealParseError::Empty));
+        assert_matches!(result, Err(LogParseError::Empty));
     }
 
     #[test]
@@ -203,7 +203,7 @@ mod test {
         assert!(result.is_err());
         assert_matches!(
             result,
-            Err(DealParseError::EthError(ethabi::Error::InvalidData))
+            Err(LogParseError::EthError(ethabi::Error::InvalidData))
         );
     }
 }
