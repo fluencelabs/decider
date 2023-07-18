@@ -19,7 +19,7 @@ impl EventField {
 pub trait ChainData {
     fn event_name() -> &'static str;
     fn signature() -> Vec<EventField>;
-    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, DealParseError>
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, LogParseError>
     where
         Self: Sized;
 
@@ -34,19 +34,21 @@ pub trait ChainData {
 }
 
 #[derive(Debug, Error)]
-pub enum DealParseError {
+pub enum LogParseError {
     #[error(transparent)]
     EthError(#[from] ethabi::Error),
     #[error(transparent)]
     HexError(#[from] hex::FromHexError),
     #[error("parsed data doesn't correspond to the expected signature: {0:?}")]
     SignatureMismatch(Vec<EventField>),
-    #[error("incorrect signature: not found token for field #{position} of type ${event_field:?}")]
+    #[error(
+        "incorrect log signature: not found token for field #{position} of type ${event_field:?}"
+    )]
     MissingToken {
         position: usize,
         event_field: EventField,
     },
-    #[error("incorrect signature: not found topic for indexed field #{position} of type ${event_field:?}")]
+    #[error("incorrect log signature: not found topic for indexed field #{position} of type ${event_field:?}")]
     MissingTopic {
         position: usize,
         event_field: EventField,
@@ -70,10 +72,10 @@ pub fn unhex(hex: String) -> String {
 pub fn parse_chain_data(
     data: String,
     signature: &[ParamType],
-) -> Result<Vec<Token>, DealParseError> {
+) -> Result<Vec<Token>, LogParseError> {
     let data = unhex(data);
     if data.is_empty() {
-        return Err(DealParseError::Empty);
+        return Err(LogParseError::Empty);
     }
     let data = hex::decode(data)?;
     Ok(ethabi::decode(signature, &data)?)

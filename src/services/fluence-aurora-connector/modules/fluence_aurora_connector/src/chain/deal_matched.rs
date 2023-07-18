@@ -4,7 +4,7 @@ use ethabi::Token;
 use marine_rs_sdk::marine;
 
 use crate::chain::chain_data::EventField::{Indexed, NotIndexed};
-use crate::chain::chain_data::{ChainData, DealParseError, EventField};
+use crate::chain::chain_data::{ChainData, EventField, LogParseError};
 use crate::chain::chain_event::ChainEvent;
 use crate::chain::data_tokens::next_opt;
 use crate::chain::u256::U256;
@@ -79,7 +79,7 @@ impl ChainData for Match {
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
-    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, DealParseError> {
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, LogParseError> {
         let tokens = &mut data_tokens.into_iter();
         let compute_provider = next_opt(tokens, "compute_provider", Token::into_address)?;
         let deal = next_opt(tokens, "deal", Token::into_address)?;

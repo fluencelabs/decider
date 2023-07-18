@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::chain::chain_data::DealParseError::{MissingToken, MissingTopic};
 use crate::chain::chain_data::EventField::{Indexed, NotIndexed};
-use crate::chain::chain_data::{parse_chain_data, ChainData, DealParseError};
+use crate::chain::chain_data::LogParseError::{MissingToken, MissingTopic};
+use crate::chain::chain_data::{parse_chain_data, ChainData, LogParseError};
 use crate::chain::chain_event::ChainEvent;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -25,10 +25,21 @@ pub fn parse_logs<U: ChainData, T: ChainEvent<U>>(logs: Vec<Log>) -> Vec<T> {
         .collect()
 }
 
-pub fn parse_log<U: ChainData, T: ChainEvent<U>>(deal: Log) -> Result<T, DealParseError> {
-    log::debug!("Parse log from block {:?}", deal.block_number);
-    let result: Result<_, DealParseError> = try {
+/// Parse Event Log to specified DTO
+///
+/// Logs consist of data fields, much like ADT. Fields can indexed and not indexed.
+///
+/// Data for indexed fields is encoded in 'log.topics', starting from 1th topic, i.e. 0th is skipped
+/// Data for non indexed fields is encoded in 'log.data'.
+///
+/// Indexed and non indexed data fields can be interleaved.
+/// That forces a certain parsing scheme, which is implemented below.
+pub fn parse_log<U: ChainData, T: ChainEvent<U>>(log: Log) -> Result<T, LogParseError> {
+    log::debug!("Parse log from block {:?}", log.block_number);
+    let result: Result<_, LogParseError> = try {
+        // event log signature, i.e. data field types
         let signature = U::signature();
+        // gather data types for non indexed ("indexless") fields
         let indexless = signature
             .clone()
             .into_iter()
@@ -37,14 +48,20 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(deal: Log) -> Result<T, DealPar
                 Indexed(_) => None,
             })
             .collect::<Vec<_>>();
-        let indexless = parse_chain_data(deal.data, &indexless)?;
+        // parse all non indexed fields to tokens
+        let indexless = parse_chain_data(log.data, &indexless)?;
 
+        // iterate through data field types (signature), and take
+        // data `Token` from either 'indexless' or 'topics'
         let mut indexless = indexless.into_iter();
-        let mut topics = deal.topics.into_iter().skip(1);
+        // skip first topic, because it contains actual topic, and not indexed data field
+        let mut topics = log.topics.into_iter().skip(1);
+        // accumulate tokens here
         let mut tokens = vec![];
         for (position, event_field) in signature.into_iter().enumerate() {
             match event_field {
                 NotIndexed(_) => {
+                    // take next token for non indexed data field
                     let token = indexless.next().ok_or(MissingToken {
                         position,
                         event_field,
@@ -56,6 +73,7 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(deal: Log) -> Result<T, DealPar
                         position,
                         event_field: ef.clone(),
                     })?;
+                    // parse indexed field to token one by one
                     let parsed = parse_chain_data(topic, &[ef.clone().param_type()])?;
                     debug_assert!(parsed.len() == 1, "parse of an indexed event fields yielded several tokens, expected a single one");
                     let token = parsed.into_iter().next().ok_or(MissingToken {
@@ -68,17 +86,17 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(deal: Log) -> Result<T, DealPar
         }
 
         if tokens.is_empty() {
-            return Err(DealParseError::Empty);
+            return Err(LogParseError::Empty);
         }
 
         let log = U::parse(&mut tokens.into_iter())?;
-        T::new(deal.block_number.clone(), log)
+        T::new(log.block_number.clone(), log)
     };
 
     if let Err(e) = result.as_ref() {
         log::warn!(target: "connector",
             "Cannot parse deal log from block {}: {:?}",
-            deal.block_number,
+            log.block_number,
             e.to_string()
         );
     }

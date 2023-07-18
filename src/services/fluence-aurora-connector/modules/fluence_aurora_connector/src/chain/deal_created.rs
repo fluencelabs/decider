@@ -3,7 +3,7 @@ use ethabi::Token;
 use marine_rs_sdk::marine;
 
 use crate::chain::chain_data::EventField::NotIndexed;
-use crate::chain::chain_data::{ChainData, DealParseError, EventField};
+use crate::chain::chain_data::{ChainData, EventField, LogParseError};
 use crate::chain::chain_event::ChainEvent;
 use crate::chain::data_tokens::next_opt;
 use crate::chain::u256::U256;
@@ -80,7 +80,7 @@ impl ChainData for DealCreatedData {
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
-    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, DealParseError> {
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, LogParseError> {
         let deal_id = next_opt(data_tokens, "deal_id", Token::into_string)?;
         let payment_token = next_opt(data_tokens, "payment_token", Token::into_string)?;
 
@@ -129,7 +129,7 @@ mod test {
     use ethabi::Token;
 
     use crate::chain::chain_data::ChainData;
-    use crate::chain::chain_data::DealParseError;
+    use crate::chain::chain_data::LogParseError;
     use crate::chain::deal_created::{DealCreated, DealCreatedData};
     use crate::chain::log::{parse_log, Log};
 
