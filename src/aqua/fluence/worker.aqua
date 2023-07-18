@@ -1,10 +1,11 @@
-module Worker declares WorkerArgs, WorkerSettings, get_worker_settings, is_worker_created
+module Worker declares WorkerArgs, WorkerSettings, get_worker_settings, is_worker_created, create
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
+import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
 
-import spell_log, get_string from "../fluence/spell.aqua"
+import spell_log, deal_log, get_string from "../fluence/spell.aqua"
 import Worker, Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
-import DealId, SpellId from "../types.aqua"
+import DealId, SpellId, WorkerId from "../types.aqua"
 
 -- Arguments of the worker
 data WorkerArgs:
@@ -18,53 +19,60 @@ data WorkerArgs:
 -- Settings of the worker for the decider
 data WorkerSettings:
     -- Trigger config of the worker
-    worker_config: TriggerConfig
+    config: TriggerConfig
     -- Worker's AIR script
-    worker_script: string
+    script: string
     -- IPFS API for the worker to pull info from
-    worker_ipfs: string
+    ipfs: string
 
 -- Parse worker-settings from the decider's KV
-func get_worker_settings(spell_id: SpellId) ->  ?WorkerSettings, bool:
+func get_worker_settings(spell_id: SpellId) ->  ?WorkerSettings:
     Spell spell_id
-    log = (msg: ⊤):
-        spell_log(spell_id, [msg])
 
-    result: *bool
     settings: *WorkerSettings
 
-    worker_script_str, is_ok1 <- get_string(spell_id, "worker_script")
-    worker_config_str, is_ok2  <- get_string(spell_id, "worker_config")
-    worker_ipfs_str, is_ok3  <- get_string(spell_id, "worker_ipfs")
+    script_str <- get_string(spell_id, "worker_script")
+    config_str <- get_string(spell_id, "worker_config")
+    ipfs_str <- get_string(spell_id, "worker_ipfs")
 
-    -- :c
-    if is_ok1 == false:
-        log("get_worker_settings: worker_script is not set")
-        result <<- false
-    else:
-        if is_ok2 == false:
-            log("get_worker_settings: worker_config is not set")
-            result <<- false
-        else:
-            if is_ok3 == false:
-                log("get_worker_settings: worker_ipfs is not set")
-                result <<- false
-            else:
-                worker_script <- Json.parse(worker_script_str!)
-                worker_config <- JsonTriggerConfig.parse(worker_config_str!)
-                worker_ipfs <- Json.parse(worker_ipfs_str!)
+    if script_str != nil:
+        if config_str != nil:
+            if ipfs_str != nil:
+                script <- Json.parse(script_str!)
+                config <- JsonTriggerConfig.parse(config_str!)
+                ipfs <- Json.parse(ipfs_str!)
 
-                ws = WorkerSettings(worker_config = worker_config, worker_script = worker_script, worker_ipfs = worker_ipfs)
+                ws = WorkerSettings(config = config, script = script, ipfs = ipfs)
                 settings <<- ws
-                result <<- true
-    <- settings, result!
+            else:
+                spell_log(spell_id, "get_worker_settings: worker_ipfs is not set")
+        else:
+            spell_log(spell_id, "get_worker_settings: worker_config is not set")
+    else:
+        spell_log(spell_id, "get_worker_settings: worker_script is not set")
+
+    <- settings
 
 -- Check if a worker for a deal is already created
 func is_worker_created(spell_id: SpellId, deal_id: DealId) -> bool:
-    result: *bool
+    created: *bool
     try:
         worker_id <- Worker.get_peer_id(deal_id)
-        result <<- true
+        created <<- true
     otherwise:
-        result <<- false
-    <- result!
+        created <<- false
+    <- created!
+
+func create(spell_id: SpellId, deal_id: DealId) -> ?WorkerId:
+    worker_id: ?WorkerId
+    try:
+        worker_id <- Worker.create(deal_id)
+        deal_log(spell_id, deal_id, ["created worker for deal", worker_id!])
+    otherwise:
+        -- if worker was already created, get its id
+        worker_id <- Worker.get_peer_id(deal_id)
+
+    if worker_id == nil:
+        deal_log(spell_id, deal_id, "error creating worker")
+
+    <- worker_id

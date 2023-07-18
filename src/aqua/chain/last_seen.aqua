@@ -14,7 +14,7 @@ use "../chain/blocks.aqua" as Blocks
 -- `last seen block` is a block for which all events have been processed
 func get(spell_id: SpellId) -> ?string:
     Spell spell_id
-    last_seen, ok <- get_string(spell_id, "last_seen_block")
+    last_seen <- get_string(spell_id, "last_seen_block")
     <- last_seen
 
 func save(spell_id: SpellId, hex: string):

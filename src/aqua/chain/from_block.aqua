@@ -14,7 +14,7 @@ func get_from_block(spell_id: SpellId) -> string:
     Spell spell_id
     from_block: *string
 
-    maybe_from_block, ok <- get_string(spell_id, "from_block")
+    maybe_from_block <- get_string(spell_id, "from_block")
     if maybe_from_block == nil:
         -- if `from_block` is not set, use "latest" as default
         from_block <<- "latest"

@@ -27,7 +27,7 @@ initArgs:
   worker_ipfs: /dns4/ipfs.fluence.dev/tcp/5001
   worker_config:
     clock:
-      periodSec: 10
+      period_sec: 10
   # worker_script will be set by a shell script
   worker_script: |
     (call %init_peer_id% ("run-console" "print") ["I did it!"])

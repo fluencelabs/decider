@@ -1,15 +1,34 @@
 module RemoveWorker declares remove
+export remove, inspect, joined_deals
 
-export remove
-
-import getWorkersInfo from "workers.aqua"
 import Worker from "@fluencelabs/aqua-lib/workers.aqua"
+import Srv from "@fluencelabs/aqua-lib/builtin.aqua"
 
+import getWorkersInfo, GetWorkersInfoHostsDeciderInstallationSpells from "workers.aqua"
+use "debug.aqua" as Debug
+use "decider/deal_storage.aqua" as DealStorage
 
-func remove() -> string:
+func spells() -> []GetWorkersInfoHostsDeciderInstallationSpells:
     info <- getWorkersInfo()
     decider = info.hosts.decider!
-    spell = decider.installationSpells[0]
-    on spell.hostId:
-        Worker.remove(spell.workerId)
+    <- decider.installationSpells
+
+func remove() -> string:
+    for spell <- spells():
+        on spell.hostId:
+            Worker.remove(spell.workerId)
+    <- "OK"
+
+func joined_deals() -> string:
+    for spell <- spells():
+        on spell.workerId via spell.hostId:
+            joined <- DealStorage.get_joined_deals("decider")
+            Debug.log_back(joined)
+    <- "OK"
+
+func inspect() -> string:
+    for spell <- spells():
+        on spell.workerId via spell.hostId:
+            list <- Srv.list()
+            Debug.log_back(list)
     <- "OK"

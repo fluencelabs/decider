@@ -10,6 +10,7 @@ import deal_log, spell_log, get_counter, get_string from "../fluence/spell.aqua"
 import is_worker_created from "../fluence/worker.aqua"
 import Json from "../fluence/peer.aqua"
 import join_deal from "../decider/join_deal.aqua"
+import JoinedDeal from "../decider/deal_storage.aqua"
 import SpellId from "../types.aqua"
 
 use "last_seen.aqua" as LastSeen
@@ -53,11 +54,7 @@ func join_deals(spell_id: SpellId, logs: []DealMatched, left: string):
 
     -- TODO: I assume that `logs` are sorted by `block_number`. Is that a correct assumption?
     for log <- logs:
-        deal_id = log.info.deal_id
-        if is_worker_created(spell_id, deal_id):
-            deal_log(spell_id, deal_id, "worker for deal is already created")
-        else:
-            join_deal(spell_id, log.block_number, deal_id, log.info.app_cid)
+        join_deal(spell_id, log.block_number, log.info.deal_id, log.info.app_cid)
 
         -- Use `log.block_number - 1` as a `last seen block`
         -- Can not use `log.block_number` because it is unknown if there are more events from that block in `logs`
@@ -68,6 +65,26 @@ func join_deals(spell_id: SpellId, logs: []DealMatched, left: string):
             -- This way, if particle has timed out during process of a log, `last seen block` would not be updated
             -- And we will try all events from that block again
             LastSeen.gt_set(spell_id, prev_block!, left)
+
+-- Returns 'matches' that were not yet joined
+func filter_new(spell_id: SpellId, matches: []DealMatched, joined_deals: []JoinedDeal) -> []DealMatched:
+    new: *DealMatched
+    -- TODO: replace with a more optimal implementation once hashmaps land in AquaVM
+    for match <- matches:
+        joined: ?bool
+        match_deal_id = match.info.deal_id
+        -- first, check if worker for that deal is created
+        if is_worker_created(spell_id, match_deal_id):
+            -- then, check if `deal_id` is among `joined_deals`
+            for deal <- joined_deals:
+                if match_deal_id == deal.deal_id:
+                    joined <<- true
+        -- if there's no worker or deal_id is not among `joined_deals`, mark that deal as `new`
+        if joined == nil:
+            new <<- match
+        else:
+            deal_log(spell_id, match_deal_id, "deal is already joined")
+    <- new
 
 data Poll:
     logs: []DealMatched
@@ -86,13 +103,14 @@ func poll_logs(spell_id: SpellId, chain: ChainInfo, left: string) -> ?Poll:
 
     <- poll
 
-func poll_new_deals(spell_id: SpellId, chain: ChainInfo, latest_block: string):
+func poll_new_deals(spell_id: SpellId, chain: ChainInfo, joined_deals: []JoinedDeal, latest_block: string):
     -- retrieve block number to poll from
     left <- get_left_boundary(spell_id, chain)
     if left != nil:
         poll <- poll_logs(spell_id, chain, left!)
         if poll != nil:
-            join_deals(spell_id, poll!.logs, left!)
+            new_deals <- filter_new(spell_id, poll!.logs, joined_deals)
+            join_deals(spell_id, new_deals, left!)
 
             -- after we have processed all logs from poll, we can conclude
             -- that we have seen all logs until `min(latest_block, right_boundary)`

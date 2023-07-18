@@ -5,7 +5,7 @@ import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 import deal_log, spell_log, get_string from "../fluence/spell.aqua"
 import Json from "../fluence/peer.aqua"
 import ChainInfo from "../chain/chain.aqua"
-import JsonJoinedDeal, JsonDealState, DealState, store_deal_state, get_joined_deals from "../decider/deal_storage.aqua"
+import JoinedDeal, JsonDealState, DealState, store_deal_state, make_change_reqs from "../decider/deal_storage.aqua"
 import SpellId, DealId from "../types.aqua"
 
 import DealInfo, DealChangesReq, FluenceAuroraConnector, DealChangedResult from "services.aqua"
@@ -13,13 +13,14 @@ import DealInfo, DealChangesReq, FluenceAuroraConnector, DealChangedResult from 
 use "../chain/blocks.aqua" as Blocks
 use "../hex.aqua" as Hex
 
-func get_deal_changes(spell_id: SpellId, api_endpoint: string) -> ?[]DealChangedResult:
+-- Get DealChanged logs from RPC
+func get_deal_changes(spell_id: SpellId, api_endpoint: string, joined: []JoinedDeal) -> ?[]DealChangedResult:
     changes: ?[]DealChangedResult
 
-    deals <- get_joined_deals(spell_id)
+    deals <- make_change_reqs(spell_id, joined)
     if deals != nil:
         -- Poll for the last logs about deal changes
-        poll_result <- FluenceAuroraConnector.poll_deal_changes(api_endpoint, deals!)
+        poll_result <- FluenceAuroraConnector.poll_deal_changes(api_endpoint, deals)
         if poll_result.success:
             spell_log(spell_id, ["deal changes from poll:", poll_result.changes.length])
             changes <<- poll_result.changes
@@ -48,10 +49,10 @@ func move_left_boundary(spell_id: SpellId, deal_id: DealId, right_boundary: stri
         if left != nil:
             store_deal_state(spell_id, deal_id, DealState(left_boundary = left!))
 
-func poll_deal_changes_batch(spell_id: SpellId, chain: ChainInfo, latest_block: string):
+func poll_deal_changes_batch(spell_id: SpellId, chain: ChainInfo, deals: []JoinedDeal, latest_block: string):
     Spell spell_id
 
-    changes <- get_deal_changes(spell_id, chain.api_endpoint)
+    changes <- get_deal_changes(spell_id, chain.api_endpoint, deals)
     if changes != nil:
         -- Update all deals with new info
         for change <- changes!:
