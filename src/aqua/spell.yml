@@ -28,6 +28,14 @@ initArgs:
   worker_config:
     clock:
       period_sec: 10
+      start_sec: 1
+      end_sec: 0
+    blockchain:
+      start_block: 0
+      end_block: 0
+    connections:
+      connect: false
+      disconnect: false
   # worker_script will be set by a shell script
   worker_script: |
     (call %init_peer_id% ("run-console" "print") ["I did it!"])
