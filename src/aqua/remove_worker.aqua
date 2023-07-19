@@ -1,10 +1,9 @@
 module RemoveWorker declares remove
-export remove, inspect, joined_deals, get_logs, test_join
+export remove, inspect, joined_deals, get_logs, test_join, test
 
 import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 import Srv, Op from "@fluencelabs/aqua-lib/builtin.aqua"
 import Spell, StringListValue from "@fluencelabs/spell/spell_service.aqua"
-
 
 import getWorkersInfo, GetWorkersInfoHostsDeciderInstallationSpells from "workers.aqua"
 import Json from "fluence/peer.aqua"
@@ -98,3 +97,10 @@ func test_join() -> []string:
     join result[10]
 
     <- result
+
+func test() -> ??string:
+    a: ??string
+    info <- getWorkersInfo()
+    on info.hosts.decider!.relayId:
+        a <<- Op.identity(?["wtf"])
+    <- a
