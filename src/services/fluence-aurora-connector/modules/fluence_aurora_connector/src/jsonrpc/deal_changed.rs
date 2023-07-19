@@ -17,9 +17,8 @@ impl DealChangesReq {
     // OLD NAME: deal_changed_req
     pub fn jsonrpc(&self, idx: usize) -> JsonRpcReq<GetLogsReq> {
         let right_boundary = default_right_boundary(&self.left_boundary);
-        let address = format!("0x{}", self.deal_info.deal_id);
         let req = GetLogsReq {
-            address,
+            address: self.deal_info.deal_id.clone(),
             topics: vec![DealChangedData::topic()],
             from_block: self.left_boundary.clone(),
             to_block: right_boundary,
