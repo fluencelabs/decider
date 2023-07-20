@@ -1,5 +1,5 @@
 module RemoveWorker declares remove
-export remove, inspect, joined_deals, get_logs, test_join, test
+export remove, inspect, joined_deals, get_logs, test_join, test, remove_all
 
 import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 import Srv, Op from "@fluencelabs/aqua-lib/builtin.aqua"
@@ -7,8 +7,10 @@ import Spell, StringListValue from "@fluencelabs/spell/spell_service.aqua"
 
 import getWorkersInfo, GetWorkersInfoHostsDeciderInstallationSpells from "workers.aqua"
 import Json from "fluence/peer.aqua"
+
 use "debug.aqua" as Debug
 use "decider/deal_storage.aqua" as DealStorage
+use "decider/mailbox.aqua" as Mailbox
 
 func spells() -> []GetWorkersInfoHostsDeciderInstallationSpells:
     info <- getWorkersInfo()
@@ -28,22 +30,29 @@ func joined_deals() -> string:
             Debug.log_back(joined)
     <- "OK"
 
--- func remove_all() -> string:
---     for spell <- spells():
---         on spell.workerId via spell.hostId:
---             spell_id = "decider"
---             joined <- DealStorage.get_joined_deals(spell_id)
---             for deal <- joined:
---                 on spell.hostId:
---                     Worker.remove(deal.worker_id)
+func remove_all() -> string:
+    for spell <- spells():
+        on spell.workerId via spell.hostId:
+            spell_id = "decider"
+            joined <- DealStorage.get_joined_deals(spell_id)
+            for deal <- joined:
+                co Debug.log_back(["will remove worker from host", deal.worker_id, spell.hostId])
+                Mailbox.push_remove_worker(spell_id, spell.hostId, deal.worker_id)
 
---     <- "OK"
+    <- "OK"
 
 func inspect() -> string:
     for spell <- spells():
         on spell.workerId via spell.hostId:
             list <- Srv.list()
+            Debug.log_back(spell)
             Debug.log_back(list)
+
+            Spell "decider"
+            Debug.log_back(Spell.get_mailbox())
+
+            joined <- DealStorage.get_joined_deals("decider")
+            Debug.log_back(joined)
     <- "OK"
 
 func get_logs() -> [][]string:

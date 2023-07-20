@@ -33,7 +33,7 @@ test('run fluence cli --help', () => new Promise<void>(done => {
   });
 }))
 
-test('run fluence cli run', () => new Promise<void>(done => {
+test('run fluence cli run inspect()', () => new Promise<void>(done => {
   exec("npx fluence run -f 'inspect()' -i ../../aqua/remove_worker.aqua", (error, stdout, stderr) => {
     if (error) {
         console.log(`error: ${error.message}`);
@@ -46,3 +46,17 @@ test('run fluence cli run', () => new Promise<void>(done => {
     done();
   });
 }))
+
+// Test on deployment
+// 1. deploy deal
+// 2. match
+// 3. test it's in Joined Deals on the decider
+// 4. test worker exists on the host
+// 5. test Srv.list on worker returns expected services
+//
+// Test on multiple deals deployment
+// 1. deploy several deals
+// 2. match all of them
+// 3. test all of them are in Joined Deal on the decider
+// 4. test all workers exist on the host
+// 5. test Srv.list is correct for all workers

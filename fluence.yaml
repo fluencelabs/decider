@@ -23,10 +23,10 @@ aquaImports:
 dependencies:
   npm:
     "@fluencelabs/aqua-ipfs": 0.5.17
-    "@fluencelabs/aqua-lib": 0.7.1
-    "@fluencelabs/spell": 0.5.14
-    "@fluencelabs/aqua": 0.10.4
-    "@fluencelabs/installation-spell": 0.5.14
+    "@fluencelabs/aqua-lib": 0.7.2
+    "@fluencelabs/spell": 0.5.16
+    "@fluencelabs/aqua": 0.11.7
+    "@fluencelabs/installation-spell": 0.5.16
   cargo:
     marine: 0.14.0
     mrepl: 0.21.3
