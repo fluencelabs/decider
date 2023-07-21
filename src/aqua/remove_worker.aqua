@@ -7,6 +7,7 @@ import Spell, StringListValue from "@fluencelabs/spell/spell_service.aqua"
 
 import getWorkersInfo, GetWorkersInfoHostsDeciderInstallationSpells from "workers.aqua"
 import Json from "fluence/peer.aqua"
+import JoinedDeal from "decider/deal_storage.aqua"
 
 use "debug.aqua" as Debug
 use "decider/deal_storage.aqua" as DealStorage
@@ -23,12 +24,14 @@ func remove() -> string:
             Worker.remove(spell.workerId)
     <- "OK"
 
-func joined_deals() -> string:
+func joined_deals() -> [][]JoinedDeal:
+    joined: *[]JoinedDeal
     for spell <- spells():
+        Debug.log_back(["will go to", spell.workerId, spell.hostId])
         on spell.workerId via spell.hostId:
             joined <- DealStorage.get_joined_deals("decider")
-            Debug.log_back(joined)
-    <- "OK"
+            Debug.log_back("")
+    <- joined
 
 func remove_all() -> string:
     for spell <- spells():

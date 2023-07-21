@@ -1,5 +1,11 @@
 import { exec } from "child_process";
 
+import '@fluencelabs/js-client.node';
+import { Fluence } from "@fluencelabs/js-client.api";
+import { joined_deals } from "../src/remove_worker.js";
+
+const RELAY = "/ip4/127.0.0.1/tcp/9999/ws/p2p/12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ";
+
 async function run(command) {
   return new Promise(done =>
     exec(command, (error, stdout, stderr) => {
@@ -26,9 +32,21 @@ async function cleanup() {
   console.log("removed .fluence dir");
 }
 
-async function deployMatch() {
+async function deployDecider() {
   await cleanup();
 
+  let build = await run(`fluence build`);
+  assert(build.error === null, `Error happened on build: ${build.error}`);
+  console.log("built");
+
+  // TODO: globally installed fluence is used here -_-
+  //       that's because older fluence fails on upload
+  let deploy = await run(`cd /Users/folex/Development/fluencelabs/decider && fluence workers deploy`);
+  assert(deploy.error === null, `Error happened on workers deploy: ${deploy.error}`);
+  console.log("deployed workers");
+}
+
+async function deployMatch() {
   let providerKey = "0xbb3457514f768615c8bc4061c7e47f817c8a570c5c3537479639d4fad052a98a";
   let registerProvider = await run(
     `./hack.sh compute-provider matching registration 1 --privKey ${providerKey} --network local`
@@ -55,4 +73,21 @@ async function deployMatch() {
   console.log(`matched ${numWorkers} workers`);
 }
 
+async function checkDeployment() {
+  let compile = await run('fluence aqua -i ../../aqua/remove_worker.aqua -o src --js');
+  assert(compile.error === null, `Error happened on compilation: ${compile.error}`);
+  console.log("recompiled removed_worker.js");
+  console.log(compile.stdout);
+
+  await Fluence.connect(RELAY);
+  console.log("connected");
+  let deals = await joined_deals({ ttl: 20000 });
+  console.log("got deals");
+  console.dir(deals);
+
+  await Fluence.disconnect();
+}
+
+await deployDecider();
 await deployMatch();
+await checkDeployment();

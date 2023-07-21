@@ -2,6 +2,5 @@
 resolver = "2"
 members = [
   "src/services/fluence-aurora-connector/modules/curl_adapter",
-  "src/services/fluence-aurora-connector/modules/fluence_aurora_connector",
-  "src/distro"
+  "src/services/fluence-aurora-connector/modules/fluence_aurora_connector"
 ]
