@@ -20,9 +20,7 @@ test('get logs', async () => {
 })
 
 test('run fluence cli --help', () => new Promise<void>(async done => {
-  console.dir(await runCli('npx fluence --version'));
-
-  exec(`npx fluence --help`, (error, stdout, stderr) => {
+  exec(`./hack.sh`, (error, stdout, stderr) => {
     if (error) {
         console.log(`error: ${error.message}`);
     }

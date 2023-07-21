@@ -20,3 +20,5 @@ connector.tar.gz
 decider.json
 
 *.wasm
+
+**/target
