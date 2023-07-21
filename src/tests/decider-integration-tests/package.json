@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@fluencelabs/cli": "^0.5.4",
+    "@fluencelabs/cli": "https://github.com/fluencelabs/cli#matching",
     "@fluencelabs/js-client.api": "^0.12.0",
     "@fluencelabs/js-client.node": "^0.7.0",
     "@fluencelabs/js-peer": "^0.9.0",

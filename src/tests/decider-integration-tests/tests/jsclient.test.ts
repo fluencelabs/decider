@@ -19,8 +19,10 @@ test('get logs', async () => {
   let logs = await get_logs();
 })
 
-test('run fluence cli --help', () => new Promise<void>(done => {
-  exec("npx fluence ", (error, stdout, stderr) => {
+test('run fluence cli --help', () => new Promise<void>(async done => {
+  console.dir(await runCli('npx fluence --version'));
+
+  exec(`npx fluence --help`, (error, stdout, stderr) => {
     if (error) {
         console.log(`error: ${error.message}`);
     }
@@ -46,6 +48,38 @@ test('run fluence cli run inspect()', () => new Promise<void>(done => {
     done();
   });
 }))
+
+type Output = {
+  error: Error | null
+  stderr: string
+  stdout: string
+};
+
+async function runCli(command: string): Promise<Output> {
+  return new Promise<Output>(done =>
+    exec(command, (error, stdout, stderr) => {
+      done({
+        error,
+        stderr,
+        stdout
+      })
+    })
+  );
+}
+
+test('deploy & match a single deal', async () => {
+  let providerKey = "0xbb3457514f768615c8bc4061c7e47f817c8a570c5c3537479639d4fad052a98a";
+  let registerProvider = await runCli(
+    `npx fluence compute-provider matching registration 1 --privKey ${providerKey} --network local`
+  );
+  assert(registerProvider.error === null, `Error happened on matching: ${registerProvider.error}`);
+
+  let devKey = "0xbb3457514f768615c8bc4061c7e47f817c8a570c5c3537479639d4fad052a98a";
+  let deployDeal = await runCli(`deal deploy --privKey ${devKey} --network local`);
+  assert(deployDeal.error === null, `Error happened on deploying deal: ${deployDeal}`);
+
+  console.dir(deployDeal);
+})
 
 // Test on deployment
 // 1. deploy deal
