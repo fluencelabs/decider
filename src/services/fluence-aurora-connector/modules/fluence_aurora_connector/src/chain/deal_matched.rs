@@ -148,11 +148,11 @@ mod tests {
         let m = m.info;
         assert_eq!(
             m.compute_provider,
-            "6f10e8209296ea9e556f80b0ff545d8175f271d0"
+            "0x6f10e8209296ea9e556f80b0ff545d8175f271d0"
         );
         assert_eq!(
             m.deal_id.to_lowercase(),
-            "99e28f59ddfe14ff4e598a3ba3928bbf87b3f2b3"
+            "0x99e28f59ddfe14ff4e598a3ba3928bbf87b3f2b3"
         );
         assert_eq!(m.joined_workers.to_eth().as_u32(), 3);
         assert_eq!(m.deal_creation_block.to_eth().as_u32(), 77);

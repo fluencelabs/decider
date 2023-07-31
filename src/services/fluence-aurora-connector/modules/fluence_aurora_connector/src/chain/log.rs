@@ -90,6 +90,7 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(log: Log) -> Result<T, LogParse
         }
 
         let block_number = log.block_number.clone();
+        println!("data tokens: {:?}", tokens);
         let log = U::parse(&mut tokens.into_iter())?;
         T::new(block_number, log)
     };

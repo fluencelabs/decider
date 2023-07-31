@@ -81,8 +81,8 @@ impl ChainData for DealCreatedData {
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
     fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, LogParseError> {
-        let deal_id = next_opt(data_tokens, "deal_id", Token::into_string)?;
-        let payment_token = next_opt(data_tokens, "payment_token", Token::into_string)?;
+        let deal_id = next_opt(data_tokens, "deal_id", Token::into_address)?;
+        let payment_token = next_opt(data_tokens, "payment_token", Token::into_address)?;
 
         let price_per_epoch = next_opt(data_tokens, "price_per_epoch", U256::from_token)?;
         let required_stake = next_opt(data_tokens, "required_stake", U256::from_token)?;
@@ -102,8 +102,8 @@ impl ChainData for DealCreatedData {
         let epoch = next_opt(data_tokens, "epoch", Token::into_uint)?.as_u64();
 
         Ok(DealCreatedData {
-            deal_id,
-            payment_token,
+            deal_id: format!("{deal_id:#x}"),
+            payment_token: format!("{payment_token:#x}"),
             price_per_epoch,
             required_stake,
             min_workers,
@@ -130,6 +130,7 @@ mod test {
 
     use crate::chain::chain_data::ChainData;
     use crate::chain::chain_data::LogParseError;
+    use crate::chain::deal_created::LogParseError::MissingParsedToken;
     use crate::chain::deal_created::{DealCreated, DealCreatedData};
     use crate::chain::log::{parse_log, Log};
 
@@ -164,10 +165,10 @@ mod test {
 
         assert!(result.is_ok(), "can't parse data: {:?}", result);
         let result = result.unwrap().info;
-        assert_eq!(result.deal_id, "94952482aa36dc9ec113bbba0df49284ecc071e2");
+        assert_eq!(result.deal_id, "0x94952482aa36dc9ec113bbba0df49284ecc071e2");
         assert_eq!(
             result.payment_token,
-            "5f7a3a2dab601ee4a1970b53088bebca176e13f4"
+            "0x5f7a3a2dab601ee4a1970b53088bebca176e13f4"
         );
         assert_eq!(
             result.required_stake.to_eth(),
@@ -193,7 +194,7 @@ mod test {
     fn test_chain_parsing_fail_empty() {
         let result = DealCreatedData::parse(&mut std::iter::empty());
         assert!(result.is_err());
-        assert_matches!(result, Err(LogParseError::Empty));
+        assert_matches!(result, Err(MissingParsedToken("deal_id")));
     }
 
     #[test]
@@ -201,9 +202,6 @@ mod test {
         let data = &mut vec![Token::Bool(false)].into_iter();
         let result = DealCreatedData::parse(data);
         assert!(result.is_err());
-        assert_matches!(
-            result,
-            Err(LogParseError::EthError(ethabi::Error::InvalidData))
-        );
+        assert_matches!(result, Err(LogParseError::InvalidParsedToken("deal_id")));
     }
 }
