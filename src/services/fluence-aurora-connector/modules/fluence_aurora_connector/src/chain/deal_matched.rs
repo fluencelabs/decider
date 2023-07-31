@@ -27,13 +27,6 @@ use crate::chain::u256::U256;
 
 #[derive(Debug, Clone)]
 #[marine]
-struct CIDV1 {
-    prefixes: Vec<u8>,
-    hash: Vec<u8>,
-}
-
-#[derive(Debug, Clone)]
-#[marine]
 pub struct Match {
     compute_provider: String,
     deal_id: String,

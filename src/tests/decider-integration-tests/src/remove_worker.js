@@ -46,7 +46,7 @@ export const test_script = `
                                      (canon %init_peer_id% $array-inline  #array-inline-0)
                                     )
                                    )
-                                   (call %init_peer_id% ("json" "obj") ["definition" "bafkreig2znran624lsnotj67nvt7blezxijtuy2gd7gisjneck7j3mrsha" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T19:43:10.634Z"] GetWorkersInfoHostsDecider_obj)
+                                   (call %init_peer_id% ("json" "obj") ["definition" "bafkreiapnccsr3o5izztb76z5523bw3copiaovazhih3yypsoovrevkvmi" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T20:04:48.035Z"] GetWorkersInfoHostsDecider_obj)
                                   )
                                   (xor
                                    (ap GetWorkersInfoHostsDecider_obj $option-inline)
@@ -174,7 +174,7 @@ export const remove_all_script = `
                                     (canon %init_peer_id% $array-inline  #array-inline-0)
                                    )
                                   )
-                                  (call %init_peer_id% ("json" "obj") ["definition" "bafkreig2znran624lsnotj67nvt7blezxijtuy2gd7gisjneck7j3mrsha" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T19:43:10.634Z"] GetWorkersInfoHostsDecider_obj)
+                                  (call %init_peer_id% ("json" "obj") ["definition" "bafkreiapnccsr3o5izztb76z5523bw3copiaovazhih3yypsoovrevkvmi" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T20:04:48.035Z"] GetWorkersInfoHostsDecider_obj)
                                  )
                                  (xor
                                   (ap GetWorkersInfoHostsDecider_obj $option-inline)
@@ -453,7 +453,7 @@ export const get_logs_script = `
                                      (canon %init_peer_id% $array-inline  #array-inline-0)
                                     )
                                    )
-                                   (call %init_peer_id% ("json" "obj") ["definition" "bafkreig2znran624lsnotj67nvt7blezxijtuy2gd7gisjneck7j3mrsha" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T19:43:10.634Z"] GetWorkersInfoHostsDecider_obj)
+                                   (call %init_peer_id% ("json" "obj") ["definition" "bafkreiapnccsr3o5izztb76z5523bw3copiaovazhih3yypsoovrevkvmi" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T20:04:48.035Z"] GetWorkersInfoHostsDecider_obj)
                                   )
                                   (xor
                                    (ap GetWorkersInfoHostsDecider_obj $option-inline)
@@ -596,7 +596,7 @@ export const inspect_script = `
                                     (canon %init_peer_id% $array-inline  #array-inline-0)
                                    )
                                   )
-                                  (call %init_peer_id% ("json" "obj") ["definition" "bafkreig2znran624lsnotj67nvt7blezxijtuy2gd7gisjneck7j3mrsha" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T19:43:10.634Z"] GetWorkersInfoHostsDecider_obj)
+                                  (call %init_peer_id% ("json" "obj") ["definition" "bafkreiapnccsr3o5izztb76z5523bw3copiaovazhih3yypsoovrevkvmi" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T20:04:48.035Z"] GetWorkersInfoHostsDecider_obj)
                                  )
                                  (xor
                                   (ap GetWorkersInfoHostsDecider_obj $option-inline)
@@ -1068,7 +1068,7 @@ export const joined_deals_script = `
                                        (canon %init_peer_id% $array-inline  #array-inline-0)
                                       )
                                      )
-                                     (call %init_peer_id% ("json" "obj") ["definition" "bafkreig2znran624lsnotj67nvt7blezxijtuy2gd7gisjneck7j3mrsha" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T19:43:10.634Z"] GetWorkersInfoHostsDecider_obj)
+                                     (call %init_peer_id% ("json" "obj") ["definition" "bafkreiapnccsr3o5izztb76z5523bw3copiaovazhih3yypsoovrevkvmi" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T20:04:48.035Z"] GetWorkersInfoHostsDecider_obj)
                                     )
                                     (xor
                                      (ap GetWorkersInfoHostsDecider_obj $option-inline)
@@ -1331,7 +1331,7 @@ export const remove_script = `
                                     (canon %init_peer_id% $array-inline  #array-inline-0)
                                    )
                                   )
-                                  (call %init_peer_id% ("json" "obj") ["definition" "bafkreig2znran624lsnotj67nvt7blezxijtuy2gd7gisjneck7j3mrsha" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T19:43:10.634Z"] GetWorkersInfoHostsDecider_obj)
+                                  (call %init_peer_id% ("json" "obj") ["definition" "bafkreiapnccsr3o5izztb76z5523bw3copiaovazhih3yypsoovrevkvmi" "installationSpells" #array-inline-0 "relayId" "12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ" "timestamp" "2023-07-21T20:04:48.035Z"] GetWorkersInfoHostsDecider_obj)
                                  )
                                  (xor
                                   (ap GetWorkersInfoHostsDecider_obj $option-inline)
