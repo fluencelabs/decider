@@ -14,7 +14,6 @@ pub struct DealChangesReq {
 }
 
 impl DealChangesReq {
-    // OLD NAME: deal_changed_req
     pub fn jsonrpc(&self, idx: usize) -> JsonRpcReq<GetLogsReq> {
         let right_boundary = default_right_boundary(&self.left_boundary);
         let req = GetLogsReq {

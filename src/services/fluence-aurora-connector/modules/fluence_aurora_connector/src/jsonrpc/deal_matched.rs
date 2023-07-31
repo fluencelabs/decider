@@ -38,13 +38,11 @@ impl MatchedResult {
     }
 }
 
-// TODO: How to set an upper limit for how many responses to return?
-//       Don't see this functionallity in eth_getLogs
 // TODO: need to restrict who can use this service to its spell
 //
-// `api_endpoint` -- api endpoint to poll (right now it's possible to pass any URL for emergency cases)
-// `address`      -- address of the chain contract
-// `left_boundary`   -- from which block to poll deals
+// `chain`          -- info about chain RPC
+// `address`        -- address of the chain contract
+// `left_boundary`  -- from which block to poll deals
 #[marine]
 pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResult {
     if let Err(err) = check_url(&chain.api_endpoint) {

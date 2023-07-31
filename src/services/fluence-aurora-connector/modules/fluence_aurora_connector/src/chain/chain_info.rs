@@ -6,7 +6,7 @@ use marine_rs_sdk::marine;
 //   api_endpoint: URL
 //   -- Address of the deal factory contract
 //   deal_factory: Address
-//   -- Chain contract address
+//   -- Matcher contract address
 //   matcher: Address
 //   -- Provider wallet address
 //   provider: Address
