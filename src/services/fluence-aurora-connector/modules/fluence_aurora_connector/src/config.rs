@@ -3,6 +3,7 @@ use marine_rs_sdk::marine;
 use crate::chain::chain_data::ChainData;
 use crate::chain::deal_changed::{DealChanged, DealChangedData};
 use crate::chain::deal_created::{DealCreated, DealCreatedData};
+use crate::chain::deal_matched::{DealMatched, Match};
 
 #[marine]
 pub struct SupportedEvent {
@@ -29,6 +30,10 @@ pub fn get_env() -> Env {
         SupportedEvent {
             name: DealChanged::EVENT_NAME.to_string(),
             topic: DealChangedData::topic(),
+        },
+        SupportedEvent {
+            name: DealMatched::EVENT_NAME.to_string(),
+            topic: Match::topic(),
         },
     ];
     Env { events }
