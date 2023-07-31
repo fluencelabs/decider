@@ -1,8 +1,0 @@
-service UrlDownloader:
-    get_n_save(url: string, file_name: string) -> string
-
-func download(target_url: string, fname: string, node:string, service_id:string) -> string:
-    on node:
-        UrlDownloader service_id
-        res <- UrlDownloader.get_n_save(target_url, fname)
-    <- res

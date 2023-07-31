@@ -1,6 +1,0 @@
-[workspace]
-members = [
-  "service/modules/url_downloader",
-  "service/modules/local_storage",
-  "service/modules/curl_adapter"
-]
