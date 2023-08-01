@@ -26,6 +26,8 @@ use crate::chain::u256::U256;
 /// );
 /// ```
 
+const PEER_ID_PREFIX: &[u8] = &[0, 36, 8, 1, 18, 32];
+
 #[derive(Debug, Clone)]
 #[marine]
 pub struct Match {
@@ -76,10 +78,7 @@ impl ChainData for Match {
     fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, LogParseError> {
         let tokens = &mut data_tokens.into_iter();
 
-        let compute_peer = next_opt(tokens, "compute_peer", |t| {
-            let t = Token::into_fixed_bytes(t)?;
-            PeerId::from_bytes(&[&[8, 1, 18, 32], &t[..]].concat()).ok()
-        })?;
+        let compute_peer = next_opt(tokens, "compute_peer", parse_peer_id)?;
 
         let deal = next_opt(tokens, "deal", Token::into_address)?;
         let pat_ids = next_opt(tokens, "pat_ids", |t| {
@@ -106,6 +105,13 @@ impl ChainData for Match {
     }
 }
 
+fn parse_peer_id(token: Token) -> Option<PeerId> {
+    let bytes = Token::into_fixed_bytes(token)?;
+    let peer_id = &[PEER_ID_PREFIX, &bytes].concat();
+
+    PeerId::from_bytes(&peer_id).ok()
+}
+
 impl ChainEvent<Match> for DealMatched {
     fn new(block_number: String, info: Match) -> Self {
         Self { block_number, info }
@@ -115,15 +121,39 @@ impl ChainEvent<Match> for DealMatched {
 #[cfg(test)]
 mod tests {
     use crate::chain::chain_data::ChainData;
-    use crate::chain::deal_matched::{DealMatched, Match};
+    use crate::chain::deal_matched::{parse_peer_id, DealMatched, Match};
     use crate::chain::log::{parse_log, Log};
     use crate::jsonrpc::JsonRpcResp;
+    use ethabi::Token;
 
     #[test]
     fn topic() {
         assert_eq!(
             Match::topic(),
             String::from("0x55e61a24ecdae954582245e5e611fb06905d6af967334fff4db72793bebc72a9")
+        );
+    }
+
+    #[test]
+    fn peer_id() {
+        let bytes = [
+            88, 198, 255, 218, 126, 170, 188, 84, 84, 39, 255, 137, 18, 55, 7, 139, 121, 207, 149,
+            42, 196, 115, 102, 160, 4, 47, 227, 62, 7, 53, 189, 15,
+        ];
+        let peer_id =
+            parse_peer_id(Token::FixedBytes(bytes.into())).expect("parse peer_id from Token");
+        assert_eq!(
+            peer_id.to_string(),
+            String::from("12D3KooWFnv3Qc25eKpTDCNBoW1jXHMHHHSzcJoPkHai1b2dHNra")
+        );
+
+        let hex = "7a82a5feefcaad4a89c689412031e5f87c02b29e3fced583be5f05c7077354b7";
+        let bytes = hex::decode(hex).expect("parse peer_id from hex");
+        let bytes = Token::FixedBytes(bytes);
+        let peer_id = parse_peer_id(bytes).expect("parse peer_id from Token");
+        assert_eq!(
+            peer_id.to_string(),
+            String::from("12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE")
         );
     }
 
