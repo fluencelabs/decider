@@ -1,6 +1,7 @@
 use cid::Cid;
 use ethabi::param_type::ParamType;
 use ethabi::Token;
+use libp2p_identity::PeerId;
 use marine_rs_sdk::marine;
 
 use crate::chain::chain_data::EventField::{Indexed, NotIndexed};
@@ -16,21 +17,21 @@ use crate::chain::u256::U256;
 ///     bytes32 hash;
 /// }
 ///
-/// event Matched(
-///     address indexed computeProvider,
-///     address deal,
-///     uint joinedWorkers,
-///     uint dealCreationBlock,
+/// event ComputePeerMatched(
+///     bytes32 indexed peerId
+///     address deal
+///     bytes32[] patIds
+///     uint dealCreationBlock
 ///     CIDV1 appCID
-/// )
+/// );
 /// ```
 
 #[derive(Debug, Clone)]
 #[marine]
 pub struct Match {
-    compute_provider: String,
+    compute_peer: PeerId,
     deal_id: String,
-    joined_workers: U256,
+    pat_ids: Vec<Vec<u8>>,
     deal_creation_block: U256,
     app_cid: String,
 }
@@ -43,7 +44,7 @@ pub struct DealMatched {
 }
 
 impl DealMatched {
-    pub const EVENT_NAME: &'static str = "Matched";
+    pub const EVENT_NAME: &'static str = "ComputePeerMatched";
 }
 
 impl ChainData for Match {
@@ -54,11 +55,11 @@ impl ChainData for Match {
     fn signature() -> Vec<EventField> {
         vec![
             // compute_provider
-            Indexed(ParamType::Address),
+            Indexed(ParamType::FixedBytes(32)),
             // deal
             NotIndexed(ParamType::Address),
-            // joined_workers
-            NotIndexed(ParamType::Uint(256)),
+            // pat_ids
+            NotIndexed(ParamType::Array(Box::new(ParamType::FixedBytes(32)))),
             // deal_creation_block
             NotIndexed(ParamType::Uint(256)),
             // app_cid
@@ -74,9 +75,19 @@ impl ChainData for Match {
     /// Parse data from chain. Accepts data with and without "0x" prefix.
     fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, LogParseError> {
         let tokens = &mut data_tokens.into_iter();
-        let compute_provider = next_opt(tokens, "compute_provider", Token::into_address)?;
+
+        let compute_peer = next_opt(tokens, "compute_peer", |t| {
+            let t = Token::into_fixed_bytes(t)?;
+            PeerId::from_bytes(&[&[8, 1, 18, 32], &t[..]].concat()).ok()
+        })?;
+
         let deal = next_opt(tokens, "deal", Token::into_address)?;
-        let joined_workers = next_opt(tokens, "joined_workers", U256::from_token)?;
+        let pat_ids = next_opt(tokens, "pat_ids", |t| {
+            Token::into_array(t)?
+                .into_iter()
+                .map(|t| t.into_fixed_bytes())
+                .collect::<Option<Vec<_>>>()
+        })?;
         let deal_creation_block = next_opt(tokens, "deal_creation_block", U256::from_token)?;
 
         let app_cid = &mut next_opt(tokens, "app_cid", Token::into_tuple)?.into_iter();
@@ -86,9 +97,9 @@ impl ChainData for Match {
         let app_cid = Cid::read_bytes(cid_bytes.as_slice())?.to_string();
 
         Ok(Match {
-            compute_provider: format!("{compute_provider:#x}"),
+            compute_peer,
             deal_id: format!("{deal:#x}"),
-            joined_workers,
+            pat_ids,
             deal_creation_block,
             app_cid,
         })
@@ -112,7 +123,7 @@ mod tests {
     fn topic() {
         assert_eq!(
             Match::topic(),
-            String::from("0x8a2ecab128faa476aff507c7f34da3348b5c56e4a0401825f6919b4cc7b249f1")
+            String::from("0x55e61a24ecdae954582245e5e611fb06905d6af967334fff4db72793bebc72a9")
         );
     }
 
@@ -147,14 +158,14 @@ mod tests {
         assert_eq!(m.block_number, "0x4e");
         let m = m.info;
         assert_eq!(
-            m.compute_provider,
+            m.compute_peer.to_string(),
             "6f10e8209296ea9e556f80b0ff545d8175f271d0"
         );
         assert_eq!(
             m.deal_id.to_lowercase(),
             "99e28f59ddfe14ff4e598a3ba3928bbf87b3f2b3"
         );
-        assert_eq!(m.joined_workers.to_eth().as_u32(), 3);
+        assert_eq!(m.pat_ids.len(), 33);
         assert_eq!(m.deal_creation_block.to_eth().as_u32(), 77);
         assert_eq!(
             m.app_cid.to_string(),
