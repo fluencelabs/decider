@@ -8,13 +8,10 @@ use marine_rs_sdk::marine;
 //   deal_factory: Address
 //   -- Chain contract address
 //   matcher: Address
-//   -- Provider wallet address
-//   provider: Address
 
 #[marine]
 pub struct ChainInfo {
     pub api_endpoint: String,
     pub deal_factory: String,
     pub matcher: String,
-    pub provider: String,
 }

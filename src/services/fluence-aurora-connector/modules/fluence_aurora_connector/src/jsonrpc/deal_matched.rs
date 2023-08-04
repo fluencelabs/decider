@@ -1,6 +1,8 @@
+use libp2p_identity::PeerId;
 use marine_rs_sdk::marine;
+use std::str::FromStr;
 
-use crate::chain::chain_data::{unhex, ChainData};
+use crate::chain::chain_data::ChainData;
 use crate::chain::chain_info::ChainInfo;
 use crate::chain::deal_matched::{DealMatched, Match};
 use crate::chain::log::parse_logs;
@@ -47,19 +49,27 @@ impl MatchedResult {
 // `left_boundary`   -- from which block to poll deals
 #[marine]
 pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResult {
+    use marine_rs_sdk::get_call_parameters;
+
+    let host = get_call_parameters().host_id;
+    let host = PeerId::from_str(&host).expect("parse host_id to peer_id");
+    let host: Vec<_> = host.to_bytes().into_iter().skip(6).collect();
+    let host = format!("0x{:0>64}", hex::encode(host));
+    log::info!("host {}", host);
+
     if let Err(err) = check_url(&chain.api_endpoint) {
         return MatchedResult::error(err.to_string());
     }
 
     let right_boundary = default_right_boundary(&left_boundary);
     // pad provider to 32 bytes
-    let provider = format!("0x{:0>64}", unhex(chain.provider));
+    // let provider = format!("0x{:0>64}", unhex(chain.provider));
     let logs = get_logs(
         chain.api_endpoint,
         chain.matcher,
         left_boundary,
         right_boundary.clone(),
-        vec![Match::topic(), provider],
+        vec![Match::topic(), host],
     );
 
     match logs {
@@ -73,15 +83,44 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
 
 #[cfg(test)]
 mod tests {
+    use crate::chain::chain_info::ChainInfo;
+    use crate::jsonrpc::deal_matched::poll_deal_matches;
+    use libp2p_identity::PeerId;
+    use marine_rs_sdk::CallParameters;
     use marine_rs_sdk_test::marine_test;
+    use std::str::FromStr;
 
     const CONFIG_PATH: &str = "../../../../../../../src/distro/decider-spell/Config.toml";
+
+    #[test]
+    fn serialize_peer_id() {
+        let host = "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE";
+        let host = PeerId::from_str(&host).expect("parse host_id to peer_id");
+        println!("host: {}", host);
+        let host: Vec<_> = host.to_bytes().into_iter().skip(6).collect();
+        println!("host: {:?}", host);
+        let host = format!("0x{:0>64}", hex::encode(host));
+        println!("host: {}", host);
+    }
+
+    // #[test]
+    // fn poll_native() {
+    //     let info = ChainInfo {
+    //         api_endpoint: url,
+    //         deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
+    //         matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
+    //     };
+    //
+    //     poll_deal_matches(info, "0x0".into());
+    // }
 
     // Set env RUST_LOGGER="mockito=debug" to enable Mockito's logs
     #[marine_test(config_path = "../../../../../../../src/distro/decider-spell/Config.toml")]
     fn poll(connector: marine_test_env::fluence_aurora_connector::ModuleInterface) {
         let _ = ::env_logger::builder()
-            // .filter_module("mockito", Debug)
+            .filter_level(log::LevelFilter::Debug)
+            .filter_module("mockito", log::LevelFilter::Debug)
+            .filter_module("wasmer_interface_types_fl", log::LevelFilter::Off)
             .is_test(true)
             .try_init();
 
@@ -94,14 +133,28 @@ mod tests {
                     "removed": false,
                     "logIndex": "0xb",
                     "transactionIndex": "0x0",
-                    "transactionHash": "0x1a7122fa7501f09f19f29451548e88adf7ec88c99d34b4abdd09b27dfdbd74f1",
-                    "blockHash": "0x1c6808f9f4f99bdad9a63601e07230b84effaec5aba724963ef17651131cf75d",
-                    "blockNumber": "0x4e",
-                    "address": "0x6328bb918a01603adc91eae689b848a9ecaef26d",
-                    "data": "0x00000000000000000000000099e28f59ddfe14ff4e598a3ba3928bbf87b3f2b30000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000004d0155122000000000000000000000000000000000000000000000000000000000ae5c519332925f31f747a4edd958fb5b0791b10383ec6d5e77e2264f211e09e3",
+                    "transactionHash": "0xe3943cc5057c8ed33ec9a6891421b367d0f8179b167559ca6e1dae9992941003",
+                    "blockHash": "0xa26b32fbefcf53e5484c0325fd6da72ee03c7198f1c32b4f8b4582b93525837b",
+                    "blockNumber": "0x51",
+                    "address": "0xb971228a3af887c8c50e7ab946df9def0d12cab2",
+                    "data": "0x000000000000000000000000ffa0611a099ab68ad7c3c67b4ca5bbbee7a58b9900000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000000500155122000000000000000000000000000000000000000000000000000000000ae5c519332925f31f747a4edd958fb5b0791b10383ec6d5e77e2264f211e09e300000000000000000000000000000000000000000000000000000000000000036c9d5e8bcc73a422dd6f968f13cd6fc92ccd5609b455cf2c7978cbc694297853fef3b95696986bf289166835e05f723f0fdea97d2bc5fea0ebbbf87b6a866cfa5a5a0f4fa4d41a4f976e799895cce944d5080041dba7d528d30e81c67973bac3",
                     "topics": [
-                        "0x8a2ecab128faa476aff507c7f34da3348b5c56e4a0401825f6919b4cc7b249f1",
-                        "0x0000000000000000000000006f10e8209296ea9e556f80b0ff545d8175f271d0"
+                        "0x55e61a24ecdae954582245e5e611fb06905d6af967334fff4db72793bebc72a9",
+                        "0x7a82a5feefcaad4a89c689412031e5f87c02b29e3fced583be5f05c7077354b7"
+                    ]
+                },
+                {
+                    "removed": false,
+                    "logIndex": "0xb",
+                    "transactionIndex": "0x0",
+                    "transactionHash": "0x093f57ec0df3420f3c8a52ee90fa9ef05aed9827fa05ba6e997bdd4b1b982189",
+                    "blockHash": "0xd2f21035758026e7f0be21c13278b1d4f993b6d75647b0c29d431a4f271ccfd0",
+                    "blockNumber": "0x57",
+                    "address": "0xb971228a3af887c8c50e7ab946df9def0d12cab2",
+                    "data": "0x00000000000000000000000067b2ad3866429282e16e55b715d12a77f85b7ce800000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000000560155122000000000000000000000000000000000000000000000000000000000ae5c519332925f31f747a4edd958fb5b0791b10383ec6d5e77e2264f211e09e300000000000000000000000000000000000000000000000000000000000000036c9d5e8bcc73a422dd6f968f13cd6fc92ccd5609b455cf2c7978cbc694297853fef3b95696986bf289166835e05f723f0fdea97d2bc5fea0ebbbf87b6a866cfa5a5a0f4fa4d41a4f976e799895cce944d5080041dba7d528d30e81c67973bac3",
+                    "topics": [
+                        "0x55e61a24ecdae954582245e5e611fb06905d6af967334fff4db72793bebc72a9",
+                        "0x7a82a5feefcaad4a89c689412031e5f87c02b29e3fced583be5f05c7077354b7"
                     ]
                 }
             ]
@@ -114,7 +167,7 @@ mod tests {
         let mock = server
             .mock("POST", "/")
             // expect to receive this exact body in POST
-            .match_body(r#"{"jsonrpc":"2.0","id":0,"method":"eth_getLogs","params":[{"fromBlock":"0x52","toBlock":"0x246","address":"0x6328bb918a01603adc91eae689b848a9ecaef26d","topics":["0x8a2ecab128faa476aff507c7f34da3348b5c56e4a0401825f6919b4cc7b249f1","0x0000000000000000000000006f10e8209296ea9e556f80b0ff545d8175f271d0"]}]}"#)
+            .match_body(r#"{"jsonrpc":"2.0","id":0,"method":"eth_getLogs","params":[{"fromBlock":"0x52","toBlock":"0x246","address":"0x6328bb918a01603adc91eae689b848a9ecaef26d","topics":["0x55e61a24ecdae954582245e5e611fb06905d6af967334fff4db72793bebc72a9","0x7a82a5feefcaad4a89c689412031e5f87c02b29e3fced583be5f05c7077354b7"]}]}"#)
             // expect exactly 1 POST request
             .expect(1)
             .with_status(200)
@@ -133,25 +186,32 @@ mod tests {
             api_endpoint: url,
             deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
             matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
-            provider: "0x6f10e8209296ea9e556f80b0ff545d8175f271d0".to_string(),
         };
-        let result = connector.poll_deal_matches(chain, "0x52".into());
+        let cp = CallParameters {
+            init_peer_id: "".to_string(),
+            service_id: "".to_string(),
+            service_creator_peer_id: "".to_string(),
+            host_id: "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE".to_string(),
+            particle_id: "".to_string(),
+            tetraplets: vec![],
+        };
+        let result = connector.poll_deal_matches_cp(chain, "0x52".into(), cp);
 
         assert!(result.success, "poll failed: {:?}", result);
         assert_eq!(
             result.logs.len(),
-            1,
+            2,
             "expected 1 logs, got {}",
             result.logs.len()
         );
         let log = result.logs.into_iter().next().unwrap().info;
         assert_eq!(
-            log.compute_provider.to_lowercase(),
-            "0x6f10e8209296ea9e556f80b0ff545d8175f271d0".to_lowercase()
+            log.compute_peer.to_lowercase(),
+            "0x2031e5f87c02b29e3fced583be5f05c7077354b7".to_lowercase()
         );
         assert_eq!(
             log.deal_id.to_lowercase(),
-            "0x99e28F59DdfE14fF4e598a3Ba3928bbF87b3f2B3".to_lowercase()
+            "0xffa0611a099ab68ad7c3c67b4ca5bbbee7a58b99".to_lowercase()
         );
 
         // assert that there was no invalid requests

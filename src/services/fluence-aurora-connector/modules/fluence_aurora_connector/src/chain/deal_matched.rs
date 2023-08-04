@@ -31,7 +31,7 @@ const PEER_ID_PREFIX: &[u8] = &[0, 36, 8, 1, 18, 32];
 #[derive(Debug, Clone)]
 #[marine]
 pub struct Match {
-    compute_peer: PeerId,
+    compute_peer: String,
     deal_id: String,
     pat_ids: Vec<Vec<u8>>,
     deal_creation_block: U256,
@@ -78,7 +78,7 @@ impl ChainData for Match {
     fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, LogParseError> {
         let tokens = &mut data_tokens.into_iter();
 
-        let compute_peer = next_opt(tokens, "compute_peer", parse_peer_id)?;
+        let compute_peer = next_opt(tokens, "compute_peer", Token::into_string)?;
 
         let deal = next_opt(tokens, "deal", Token::into_address)?;
         let pat_ids = next_opt(tokens, "pat_ids", |t| {
@@ -120,10 +120,7 @@ impl ChainEvent<Match> for DealMatched {
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
-
     use ethabi::Token;
-    use libp2p_identity::PeerId;
 
     use crate::chain::chain_data::ChainData;
     use crate::chain::deal_matched::{parse_peer_id, DealMatched, Match};
@@ -211,8 +208,7 @@ mod tests {
         let m = m.info;
         assert_eq!(
             m.compute_peer,
-            PeerId::from_str("12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE")
-                .expect("parse peer id")
+            "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE"
         );
         assert_eq!(
             m.deal_id.to_lowercase(),
@@ -231,8 +227,7 @@ mod tests {
         let m = m.info;
         assert_eq!(
             m.compute_peer,
-            PeerId::from_str("12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE")
-                .expect("parse peer id")
+            "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE"
         );
         assert_eq!(
             m.deal_id.to_lowercase(),
