@@ -78,7 +78,8 @@ impl ChainData for Match {
     fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, LogParseError> {
         let tokens = &mut data_tokens.into_iter();
 
-        let compute_peer = next_opt(tokens, "compute_peer", Token::into_string)?;
+        let compute_peer = next_opt(tokens, "compute_peer", Token::into_fixed_bytes)?;
+        let compute_peer = format!("0x{}", hex::encode(compute_peer));
 
         let deal = next_opt(tokens, "deal", Token::into_address)?;
         let pat_ids = next_opt(tokens, "pat_ids", |t| {

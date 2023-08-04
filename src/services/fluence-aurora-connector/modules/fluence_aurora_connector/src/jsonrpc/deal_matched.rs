@@ -83,8 +83,6 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
 
 #[cfg(test)]
 mod tests {
-    use crate::chain::chain_info::ChainInfo;
-    use crate::jsonrpc::deal_matched::poll_deal_matches;
     use libp2p_identity::PeerId;
     use marine_rs_sdk::CallParameters;
     use marine_rs_sdk_test::marine_test;
@@ -103,23 +101,14 @@ mod tests {
         println!("host: {}", host);
     }
 
-    // #[test]
-    // fn poll_native() {
-    //     let info = ChainInfo {
-    //         api_endpoint: url,
-    //         deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
-    //         matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
-    //     };
-    //
-    //     poll_deal_matches(info, "0x0".into());
-    // }
-
     // Set env RUST_LOGGER="mockito=debug" to enable Mockito's logs
     #[marine_test(config_path = "../../../../../../../src/distro/decider-spell/Config.toml")]
     fn poll(connector: marine_test_env::fluence_aurora_connector::ModuleInterface) {
         let _ = ::env_logger::builder()
             .filter_level(log::LevelFilter::Debug)
             .filter_module("mockito", log::LevelFilter::Debug)
+            .filter_module("fluence_aurora_connector", log::LevelFilter::Debug)
+            .filter_module("marine_core", log::LevelFilter::Debug)
             .filter_module("wasmer_interface_types_fl", log::LevelFilter::Off)
             .is_test(true)
             .try_init();
@@ -207,7 +196,7 @@ mod tests {
         let log = result.logs.into_iter().next().unwrap().info;
         assert_eq!(
             log.compute_peer.to_lowercase(),
-            "0x2031e5f87c02b29e3fced583be5f05c7077354b7".to_lowercase()
+            "0x7a82a5feefcaad4a89c689412031e5f87c02b29e3fced583be5f05c7077354b7".to_lowercase()
         );
         assert_eq!(
             log.deal_id.to_lowercase(),
