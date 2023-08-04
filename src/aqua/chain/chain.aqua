@@ -11,5 +11,3 @@ data ChainInfo:
   deal_factory: Address
   -- Chain contract address
   matcher: Address
-  -- Provider wallet address
-  provider: Address

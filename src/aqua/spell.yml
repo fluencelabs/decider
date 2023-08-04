@@ -6,7 +6,7 @@ version: 0
 aquaFilePath: ./decider/poll.aqua
 function: main
 clock:
-  periodSec: 60
+  periodSec: 20
   endDelaySec: 1800
 initArgs:
   # "worker_script" => json!(WORKER_SPELL),
@@ -20,9 +20,9 @@ initArgs:
   chain:
     api_endpoint: http://127.0.0.1:8545
     deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d"
-    matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d"
+    matcher: "0xB971228A3af887C8C50e7Ab946dF9deF0D12CAB2"
     # worker_script will be set by a shell script
-    provider: "0x6f10e8209296ea9e556f80b0ff545d8175f271d0"
+    # provider: "0x6f10e8209296ea9e556f80b0ff545d8175f271d0"
   from_block: "0x0"
   worker_ipfs: /dns4/ipfs.fluence.dev/tcp/5001
   worker_config:
