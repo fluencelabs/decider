@@ -19,6 +19,7 @@ hex = "0.4.3"
 url = "2.4.0"
 cid = "0.10.1"
 libp2p-identity = { version = "0.2.1", features = ["peerid"], default-features = false }
+ethereum-tx-sign = "6.1.2"
 
 [dev-dependencies]
 marine-rs-sdk-test = "0.10.0"
