@@ -13,7 +13,7 @@ pub struct ChainInfo {
     // Address of the worker contract
     pub workers: String,
     // How much gas is needed to register a worker
-    pub workers_gas: u128,
+    pub workers_gas: u64,
     // private key of the wallet
     pub wallet_key: String,
 }
