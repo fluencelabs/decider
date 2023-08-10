@@ -13,6 +13,11 @@ pub fn int_to_hex(num: u64) -> String {
     format!("{:#x}", num)
 }
 
+pub fn decode_hex(h: &str) -> Result<Vec<u8>, hex::FromHexError> {
+    let h = h.trim_start_matches("0x");
+    hex::decode(h)
+}
+
 #[marine]
 /// Calculates a difference between two hex strings as u64 number
 /// Returns 0 on overflow
