@@ -8,6 +8,8 @@ DISTRO_DIR=src/distro/decider-spell
 
 mkdir -p "$DISTRO_DIR"
 
+export CC=/opt/homebrew/opt/llvm/bin/clang
+export AR=/opt/homebrew/opt/llvm/bin/llvm-ar
 fluence dep i
 # compile connector
 fluence build
