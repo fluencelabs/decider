@@ -10,7 +10,7 @@ data ChainInfo:
   api_endpoint: URL
   -- Address of the deal factory contract
   deal_factory: Address
-  -- Chain contract address
+  -- Address of the matcher contract
   matcher: Address
   -- Address of the worker contract
   workers: Address

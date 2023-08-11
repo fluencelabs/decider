@@ -62,8 +62,6 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
     }
 
     let right_boundary = default_right_boundary(&left_boundary);
-    // pad provider to 32 bytes
-    // let provider = format!("0x{:0>64}", unhex(chain.provider));
     let logs = get_logs(
         chain.api_endpoint,
         chain.matcher,

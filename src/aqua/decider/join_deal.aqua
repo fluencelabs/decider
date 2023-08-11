@@ -3,7 +3,6 @@ module JoinDeal declares join_deal
 import PeerSpell from "@fluencelabs/spell/api.aqua"
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 
--- import Worker from "../fluence/peer.aqua"
 import deal_log from "../fluence/spell.aqua"
 import get_worker_settings, WorkerArgs, WorkerSettings from "../fluence/worker.aqua"
 import DealState, store_joined_deal, store_deal_state from "../decider/deal_storage.aqua"
