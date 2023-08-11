@@ -1,0 +1,23 @@
+module RegisterWorker declares register_onchain
+
+import DealId, SpellId, WorkerId from "../types.aqua"
+import spell_log, deal_log from "../fluence/spell.aqua"
+
+func register_call() -> string:
+    <- "OK"
+
+-- TODO:
+-- Store joined worker in KV, status = unregistered
+-- Immediately go and register
+-- Update worker status in KV with status = registered and pat_id = xxx
+-- On start, first go through unregistered workers
+
+-- How to store workers?
+--  Maybe store all workers in a list of json objects. Though update would SUCK to implement.
+--  Maybe put unregistered and registered to different lists?
+--      But then it may be possible to send register tx more than 1 time: eg if TTL ends during removal from "unregistered" list
+--  Maybe store by id. But then it's impossible to retrieve them all.
+--  Maybe implement custom SQL storage in connector? But that's cheating, how will others write spells then?
+
+func register_onchain(spell_id: SpellId, deal_id: DealId, id: WorkerId) -> string:
+    <- "OK"
