@@ -11,9 +11,10 @@ clock:
 initArgs:
   chain:
     api_endpoint: http://127.0.0.1:8545
-    deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d"
-    matcher: "0xB971228A3af887C8C50e7Ab946dF9deF0D12CAB2"
-    workers: "0x908aEBfb6051Bca6d1e684586d7760e53C4c736C"
+    # deploying "Factory" (tx: 0xe3a37d7c7bbdf97bc23b57e4806470ddf1b2857f0f7afc9866ca24824aebd22c)...: deployed at 0x6328bB918A01603adc91EaE689B848A9eCaEF26D with 143491 gas
+    deal_factory: "0x6328bB918A01603adc91EaE689B848A9eCaEF26D"
+    # deploying "Matcher" (tx: 0xf1badc3e813f9924063cc2f47dbed2c41a0260dbcc37d341ab92156d5ad0adb8)...: deployed at 0x0f68c702dC151D07038fA40ab3Ed1f9b8BAC2981 with 143491 gas
+    matcher: "0x0f68c702dC151D07038fA40ab3Ed1f9b8BAC2981"
     workers_gas: 210000
     wallet_key: "0xbb3457514f768615c8bc4061c7e47f817c8a570c5c3537479639d4fad052a98a"
   from_block: "0x0"

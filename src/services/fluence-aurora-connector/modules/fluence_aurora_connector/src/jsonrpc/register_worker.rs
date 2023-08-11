@@ -12,7 +12,7 @@ use crate::chain::deal_matched::PEER_ID_PREFIX;
 use crate::curl::send_jsonrpc;
 use crate::hex::decode_hex;
 use crate::jsonrpc::register_worker::RegisterWorkerError::{
-    InvalidPrivateKey, InvalidWorkerId, ParseWorkersAddr,
+    InvalidPrivateKey, InvalidWorkerId, ParseDealAddr,
 };
 use crate::jsonrpc::request::RequestError;
 use crate::jsonrpc::{JsonRpcError, JsonRpcReq, JSON_RPC_VERSION};
@@ -23,8 +23,8 @@ pub enum RegisterWorkerError {
     InvalidWorkerId(#[source] ParseError, &'static str),
     #[error("error encoding function inputs: {0:?}")]
     EncodeInput(#[from] ethabi::Error),
-    #[error("invalid workers addr: {0:?}")]
-    ParseWorkersAddr(#[source] clarity::Error),
+    #[error("invalid deal contract addr: {0:?}")]
+    ParseDealAddr(#[source] clarity::Error),
     #[error("invalid private key")]
     InvalidPrivateKey(#[source] Box<dyn std::error::Error>),
     #[error("error sending transaction to rpc: {0:?}")]
@@ -34,7 +34,12 @@ pub enum RegisterWorkerError {
 }
 
 #[marine]
-pub fn register_worker(pat_id: Vec<u8>, worker_id: &str, chain: ChainInfo) -> Vec<String> {
+pub fn register_worker(
+    pat_id: Vec<u8>,
+    worker_id: &str,
+    chain: ChainInfo,
+    deal_addr: String,
+) -> Vec<String> {
     // get network id from rpc
     // get gas price from rpc
     // form tx
@@ -45,7 +50,7 @@ pub fn register_worker(pat_id: Vec<u8>, worker_id: &str, chain: ChainInfo) -> Ve
         let nonce = load_nonce()?;
         let gas_price = get_gas_price()?;
         let endpoint = chain.api_endpoint.clone();
-        let tx = make_tx(input, chain, nonce, gas_price)?;
+        let tx = make_tx(input, chain, nonce, gas_price, deal_addr)?;
         send_tx(tx, endpoint)?
     };
 
@@ -54,9 +59,6 @@ pub fn register_worker(pat_id: Vec<u8>, worker_id: &str, chain: ChainInfo) -> Ve
         Err(err) => vec![format!("{}", err)],
     }
 }
-
-// '{"jsonrpc":"2.0","id":0,"method":"eth_sendRawTransaction","params":["0xf8a802830f42408303345094908aebfb6051bca6d1e684586d7760e53c4c736c80b844d5053ab0e532c726aa9c2f223fb21b5a488f874583e809257685ac3c40c9e0f7c89c082e529d4dabfa72abfd83c48adca7a2d49a921fa7351689d12e2a6c68375052f0b51ca0ff9912eec4a93c6a4591255bcd354a698fa05ba052519b0a6c15ccb8bd0ef2a8a072b700c1f4319b4046060c466e06b1d2af98c4d1dae06b01e9a6ee5a14a01f09"]}' http://127.0.0.1:8545
-// {"jsonrpc":"2.0","id":0,"result":"0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05"}%
 
 /// Send transaction to RPC
 fn send_tx(tx: String, api_endpoint: String) -> Result<String, RegisterWorkerError> {
@@ -137,6 +139,7 @@ fn make_tx(
     chain: ChainInfo,
     nonce: u128,
     gas_price: u128,
+    deal_addr: String,
 ) -> Result<String, RegisterWorkerError> {
     use InvalidPrivateKeySize as PKErr;
 
@@ -144,7 +147,7 @@ fn make_tx(
     let private_key = private_key.try_into().map_err(|_| pk_err(PKErr))?;
     let private_key = PrivateKey::from_bytes(private_key).map_err(pk_err)?;
 
-    let workers_address = chain.workers.parse().map_err(ParseWorkersAddr)?;
+    let workers_address = deal_addr.parse().map_err(ParseDealAddr)?;
 
     // Create a new transaction
     let tx = Transaction::Legacy {
@@ -200,13 +203,12 @@ mod tests {
     fn gen_tx() {
         let call = encode_call(pat_id(), WORKER_ID).expect("encode call");
         let chain = ChainInfo {
-            workers: WORKERS.to_string(),
             workers_gas: 210000,
             wallet_key: PRIVATE_KEY.to_string(),
             ..ChainInfo::default()
         };
         let gas_price = get_gas_price().expect("get gas price");
-        let tx = make_tx(call, chain, 3, gas_price).expect("make_tx");
+        let tx = make_tx(call, chain, 3, gas_price, WORKERS.into()).expect("make_tx");
 
         println!("tx_bytes 0x{}", tx);
     }
@@ -259,7 +261,6 @@ mod tests {
             api_endpoint: url,
             deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
             matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
-            workers: WORKERS.into(),
             workers_gas: 210_000,
             wallet_key: PRIVATE_KEY.into(),
         };

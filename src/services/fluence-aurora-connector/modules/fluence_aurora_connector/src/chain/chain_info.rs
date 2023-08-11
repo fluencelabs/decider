@@ -9,8 +9,6 @@ pub struct ChainInfo {
     pub deal_factory: String,
     // Address of the matcher contract
     pub matcher: String,
-    // Address of the worker contract
-    pub workers: String,
     // How much gas is needed to register a worker
     pub workers_gas: u64,
     // Private key of the wallet

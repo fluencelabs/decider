@@ -12,8 +12,6 @@ data ChainInfo:
   deal_factory: Address
   -- Address of the matcher contract
   matcher: Address
-  -- Address of the worker contract
-  workers: Address
   -- How much gas is needed to register a worker
   workers_gas: u64
   -- Private key of the wallet
