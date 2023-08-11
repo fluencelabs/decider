@@ -86,8 +86,6 @@ mod tests {
     use marine_rs_sdk_test::marine_test;
     use std::str::FromStr;
 
-    const CONFIG_PATH: &str = "../../../../../../../src/distro/decider-spell/Config.toml";
-
     #[test]
     fn serialize_peer_id() {
         let host = "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE";
