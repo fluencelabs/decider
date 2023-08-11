@@ -5,8 +5,6 @@ use marine_rs_sdk::marine;
 pub struct ChainInfo {
     // URL of a chain RPC
     pub api_endpoint: String,
-    // Chain id of the chain behind RPC
-    pub network_id: u64,
     // Address of the deal factory contract
     pub deal_factory: String,
     // Address of the matcher contract
@@ -15,6 +13,6 @@ pub struct ChainInfo {
     pub workers: String,
     // How much gas is needed to register a worker
     pub workers_gas: u64,
-    // private key of the wallet
+    // Private key of the wallet
     pub wallet_key: String,
 }

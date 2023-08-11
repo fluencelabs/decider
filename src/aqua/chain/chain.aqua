@@ -2,6 +2,7 @@ module Chain declares ChainInfo
 
 alias Address: string
 alias URL: string
+alias PrivateKey: string
 
 -- Data we need to poll new deals from aurora
 data ChainInfo:
@@ -11,3 +12,9 @@ data ChainInfo:
   deal_factory: Address
   -- Chain contract address
   matcher: Address
+  -- Address of the worker contract
+  workers: Address
+  -- How much gas is needed to register a worker
+  workers_gas: u64
+  -- Private key of the wallet
+  wallet_key: PrivateKey
