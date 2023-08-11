@@ -4,8 +4,11 @@ use libp2p_identity::ParseError;
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Kind of the field in Chain Event
 pub enum EventField {
+    /// If field is indexed, it's passed among topics
     Indexed(ParamType),
+    /// If field is not indexed, it's passed in log.data
     NotIndexed(ParamType),
 }
 
