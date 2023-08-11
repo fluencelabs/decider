@@ -160,8 +160,9 @@ fn make_tx(
     // TODO: use network_id?
     // let network_id = chain.network_id;
     let tx = tx.sign(&private_key, None).to_bytes();
+    let tx = hex::encode(tx);
 
-    Ok(hex::encode(tx))
+    Ok(format!("0x{}", tx))
 }
 
 #[cfg(test)]

@@ -58,6 +58,7 @@ func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: 
         deal_id = log.info.deal_id
         worker_id <- join_deal(spell_id, log.block_number, deal_id, log.info.app_cid)
         if worker_id != nil:
+            -- TODO: track if register worker fails, and retry later
             register_worker(chain, spell_id, deal_id, worker_id!, log.info.pat_ids)
 
         -- Use `log.block_number - 1` as a `last seen block`
