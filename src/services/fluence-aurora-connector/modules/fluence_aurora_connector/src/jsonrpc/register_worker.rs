@@ -63,7 +63,7 @@ fn send_tx(tx: String, api_endpoint: String) -> Result<String, RegisterWorkerErr
     let req = JsonRpcReq {
         id: 0,
         jsonrpc: JSON_RPC_VERSION.to_string(),
-        method: "eth_getLogs".to_string(),
+        method: "eth_sendRawTransaction".to_string(),
         params: vec![tx],
     };
     let response = send_jsonrpc(api_endpoint, req)?;
