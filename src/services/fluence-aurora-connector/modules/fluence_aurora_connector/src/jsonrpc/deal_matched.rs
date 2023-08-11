@@ -171,11 +171,11 @@ mod tests {
             .with_body("invalid mock was hit. Check that request body matches 'match_body' clause'")
             .create();
 
+        let compute_peer = "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE";
         let chain = marine_test_env::fluence_aurora_connector::ChainInfo {
             api_endpoint: url,
             deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
             matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
-            network_id: <_>::default(),
             workers: <_>::default(),
             workers_gas: <_>::default(),
             wallet_key: <_>::default(),
@@ -184,7 +184,7 @@ mod tests {
             init_peer_id: "".to_string(),
             service_id: "".to_string(),
             service_creator_peer_id: "".to_string(),
-            host_id: "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE".to_string(),
+            host_id: compute_peer.to_string(),
             particle_id: "".to_string(),
             tetraplets: vec![],
         };
@@ -198,10 +198,7 @@ mod tests {
             result.logs.len()
         );
         let log = result.logs.into_iter().next().unwrap().info;
-        assert_eq!(
-            log.compute_peer.to_lowercase(),
-            "0x7a82a5feefcaad4a89c689412031e5f87c02b29e3fced583be5f05c7077354b7".to_lowercase()
-        );
+        assert_eq!(log.compute_peer.to_lowercase(), compute_peer.to_lowercase());
         assert_eq!(
             log.deal_id.to_lowercase(),
             "0xffa0611a099ab68ad7c3c67b4ca5bbbee7a58b99".to_lowercase()

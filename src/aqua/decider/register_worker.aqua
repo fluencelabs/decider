@@ -1,7 +1,9 @@
-module RegisterWorker declares register_onchain
+module RegisterWorker declares register_worker
 
-import DealId, SpellId, WorkerId from "../types.aqua"
+import DealId, SpellId, WorkerId, PAT from "../types.aqua"
 import spell_log, deal_log from "../fluence/spell.aqua"
+import FluenceAuroraConnector from "services.aqua"
+import ChainInfo from "../chain/chain.aqua"
 
 func register_call() -> string:
     <- "OK"
@@ -19,5 +21,15 @@ func register_call() -> string:
 --  Maybe store by id. But then it's impossible to retrieve them all.
 --  Maybe implement custom SQL storage in connector? But that's cheating, how will others write spells then?
 
-func register_onchain(spell_id: SpellId, deal_id: DealId, id: WorkerId) -> string:
-    <- "OK"
+-- There's an EASIER way
+-- Don't increment last_seen_block until workers are registered, and that's it.
+-- If TTL happens during registration, last_seen_block won't be incremented,
+--  so we'll load same Chain Events and repeat the whole deployment and registration once again.
+-- Remember to track registration failures though, and retry them
+
+func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, pat_ids: [][]u8):
+    err <- FluenceAuroraConnector.register_worker(pat_ids[0], worker_id, chain)
+    if err == nil:
+        deal_log(spell_id, deal_id, "registered worker")
+    else:
+        deal_log(spell_id, deal_id, ["error registering worker", err!])

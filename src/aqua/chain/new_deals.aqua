@@ -12,6 +12,7 @@ import Json from "../fluence/peer.aqua"
 import join_deal from "../decider/join_deal.aqua"
 import JoinedDeal from "../decider/deal_storage.aqua"
 import SpellId from "../types.aqua"
+import register_worker from "../decider/register_worker.aqua"
 
 use "last_seen.aqua" as LastSeen
 use "../hex.aqua" as Hex
@@ -49,12 +50,15 @@ func get_left_boundary(spell_id: SpellId, chain: ChainInfo) -> ?string:
     spell_log(spell_id, ["left boundary will be", left])
     <- left
 
-func join_deals(spell_id: SpellId, logs: []DealMatched, left: string):
+func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: string):
     Spell spell_id
 
     -- TODO: I assume that `logs` are sorted by `block_number`. Is that a correct assumption?
     for log <- logs:
-        join_deal(spell_id, log.block_number, log.info.deal_id, log.info.app_cid)
+        deal_id = log.info.deal_id
+        worker_id <- join_deal(spell_id, log.block_number, deal_id, log.info.app_cid)
+        if worker_id != nil:
+            register_worker(chain, spell_id, deal_id, worker_id!, log.info.pat_ids)
 
         -- Use `log.block_number - 1` as a `last seen block`
         -- Can not use `log.block_number` because it is unknown if there are more events from that block in `logs`
@@ -110,7 +114,7 @@ func poll_new_deals(spell_id: SpellId, chain: ChainInfo, joined_deals: []JoinedD
         poll <- poll_logs(spell_id, chain, left!)
         if poll != nil:
             new_deals <- filter_new(spell_id, poll!.logs, joined_deals)
-            join_deals(spell_id, new_deals, left!)
+            join_deals(chain, spell_id, new_deals, left!)
 
             -- after we have processed all logs from poll, we can conclude
             -- that we have seen all logs until `min(latest_block, right_boundary)`

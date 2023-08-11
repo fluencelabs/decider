@@ -7,7 +7,7 @@ import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 import deal_log from "../fluence/spell.aqua"
 import get_worker_settings, WorkerArgs, WorkerSettings from "../fluence/worker.aqua"
 import DealState, store_joined_deal, store_deal_state from "../decider/deal_storage.aqua"
-import DealId, SpellId, CID from "../types.aqua"
+import DealId, SpellId, WorkerId, CID, Block from "../types.aqua"
 
 import DealCreated from "services.aqua"
 
@@ -18,9 +18,21 @@ func install_deal_spell(deal_id: DealId, cid: CID, settings: WorkerSettings) -> 
     worker_spell_id <- PeerSpell.install(settings.script, args, settings.config)
     <- worker_spell_id
 
+func store_deal(
+        spell_id: SpellId, deal_id: DealId, deal_spell: SpellId,
+        worker_id: WorkerId, block: Block
+    ):
+    try:
+        store_joined_deal(spell_id, deal_id, deal_spell, worker_id)
+        store_deal_state(spell_id, deal_id, DealState(left_boundary = block))
+        deal_log(spell_id, deal_id, "deal state saved to kv")
+    catch e:
+        deal_log(spell_id, deal_id, ["cannot store deal state, deal join failed", e.message])
+
 -- TODO: what should happen if join_deal has failed? We might never receive it again
 --       Probably should store failed deals, and then retry them a few times?
-func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID):
+func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID) -> ?WorkerId:
+
     log = (msg: ⊤):
         deal_log(spell_id, deal_id, msg)
 
@@ -33,13 +45,10 @@ func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID):
                 try:
                     deal_spell <- install_deal_spell(deal_id, app_cid, settings!)
                     log(["created deal spell", deal_spell])
-                    try:
-                        store_joined_deal(spell_id, deal_id, deal_spell, worker_id!)
-                        store_deal_state(spell_id, deal_id, DealState(left_boundary = block))
-                        log("joined the deal")
-                    catch e:
-                        log(["cannot store deal state, deal join failed", e.message])
+                    store_deal(spell_id, deal_id, deal_spell, worker_id!, block)
                 catch e:
                     log(["cannot create deal spell, deal join failed", e.message])
         else:
             log("error reading worker settings, deal join failed")
+
+    <- worker_id

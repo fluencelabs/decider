@@ -21,6 +21,10 @@ initArgs:
     api_endpoint: http://127.0.0.1:8545
     deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d"
     matcher: "0xB971228A3af887C8C50e7Ab946dF9deF0D12CAB2"
+    workers: "0x908aEBfb6051Bca6d1e684586d7760e53C4c736C"
+    workers_gas: 210000
+    wallet_key: "0xbb3457514f768615c8bc4061c7e47f817c8a570c5c3537479639d4fad052a98a"
+
     # worker_script will be set by a shell script
     # provider: "0x6f10e8209296ea9e556f80b0ff545d8175f271d0"
   from_block: "0x0"

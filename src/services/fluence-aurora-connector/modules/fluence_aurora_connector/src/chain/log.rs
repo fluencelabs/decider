@@ -49,7 +49,7 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(log: Log) -> Result<T, LogParse
             })
             .collect::<Vec<_>>();
         // parse all non indexed fields to tokens
-        let indexless = parse_chain_data(log.data, &indexless)?;
+        let indexless = parse_chain_data(&log.data, &indexless)?;
 
         // iterate through data field types (signature), and take
         // data `Token` from either 'indexless' or 'topics'
@@ -74,7 +74,7 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(log: Log) -> Result<T, LogParse
                         event_field: ef.clone(),
                     })?;
                     // parse indexed field to token one by one
-                    let parsed = parse_chain_data(topic, &[ef.clone().param_type()])?;
+                    let parsed = parse_chain_data(&topic, &[ef.clone().param_type()])?;
                     debug_assert!(parsed.len() == 1, "parse of an indexed event fields yielded several tokens, expected a single one");
                     let token = parsed.into_iter().next().ok_or(MissingToken {
                         position,

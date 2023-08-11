@@ -1,4 +1,6 @@
+use crate::hex::decode_hex;
 use ethabi::{ParamType, Token};
+use libp2p_identity::ParseError;
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -61,22 +63,15 @@ pub enum LogParseError {
     MissingParsedToken(&'static str),
     #[error("invalid token for field '{0}'")]
     InvalidParsedToken(&'static str),
-}
-
-/// Remove "0x" prefix from string
-pub fn unhex(hex: String) -> String {
-    hex.strip_prefix("0x").map(String::from).unwrap_or(hex)
+    #[error("invalid compute peer id: '{0}'")]
+    InvalidComputePeerId(#[from] ParseError),
 }
 
 /// Parse data from chain. Accepts data with and without "0x" prefix.
-pub fn parse_chain_data(
-    data: String,
-    signature: &[ParamType],
-) -> Result<Vec<Token>, LogParseError> {
-    let data = unhex(data);
+pub fn parse_chain_data(data: &str, signature: &[ParamType]) -> Result<Vec<Token>, LogParseError> {
     if data.is_empty() {
         return Err(LogParseError::Empty);
     }
-    let data = hex::decode(data)?;
+    let data = decode_hex(&data)?;
     Ok(ethabi::decode(signature, &data)?)
 }
