@@ -1,8 +1,7 @@
-use clarity::Uint256;
 use std::convert::TryInto;
 
+use clarity::{PrivateKey, Transaction};
 use ethabi::{Function, Param, ParamType, StateMutability, Token};
-// use ethereum_tx_sign::{LegacyTransaction, Transaction};
 use hex::FromHexError;
 use marine_rs_sdk::marine;
 use thiserror::Error;
@@ -10,7 +9,7 @@ use thiserror::Error;
 use crate::chain::chain_info::ChainInfo;
 use crate::hex::decode_hex;
 use crate::jsonrpc::register_worker::RegisterWorkerError::{
-    DecodeWorkersAddr, EncodeArgument, InvalidPrivateKey, InvalidWorkersAddr,
+    EncodeArgument, InvalidPrivateKey, ParseWorkersAddr,
 };
 
 #[derive(Debug, Error)]
@@ -19,16 +18,10 @@ pub enum RegisterWorkerError {
     EncodeArgument(FromHexError, &'static str),
     #[error("error encoding function inputs: {0:?}")]
     EncodeInput(#[from] ethabi::Error),
-    #[error("error decoding WorkersModule contract address: {0:?}")]
-    DecodeWorkersAddr(#[from] FromHexError),
-    #[error("invalid workers addr: '{0}'. Must be of length 20, was {1}")]
-    InvalidWorkersAddr(String, usize),
     #[error("invalid workers addr: {0:?}")]
-    ParseWorkersAddr(#[from] clarity::Error),
+    ParseWorkersAddr(clarity::Error),
     #[error("error parsing private key from hex")]
     InvalidPrivateKey,
-    // #[error("Error signing tx: {0:?}")]
-    // SignTransaction(ethereum_tx_sign::Error),
 }
 
 #[marine]
@@ -146,13 +139,11 @@ fn make_tx(
     nonce: u128,
     gas_price: u128,
 ) -> Result<String, RegisterWorkerError> {
-    use clarity::{Address, PrivateKey, Signature, Transaction};
-
     let private_key = decode_hex(&chain.wallet_key).map_err(|_| InvalidPrivateKey)?;
     let private_key: [u8; 32] = private_key.try_into().map_err(|_| InvalidPrivateKey)?;
     let private_key = PrivateKey::from_bytes(private_key).map_err(|_| InvalidPrivateKey)?;
 
-    let workers_address = chain.workers.parse()?;
+    let workers_address = chain.workers.parse().map_err(ParseWorkersAddr)?;
 
     // Create a new transaction
     let tx = Transaction::Legacy {
@@ -174,10 +165,7 @@ fn make_tx(
 
 #[cfg(test)]
 mod tests {
-    use std::convert::TryInto;
-
     use crate::chain::chain_info::ChainInfo;
-
     use crate::jsonrpc::register_worker::{encode_call, function, get_gas_price, make_tx};
 
     #[test]
@@ -199,21 +187,16 @@ mod tests {
     fn gen_tx() {
         let pat_id = "e532c726aa9c2f223fb21b5a488f874583e809257685ac3c40c9e0f7c89c082e";
         let worker_id = "529d4dabfa72abfd83c48adca7a2d49a921fa7351689d12e2a6c68375052f0b5";
-        let input = encode_call(pat_id, worker_id).expect("encode call");
-
         let address = "908aEBfb6051Bca6d1e684586d7760e53C4c736C";
-
         let private_key = "bb3457514f768615c8bc4061c7e47f817c8a570c5c3537479639d4fad052a98a";
 
         let call = encode_call(pat_id, worker_id).expect("encode call");
         let chain = ChainInfo {
-            api_endpoint: "".to_string(),
             network_id: 31337,
-            deal_factory: "".to_string(),
-            matcher: "".to_string(),
             workers: address.to_string(),
             workers_gas: 210000,
             wallet_key: private_key.to_string(),
+            ..ChainInfo::default()
         };
         let gas_price = get_gas_price().expect("get gas price");
         let tx = make_tx(call, chain, 3, gas_price).expect("make_tx");

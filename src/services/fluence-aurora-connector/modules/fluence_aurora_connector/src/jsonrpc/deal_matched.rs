@@ -175,6 +175,10 @@ mod tests {
             api_endpoint: url,
             deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
             matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
+            network_id: <_>::default(),
+            workers: <_>::default(),
+            workers_gas: <_>::default(),
+            wallet_key: <_>::default(),
         };
         let cp = CallParameters {
             init_peer_id: "".to_string(),
