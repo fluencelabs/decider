@@ -1,12 +1,16 @@
 use ethabi::ParamType::{Address, Array, FixedBytes, Tuple, Uint};
-use ethabi::{Function, ParamType, StateMutability};
+use ethabi::{Function, ParamType, StateMutability, Token};
+use libp2p_identity::ParseError;
 use marine_rs_sdk::marine;
 use serde_json::json;
 use thiserror::Error;
 
-use crate::chain::chain_data::parse_chain_data;
+use crate::chain::chain_data::ChainDataError::InvalidParsedToken;
+use crate::chain::chain_data::{parse_chain_data, ChainDataError};
+use crate::chain::data_tokens::next_opt;
 use crate::curl::send_jsonrpc;
 use crate::jsonrpc::request::RequestError;
+use crate::jsonrpc::resolve_subnet::ResolveSubnetError::{Empty, InvalidPeerId};
 use crate::jsonrpc::{JsonRpcError, JsonRpcReq, JSON_RPC_VERSION};
 use crate::peer_id::parse_peer_id;
 
@@ -18,6 +22,14 @@ pub enum ResolveSubnetError {
     SendRPC(#[from] RequestError),
     #[error("error sending jsonrpc request: '{0}'")]
     ReceiveRPC(#[from] JsonRpcError),
+    #[error(transparent)]
+    ChainData(#[from] ChainDataError),
+    #[error("'{0}' not found in getPATs response")]
+    MissingField(&'static str),
+    #[error("getPATs response is empty")]
+    Empty,
+    #[error("'{1}' from getPATs is not a valid PeerId")]
+    InvalidPeerId(#[source] ParseError, &'static str),
 }
 
 #[marine]
@@ -31,15 +43,7 @@ pub struct Worker {
 #[derive(Clone, Debug)]
 pub struct Subnet {
     workers: Vec<Worker>,
-    success: bool,
     error: Vec<String>,
-}
-
-#[marine]
-#[derive(Clone, Debug)]
-pub struct PAT {
-    peer_id: String,
-    worker_id: String,
 }
 
 fn signature() -> ParamType {
@@ -73,34 +77,32 @@ fn function() -> Function {
     }
 }
 
-fn decode_pats(data: &str) -> Vec<PAT> {
-    let signature = &[signature()];
-    let tokens = parse_chain_data(data, signature).expect("parse chain data");
-    let tokens = tokens.into_iter().next().expect("first token");
-    let tokens = tokens.into_array().expect("array");
+fn decode_pats(data: String) -> Result<Vec<Worker>, ResolveSubnetError> {
+    let tokens = parse_chain_data(&data, &[signature()])?;
+    let tokens = tokens.into_iter().next().ok_or(Empty)?;
+    let tokens = tokens.into_array().ok_or(InvalidParsedToken("response"))?;
     let mut result = vec![];
     for token in tokens {
-        let tuple = token.into_tuple().expect("tuple");
+        let tuple = token.into_tuple().ok_or(InvalidParsedToken("tuple"))?;
         let mut tuple = tuple.into_iter().skip(2);
-        let peer_id = tuple.next().expect("peer_id");
-        let peer_id = peer_id.into_fixed_bytes().expect("fixed bytes peer_id");
-        let peer_id = parse_peer_id(peer_id).expect("parse peer_id");
-        let worker_id = tuple.next().expect("worker_id");
-        let worker_id = worker_id.into_fixed_bytes().expect("fixed bytes worker_id");
-        let worker_id = parse_peer_id(worker_id).expect("parse worker_id");
 
-        let pat = PAT {
-            peer_id: peer_id.to_string(),
+        let peer_id = next_opt(&mut tuple, "compute_peer_id", Token::into_fixed_bytes)?;
+        let peer_id = parse_peer_id(peer_id).map_err(|e| InvalidPeerId(e, "compute_peer_id"))?;
+        let worker_id = next_opt(&mut tuple, "compute_worker_id", Token::into_fixed_bytes)?;
+        let worker_id = parse_peer_id(worker_id).map_err(|e| InvalidPeerId(e, "worker_id"))?;
+
+        let pat = Worker {
+            host_id: peer_id.to_string(),
             worker_id: worker_id.to_string(),
         };
         result.push(pat);
     }
 
-    result
+    Ok(result)
 }
 
 #[marine]
-pub fn resolve_subnet(deal_id: String, api_endpoint: String) -> Vec<PAT> {
+pub fn resolve_subnet(deal_id: String, api_endpoint: String) -> Subnet {
     let res: Result<_, ResolveSubnetError> = try {
         let input = function().encode_input(&[])?;
         let input = format!("0x{}", hex::encode(input));
@@ -114,18 +116,26 @@ pub fn resolve_subnet(deal_id: String, api_endpoint: String) -> Vec<PAT> {
             ],
         };
         let response = send_jsonrpc(api_endpoint, req)?;
-        let pats: String = response.get_result()?;
-        decode_pats(&pats)
+        let pats = response.get_result()?;
+
+        decode_pats(pats)?
     };
 
-    res.expect("resolve")
+    match res {
+        Ok(workers) => Subnet {
+            workers,
+            error: vec![],
+        },
+        Err(err) => Subnet {
+            workers: vec![],
+            error: vec![format!("{}", err)],
+        },
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use marine_rs_sdk_test::marine_test;
-
-    use crate::jsonrpc::resolve_subnet::decode_pats;
 
     // Set env RUST_LOGGER="mockito=debug" to enable Mockito's logs
     #[marine_test(config_path = "../../../../../../../src/distro/decider-spell/Config.toml")]
@@ -171,12 +181,13 @@ mod tests {
             .with_body("invalid mock was hit. Check that request body matches 'match_body' clause'")
             .create();
 
-        let pats =
+        let subnet =
             connector.resolve_subnet("0x6dD1aFfe90415C61AeDf5c0ACcA9Cf5fD5031517".into(), url);
 
-        let pats: Vec<_> = pats
+        let pats: Vec<_> = subnet
+            .workers
             .iter()
-            .map(|p| (p.peer_id.as_str(), p.worker_id.as_str()))
+            .map(|p| (p.host_id.as_str(), p.worker_id.as_str()))
             .collect();
 
         assert_eq!(
