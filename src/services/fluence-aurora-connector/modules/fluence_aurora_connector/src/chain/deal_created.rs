@@ -3,7 +3,7 @@ use ethabi::Token;
 use marine_rs_sdk::marine;
 
 use crate::chain::chain_data::EventField::NotIndexed;
-use crate::chain::chain_data::{ChainData, EventField, LogParseError};
+use crate::chain::chain_data::{ChainData, ChainDataError, EventField};
 use crate::chain::chain_event::ChainEvent;
 use crate::chain::data_tokens::next_opt;
 use crate::chain::u256::U256;
@@ -80,7 +80,7 @@ impl ChainData for DealCreatedData {
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
-    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, LogParseError> {
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, ChainDataError> {
         let deal_id = next_opt(data_tokens, "deal_id", Token::into_address)?;
         let payment_token = next_opt(data_tokens, "payment_token", Token::into_address)?;
 
@@ -129,7 +129,7 @@ mod test {
     use ethabi::Token;
 
     use crate::chain::chain_data::ChainData;
-    use crate::chain::chain_data::LogParseError;
+    use crate::chain::chain_data::ChainDataError;
     use crate::chain::deal_created::{DealCreated, DealCreatedData};
     use crate::chain::log::{parse_log, Log};
 
@@ -193,7 +193,7 @@ mod test {
     fn test_chain_parsing_fail_empty() {
         let result = DealCreatedData::parse(&mut std::iter::empty());
         assert!(result.is_err());
-        assert_matches!(result, Err(LogParseError::MissingParsedToken("deal_id")));
+        assert_matches!(result, Err(ChainDataError::MissingParsedToken("deal_id")));
     }
 
     #[test]
@@ -201,6 +201,6 @@ mod test {
         let data = &mut vec![Token::Bool(false)].into_iter();
         let result = DealCreatedData::parse(data);
         assert!(result.is_err());
-        assert_matches!(result, Err(LogParseError::InvalidParsedToken("deal_id")));
+        assert_matches!(result, Err(ChainDataError::InvalidParsedToken("deal_id")));
     }
 }

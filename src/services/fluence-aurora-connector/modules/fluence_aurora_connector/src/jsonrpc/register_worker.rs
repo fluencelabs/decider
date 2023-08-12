@@ -8,7 +8,6 @@ use marine_rs_sdk::marine;
 use thiserror::Error;
 
 use crate::chain::chain_info::ChainInfo;
-use crate::chain::deal_matched::PEER_ID_PREFIX;
 use crate::curl::send_jsonrpc;
 use crate::hex::decode_hex;
 use crate::jsonrpc::register_worker::RegisterWorkerError::{
@@ -16,6 +15,7 @@ use crate::jsonrpc::register_worker::RegisterWorkerError::{
 };
 use crate::jsonrpc::request::RequestError;
 use crate::jsonrpc::{JsonRpcError, JsonRpcReq, JSON_RPC_VERSION};
+use crate::peer_id::serialize_peer_id;
 
 #[derive(Debug, Error)]
 pub enum RegisterWorkerError {
@@ -113,8 +113,7 @@ fn encode_call(pat_id: Vec<u8>, worker_id: &str) -> Result<Vec<u8>, RegisterWork
     let pat_id = Token::FixedBytes(pat_id);
 
     let worker_id = PeerId::from_str(worker_id).map_err(|e| InvalidWorkerId(e, "worker_id"))?;
-    let worker_id = worker_id.to_bytes();
-    let worker_id = worker_id.into_iter().skip(PEER_ID_PREFIX.len()).collect();
+    let worker_id = serialize_peer_id(worker_id);
     let worker_id = Token::FixedBytes(worker_id);
 
     let input = function().encode_input(&[pat_id, worker_id])?;
@@ -272,7 +271,13 @@ mod tests {
             particle_id: "".to_string(),
             tetraplets: vec![],
         };
-        let result = connector.register_worker_cp(pat_id().into(), WORKER_ID.into(), chain, cp);
+        let result = connector.register_worker_cp(
+            pat_id().into(),
+            WORKER_ID.into(),
+            chain,
+            "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
+            cp,
+        );
         println!("result: {:?}", result);
 
         // assert that there was no invalid requests

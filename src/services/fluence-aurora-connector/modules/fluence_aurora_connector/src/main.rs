@@ -17,6 +17,7 @@ mod curl;
 mod hex;
 mod jsonrpc;
 mod latest_block;
+mod peer_id;
 
 module_manifest!();
 

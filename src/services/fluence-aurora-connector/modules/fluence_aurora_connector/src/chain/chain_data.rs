@@ -1,7 +1,28 @@
-use crate::hex::decode_hex;
+use crate::chain::chain_data::ChainDataError::DecodeHex;
 use ethabi::{ParamType, Token};
+use hex::FromHexError;
 use libp2p_identity::ParseError;
 use thiserror::Error;
+
+use crate::hex::decode_hex;
+
+#[derive(Debug, Error)]
+pub enum ChainDataError {
+    #[error("empty data, nothing to parse")]
+    Empty,
+    #[error("missing token for field '{0}'")]
+    MissingParsedToken(&'static str),
+    #[error("invalid token for field '{0}'")]
+    InvalidParsedToken(&'static str),
+    #[error("invalid compute peer id: '{0}'")]
+    InvalidComputePeerId(#[from] ParseError),
+    #[error("data is not a valid hex: '{0}'")]
+    DecodeHex(#[source] FromHexError),
+    #[error(transparent)]
+    EthError(#[from] ethabi::Error),
+    #[error("invalid app_cid: {0:?}")]
+    InvalidCID(#[from] cid::Error),
+}
 
 #[derive(Debug, Clone, PartialEq)]
 /// Kind of the field in Chain Event
@@ -24,7 +45,7 @@ impl EventField {
 pub trait ChainData {
     fn event_name() -> &'static str;
     fn signature() -> Vec<EventField>;
-    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, LogParseError>
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, ChainDataError>
     where
         Self: Sized;
 
@@ -38,43 +59,11 @@ pub trait ChainData {
     }
 }
 
-#[derive(Debug, Error)]
-pub enum LogParseError {
-    #[error(transparent)]
-    EthError(#[from] ethabi::Error),
-    #[error(transparent)]
-    HexError(#[from] hex::FromHexError),
-    #[error("parsed data doesn't correspond to the expected signature: {0:?}")]
-    SignatureMismatch(Vec<EventField>),
-    #[error(
-        "incorrect log signature: not found token for field #{position} of type ${event_field:?}"
-    )]
-    MissingToken {
-        position: usize,
-        event_field: EventField,
-    },
-    #[error("incorrect log signature: not found topic for indexed field #{position} of type ${event_field:?}")]
-    MissingTopic {
-        position: usize,
-        event_field: EventField,
-    },
-    #[error("empty data, nothing to parse")]
-    Empty,
-    #[error("invalid app_cid: {0:?}")]
-    InvalidCID(#[from] cid::Error),
-    #[error("missing token for field '{0}'")]
-    MissingParsedToken(&'static str),
-    #[error("invalid token for field '{0}'")]
-    InvalidParsedToken(&'static str),
-    #[error("invalid compute peer id: '{0}'")]
-    InvalidComputePeerId(#[from] ParseError),
-}
-
 /// Parse data from chain. Accepts data with and without "0x" prefix.
-pub fn parse_chain_data(data: &str, signature: &[ParamType]) -> Result<Vec<Token>, LogParseError> {
+pub fn parse_chain_data(data: &str, signature: &[ParamType]) -> Result<Vec<Token>, ChainDataError> {
     if data.is_empty() {
-        return Err(LogParseError::Empty);
+        return Err(ChainDataError::Empty);
     }
-    let data = decode_hex(&data)?;
+    let data = decode_hex(&data).map_err(DecodeHex)?;
     Ok(ethabi::decode(signature, &data)?)
 }

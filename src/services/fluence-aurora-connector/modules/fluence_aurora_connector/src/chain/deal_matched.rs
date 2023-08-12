@@ -1,14 +1,14 @@
 use cid::Cid;
 use ethabi::param_type::ParamType;
 use ethabi::Token;
-use libp2p_identity::{ParseError, PeerId};
 use marine_rs_sdk::marine;
 
 use crate::chain::chain_data::EventField::{Indexed, NotIndexed};
-use crate::chain::chain_data::{ChainData, EventField, LogParseError};
+use crate::chain::chain_data::{ChainData, ChainDataError, EventField};
 use crate::chain::chain_event::ChainEvent;
 use crate::chain::data_tokens::next_opt;
 use crate::chain::u256::U256;
+use crate::peer_id::parse_peer_id;
 
 /// Corresponding Solidity type:
 /// ```solidity
@@ -25,8 +25,6 @@ use crate::chain::u256::U256;
 ///     CIDV1 appCID
 /// );
 /// ```
-
-pub const PEER_ID_PREFIX: &[u8] = &[0, 36, 8, 1, 18, 32];
 
 #[derive(Debug, Clone)]
 #[marine]
@@ -75,7 +73,7 @@ impl ChainData for Match {
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
-    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, LogParseError> {
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, ChainDataError> {
         let tokens = &mut data_tokens.into_iter();
 
         let compute_peer = next_opt(tokens, "compute_peer", Token::into_fixed_bytes)?;
@@ -106,12 +104,6 @@ impl ChainData for Match {
     }
 }
 
-fn parse_peer_id(bytes: Vec<u8>) -> Result<PeerId, ParseError> {
-    let peer_id = &[PEER_ID_PREFIX, &bytes].concat();
-
-    PeerId::from_bytes(&peer_id)
-}
-
 impl ChainEvent<Match> for DealMatched {
     fn new(block_number: String, info: Match) -> Self {
         Self { block_number, info }
@@ -121,10 +113,11 @@ impl ChainEvent<Match> for DealMatched {
 #[cfg(test)]
 mod tests {
     use crate::chain::chain_data::ChainData;
-    use crate::chain::deal_matched::{parse_peer_id, DealMatched, Match};
+    use crate::chain::deal_matched::{DealMatched, Match};
     use crate::chain::log::{parse_log, Log};
     use crate::hex::decode_hex;
     use crate::jsonrpc::JsonRpcResp;
+    use crate::peer_id::parse_peer_id;
 
     #[test]
     fn topic() {

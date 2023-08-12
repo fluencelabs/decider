@@ -1,9 +1,11 @@
+use libp2p_identity::ParseError;
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
 use crate::chain::chain_data::EventField::{Indexed, NotIndexed};
-use crate::chain::chain_data::LogParseError::{MissingToken, MissingTopic};
-use crate::chain::chain_data::{parse_chain_data, ChainData, LogParseError};
+use crate::chain::chain_data::{parse_chain_data, ChainData, ChainDataError, EventField};
 use crate::chain::chain_event::ChainEvent;
+use crate::chain::log::LogParseError::{MissingToken, MissingTopic};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -16,6 +18,38 @@ pub struct Log {
     #[serde(default)]
     pub removed: bool,
     pub topics: Vec<String>,
+}
+
+#[derive(Debug, Error)]
+pub enum LogParseError {
+    #[error(transparent)]
+    EthError(#[from] ethabi::Error),
+    #[error(transparent)]
+    DecodeHex(#[from] hex::FromHexError),
+    #[error("parsed data doesn't correspond to the expected signature: {0:?}")]
+    SignatureMismatch(Vec<EventField>),
+    #[error(
+        "incorrect log signature: not found token for field #{position} of type ${event_field:?}"
+    )]
+    MissingToken {
+        position: usize,
+        event_field: EventField,
+    },
+    #[error("incorrect log signature: not found topic for indexed field #{position} of type ${event_field:?}")]
+    MissingTopic {
+        position: usize,
+        event_field: EventField,
+    },
+    #[error("missing token for field '{0}'")]
+    MissingParsedToken(&'static str),
+    #[error("invalid token for field '{0}'")]
+    InvalidParsedToken(&'static str),
+    #[error("invalid compute peer id: '{0}'")]
+    InvalidComputePeerId(#[from] ParseError),
+    #[error(transparent)]
+    ChainData(#[from] ChainDataError),
+    #[error("no tokens after deserialization")]
+    NoTokens,
 }
 
 pub fn parse_logs<U: ChainData, T: ChainEvent<U>>(logs: Vec<Log>) -> Vec<T> {
@@ -86,7 +120,7 @@ pub fn parse_log<U: ChainData, T: ChainEvent<U>>(log: Log) -> Result<T, LogParse
         }
 
         if tokens.is_empty() {
-            return Err(LogParseError::Empty);
+            return Err(LogParseError::NoTokens);
         }
 
         let block_number = log.block_number.clone();
