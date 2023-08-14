@@ -56,6 +56,12 @@ jobs:
         with:
           dependencies: ${{ inputs.cargo-dependencies }}
 
+      - name: Setup LLVM
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: "16.0"
+          cached: true
+
       - name: Build distro
         run: ./build.sh
 
