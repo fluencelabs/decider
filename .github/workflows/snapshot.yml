@@ -82,3 +82,6 @@ jobs:
         with:
           id: ${{ steps.version.outputs.id }}
           path: src/distro
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
