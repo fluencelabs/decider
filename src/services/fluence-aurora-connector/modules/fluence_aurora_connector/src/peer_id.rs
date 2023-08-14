@@ -1,5 +1,6 @@
 use libp2p_identity::{ParseError, PeerId};
 
+/// Static prefix of the PeerId. Protobuf encoding + multihash::identity + length and so on.
 pub const PEER_ID_PREFIX: &[u8] = &[0, 36, 8, 1, 18, 32];
 
 pub fn parse_peer_id(bytes: Vec<u8>) -> Result<PeerId, ParseError> {
