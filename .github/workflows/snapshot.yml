@@ -60,7 +60,6 @@ jobs:
         uses: KyleMayes/install-llvm-action@v1
         with:
           version: "16.0"
-          cached: true
 
       - name: Build distro
         run: ./build.sh
