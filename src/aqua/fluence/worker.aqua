@@ -1,10 +1,11 @@
-module Worker declares WorkerArgs, WorkerSettings, get_worker_settings, is_worker_created, create
+module Worker declares WorkerArgs, WorkerSettings, get_worker_settings, is_worker_created, create, remove
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
 import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
+import DealWorker as Worker from "@fluencelabs/aqua-lib/workers.aqua"
 
 import spell_log, deal_log, get_string from "../fluence/spell.aqua"
-import Worker, Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
+import Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
 import DealId, SpellId, WorkerId from "../types.aqua"
 
 -- Arguments of the worker
@@ -57,7 +58,7 @@ func get_worker_settings(spell_id: SpellId) ->  ?WorkerSettings:
 func is_worker_created(spell_id: SpellId, deal_id: DealId) -> bool:
     created: *bool
     try:
-        worker_id <- Worker.get_peer_id(deal_id)
+        worker_id <- Worker.get_peer_id(?[deal_id])
         created <<- true
     otherwise:
         created <<- false
@@ -66,13 +67,18 @@ func is_worker_created(spell_id: SpellId, deal_id: DealId) -> bool:
 func create(spell_id: SpellId, deal_id: DealId) -> ?WorkerId:
     worker_id: ?WorkerId
     try:
-        worker_id <- Worker.create(deal_id)
+        worker_id <- Worker.create(?[deal_id])
         deal_log(spell_id, deal_id, ["created worker for deal", worker_id!])
     otherwise:
         -- if worker was already created, get its id
-        worker_id <- Worker.get_peer_id(deal_id)
+        worker_id <- Worker.get_peer_id(?[deal_id])
 
     if worker_id == nil:
         deal_log(spell_id, deal_id, "error creating worker")
 
     <- worker_id
+
+func remove(host_id: PeerId, worker_id: WorkerId):
+    spell_log("spell", ["will remove worker", worker_id, "from host", host_id])
+    on host_id:
+        Worker.remove(worker_id)
