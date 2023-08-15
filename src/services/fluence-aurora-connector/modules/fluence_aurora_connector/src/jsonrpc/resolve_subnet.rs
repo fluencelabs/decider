@@ -102,7 +102,7 @@ fn decode_pats(data: String) -> Result<Vec<Worker>, ResolveSubnetError> {
 }
 
 #[marine]
-pub fn resolve_subnet(deal_id: String, api_endpoint: String) -> Subnet {
+pub fn resolve_subnet(deal_id: String, api_endpoint: &str) -> Subnet {
     let res: Result<_, ResolveSubnetError> = try {
         let input = function().encode_input(&[])?;
         let input = format!("0x{}", hex::encode(input));

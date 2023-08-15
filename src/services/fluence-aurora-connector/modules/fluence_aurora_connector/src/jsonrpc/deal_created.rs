@@ -45,11 +45,11 @@ impl DealCreatedResult {
 // `left_boundary`   -- from which block to poll deals
 #[marine]
 pub fn poll_deal_created(
-    api_endpoint: String,
+    api_endpoint: &str,
     address: String,
     left_boundary: String,
 ) -> DealCreatedResult {
-    if let Err(err) = check_url(&api_endpoint) {
+    if let Err(err) = check_url(api_endpoint) {
         return DealCreatedResult::error(err.to_string());
     }
 

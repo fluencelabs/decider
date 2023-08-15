@@ -27,7 +27,7 @@ impl GetLogsReq {
 }
 
 pub fn get_logs(
-    api_endpoint: String,
+    api_endpoint: &str,
     address: String,
     from_block: String,
     to_block: String,

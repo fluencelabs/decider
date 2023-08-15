@@ -63,7 +63,7 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
 
     let right_boundary = default_right_boundary(&left_boundary);
     let logs = get_logs(
-        chain.api_endpoint,
+        &chain.api_endpoint,
         chain.matcher,
         left_boundary,
         right_boundary.clone(),

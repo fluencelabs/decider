@@ -1,7 +1,7 @@
 use std::convert::TryInto;
 use std::str::FromStr;
 
-use clarity::{PrivateKey, Transaction};
+use clarity::{Address, PrivateKey, Transaction};
 use ethabi::{Function, Param, ParamType, StateMutability, Token};
 use libp2p_identity::{ParseError, PeerId};
 use marine_rs_sdk::marine;
@@ -38,20 +38,16 @@ pub fn register_worker(
     pat_id: Vec<u8>,
     worker_id: &str,
     chain: ChainInfo,
-    deal_addr: String,
+    deal_addr: &str,
 ) -> Vec<String> {
-    // get network id from rpc
-    // get gas price from rpc
-    // form tx
-    // sign
-    // send tx to rpc
     let r: Result<_, RegisterWorkerError> = try {
+        let wallet_key = parse_wallet_key(&chain.wallet_key)?;
         let input = encode_call(pat_id, worker_id)?;
-        let nonce = load_nonce()?;
+        let nonce = load_nonce(wallet_key.to_address(), &chain.api_endpoint)?;
         let gas_price = get_gas_price()?;
-        let endpoint = chain.api_endpoint.clone();
-        let tx = make_tx(input, chain, nonce, gas_price, deal_addr)?;
-        send_tx(tx, endpoint)?
+        let gas = chain.workers_gas;
+        let tx = make_tx(input, wallet_key, gas, nonce, gas_price, deal_addr)?;
+        send_tx(tx, &chain.api_endpoint)?
     };
 
     match r {
@@ -61,7 +57,7 @@ pub fn register_worker(
 }
 
 /// Send transaction to RPC
-fn send_tx(tx: String, api_endpoint: String) -> Result<String, RegisterWorkerError> {
+fn send_tx(tx: String, api_endpoint: &str) -> Result<String, RegisterWorkerError> {
     let req = JsonRpcReq {
         id: 0,
         jsonrpc: JSON_RPC_VERSION.to_string(),
@@ -75,13 +71,18 @@ fn send_tx(tx: String, api_endpoint: String) -> Result<String, RegisterWorkerErr
 }
 
 /// Load nonce from KV
-fn load_nonce() -> Result<u128, RegisterWorkerError> {
-    Ok(0)
-}
+fn load_nonce(address: Address, api_endpoint: &str) -> Result<u128, RegisterWorkerError> {
+    // '{"method":"eth_getTransactionCount","params":["0x8D97689C9818892B700e27F316cc3E41e17fBeb9", "latest"],"id":1,"jsonrpc":"2.0"}'
+    let req = JsonRpcReq {
+        id: 0,
+        jsonrpc: JSON_RPC_VERSION.to_string(),
+        method: "eth_getTransactionCount".to_string(),
+        params: vec![address.to_string(), "pending".into()],
+    };
+    let response = send_jsonrpc(api_endpoint, req)?;
+    let count: u128 = response.get_result()?;
 
-/// Increment nonce in KV
-fn increment_nonce(_nonce: u128) -> Result<(), RegisterWorkerError> {
-    Ok(())
+    Ok(count + 1)
 }
 
 /// Description of the `setWorker` function from the `chain.workers` smart contract on chain
@@ -133,26 +134,31 @@ fn pk_err<E: std::error::Error + 'static>(err: E) -> RegisterWorkerError {
 #[error("invalid private key size, expected 32 bytes")]
 struct InvalidPrivateKeySize;
 
-fn make_tx(
-    input: Vec<u8>,
-    chain: ChainInfo,
-    nonce: u128,
-    gas_price: u128,
-    deal_addr: String,
-) -> Result<String, RegisterWorkerError> {
+fn parse_wallet_key(wallet_key: &str) -> Result<PrivateKey, RegisterWorkerError> {
     use InvalidPrivateKeySize as PKErr;
 
-    let private_key = decode_hex(&chain.wallet_key).map_err(pk_err)?;
+    let private_key = decode_hex(wallet_key).map_err(pk_err)?;
     let private_key = private_key.try_into().map_err(|_| pk_err(PKErr))?;
     let private_key = PrivateKey::from_bytes(private_key).map_err(pk_err)?;
 
+    Ok(private_key)
+}
+
+fn make_tx(
+    input: Vec<u8>,
+    wallet_key: PrivateKey,
+    workers_gas: u64,
+    nonce: u128,
+    gas_price: u128,
+    deal_addr: &str,
+) -> Result<String, RegisterWorkerError> {
     let workers_address = deal_addr.parse().map_err(ParseDealAddr)?;
 
     // Create a new transaction
     let tx = Transaction::Legacy {
         nonce: nonce.into(),
         gas_price: gas_price.into(),
-        gas_limit: chain.workers_gas.into(),
+        gas_limit: workers_gas.into(),
         to: workers_address,
         value: 0u32.into(),
         data: input,
@@ -161,7 +167,7 @@ fn make_tx(
 
     // TODO: use network_id?
     // let network_id = chain.network_id;
-    let tx = tx.sign(&private_key, None).to_bytes();
+    let tx = tx.sign(&wallet_key, None).to_bytes();
     let tx = hex::encode(tx);
 
     Ok(format!("0x{}", tx))
@@ -172,9 +178,10 @@ mod tests {
     use marine_rs_sdk::CallParameters;
     use marine_rs_sdk_test::marine_test;
 
-    use crate::chain::chain_info::ChainInfo;
     use crate::hex::decode_hex;
-    use crate::jsonrpc::register_worker::{encode_call, function, get_gas_price, make_tx};
+    use crate::jsonrpc::register_worker::{
+        encode_call, function, get_gas_price, make_tx, parse_wallet_key,
+    };
 
     fn pat_id() -> Vec<u8> {
         decode_hex("0xe532c726aa9c2f223fb21b5a488f874583e809257685ac3c40c9e0f7c89c082e")
@@ -201,13 +208,10 @@ mod tests {
     #[test]
     fn gen_tx() {
         let call = encode_call(pat_id(), WORKER_ID).expect("encode call");
-        let chain = ChainInfo {
-            workers_gas: 210000,
-            wallet_key: PRIVATE_KEY.to_string(),
-            ..ChainInfo::default()
-        };
+        let workers_gas = 210000;
+        let wallet_key = parse_wallet_key(PRIVATE_KEY).expect("parse wallet key");
         let gas_price = get_gas_price().expect("get gas price");
-        let tx = make_tx(call, chain, 3, gas_price, WORKERS.into()).expect("make_tx");
+        let tx = make_tx(call, wallet_key, workers_gas, 3, gas_price, WORKERS).expect("make_tx");
 
         println!("tx_bytes 0x{}", tx);
     }

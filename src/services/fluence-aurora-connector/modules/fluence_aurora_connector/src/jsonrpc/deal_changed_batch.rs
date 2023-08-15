@@ -49,8 +49,8 @@ pub fn deal_changed_req_batch(deals: &[DealChangesReq]) -> Vec<JsonRpcReq<GetLog
 }
 
 #[marine]
-pub fn poll_deal_changes(api_endpoint: String, deals: Vec<DealChangesReq>) -> MultipleDealsChanged {
-    if let Err(err) = check_url(&api_endpoint) {
+pub fn poll_deal_changes(api_endpoint: &str, deals: Vec<DealChangesReq>) -> MultipleDealsChanged {
+    if let Err(err) = check_url(api_endpoint) {
         return MultipleDealsChanged::error(err.to_string());
     }
     if deals.is_empty() {
