@@ -170,7 +170,6 @@ mod tests {
         let compute_peer = "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE";
         let chain = marine_test_env::fluence_aurora_connector::ChainInfo {
             api_endpoint: url,
-            deal_factory: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
             matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
             workers_gas: <_>::default(),
             wallet_key: <_>::default(),

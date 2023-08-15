@@ -8,8 +8,6 @@ alias PrivateKey: string
 data ChainInfo:
   -- Refers to which api endpoint to poll
   api_endpoint: URL
-  -- Address of the deal factory contract
-  deal_factory: Address
   -- Address of the matcher contract
   matcher: Address
   -- How much gas is needed to register a worker

@@ -52,8 +52,6 @@ pub struct DeciderConfig {
     pub worker_period_sec: u32,
     /// The network of the chain from which the decider polls deals
     pub chain_network: String,
-    /// The address of the new deals contract
-    pub chain_contract_addr: String,
     /// The block number from which to poll new deals in hex format
     pub chain_contract_block_hex: String,
     /// Address of the Matcher contract
@@ -78,7 +76,6 @@ pub fn decider_spell(config: DeciderConfig) -> DistrSpell {
             "from_block" => json!(config.chain_contract_block_hex),
             "chain" => json!( {
                 "api_endpoint": config.chain_network,
-                "deal_factory": config.chain_contract_addr,
                 "matcher": config.chain_matcher_addr, // "0x0f68c702dC151D07038fA40ab3Ed1f9b8BAC2981",
                 "workers_gas": config.chain_workers_gas, // 210000,
                 "wallet_key": config.chain_wallet_key, // "0xbb3457514f768615c8bc4061c7e47f817c8a570c5c3537479639d4fad052a98a",
