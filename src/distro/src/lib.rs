@@ -79,9 +79,9 @@ pub fn decider_spell(config: DeciderConfig) -> DistrSpell {
             "chain" => json!( {
                 "api_endpoint": config.chain_network,
                 "deal_factory": config.chain_contract_addr,
-                "matcher": config.chain_matcher_addr // "0x0f68c702dC151D07038fA40ab3Ed1f9b8BAC2981",
-                "workers_gas": config.chain_workers_gas // 210000,
-                "wallet_key": config.chain_wallet_key // "0xbb3457514f768615c8bc4061c7e47f817c8a570c5c3537479639d4fad052a98a",
+                "matcher": config.chain_matcher_addr, // "0x0f68c702dC151D07038fA40ab3Ed1f9b8BAC2981",
+                "workers_gas": config.chain_workers_gas, // 210000,
+                "wallet_key": config.chain_wallet_key, // "0xbb3457514f768615c8bc4061c7e47f817c8a570c5c3537479639d4fad052a98a",
             }),
         },
     }
