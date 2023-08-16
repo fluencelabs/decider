@@ -11,4 +11,6 @@ pub struct ChainInfo {
     pub workers_gas: u64,
     // Private key of the wallet
     pub wallet_key: String,
+    // ID of the chain behind RPC. EIP-155: protection from replay on other chains.
+    pub network_id: u64,
 }

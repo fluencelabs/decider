@@ -14,3 +14,5 @@ data ChainInfo:
   workers_gas: u64
   -- Private key of the wallet
   wallet_key: PrivateKey
+  -- ID of the chain behind RPC. EIP-155: protection from replay on other chains.
+  network_id: u64

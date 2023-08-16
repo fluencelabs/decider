@@ -41,12 +41,13 @@ pub fn register_worker(
     deal_addr: &str,
 ) -> Vec<String> {
     let r: Result<_, RegisterWorkerError> = try {
-        let wallet_key = parse_wallet_key(&chain.wallet_key)?;
+        let key = parse_wallet_key(&chain.wallet_key)?;
         let input = encode_call(pat_id, worker_id)?;
-        let nonce = load_nonce(wallet_key.to_address(), &chain.api_endpoint)?;
+        let nonce = load_nonce(key.to_address(), &chain.api_endpoint)?;
         let gas_price = get_gas_price()?;
         let gas = chain.workers_gas;
-        let tx = make_tx(input, wallet_key, gas, nonce, gas_price, deal_addr)?;
+        let network_id = chain.network_id;
+        let tx = make_tx(input, key, gas, nonce, gas_price, deal_addr, network_id)?;
         send_tx(tx, &chain.api_endpoint)?
     };
 
@@ -151,6 +152,7 @@ fn make_tx(
     nonce: u128,
     gas_price: u128,
     deal_addr: &str,
+    network_id: u64,
 ) -> Result<String, RegisterWorkerError> {
     let workers_address = deal_addr.parse().map_err(ParseDealAddr)?;
 
@@ -165,9 +167,7 @@ fn make_tx(
         signature: None, // Not signed. Yet.
     };
 
-    // TODO: use network_id?
-    // let network_id = chain.network_id;
-    let tx = tx.sign(&wallet_key, None).to_bytes();
+    let tx = tx.sign(&wallet_key, Some(network_id)).to_bytes();
     let tx = hex::encode(tx);
 
     Ok(format!("0x{}", tx))
@@ -211,7 +211,8 @@ mod tests {
         let workers_gas = 210000;
         let wallet_key = parse_wallet_key(PRIVATE_KEY).expect("parse wallet key");
         let gas_price = get_gas_price().expect("get gas price");
-        let tx = make_tx(call, wallet_key, workers_gas, 3, gas_price, WORKERS).expect("make_tx");
+        let tx =
+            make_tx(call, wallet_key, workers_gas, 3, gas_price, WORKERS, 80001).expect("make_tx");
 
         println!("tx_bytes 0x{}", tx);
     }

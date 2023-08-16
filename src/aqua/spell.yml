@@ -15,6 +15,7 @@ initArgs:
     matcher: "0x0f68c702dC151D07038fA40ab3Ed1f9b8BAC2981"
     workers_gas: 210000
     wallet_key: "0xbb3457514f768615c8bc4061c7e47f817c8a570c5c3537479639d4fad052a98a"
+    network_id: 31337
   from_block: "0x0"
   worker_ipfs: /dns4/ipfs.fluence.dev/tcp/5001
   worker_config:
