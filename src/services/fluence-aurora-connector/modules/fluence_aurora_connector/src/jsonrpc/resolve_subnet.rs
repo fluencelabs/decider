@@ -110,10 +110,7 @@ pub fn resolve_subnet(deal_id: String, api_endpoint: &str) -> Subnet {
             jsonrpc: JSON_RPC_VERSION.into(),
             id: 0,
             method: "eth_call".to_string(),
-            params: vec![
-                json!({ "data": input, "to": deal_id }).to_string(),
-                "latest".to_string(),
-            ],
+            params: vec![json!({ "data": input, "to": deal_id }), json!("latest")],
         };
         let response = send_jsonrpc(api_endpoint, req)?;
         let pats = response.get_result()?;
@@ -149,6 +146,10 @@ mod tests {
             .is_test(true)
             .try_init();
 
+        let expected_request = r#"{"jsonrpc":"2.0","id":0,"method":"eth_call","params":[{"data":"0xf3b6a45d","to":"0x6dD1aFfe90415C61AeDf5c0ACcA9Cf5fD5031517"},"latest"]}"#;
+        let expected_request: serde_json::Value =
+            serde_json::from_str(expected_request).expect("parse expected_request as json");
+
         let jsonrpc = r#"
         {
             "jsonrpc": "2.0",
@@ -164,6 +165,14 @@ mod tests {
             .mock("POST", "/")
             .with_body_from_request(move |req| {
                 println!("req: {:?}", req);
+                let body = req.body().expect("mock: get req body");
+                let body: serde_json::Value =
+                    serde_json::from_slice(body).expect("mock: parse req body as json");
+                assert_eq!(
+                    body, expected_request,
+                    "invalid request. expected {}, got {}",
+                    expected_request, body
+                );
                 jsonrpc.into()
             })
             // expect to receive this exact body in POST
