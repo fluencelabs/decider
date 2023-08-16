@@ -173,6 +173,7 @@ mod tests {
             matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
             workers_gas: <_>::default(),
             wallet_key: <_>::default(),
+            network_id: 80001,
         };
         let cp = CallParameters {
             init_peer_id: "".to_string(),

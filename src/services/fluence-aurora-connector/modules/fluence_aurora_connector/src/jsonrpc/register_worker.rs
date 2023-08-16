@@ -1,4 +1,5 @@
 use std::convert::TryInto;
+use std::num::ParseIntError;
 use std::str::FromStr;
 
 use clarity::{Address, PrivateKey, Transaction};
@@ -9,7 +10,7 @@ use thiserror::Error;
 
 use crate::chain::chain_info::ChainInfo;
 use crate::curl::send_jsonrpc;
-use crate::hex::decode_hex;
+use crate::hex::{decode_hex, u128_from_hex};
 use crate::jsonrpc::register_worker::RegisterWorkerError::{
     InvalidPrivateKey, InvalidWorkerId, ParseDealAddr,
 };
@@ -29,8 +30,10 @@ pub enum RegisterWorkerError {
     InvalidPrivateKey(#[source] Box<dyn std::error::Error>),
     #[error("error sending transaction to rpc: {0:?}")]
     SendTransaction(#[from] RequestError),
-    #[error(transparent)]
+    #[error("error sending json rpc: {0}")]
     JsonRpcError(#[from] JsonRpcError),
+    #[error("error parsing eth_getTransactionCount response: {0}")]
+    InvalidTxCount(#[from] ParseIntError),
 }
 
 #[marine]
@@ -81,9 +84,10 @@ fn load_nonce(address: Address, api_endpoint: &str) -> Result<u128, RegisterWork
         params: vec![address.to_string(), "pending".into()],
     };
     let response = send_jsonrpc(api_endpoint, req)?;
-    let count: u128 = response.get_result()?;
+    let count_hex: String = response.get_result()?;
+    let count = u128_from_hex(&count_hex)?;
 
-    Ok(count + 1)
+    Ok(count)
 }
 
 /// Description of the `setWorker` function from the `chain.workers` smart contract on chain
@@ -229,7 +233,8 @@ mod tests {
             .is_test(true)
             .try_init();
 
-        let jsonrpc = r#"
+        let get_nonce_response = r#"{"jsonrpc":"2.0","id":0,"result":"0x20"}"#;
+        let send_tx_response = r#"
         {
             "jsonrpc": "2.0",
             "id": 0,
@@ -243,13 +248,20 @@ mod tests {
         let mock = server
             .mock("POST", "/")
             .with_body_from_request(move |req| {
-                println!("req: {:?}", req);
-                jsonrpc.into()
+                let body = req.body().expect("mock: get request body");
+                let body: serde_json::Value =
+                    serde_json::from_slice(body).expect("mock: parse request body");
+                let method = body.get("method").expect("get method");
+                let method = method.as_str().expect("as str").trim_matches(|c| c == '\"');
+
+                match method {
+                    "eth_getTransactionCount" => get_nonce_response.into(),
+                    "eth_sendRawTransaction" => send_tx_response.into(),
+                    method => format!("'{}' not supported", method).into(),
+                }
             })
-            // expect to receive this exact body in POST
-            // .match_body(r#"{"jsonrpc":"2.0","id":0,"method":"eth_getLogs","params":[{"fromBlock":"0x52","toBlock":"0x246","address":"0x6328bb918a01603adc91eae689b848a9ecaef26d","topics":["0x55e61a24ecdae954582245e5e611fb06905d6af967334fff4db72793bebc72a9","0x7a82a5feefcaad4a89c689412031e5f87c02b29e3fced583be5f05c7077354b7"]}]}"#)
-            // expect exactly 1 POST request
-            .expect(1)
+            // expect exactly 2 POST requests
+            .expect(2)
             .with_status(200)
             .with_header("content-type", "application/json")
             .create();
@@ -266,6 +278,7 @@ mod tests {
             matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
             workers_gas: 210_000,
             wallet_key: PRIVATE_KEY.into(),
+            network_id: 80001,
         };
         let cp = CallParameters {
             init_peer_id: "".to_string(),
@@ -275,14 +288,19 @@ mod tests {
             particle_id: "".to_string(),
             tetraplets: vec![],
         };
-        let result = connector.register_worker_cp(
+        let error_opt = connector.register_worker_cp(
             pat_id().into(),
             WORKER_ID.into(),
             chain,
             "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
             cp,
         );
-        println!("result: {:?}", result);
+        assert_eq!(
+            error_opt.len(),
+            0,
+            "error in register_worker: {}",
+            error_opt[0]
+        );
 
         // assert that there was no invalid requests
         invalid_mock.assert();
