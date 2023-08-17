@@ -35,8 +35,9 @@ pub enum ResolveSubnetError {
 #[marine]
 #[derive(Clone, Debug)]
 pub struct Worker {
+    pat_id: String,
     host_id: String,
-    worker_id: String,
+    worker_id: Vec<String>,
 }
 
 #[marine]
@@ -84,16 +85,30 @@ fn decode_pats(data: String) -> Result<Vec<Worker>, ResolveSubnetError> {
     let mut result = vec![];
     for token in tokens {
         let tuple = token.into_tuple().ok_or(InvalidParsedToken("tuple"))?;
-        let mut tuple = tuple.into_iter().skip(2);
+        let mut tuple = tuple.into_iter();
+
+        let pat_id = next_opt(&mut tuple, "pat_id", Token::into_fixed_bytes)?;
+        let pat_id = hex::encode(pat_id);
+
+        // skip 'index' field
+        let mut tuple = tuple.skip(1);
 
         let peer_id = next_opt(&mut tuple, "compute_peer_id", Token::into_fixed_bytes)?;
         let peer_id = parse_peer_id(peer_id).map_err(|e| InvalidPeerId(e, "compute_peer_id"))?;
         let worker_id = next_opt(&mut tuple, "compute_worker_id", Token::into_fixed_bytes)?;
-        let worker_id = parse_peer_id(worker_id).map_err(|e| InvalidPeerId(e, "worker_id"))?;
+        // if all bytes are 0, then worker_id is considered empty
+        let all_zeros = worker_id.iter().find(|b| **b != 0).is_none();
+        let worker_id = if all_zeros {
+            vec![]
+        } else {
+            let worker_id = parse_peer_id(worker_id).map_err(|e| InvalidPeerId(e, "worker_id"))?;
+            vec![worker_id.to_string()]
+        };
 
         let pat = Worker {
+            pat_id: format!("0x{}", pat_id),
             host_id: peer_id.to_string(),
-            worker_id: worker_id.to_string(),
+            worker_id,
         };
         result.push(pat);
     }
@@ -193,24 +208,29 @@ mod tests {
         let subnet =
             connector.resolve_subnet("0x6dD1aFfe90415C61AeDf5c0ACcA9Cf5fD5031517".into(), url);
 
+        println!("subnet: {:#?}", subnet);
+
         let pats: Vec<_> = subnet
             .workers
             .iter()
-            .map(|p| (p.host_id.as_str(), p.worker_id.as_str()))
+            .map(|p| (p.pat_id.as_str(), p.host_id.as_str(), p.worker_id.as_str()))
             .collect();
 
         assert_eq!(
             pats,
             vec![
                 (
+                    "0x2b7083358039745e731fb9809204d9304b48797406593e180b4e5a762a473214",
                     "12D3KooWCPFLtcLwzT1k4gsacu3gkM2gYJTXdnTSfsPFZ67FrD4F",
                     "12D3KooWLvhtdbBuFTzxvDXUGYcyxyeZrab1tZWEY4YY8K6PTjTH"
                 ),
                 (
+                    "0xdbfb375f013a592c50174ad241c67a4cf1b9ec81c902900b75f801f83cd2657a",
                     "12D3KooWCPFLtcLwzT1k4gsacu3gkM2gYJTXdnTSfsPFZ67FrD4F",
                     "12D3KooW9pNAk8aiBuGVQtWRdbkLmo5qVL3e2h5UxbN2Nz9ttwiw"
                 ),
                 (
+                    "0xec7c6fea91d971bc7c5ed340ec86265bb93386fff248e842a1a69a94b58d2d9e",
                     "12D3KooWCPFLtcLwzT1k4gsacu3gkM2gYJTXdnTSfsPFZ67FrD4F",
                     "12D3KooW9pNAk8aiBuGVQtWRdbkLmo5qVL3e2h5UxbN2Nz9ttwiw"
                 ),
