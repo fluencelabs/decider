@@ -136,7 +136,7 @@ fn get_gas_price() -> Result<u128, RegisterWorkerError> {
 
     // bad: 0.00000000180100000 MATIC (0.001 Gwei)
 
-    Ok(1_800_000_000)
+    Ok(3_000_000_000)
 }
 
 fn pk_err<E: std::error::Error + 'static>(err: E) -> RegisterWorkerError {
