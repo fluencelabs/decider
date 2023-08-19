@@ -128,7 +128,15 @@ fn encode_call(pat_id: Vec<u8>, worker_id: &str) -> Result<Vec<u8>, RegisterWork
 
 /// Load gas price from RPC
 fn get_gas_price() -> Result<u128, RegisterWorkerError> {
-    Ok(1_000_000)
+    // bad: 0.00000000000100000 MATIC (0.001 Gwei)
+    // block: 19 wei (0.000000019 Gwei)
+    // tx1: 0.00000000160680002 MATIC (1.60680002 Gwei)
+    // tx2: 0.000000001500000018 MATIC (1.500000018 Gwei)
+    // tx3: 0.000000001800000022 MATIC (1.800000022 Gwei)
+
+    // bad: 0.00000000180100000 MATIC (0.001 Gwei)
+
+    Ok(1_800_000_000)
 }
 
 fn pk_err<E: std::error::Error + 'static>(err: E) -> RegisterWorkerError {
