@@ -18,6 +18,8 @@ use crate::jsonrpc::request::RequestError;
 use crate::jsonrpc::{JsonRpcError, JsonRpcReq, JSON_RPC_VERSION};
 use crate::peer_id::serialize_peer_id;
 
+const GAS_MULTIPLIER: f64 = 0.20;
+
 #[derive(Debug, Error)]
 pub enum RegisterWorkerError {
     #[error("invalid worker id {1}: {0:?}")]
@@ -43,15 +45,17 @@ pub fn register_worker(
     chain: ChainInfo,
     deal_addr: &str,
 ) -> Vec<String> {
+    let endpoint = &chain.api_endpoint;
+    let gas = chain.workers_gas;
+    let network_id = chain.network_id;
+
     let r: Result<_, RegisterWorkerError> = try {
         let key = parse_wallet_key(&chain.wallet_key)?;
         let input = encode_call(pat_id, worker_id)?;
-        let nonce = load_nonce(key.to_address(), &chain.api_endpoint)?;
-        let gas_price = get_gas_price()?;
-        let gas = chain.workers_gas;
-        let network_id = chain.network_id;
+        let nonce = load_nonce(key.to_address(), endpoint)?;
+        let gas_price = get_gas_price(endpoint)?;
         let tx = make_tx(input, key, gas, nonce, gas_price, deal_addr, network_id)?;
-        send_tx(tx, &chain.api_endpoint)?
+        send_tx(tx, endpoint)?
     };
 
     match r {
@@ -74,7 +78,7 @@ fn send_tx(tx: String, api_endpoint: &str) -> Result<String, RegisterWorkerError
     Ok(tx_id)
 }
 
-/// Load nonce from KV
+/// Load nonce from RPC
 fn load_nonce(address: Address, api_endpoint: &str) -> Result<u128, RegisterWorkerError> {
     // '{"method":"eth_getTransactionCount","params":["0x8D97689C9818892B700e27F316cc3E41e17fBeb9", "latest"],"id":1,"jsonrpc":"2.0"}'
     let req = JsonRpcReq {
@@ -127,16 +131,24 @@ fn encode_call(pat_id: Vec<u8>, worker_id: &str) -> Result<Vec<u8>, RegisterWork
 }
 
 /// Load gas price from RPC
-fn get_gas_price() -> Result<u128, RegisterWorkerError> {
-    // bad: 0.00000000000100000 MATIC (0.001 Gwei)
-    // block: 19 wei (0.000000019 Gwei)
-    // tx1: 0.00000000160680002 MATIC (1.60680002 Gwei)
-    // tx2: 0.000000001500000018 MATIC (1.500000018 Gwei)
-    // tx3: 0.000000001800000022 MATIC (1.800000022 Gwei)
+fn get_gas_price(api_endpoint: &str) -> Result<u128, RegisterWorkerError> {
+    // {"jsonrpc":"2.0","id":0,"method":"eth_gasPrice","params":[]}
+    // {"jsonrpc":"2.0","id":0,"result":"0x3b9aca07"}
+    let req = JsonRpcReq::<()> {
+        id: 0,
+        jsonrpc: JSON_RPC_VERSION.to_string(),
+        method: "eth_gasPrice".to_string(),
+        params: vec![],
+    };
+    let response = send_jsonrpc(api_endpoint, req)?;
+    let price: String = response.get_result()?;
+    let price = u128_from_hex(&price)?;
 
-    // bad: 0.00000000180100000 MATIC (0.001 Gwei)
+    // increase price by GAS_MULTIPLIER so transaction are included faster
+    let increase = price as f64 * GAS_MULTIPLIER as u128;
+    let price = price.checked_add(increase).unwrap_or(price);
 
-    Ok(3_000_000_000)
+    Ok(price)
 }
 
 fn pk_err<E: std::error::Error + 'static>(err: E) -> RegisterWorkerError {
@@ -191,9 +203,7 @@ mod tests {
     use marine_rs_sdk_test::marine_test;
 
     use crate::hex::decode_hex;
-    use crate::jsonrpc::register_worker::{
-        encode_call, function, get_gas_price, make_tx, parse_wallet_key,
-    };
+    use crate::jsonrpc::register_worker::{encode_call, function};
 
     fn pat_id() -> Vec<u8> {
         decode_hex("0xe532c726aa9c2f223fb21b5a488f874583e809257685ac3c40c9e0f7c89c082e")
@@ -217,18 +227,6 @@ mod tests {
         assert_eq!(input, "d5053ab0e532c726aa9c2f223fb21b5a488f874583e809257685ac3c40c9e0f7c89c082e529d4dabfa72abfd83c48adca7a2d49a921fa7351689d12e2a6c68375052f0b5");
     }
 
-    #[test]
-    fn gen_tx() {
-        let call = encode_call(pat_id(), WORKER_ID).expect("encode call");
-        let workers_gas = 210000;
-        let wallet_key = parse_wallet_key(PRIVATE_KEY).expect("parse wallet key");
-        let gas_price = get_gas_price().expect("get gas price");
-        let tx =
-            make_tx(call, wallet_key, workers_gas, 3, gas_price, WORKERS, 80001).expect("make_tx");
-
-        println!("tx_bytes 0x{}", tx);
-    }
-
     // Set env RUST_LOGGER="mockito=debug" to enable Mockito's logs
     #[marine_test(config_path = "../../../../../../../src/distro/decider-spell/Config.toml")]
     fn register(connector: marine_test_env::fluence_aurora_connector::ModuleInterface) {
@@ -249,6 +247,7 @@ mod tests {
             "result": "0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05"
         }
         "#;
+        let gas_price_response = r#"{"jsonrpc":"2.0","id":0,"result":"0x3b9aca07"}"#;
 
         // Create a mock
         let mut server = mockito::Server::new();
@@ -265,11 +264,12 @@ mod tests {
                 match method {
                     "eth_getTransactionCount" => get_nonce_response.into(),
                     "eth_sendRawTransaction" => send_tx_response.into(),
+                    "eth_gasPrice" => gas_price_response.into(),
                     method => format!("'{}' not supported", method).into(),
                 }
             })
-            // expect exactly 2 POST requests
-            .expect(2)
+            // expect exactly 3 POST requests
+            .expect(3)
             .with_status(200)
             .with_header("content-type", "application/json")
             .create();
