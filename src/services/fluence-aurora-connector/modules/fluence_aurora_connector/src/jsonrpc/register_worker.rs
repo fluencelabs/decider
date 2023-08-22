@@ -145,7 +145,7 @@ fn get_gas_price(api_endpoint: &str) -> Result<u128, RegisterWorkerError> {
     let price = u128_from_hex(&price)?;
 
     // increase price by GAS_MULTIPLIER so transaction are included faster
-    let increase = price as f64 * GAS_MULTIPLIER as u128;
+    let increase = (price as f64 * GAS_MULTIPLIER) as u128;
     let price = price.checked_add(increase).unwrap_or(price);
 
     Ok(price)
