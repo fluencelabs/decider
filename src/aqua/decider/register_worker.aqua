@@ -27,8 +27,8 @@ func register_call() -> string:
 --  so we'll load same Chain Events and repeat the whole deployment and registration once again.
 -- Remember to track registration failures though, and retry them
 
-func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, pat_ids: [][]u8):
-    err <- FluenceAuroraConnector.register_worker(pat_ids[0], worker_id, chain, deal_id)
+func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, pat_id: []u8):
+    err <- FluenceAuroraConnector.register_worker(pat_id, worker_id, chain, deal_id)
     if err == nil:
         deal_log(spell_id, deal_id, "registered worker")
     else:

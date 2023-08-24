@@ -31,7 +31,7 @@ use crate::peer_id::parse_peer_id;
 pub struct Match {
     compute_peer: String,
     deal_id: String,
-    pat_ids: Vec<Vec<u8>>,
+    pat_id: Vec<u8>,
     deal_creation_block: U256,
     app_cid: String,
 }
@@ -58,8 +58,8 @@ impl ChainData for Match {
             Indexed(ParamType::FixedBytes(32)),
             // deal
             NotIndexed(ParamType::Address),
-            // pat_ids
-            NotIndexed(ParamType::Array(Box::new(ParamType::FixedBytes(32)))),
+            // pat_id
+            NotIndexed(ParamType::FixedBytes(32)),
             // deal_creation_block
             NotIndexed(ParamType::Uint(256)),
             // app_cid
@@ -80,12 +80,7 @@ impl ChainData for Match {
         let compute_peer = parse_peer_id(compute_peer)?.to_string();
 
         let deal = next_opt(tokens, "deal", Token::into_address)?;
-        let pat_ids = next_opt(tokens, "pat_ids", |t| {
-            Token::into_array(t)?
-                .into_iter()
-                .map(|t| t.into_fixed_bytes())
-                .collect::<Option<Vec<_>>>()
-        })?;
+        let pat_id = next_opt(tokens, "pat_id", Token::into_fixed_bytes)?;
         let deal_creation_block = next_opt(tokens, "deal_creation_block", U256::from_token)?;
 
         let app_cid = &mut next_opt(tokens, "app_cid", Token::into_tuple)?.into_iter();
@@ -97,7 +92,7 @@ impl ChainData for Match {
         Ok(Match {
             compute_peer,
             deal_id: format!("{deal:#x}"),
-            pat_ids,
+            pat_id,
             deal_creation_block,
             app_cid,
         })
@@ -204,7 +199,7 @@ mod tests {
             m.deal_id.to_lowercase(),
             "0xFfA0611a099AB68AD7C3C67B4cA5bbBEE7a58B99".to_lowercase()
         );
-        assert_eq!(m.pat_ids.len(), 3);
+        assert_eq!(m.pat_id.len(), 3);
         assert_eq!(m.deal_creation_block.to_eth().as_u32(), 80);
         assert_eq!(
             m.app_cid.to_string(),
@@ -223,7 +218,7 @@ mod tests {
             m.deal_id.to_lowercase(),
             "0x67b2AD3866429282e16e55B715d12A77F85B7CE8".to_lowercase()
         );
-        assert_eq!(m.pat_ids.len(), 3);
+        assert_eq!(m.pat_id.len(), 3);
         assert_eq!(m.deal_creation_block.to_eth().as_u32(), 86);
         assert_eq!(
             m.app_cid.to_string(),
