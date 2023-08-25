@@ -20,7 +20,7 @@ use crate::peer_id::parse_peer_id;
 /// event ComputePeerMatched(
 ///     bytes32 indexed peerId
 ///     address deal
-///     bytes32[] patIds
+///     bytes32 patId
 ///     uint dealCreationBlock
 ///     CIDV1 appCID
 /// );
