@@ -36,7 +36,13 @@ func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID) 
         deal_log(spell_id, deal_id, msg)
 
     log(["joining a deal from_block", block])
-    worker_id <- Worker.create(spell_id, deal_id)
+    worker_id: ?WorkerId
+    error: ?⊤
+    try:
+        id <- Worker.create(spell_id, deal_id)
+    catch e:
+        error <<- e
+
     if worker_id != nil:
         settings <- get_worker_settings(spell_id)
         if settings != nil:
@@ -48,6 +54,6 @@ func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID) 
                 catch e:
                     log(["cannot create deal spell, deal join failed", e.message])
         else:
-            log("error reading worker settings, deal join failed")
+            log(["error reading worker settings, deal join failed", error])
 
     <- worker_id
