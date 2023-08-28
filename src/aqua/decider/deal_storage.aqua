@@ -15,9 +15,7 @@ data DealState:
 
 data JoinedDeal:
     deal_id: DealId
-    spell_id: SpellId
     worker_id: WorkerId
-
 
 service JsonDealState("json"):
     parse(str: string) -> DealState
