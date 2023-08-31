@@ -55,7 +55,6 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
     let host = PeerId::from_str(&host).expect("parse host_id to peer_id");
     let host: Vec<_> = host.to_bytes().into_iter().skip(6).collect();
     let host = format!("0x{:0>64}", hex::encode(host));
-    log::info!("host {}", host);
 
     if let Err(err) = check_url(&chain.api_endpoint) {
         return MatchedResult::error(err.to_string());
