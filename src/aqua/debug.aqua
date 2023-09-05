@@ -1,4 +1,4 @@
-module Debug declares RunConsoleAny, RunConsoleMany, RunConsoleManyAny
+module Debug declares Console, RunConsoleAny, RunConsoleMany, RunConsoleManyAny, log_back
 
 -- Debug outputs
 service RunConsoleMany("run-console"):
@@ -9,3 +9,10 @@ service RunConsoleManyAny("run-console"):
 
 service RunConsoleAny("run-console"):
    print(msg: ⊤)
+
+service Console("run-console"):
+   print(msg: ⊤)
+
+func log_back(msg: ⊤):
+   on INIT_PEER_ID via HOST_PEER_ID:
+      RunConsoleAny.print(msg)

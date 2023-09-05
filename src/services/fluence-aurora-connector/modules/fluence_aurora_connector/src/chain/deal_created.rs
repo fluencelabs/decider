@@ -1,8 +1,11 @@
 use ethabi::param_type::ParamType;
+use ethabi::Token;
 use marine_rs_sdk::marine;
 
-use crate::chain::chain_data::{parse_chain_data, ChainData, DealParseError};
+use crate::chain::chain_data::EventField::NotIndexed;
+use crate::chain::chain_data::{ChainData, ChainDataError, EventField};
 use crate::chain::chain_event::ChainEvent;
+use crate::chain::data_tokens::next_opt;
 use crate::chain::u256::U256;
 
 /// Corresponding Solidity type:
@@ -57,65 +60,58 @@ impl DealCreated {
 }
 
 impl ChainData for DealCreatedData {
-    fn topic() -> String {
-        let sig = Self::signature();
-        let hash = ethabi::long_signature(DealCreated::EVENT_NAME, &sig);
-        format!("0x{}", hex::encode(hash.as_bytes()))
+    fn event_name() -> &'static str {
+        DealCreated::EVENT_NAME
     }
 
-    fn signature() -> Vec<ParamType> {
+    fn signature() -> Vec<EventField> {
         vec![
-            ParamType::Address,                            // deal
-            ParamType::Address,                            // paymentToken
-            ParamType::Uint(256),                          // pricePerEpoch
-            ParamType::Uint(256),                          // requiredStake
-            ParamType::Uint(256),                          // minWorkers
-            ParamType::Uint(256),                          // maxWorkersPerProvider
-            ParamType::Uint(256),                          // targetWorkers
-            ParamType::String,                             // appCID
-            ParamType::Array(Box::new(ParamType::String)), // effectorWasmsCids
-            ParamType::Uint(256),                          // epoch
+            NotIndexed(ParamType::Address),                            // deal
+            NotIndexed(ParamType::Address),                            // paymentToken
+            NotIndexed(ParamType::Uint(256)),                          // pricePerEpoch
+            NotIndexed(ParamType::Uint(256)),                          // requiredStake
+            NotIndexed(ParamType::Uint(256)),                          // minWorkers
+            NotIndexed(ParamType::Uint(256)),                          // maxWorkersPerProvider
+            NotIndexed(ParamType::Uint(256)),                          // targetWorkers
+            NotIndexed(ParamType::String),                             // appCID
+            NotIndexed(ParamType::Array(Box::new(ParamType::String))), // effectorWasmsCids
+            NotIndexed(ParamType::Uint(256)),                          // epoch
         ]
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
-    fn parse(data: &str) -> Result<DealCreatedData, DealParseError> {
-        let data_tokens = parse_chain_data(data, Self::signature())?;
-        let deal_data: Option<DealCreatedData> = try {
-            let deal_id = data_tokens[0].to_string();
-            let payment_token = data_tokens[1].to_string();
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, ChainDataError> {
+        let deal_id = next_opt(data_tokens, "deal_id", Token::into_address)?;
+        let payment_token = next_opt(data_tokens, "payment_token", Token::into_address)?;
 
-            let price_per_epoch = U256::from_eth(data_tokens[2].clone().into_uint()?);
-            let required_stake = U256::from_eth(data_tokens[3].clone().into_uint()?);
+        let price_per_epoch = next_opt(data_tokens, "price_per_epoch", U256::from_token)?;
+        let required_stake = next_opt(data_tokens, "required_stake", U256::from_token)?;
 
-            let min_workers = data_tokens[4].clone().into_uint()?.as_u64();
-            let max_workers_per_provider = data_tokens[5].clone().into_uint()?.as_u64();
-            let target_workers = data_tokens[6].clone().into_uint()?.as_u64();
+        let min_workers = next_opt(data_tokens, "min_workers", Token::into_uint)?.as_u64();
+        let max_workers_per_provider =
+            next_opt(data_tokens, "max_workers_per_provider", Token::into_uint)?.as_u64();
+        let target_workers = next_opt(data_tokens, "target_workers", Token::into_uint)?.as_u64();
 
-            let app_cid = data_tokens[7].clone().into_string()?;
-            let effector_wasms_cids = data_tokens[8]
-                .clone()
-                .into_array()?
+        let app_cid = next_opt(data_tokens, "app_cid", Token::into_string)?;
+        let effector_wasms_cids = next_opt(data_tokens, "effector_wasms_cids", |t| {
+            t.into_array()?
                 .into_iter()
-                .map(|x| x.into_string())
-                .collect::<Option<_>>()?;
-            let epoch = data_tokens[9].clone().into_uint()?.as_u64();
+                .map(Token::into_string)
+                .collect()
+        })?;
+        let epoch = next_opt(data_tokens, "epoch", Token::into_uint)?.as_u64();
 
-            DealCreatedData {
-                deal_id,
-                payment_token,
-                price_per_epoch,
-                required_stake,
-                min_workers,
-                max_workers_per_provider,
-                target_workers,
-                app_cid,
-                effector_wasms_cids,
-                epoch,
-            }
-        };
-        deal_data.ok_or_else(|| {
-            DealParseError::InternalError("parsed data doesn't correspond expected signature")
+        Ok(DealCreatedData {
+            deal_id: format!("{deal_id:#x}"),
+            payment_token: format!("{payment_token:#x}"),
+            price_per_epoch,
+            required_stake,
+            min_workers,
+            max_workers_per_provider,
+            target_workers,
+            app_cid,
+            effector_wasms_cids,
+            epoch,
         })
     }
 }
@@ -130,7 +126,12 @@ impl ChainEvent<DealCreatedData> for DealCreated {
 mod test {
     use std::assert_matches::assert_matches;
 
-    use crate::{chain::chain_data::DealParseError, *};
+    use ethabi::Token;
+
+    use crate::chain::chain_data::ChainData;
+    use crate::chain::chain_data::ChainDataError;
+    use crate::chain::deal_created::{DealCreated, DealCreatedData};
+    use crate::chain::log::{parse_log, Log};
 
     // Cannot now provide an example of encoded data with effectors
     // #[test]
@@ -152,15 +153,21 @@ mod test {
 
     #[test]
     fn test_chain_parsing_ok_empty_effectors() {
-        let data = "0x00000000000000000000000094952482aa36dc9ec113bbba0df49284ecc071e20000000000000000000000005f7a3a2dab601ee4a1970b53088bebca176e13f40000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000de0b6b3a7640000000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000009896800000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001a00000000000000000000000000000000000000000000000000000000000554509000000000000000000000000000000000000000000000000000000000000002e516d5758616131534b41445274774e7472773278714a5556447864734472536d4a635542614a7946324c353476500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+        let data = "0x00000000000000000000000094952482aa36dc9ec113bbba0df49284ecc071e20000000000000000000000005f7a3a2dab601ee4a1970b53088bebca176e13f40000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000de0b6b3a7640000000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000009896800000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001a00000000000000000000000000000000000000000000000000000000000554509000000000000000000000000000000000000000000000000000000000000002e516d5758616131534b41445274774e7472773278714a5556447864734472536d4a635542614a7946324c353476500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".to_string();
+        let log = Log {
+            data,
+            block_number: "0x0".to_string(),
+            removed: false,
+            topics: vec![],
+        };
+        let result = parse_log::<DealCreatedData, DealCreated>(log);
 
-        let result = DealCreatedData::parse(data);
         assert!(result.is_ok(), "can't parse data: {:?}", result);
-        let result = result.unwrap();
-        assert_eq!(result.deal_id, "94952482aa36dc9ec113bbba0df49284ecc071e2");
+        let result = result.unwrap().info;
+        assert_eq!(result.deal_id, "0x94952482aa36dc9ec113bbba0df49284ecc071e2");
         assert_eq!(
             result.payment_token,
-            "5f7a3a2dab601ee4a1970b53088bebca176e13f4"
+            "0x5f7a3a2dab601ee4a1970b53088bebca176e13f4"
         );
         assert_eq!(
             result.required_stake.to_eth(),
@@ -184,20 +191,16 @@ mod test {
 
     #[test]
     fn test_chain_parsing_fail_empty() {
-        let data = "";
-        let result = DealCreatedData::parse(data);
+        let result = DealCreatedData::parse(&mut std::iter::empty());
         assert!(result.is_err());
-        assert_matches!(result, Err(DealParseError::Empty));
+        assert_matches!(result, Err(ChainDataError::MissingParsedToken("deal_id")));
     }
 
     #[test]
     fn test_chain_parsing_fail_something() {
-        let data = "0x1234567890";
+        let data = &mut vec![Token::Bool(false)].into_iter();
         let result = DealCreatedData::parse(data);
         assert!(result.is_err());
-        assert_matches!(
-            result,
-            Err(DealParseError::EthError(ethabi::Error::InvalidData))
-        );
+        assert_matches!(result, Err(ChainDataError::InvalidParsedToken("deal_id")));
     }
 }

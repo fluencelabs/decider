@@ -3,14 +3,16 @@ module NewDeals declares poll_new_deals
 import or, not from "@fluencelabs/aqua-lib/binary.aqua"
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 
-import FluenceAuroraConnector, DealCreated from "services.aqua"
+import FluenceAuroraConnector, DealMatched from "services.aqua"
 
 import ChainInfo from "../chain/chain.aqua"
 import deal_log, spell_log, get_counter, get_string from "../fluence/spell.aqua"
 import is_worker_created from "../fluence/worker.aqua"
 import Json from "../fluence/peer.aqua"
 import join_deal from "../decider/join_deal.aqua"
+import JoinedDeal from "../decider/deal_storage.aqua"
 import SpellId from "../types.aqua"
+import register_worker from "../decider/register_worker.aqua"
 
 use "last_seen.aqua" as LastSeen
 use "../hex.aqua" as Hex
@@ -27,6 +29,7 @@ func get_left_boundary(spell_id: SpellId, chain: ChainInfo) -> ?string:
     -- `last seen block` is initialized to the first `left boundary` this function returns
     -- After that, `last seen block` is set to the block number of every next processed Log
     maybe_last_seen <- LastSeen.get(spell_id)
+    spell_log(spell_id, ["maybe_last_seen is", maybe_last_seen])
     if maybe_last_seen == nil:
         -- When have not yet seen any blocks, initialize `last seen` to `init_data.from_block`
         last_seen <- LastSeen.init(spell_id, chain)
@@ -43,18 +46,20 @@ func get_left_boundary(spell_id: SpellId, chain: ChainInfo) -> ?string:
         else:
             -- if for some reason `hex_add` failed, use `last_seen` as left boundary
             left <<- last_seen
+
+    spell_log(spell_id, ["left boundary will be", left])
     <- left
 
-func join_deals(spell_id: SpellId, logs: []DealCreated, left: string):
+func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: string):
     Spell spell_id
 
     -- TODO: I assume that `logs` are sorted by `block_number`. Is that a correct assumption?
     for log <- logs:
         deal_id = log.info.deal_id
-        if is_worker_created(spell_id, deal_id):
-            deal_log(spell_id, deal_id, "worker for deal is already created")
-        else:
-            join_deal(spell_id, log)
+        worker_id <- join_deal(spell_id, log.block_number, deal_id, log.info.app_cid)
+        if worker_id != nil:
+            -- TODO: track if register worker fails, and retry later
+            register_worker(chain, spell_id, deal_id, worker_id!, log.info.pat_id)
 
         -- Use `log.block_number - 1` as a `last seen block`
         -- Can not use `log.block_number` because it is unknown if there are more events from that block in `logs`
@@ -66,40 +71,66 @@ func join_deals(spell_id: SpellId, logs: []DealCreated, left: string):
             -- And we will try all events from that block again
             LastSeen.gt_set(spell_id, prev_block!, left)
 
+-- Returns 'matches' that were not yet joined
+func filter_new(spell_id: SpellId, matches: []DealMatched, joined_deals: []JoinedDeal) -> []DealMatched:
+    new: *DealMatched
+    -- TODO: replace with a more optimal implementation once hashmaps land in AquaVM
+    for match <- matches:
+        joined: ?bool
+        match_deal_id = match.info.deal_id
+        -- first, check if worker for that deal is created
+        if is_worker_created(spell_id, match_deal_id):
+            -- then, check if `deal_id` is among `joined_deals`
+            for deal <- joined_deals:
+                if match_deal_id == deal.deal_id:
+                    joined <<- true
+        -- if there's no worker or deal_id is not among `joined_deals`, mark that deal as `new`
+        if joined == nil:
+            new <<- match
+        else:
+            deal_log(spell_id, match_deal_id, "deal is already joined")
+    <- new
+
 data Poll:
-    logs: []DealCreated
+    logs: []DealMatched
     right_boundary: string
 
-func poll_logs(spell_id: SpellId, chain: ChainInfo, left: string) -> Poll:
-    result <- FluenceAuroraConnector.poll_deal_created(chain.api_endpoint, chain.address, left)
+func poll_logs(spell_id: SpellId, chain: ChainInfo, left: string) -> ?Poll:
+    poll: ?Poll
+
+    result <- FluenceAuroraConnector.poll_deal_matches(chain, left)
     if result.success == false:
         spell_log(spell_id, ["error polling deal created events", result.error])
+    else:
+        logs = result.logs
+        spell_log(spell_id, ["new deals from poll:", logs.length, "from block:", left])
+        poll <<- Poll(logs = logs, right_boundary = result.right_boundary)
 
-    logs = result.result
-    spell_log(spell_id, ["created deals from poll:", logs.length, "from block:", left])
+    <- poll
 
-    <- Poll(logs = logs, right_boundary = result.right_boundary)
-
-func poll_new_deals(spell_id: SpellId, chain: ChainInfo, latest_block: string):
+func poll_new_deals(spell_id: SpellId, chain: ChainInfo, joined_deals: []JoinedDeal, latest_block: string):
     -- retrieve block number to poll from
     left <- get_left_boundary(spell_id, chain)
     if left != nil:
         poll <- poll_logs(spell_id, chain, left!)
-        join_deals(spell_id, poll.logs, left!)
+        if poll != nil:
+            new_deals <- filter_new(spell_id, poll!.logs, joined_deals)
+            join_deals(chain, spell_id, new_deals, left!)
 
-        -- after we have processed all logs from poll, we can conclude
-        -- that we have seen all logs until `min(latest_block, right_boundary)`
-        -- if `poll.right_boundary >= latest_block` then we have seen up until `latest_block`
-        -- if `poll.right_boundary < latest_block`, then we have seen up until `poll.right_boundary`
-        right <- Hex.min(spell_id, latest_block, poll.right_boundary)
+            -- after we have processed all logs from poll, we can conclude
+            -- that we have seen all logs until `min(latest_block, right_boundary)`
+            -- if `poll.right_boundary >= latest_block` then we have seen up until `latest_block`
+            -- if `poll.right_boundary < latest_block`, then we have seen up until `poll.right_boundary`
+            spell_log(spell_id, ["poll_new_deals call Hex.min", latest_block, poll!.right_boundary])
+            right <- Hex.min(spell_id, latest_block, poll!.right_boundary)
 
-        if right != nil:
-            -- use `increase` to protect against overwriting `current last seen` with a lower value
-            -- since `last seen` is updated on every processed log,
-            -- `current last seen` equals to the block of the latest processed log,
-            -- can be sure `increase` won't overwrite LastSeen
-            -- even if `latest_block` < `block of the last processed log`
-            LastSeen.increase(spell_id, right!)
+            if right != nil:
+                -- use `increase` to protect against overwriting `current last seen` with a lower value
+                -- since `last seen` is updated on every processed log,
+                -- `current last seen` equals to the block of the latest processed log,
+                -- can be sure `increase` won't overwrite LastSeen
+                -- even if `latest_block` < `block of the last processed log`
+                LastSeen.increase(spell_id, right!)
 
     else:
         -- if it's not possible to retrieve `left boundary`, then it's not possible to `poll_logs`

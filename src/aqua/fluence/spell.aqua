@@ -21,23 +21,18 @@ func deal_log(spell_id: SpellId, deal_id: DealId, msg: ⊤):
     Spell.list_push_string("logs", msg_full)
 
 -- Wrapper over spell.get_string to get a string from spell's KV with reduced amount of if-else's
-func get_string(spell_id: SpellId, key: string) -> ?string, bool:
+func get_string(spell_id: SpellId, key: string) -> ?string:
     Spell spell_id
 
-    status: *bool
     result: *string
 
     value <- Spell.get_string(key)
     if value.success == false:
         spell_log(spell_id, ["get_string failed", key, value.error])
-        status <<- false
     else:
-        if value.absent:
-            status <<- false
-        else:
+        if value.absent == false:
             result <<- value.str
-            status <<- true
-    <- result, status!
+    <- result
 
 
 func get_counter(spell_id: SpellId) -> u32:

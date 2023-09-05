@@ -1,4 +1,5 @@
 use std::cmp::{min, Ordering};
+use std::num::ParseIntError;
 
 use marine_rs_sdk::marine;
 
@@ -11,6 +12,16 @@ pub fn hex_to_int(hex: &str) -> Option<u64> {
 /// Convert u64 to hex string
 pub fn int_to_hex(num: u64) -> String {
     format!("{:#x}", num)
+}
+
+pub fn decode_hex(h: &str) -> Result<Vec<u8>, hex::FromHexError> {
+    let h = h.trim_start_matches("0x");
+    hex::decode(h)
+}
+
+pub fn u128_from_hex(h: &str) -> Result<u128, ParseIntError> {
+    let h = h.trim_start_matches("0x");
+    u128::from_str_radix(h, 16)
 }
 
 #[marine]

@@ -14,9 +14,9 @@ extern "C" {
 }
 
 #[rustfmt::skip]
-fn curl_params(url: String, data: String) -> Vec<String> {
+fn curl_params(url: &str, data: &str) -> Vec<String> {
     let params = vec![
-        url.as_str(),
+        url,
         // To avoid unnecessary data in stderr
         "--no-progress-meter",
         "-X", "POST",
@@ -26,13 +26,13 @@ fn curl_params(url: String, data: String) -> Vec<String> {
         "--connect-timeout", "5",
         // Do not try to reconnect, just make another call
         "--retry", "0",
-        "--data", data.as_str(),
+        "--data", data,
     ];
 
     params.into_iter().map(String::from).collect::<_>()
 }
 
-pub fn curl(url: String, data: String) -> Result<String, RequestError> {
+pub fn curl(url: &str, data: &str) -> Result<String, RequestError> {
     let params = curl_params(url, data);
     let result = curl_request(params);
 
@@ -48,12 +48,12 @@ pub fn curl(url: String, data: String) -> Result<String, RequestError> {
 }
 
 pub fn send_jsonrpc<Req: Serialize, Resp: DeserializeOwned>(
-    url: String,
+    url: &str,
     req: JsonRpcReq<Req>,
 ) -> Result<JsonRpcResp<Resp>, RequestError> {
     let req = serde_json::to_string(&req).map_err(RpcSerializeError)?;
     log::debug!("json rpc request: {}", req);
-    let result = curl(url, req)?;
+    let result = curl(url, &req)?;
     log::debug!("json rpc response: {}", result);
     let result = match serde_json::from_str(&result) {
         Err(err) => Err(ParseError(err, result)),
@@ -63,13 +63,13 @@ pub fn send_jsonrpc<Req: Serialize, Resp: DeserializeOwned>(
 }
 
 pub fn send_jsonrpc_batch<Req: Serialize, Resp: DeserializeOwned>(
-    url: String,
+    url: &str,
     reqs: Vec<JsonRpcReq<Req>>,
 ) -> Result<Vec<JsonRpcResp<Resp>>, RequestError> {
     let reqs = serde_json::json!(reqs);
     log::debug!("json rpc batch request: {}", reqs);
-    let params = serde_json::to_string(&reqs).map_err(RpcSerializeError)?;
-    let result = curl(url, params)?;
+    let req = serde_json::to_string(&reqs).map_err(RpcSerializeError)?;
+    let result = curl(url, &req)?;
     log::debug!("json rpc batch response: {}", result);
 
     // Parse the result. Note that errors in a JSON RPC request will result in

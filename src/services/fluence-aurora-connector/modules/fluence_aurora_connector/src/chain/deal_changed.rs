@@ -1,8 +1,11 @@
 use ethabi::param_type::ParamType;
+use ethabi::Token;
 use marine_rs_sdk::marine;
 
-use crate::chain::chain_data::{parse_chain_data, ChainData, DealParseError};
+use crate::chain::chain_data::EventField::NotIndexed;
+use crate::chain::chain_data::{ChainData, ChainDataError, EventField};
 use crate::chain::chain_event::ChainEvent;
+use crate::chain::data_tokens::next_opt;
 use crate::chain::log::{parse_log, Log};
 
 /// Corresponding Solidity type:
@@ -28,28 +31,20 @@ impl DealChanged {
 }
 
 impl ChainData for DealChangedData {
-    fn topic() -> String {
-        let sig = Self::signature();
-        let hash = ethabi::long_signature(DealChanged::EVENT_NAME, &sig);
-        format!("0x{}", hex::encode(hash.as_bytes()))
+    fn event_name() -> &'static str {
+        DealChanged::EVENT_NAME
     }
 
-    fn signature() -> Vec<ParamType> {
+    fn signature() -> Vec<EventField> {
         vec![
-            ParamType::String, // appCID
+            NotIndexed(ParamType::String), // appCID
         ]
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
-    fn parse(data: &str) -> Result<DealChangedData, DealParseError> {
-        let data_tokens = parse_chain_data(data, Self::signature())?;
-        let deal_data: Option<DealChangedData> = try {
-            let app_cid = data_tokens.into_iter().next()?.into_string()?;
-            DealChangedData { app_cid }
-        };
-        deal_data.ok_or_else(|| {
-            DealParseError::InternalError("parsed data doesn't correspond expected signature")
-        })
+    fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, ChainDataError> {
+        let app_cid = next_opt(data_tokens, "app_cid", |t| t.into_string())?;
+        Ok(DealChangedData { app_cid })
     }
 }
 
@@ -60,5 +55,6 @@ impl ChainEvent<DealChangedData> for DealChanged {
 }
 
 pub fn parse_deal_changed(log: Log) -> Option<DealChanged> {
-    parse_log::<DealChangedData, DealChanged>(log)
+    // TODO: should we communicate these failures to Aqua code?
+    parse_log::<DealChangedData, DealChanged>(log).ok()
 }

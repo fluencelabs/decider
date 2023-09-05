@@ -14,21 +14,26 @@ use "../chain/blocks.aqua" as Blocks
 -- `last seen block` is a block for which all events have been processed
 func get(spell_id: SpellId) -> ?string:
     Spell spell_id
-    last_seen, ok <- get_string(spell_id, "last_seen_block")
+    last_seen <- get_string(spell_id, "last_seen_block")
     <- last_seen
 
 func save(spell_id: SpellId, hex: string):
     Spell spell_id
-    r <- Spell.set_string("last_seen_block", hex)
-    if r.success:
-        spell_log(spell_id, ["saved last seen", hex])
-    else:
-        spell_log(spell_id, ["error saving last_seen_block", r.error])
+    spell_log(spell_id, ["will set last seen to", hex])
+    try:
+        r <- Spell.set_string("last_seen_block", hex)
+        if r.success:
+            spell_log(spell_id, ["saved last seen", hex])
+        else:
+            spell_log(spell_id, ["error saving last_seen_block", r.error])
+    catch e:
+        spell_log(spell_id, ["error saving last_seen_block", e])
 
 -- initialize `last seen` to the value of `from_block`, so that polls start from that value as a left boundary
 -- NOTE: `from_block` is passed as a part of decider's `init data`
 func init(spell_id: SpellId, chain: ChainInfo) -> ?string:
     from_block <- evaluate_from_block(spell_id, chain)
+    spell_log(spell_id, ["init: will set last seen to", from_block])
     if from_block != nil:
         save(spell_id, from_block!)
     <- from_block
@@ -38,6 +43,7 @@ func init(spell_id: SpellId, chain: ChainInfo) -> ?string:
 func gt_set(spell_id: SpellId, new_hex: string, known_hex: string):
     greater <- Blocks.gt(spell_id, new_hex, known_hex)
     if greater == [true]:
+        spell_log(spell_id, ["gt_set: will set last seen to", new_hex])
         save(spell_id, new_hex)
 
 -- Set value of LastSeen to `hex` iff `hex > current last seen`
@@ -46,4 +52,5 @@ func increase(spell_id: SpellId, hex: string):
     if current != nil:
         gt_set(spell_id, hex, current!)
     else:
+        spell_log(spell_id, ["increase: will set last seen to", hex])
         save(spell_id, hex)

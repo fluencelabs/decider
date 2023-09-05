@@ -1,0 +1,127 @@
+data BlockNumberResult:
+  success: bool
+  number_hex: string
+  error: []string
+
+data ChainInfo:
+  api_endpoint: string
+  matcher: string
+  workers_gas: u64
+  wallet_key: string
+  network_id: u64
+
+data DealChangedData:
+  app_cid: string
+
+data DealChanged:
+  block_number: string
+  info: DealChangedData
+
+data DealInfo:
+  worker_id: string
+  deal_id: string
+
+data DealChangedResult:
+  success: bool
+  error: []string
+  log: []DealChanged
+  right_boundary: string
+  deal_info: DealInfo
+
+data DealChangesReq:
+  deal_info: DealInfo
+  left_boundary: string
+
+data U256:
+  bytes: []u8
+
+data DealCreatedData:
+  deal_id: string
+  payment_token: string
+  price_per_epoch: U256
+  required_stake: U256
+  min_workers: u64
+  max_workers_per_provider: u64
+  target_workers: u64
+  app_cid: string
+  effector_wasms_cids: []string
+  epoch: u64
+
+data DealCreated:
+  block_number: string
+  info: DealCreatedData
+
+data DealCreatedResult:
+  error: []string
+  success: bool
+  logs: []DealCreated
+  right_boundary: string
+
+data Match:
+  compute_peer: string
+  deal_id: string
+  pat_id: []u8
+  deal_creation_block: U256
+  app_cid: string
+
+data DealMatched:
+  block_number: string
+  info: Match
+
+data SupportedEvent:
+  name: string
+  topic: string
+
+data Env:
+  events: []SupportedEvent
+
+data HexAdd:
+  hex: []string
+  success: bool
+
+data HexCmp:
+  ordering: i8
+  success: bool
+  error: string
+
+data HexMin:
+  hex: []string
+  success: bool
+
+data HexSub:
+  diff: []string
+  success: bool
+
+data MatchedResult:
+  error: []string
+  success: bool
+  logs: []DealMatched
+  right_boundary: string
+
+data MultipleDealsChanged:
+  changes: []DealChangedResult
+  success: bool
+  error: []string
+
+data Worker:
+  pat_id: string
+  host_id: string
+  worker_id: []string
+
+data Subnet:
+  workers: []Worker
+  error: []string
+
+service FluenceAuroraConnector("fluence_aurora_connector"):
+  get_env() -> Env
+  hex_add(hex: string, add: u32) -> HexAdd
+  hex_cmp(hex_a: string, hex_b: string) -> HexCmp
+  hex_diff(from: string, to: string) -> u64
+  hex_min(hex_a: string, hex_b: string) -> HexMin
+  hex_sub(hex: string, sub: u32) -> HexSub
+  latest_block_number(api_endpoint: string) -> BlockNumberResult
+  poll_deal_changes(api_endpoint: string, deals: []DealChangesReq) -> MultipleDealsChanged
+  poll_deal_created(api_endpoint: string, address: string, left_boundary: string) -> DealCreatedResult
+  poll_deal_matches(chain: ChainInfo, left_boundary: string) -> MatchedResult
+  register_worker(pat_id: []u8, worker_id: string, chain: ChainInfo, deal_addr: string) -> []string
+  resolve_subnet(deal_id: string, api_endpoint: string) -> Subnet

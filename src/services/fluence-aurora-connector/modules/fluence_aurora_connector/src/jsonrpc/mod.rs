@@ -1,15 +1,19 @@
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-pub mod block_number;
-pub mod deal_changed;
-pub mod deal_created;
-pub mod get_logs;
-
-pub mod request;
-pub mod right_boundary;
 #[cfg(test)]
 mod tests;
+
+pub mod block_number;
+pub mod deal_changed;
+pub mod deal_changed_batch;
+pub mod deal_created;
+pub mod deal_matched;
+pub mod get_logs;
+pub mod register_worker;
+pub mod request;
+pub mod resolve_subnet;
+pub mod right_boundary;
 
 const JSON_RPC_VERSION: &str = "2.0";
 

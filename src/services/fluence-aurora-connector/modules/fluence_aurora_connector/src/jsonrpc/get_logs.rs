@@ -27,15 +27,15 @@ impl GetLogsReq {
 }
 
 pub fn get_logs(
-    api_endpoint: String,
+    api_endpoint: &str,
     address: String,
     from_block: String,
     to_block: String,
-    topic: String,
+    topics: Vec<String>,
 ) -> Result<Vec<Log>, RequestError> {
     let req = GetLogsReq {
         address,
-        topics: vec![topic],
+        topics,
         from_block,
         to_block,
     };

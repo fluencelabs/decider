@@ -1,0 +1,54 @@
+module Mailbox declares poll_mailbox, push_remove_worker
+
+export poll_mailbox, push_remove_worker
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
+
+import Console from "../debug.aqua"
+import SpellId, WorkerId from "../types.aqua"
+
+import spell_log from "../fluence/spell.aqua"
+
+use "../fluence/worker.aqua" as Worker
+
+data RemoveWorker:
+    host_id: PeerId
+    worker_id: WorkerId
+
+data DeciderMessage:
+    remove: ?RemoveWorker
+
+service JsonMsg("json"):
+  parse(str: string) -> DeciderMessage
+  stringify(msg: DeciderMessage) -> string
+
+func process_message(msg: DeciderMessage):
+    if msg.remove != nil:
+        cmd = msg.remove!
+        Worker.remove(cmd.host_id, cmd.worker_id)
+
+func poll_mailbox(spell_id: SpellId):
+    Spell spell_id
+
+    mailbox <- Spell.get_mailbox()
+    spell_log(spell_id, ["mailbox", mailbox])
+    if mailbox.success:
+        for msg <- mailbox.messages:
+            try:
+                message <- JsonMsg.parse(msg.message)
+                process_message(message)
+                spell_log(spell_id, "will pop")
+                popped <- Spell.pop_mailbox()
+                if popped.message.length == 0:
+                    spell_log(spell_id, ["произошла чудовищная ошибка. expected", msg, "popped nothing"])
+                else:
+                    if popped.message!.message != msg.message:
+                        spell_log(spell_id, ["произошла чудовищная ошибка. expected", msg, "popped", popped])
+
+func push_remove_worker(spell_id: SpellId, host_id: PeerId, worker_id: WorkerId):
+    Spell spell_id
+
+    remove = RemoveWorker(host_id = host_id, worker_id = worker_id)
+    msg = JsonMsg.stringify(DeciderMessage(remove = ?[remove]))
+    Spell.push_mailbox(msg)

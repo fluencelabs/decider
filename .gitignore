@@ -3,7 +3,6 @@
 # recommended by Fluence Labs:
 .idea
 .DS_Store
-.fluence
 **/node_modules
 **/target/
 .repl_history
@@ -18,3 +17,7 @@ src/distro/decider-spell/
 connector/
 connector.tar.gz
 decider.json
+
+*.wasm
+
+**/target

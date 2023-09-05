@@ -50,12 +50,18 @@ pub struct DeciderConfig {
     pub worker_ipfs_multiaddr: String,
     /// How often to run the worker-spell for updates/healthchecks
     pub worker_period_sec: u32,
-    /// The network of the chain from which the decider polls deals
-    pub chain_network: String,
-    /// The address of the new deals contract
-    pub chain_contract_addr: String,
+    /// URI of the RPC for decider to communicate with the chain (poll, send tx)
+    pub chain_api_endpoint: String,
+    // ID of the chain behind RPC. EIP-155: protection from replay on other chains.
+    pub chain_network_id: u64,
     /// The block number from which to poll new deals in hex format
     pub chain_contract_block_hex: String,
+    /// Address of the Matcher contract
+    pub chain_matcher_addr: String,
+    /// How much gas is needed to register a worker
+    pub chain_workers_gas: u64,
+    /// Private key to send `setWorker` tx to chain to register a worker
+    pub chain_wallet_key: String,
 }
 
 pub fn decider_spell(config: DeciderConfig) -> DistrSpell {
@@ -71,8 +77,11 @@ pub fn decider_spell(config: DeciderConfig) -> DistrSpell {
             "worker_ipfs" => json!(config.worker_ipfs_multiaddr),
             "from_block" => json!(config.chain_contract_block_hex),
             "chain" => json!( {
-                "api_endpoint": config.chain_network,
-                "address": config.chain_contract_addr,
+                "api_endpoint": config.chain_api_endpoint,
+                "matcher": config.chain_matcher_addr,
+                "workers_gas": config.chain_workers_gas,
+                "wallet_key": config.chain_wallet_key,
+                "network_id": config.chain_network_id
             }),
         },
     }
