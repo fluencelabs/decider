@@ -3,13 +3,6 @@ module Peer declares Json, OpExt, JsonTriggerConfig
 import TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 import DealId, SpellId from "../types.aqua"
 
--- -- Worker API
--- -- TODO: use Worker from aqua-lib
--- service Worker("worker"):
---   -- throws exception if the worker already exists
---   create(deal_id: DealId) -> string
---   -- throws exception if the worker doesn't exist
---   get_peer_id(deal_id: DealId) -> string
 
 -- Extentions of the aqua lib
 service Json("json"):
