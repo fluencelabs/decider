@@ -16,4 +16,3 @@ service Console("run-console"):
 func log_back(msg: ⊤):
    on INIT_PEER_ID via HOST_PEER_ID:
       RunConsoleAny.print(msg)
-      
