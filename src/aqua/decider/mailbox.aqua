@@ -36,7 +36,7 @@ func poll_mailbox(spell_id: SpellId):
     if mailbox.success:
         for msg <- mailbox.messages:
             try:
-                message <- JsonMsg.parse(msg)
+                message <- JsonMsg.parse(msg.message)
                 process_message(message)
                 spell_log(spell_id, "will pop")
                 popped <- Spell.pop_mailbox()
