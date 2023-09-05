@@ -40,8 +40,11 @@ func poll_mailbox(spell_id: SpellId):
                 process_message(message)
                 spell_log(spell_id, "will pop")
                 popped <- Spell.pop_mailbox()
-                if popped.message.message != msg.message:
-                    spell_log(spell_id, ["произошла чудовищная ошибка. expected", msg, "popped", popped])
+                if popped.message.length == 0:
+                    spell_log(spell_id, ["произошла чудовищная ошибка. expected", msg, "popped nothing"])
+                else:
+                    if popped.message!.message != msg.message:
+                        spell_log(spell_id, ["произошла чудовищная ошибка. expected", msg, "popped", popped])
 
 func push_remove_worker(spell_id: SpellId, host_id: PeerId, worker_id: WorkerId):
     Spell spell_id
