@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/fluencelabs/decider/compare/connector-v0.4.17...connector-v0.5.0) (2023-09-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **match:** Create workers on Match, register, resolve subnet ([#68](https://github.com/fluencelabs/decider/issues/68))
+
+### Features
+
+* **builtin:** remove builtin package ([#63](https://github.com/fluencelabs/decider/issues/63)) ([0be2b0d](https://github.com/fluencelabs/decider/commit/0be2b0db38e45463922f8a08a394fc570b883212))
+* **match:** Create workers on Match, register, resolve subnet ([#68](https://github.com/fluencelabs/decider/issues/68)) ([b40d042](https://github.com/fluencelabs/decider/commit/b40d0421fe7558f531bdfb0090df26d01d09d89b))
+
 ## [0.4.17](https://github.com/fluencelabs/decider/compare/connector-v0.4.16...connector-v0.4.17) (2023-07-13)
 
 
