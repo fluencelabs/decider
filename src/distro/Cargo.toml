@@ -22,7 +22,6 @@ fluence-app-service = { version = "=0.26.4-feat-wasm-backend-interface-update-b3
 
 tokio = { version = "1.29.1", features = ["full", "tracing"] }
 toml = "0.5.10"
-httpmock = "0.6.8"
 
 [build-dependencies]
 built = "0.6.0"
