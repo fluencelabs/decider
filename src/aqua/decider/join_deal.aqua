@@ -18,6 +18,7 @@ use "../fluence/worker.aqua" as Worker
 func install_deal_spell(deal_id: DealId, cid: CID, settings: WorkerSettings) -> string:
     args = WorkerArgs(deal_id = deal_id, worker_def_cid = cid, ipfs = settings.ipfs)
     worker_spell_id <- PeerSpell.install(settings.script, args, settings.config)
+    Srv.add_alias("worker-spell", worker_spell_id)
     <- worker_spell_id
 
 func store_deal(spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, block: Block):
