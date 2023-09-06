@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/fluencelabs/decider/compare/connector-v0.5.0...connector-v0.5.1) (2023-09-06)
+
+
+### Bug Fixes
+
+* **decider:** add alias for worker spell ([#71](https://github.com/fluencelabs/decider/issues/71)) ([860ba6c](https://github.com/fluencelabs/decider/commit/860ba6c31d0a0dba9c29a4c34fe05afda256ce7a))
+
 ## [0.5.0](https://github.com/fluencelabs/decider/compare/connector-v0.4.17...connector-v0.5.0) (2023-09-05)
 
 
