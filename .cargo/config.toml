@@ -1,2 +1,10 @@
+[net]
+git-fetch-with-cli = true
+
 [registries]
+#my-registry = { index = "http://127.0.0.1:12345/git" }
+my-registry = { index = "file:///tmp/my-registry" }
 fluence = { index = "git://crates.fluence.dev/index" }
+
+[build]
+rustflags = ["--cfg", "tokio_unstable"]
