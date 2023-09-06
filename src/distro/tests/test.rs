@@ -104,8 +104,6 @@ async fn test_decider_installed() {
         .await
         .unwrap();
 
-    std::thread::sleep(std::time::Duration::from_secs(120));
-
     if let [Value::Object(service1), Value::Object(service2)] =
         result[0].as_array().expect("expect an array").as_slice()
     {
