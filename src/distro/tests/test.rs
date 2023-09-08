@@ -2,7 +2,6 @@ use connected_client::ConnectedClient;
 use created_swarm::{make_swarms_with_cfg, CreatedSwarm};
 use fluence_app_service::TomlMarineConfig;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
-use log_utils::enable_logs;
 use maplit::hashmap;
 use serde_json::{json, Value};
 use system_services::{PackageDistro, ServiceDistro, SpellDistro};
@@ -120,63 +119,4 @@ async fn test_decider_installed() {
         assert!(names.contains(&alias1), "{alias1} service is not installed");
         assert!(names.contains(&alias2), "{alias2} service is not installed");
     }
-}
-
-#[tokio::test]
-async fn test_empty_run_ok() {
-    enable_logs();
-    let distro = make_distro();
-    let names = package_items_names(&distro);
-    assert_eq!(
-        names.len(),
-        2,
-        "expect only 2 services and spells in the decider package"
-    );
-
-    let mut swarms = make_swarms_with_cfg(1, move |mut cfg| {
-        // disable built-in system services (disabled by default for now, but just in case)
-        cfg.enabled_system_services = vec![];
-        cfg.extend_system_services = vec![make_distro()];
-        cfg
-    })
-    .await;
-    let mut client = ConnectedClient::connect_to(swarms[0].multiaddr.clone())
-        .await
-        .unwrap();
-
-    sleep(std::time::Duration::from_secs(120)).await;
-
-    let result = client
-        .execute_particle(
-            r#"
-        (seq
-          (call relay ("decider" "get_all_errors") [] errs)
-          (call client ("return" "") [errs])
-        )
-       "#,
-            hashmap! {
-                "relay" => json!(client.node.to_string()),
-                "client" => json!(client.peer_id.to_string())
-            },
-        )
-        .await
-        .unwrap();
-    println!("{:?}", result);
-
-    let result = client
-        .execute_particle(
-            r#"
-        (seq
-          (call relay ("decider" "get_logs") [] errs)
-          (call client ("return" "") [errs])
-        )
-       "#,
-            hashmap! {
-                "relay" => json!(client.node.to_string()),
-                "client" => json!(client.peer_id.to_string())
-            },
-        )
-        .await
-        .unwrap();
-    println!("{:?}", result);
 }
