@@ -1,11 +1,11 @@
 [package]
-name = "fluence_aurora_connector"
+name = "chain_connector"
 version = "0.5.1"
 edition = "2018"
 publish = false
 
 [[bin]]
-name = "fluence_aurora_connector"
+name = "chain_connector"
 path = "src/main.rs"
 
 [dependencies]

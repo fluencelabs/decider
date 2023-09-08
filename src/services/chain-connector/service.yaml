@@ -5,9 +5,9 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/service.md
 
 version: 0
-name: fluence_aurora_connector
+name: chain_connector
 modules:
   facade:
-    get: modules/fluence_aurora_connector
+    get: modules/chain_connector
   curl_adapter:
     get: modules/curl_adapter/

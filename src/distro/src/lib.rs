@@ -6,7 +6,7 @@ use serde_json::{json, Value as JValue};
 
 pub use build_info::PKG_VERSION as VERSION;
 
-const CONNECTOR: &'static [u8] = include_bytes!("../decider-spell/fluence_aurora_connector.wasm");
+const CONNECTOR: &'static [u8] = include_bytes!("../decider-spell/chain_connector.wasm");
 const CURL_ADAPTER: &'static [u8] = include_bytes!("../decider-spell/curl_adapter.wasm");
 const CONFIG: &'static [u8] = include_bytes!("../decider-spell/Config.toml");
 
@@ -27,10 +27,10 @@ pub fn connector_service_modules() -> DistrService {
     DistrService {
         // The name is used by the decider, so we don't need to explicitly pass the service id of the connector service
         // The name is taken from the config. Would be nice one day to automatically take it from the project itself.
-        name: "fluence_aurora_connector",
+        name: "chain_connector",
         config: CONFIG,
         modules: hashmap! {
-            "fluence_aurora_connector" => CONNECTOR,
+            "chain_connector" => CONNECTOR,
             "curl_adapter" => CURL_ADAPTER,
         },
     }

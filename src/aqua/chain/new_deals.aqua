@@ -3,7 +3,7 @@ module NewDeals declares poll_new_deals
 import or, not from "@fluencelabs/aqua-lib/binary.aqua"
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 
-import FluenceAuroraConnector, DealMatched from "services.aqua"
+import ChainConnector, DealMatched from "services.aqua"
 
 import ChainInfo from "../chain/chain.aqua"
 import deal_log, spell_log, get_counter, get_string from "../fluence/spell.aqua"
@@ -98,7 +98,7 @@ data Poll:
 func poll_logs(spell_id: SpellId, chain: ChainInfo, left: string) -> ?Poll:
     poll: ?Poll
 
-    result <- FluenceAuroraConnector.poll_deal_matches(chain, left)
+    result <- ChainConnector.poll_deal_matches(chain, left)
     if result.success == false:
         spell_log(spell_id, ["error polling deal created events", result.error])
     else:

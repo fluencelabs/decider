@@ -112,7 +112,7 @@ data Subnet:
   workers: []Worker
   error: []string
 
-service FluenceAuroraConnector("fluence_aurora_connector"):
+service ChainConnector("chain_connector"):
   get_env() -> Env
   hex_add(hex: string, add: u32) -> HexAdd
   hex_cmp(hex_a: string, hex_b: string) -> HexCmp

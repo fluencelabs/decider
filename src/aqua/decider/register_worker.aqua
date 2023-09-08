@@ -2,7 +2,7 @@ module RegisterWorker declares register_worker
 
 import DealId, SpellId, WorkerId, PAT from "../types.aqua"
 import spell_log, deal_log from "../fluence/spell.aqua"
-import FluenceAuroraConnector from "services.aqua"
+import ChainConnector from "services.aqua"
 import ChainInfo from "../chain/chain.aqua"
 
 func register_call() -> string:
@@ -28,7 +28,7 @@ func register_call() -> string:
 -- Remember to track registration failures though, and retry them
 
 func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, pat_id: []u8):
-    err <- FluenceAuroraConnector.register_worker(pat_id, worker_id, chain, deal_id)
+    err <- ChainConnector.register_worker(pat_id, worker_id, chain, deal_id)
     if err == nil:
         deal_log(spell_id, deal_id, "registered worker")
     else:

@@ -11,7 +11,7 @@ mkdir -p "$DISTRO_DIR"
 fluence dep i
 # compile connector
 fluence build
-cp target/wasm32-wasi/release/fluence_aurora_connector.wasm src/distro/decider-spell/
+cp target/wasm32-wasi/release/chain_connector.wasm src/distro/decider-spell/
 cp target/wasm32-wasi/release/curl_adapter.wasm src/distro/decider-spell/
 cp example/Config.toml src/distro/decider-spell/
 

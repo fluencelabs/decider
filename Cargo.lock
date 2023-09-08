@@ -361,6 +361,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "chain_connector"
+version = "0.5.1"
+dependencies = [
+ "cid",
+ "clarity",
+ "env_logger",
+ "ethabi",
+ "hex",
+ "libp2p-identity",
+ "log",
+ "marine-rs-sdk",
+ "marine-rs-sdk-test",
+ "mockito",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "url",
+]
+
+[[package]]
 name = "chrono"
 version = "0.4.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -937,26 +957,6 @@ dependencies = [
  "marine-sqlite-connector",
  "serde",
  "thiserror",
-]
-
-[[package]]
-name = "fluence_aurora_connector"
-version = "0.5.1"
-dependencies = [
- "cid",
- "clarity",
- "env_logger",
- "ethabi",
- "hex",
- "libp2p-identity",
- "log",
- "marine-rs-sdk",
- "marine-rs-sdk-test",
- "mockito",
- "serde",
- "serde_json",
- "thiserror",
- "url",
 ]
 
 [[package]]

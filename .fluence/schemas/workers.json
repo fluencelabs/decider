@@ -30,8 +30,8 @@
           "chainNetwork": {
             "type": "string",
             "enum": [
-              "testnet",
-              "local"
+              "local",
+              "testnet"
             ]
           },
           "chainNetworkId": {
@@ -67,8 +67,8 @@
             "chainNetwork": {
               "type": "string",
               "enum": [
-                "testnet",
-                "local"
+                "local",
+                "testnet"
               ]
             },
             "chainNetworkId": {
