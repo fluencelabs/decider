@@ -5,15 +5,6 @@
 
 # config version
 version: 0
-hosts:
-  decider:
-    definition: bafkreib633kyesbnrctihqx6wtceb3h2ldhf3u7ebcfjupvzgk7yw3emwi
-    installation_spells:
-      - host_id: 12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ
-        spell_id: b6767534-0017-4ffe-902d-6752b7d81555
-        worker_id: 12D3KooWEVqyJ95tj4SZ1EhkuBRQoDyUpsDD1Rq2tWQC85cTyooe
-    timestamp: 2023-08-16T13:52:04.143Z
-    relayId: 12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ
 
 # # A map of created deals
 # deals:
