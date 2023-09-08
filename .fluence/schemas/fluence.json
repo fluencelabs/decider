@@ -577,8 +577,8 @@
       "type": "string",
       "description": "The network in which the transactions will be carried out",
       "enum": [
-        "local",
-        "testnet"
+        "testnet",
+        "local"
       ],
       "default": "testnet",
       "nullable": true
@@ -743,7 +743,7 @@
     },
     "marineBuildArgs": {
       "type": "string",
-      "description": "`cargo build` arguments to pass to marine build command",
+      "description": "Space separated `cargo build` flags and args to pass to marine build. Can be overridden using --marine-build-args flag Default: --release",
       "nullable": true
     },
     "cliVersion": {

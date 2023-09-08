@@ -17,8 +17,9 @@ data GetWorkersInfoHostsDeciderInstallationSpells:
 data GetWorkersInfoHostsDecider:
     definition: string
     installationSpells: []GetWorkersInfoHostsDeciderInstallationSpells
-    timestamp: string
     relayId: string
+    timestamp: string
+    dummyDealId: string
 
 data GetWorkersInfoHosts:
     decider: ?GetWorkersInfoHostsDecider
@@ -33,17 +34,6 @@ func getWorkersInfo() -> GetWorkersInfo:
             decider=nil
         ),
         hosts=GetWorkersInfoHosts(
-            decider=?[GetWorkersInfoHostsDecider(
-                definition="bafkreib633kyesbnrctihqx6wtceb3h2ldhf3u7ebcfjupvzgk7yw3emwi",
-                installationSpells=[
-                    GetWorkersInfoHostsDeciderInstallationSpells(
-                        hostId="12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ",
-                        spellId="b6767534-0017-4ffe-902d-6752b7d81555",
-                        workerId="12D3KooWEVqyJ95tj4SZ1EhkuBRQoDyUpsDD1Rq2tWQC85cTyooe"
-                    )
-                ],
-                timestamp="2023-08-16T13:52:04.143Z",
-                relayId="12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ"
-            )]
+            decider=nil
         )
     )

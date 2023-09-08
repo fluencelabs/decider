@@ -1514,23 +1514,6 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.5.1"
-dependencies = [
- "built 0.6.1",
- "connected-client",
- "created-swarm",
- "fluence-app-service 0.26.4-feat-wasm-backend-interface-update-b3cf050-636-1.0",
- "fluence-spell-dtos",
- "log-utils",
- "maplit",
- "serde_json",
- "system-services",
- "tokio",
- "toml 0.5.11",
-]
-
-[[package]]
-name = "decider-distro"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0d677150abe73fcc5d83588bf4bd930f46988ff818572fb52c4bb6eb3e58852c"
@@ -1539,6 +1522,22 @@ dependencies = [
  "fluence-spell-dtos",
  "maplit",
  "serde_json",
+]
+
+[[package]]
+name = "decider-distro"
+version = "0.5.1"
+dependencies = [
+ "built 0.6.1",
+ "connected-client",
+ "created-swarm",
+ "fluence-app-service 0.26.4-feat-wasm-backend-interface-update-b3cf050-636-1.0",
+ "fluence-spell-dtos",
+ "maplit",
+ "serde_json",
+ "system-services",
+ "tokio",
+ "toml 0.5.11",
 ]
 
 [[package]]
@@ -3567,18 +3566,6 @@ name = "log"
 version = "0.4.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
-
-[[package]]
-name = "log-utils"
-version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#290398e6e9fbda92e1f64560012fa05d4a178871"
-dependencies = [
- "console-subscriber",
- "log",
- "tracing",
- "tracing-logfmt",
- "tracing-subscriber",
-]
 
 [[package]]
 name = "lru"
@@ -6580,7 +6567,7 @@ version = "0.1.0"
 source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#290398e6e9fbda92e1f64560012fa05d4a178871"
 dependencies = [
  "aqua-ipfs-distro",
- "decider-distro 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "decider-distro 0.5.0",
  "eyre",
  "fluence-app-service 0.26.4-feat-wasm-backend-interface-update-b3cf050-636-1.0",
  "fluence-spell-dtos",
