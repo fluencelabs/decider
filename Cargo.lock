@@ -1404,7 +1404,7 @@ dependencies = [
 
 [[package]]
 name = "curl_adapter"
-version = "0.5.0"
+version = "0.5.1"
 dependencies = [
  "marine-rs-sdk 0.7.1",
  "marine-rs-sdk-test",
@@ -1514,7 +1514,7 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.5.0"
+version = "0.5.1"
 dependencies = [
  "built 0.6.1",
  "connected-client",
@@ -2047,7 +2047,7 @@ dependencies = [
 
 [[package]]
 name = "fluence_aurora_connector"
-version = "0.5.0"
+version = "0.5.1"
 dependencies = [
  "cid",
  "clarity",
