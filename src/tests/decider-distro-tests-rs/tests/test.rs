@@ -1,11 +1,10 @@
 use connected_client::ConnectedClient;
-use created_swarm::{make_swarms_with_cfg, CreatedSwarm};
+use created_swarm::make_swarms_with_cfg;
 use fluence_app_service::TomlMarineConfig;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use maplit::hashmap;
 use serde_json::{json, Value};
 use system_services::{PackageDistro, ServiceDistro, SpellDistro};
-use tokio::time::sleep;
 
 // TODO: read config from some config file
 pub fn make_distro() -> PackageDistro {
@@ -78,7 +77,7 @@ async fn test_decider_installed() {
         "expect only 2 services and spells in the decider package"
     );
 
-    let mut swarms = make_swarms_with_cfg(1, move |mut cfg| {
+    let swarms = make_swarms_with_cfg(1, move |mut cfg| {
         // disable built-in system services (disabled by default for now, but just in case)
         cfg.enabled_system_services = vec![];
         cfg.extend_system_services = vec![make_distro()];
