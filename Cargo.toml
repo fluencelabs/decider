@@ -5,3 +5,4 @@ members = [
   "src/services/chain-connector/modules/chain_connector",
   "src/distro"
 ]
+exclude = [ "src/tests" ]
