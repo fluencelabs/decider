@@ -5,3 +5,7 @@ members = [
   "src/services/fluence-aurora-connector/modules/fluence_aurora_connector",
   "src/distro"
 ]
+
+exclude = [
+	"src/tests"
+]

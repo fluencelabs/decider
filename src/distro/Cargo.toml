@@ -14,14 +14,5 @@ maplit = "1.0.2"
 serde_json = "1.0.96"
 fluence-spell-dtos = "0.5.11"
 
-[dev-dependencies]
-created-swarm = { git = "https://github.com/fluencelabs/nox.git", branch = "plugable-system-services" }
-connected-client = { git = "https://github.com/fluencelabs/nox.git", branch = "plugable-system-services" }
-system-services = { git = "https://github.com/fluencelabs/nox.git", branch = "plugable-system-services" }
-fluence-app-service = { version = "=0.26.4-feat-wasm-backend-interface-update-b3cf050-636-1.0", registry = "fluence" }
-
-tokio = { version = "1.29.1", features = ["full", "tracing"] }
-toml = "0.5.10"
-
 [build-dependencies]
 built = "0.6.0"
