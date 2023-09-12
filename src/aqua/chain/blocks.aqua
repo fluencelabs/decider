@@ -4,12 +4,12 @@ import get_string, spell_log from "../fluence/spell.aqua"
 import ChainInfo from "../chain/chain.aqua"
 import SpellId from "../types.aqua"
 
-import FluenceAuroraConnector from "services.aqua"
+import ChainConnector from "services.aqua"
 
 -- Get latest block number from RPC
 func get_latest(spell_id: SpellId, chain: ChainInfo) -> ?string:
     latest: ?string
-    latest_block <- FluenceAuroraConnector.latest_block_number(chain.api_endpoint)
+    latest_block <- ChainConnector.latest_block_number(chain.api_endpoint)
     if latest_block.success:
         latest <<- latest_block.number_hex
     else:
@@ -21,7 +21,7 @@ func get_latest(spell_id: SpellId, chain: ChainInfo) -> ?string:
 func lte(spell_id: string, hex_a: string, hex_b: string) -> ?bool:
     lte: ?bool
 
-    cmp <- FluenceAuroraConnector.hex_cmp(hex_a, hex_b)
+    cmp <- ChainConnector.hex_cmp(hex_a, hex_b)
     if cmp.success:
         -- `hex_a` is less than `hex_b`
         if cmp.ordering == -1:
@@ -41,7 +41,7 @@ func lte(spell_id: string, hex_a: string, hex_b: string) -> ?bool:
 func gt(spell_id: string, hex_a: string, hex_b: string) -> ?bool:
     gt: ?bool
 
-    cmp <- FluenceAuroraConnector.hex_cmp(hex_a, hex_b)
+    cmp <- ChainConnector.hex_cmp(hex_a, hex_b)
     if cmp.success:
         -- `hex_a` is less than `hex_b`
         if cmp.ordering == -1:

@@ -8,7 +8,7 @@ import ChainInfo from "../chain/chain.aqua"
 import JoinedDeal, JsonDealState, DealState, store_deal_state, make_change_reqs from "../decider/deal_storage.aqua"
 import SpellId, DealId from "../types.aqua"
 
-import DealInfo, DealChangesReq, FluenceAuroraConnector, DealChangedResult from "services.aqua"
+import DealInfo, DealChangesReq, ChainConnector, DealChangedResult from "services.aqua"
 
 use "../chain/blocks.aqua" as Blocks
 use "../hex.aqua" as Hex
@@ -20,7 +20,7 @@ func get_deal_changes(spell_id: SpellId, api_endpoint: string, joined: []JoinedD
     deals <- make_change_reqs(spell_id, joined)
     if deals != nil:
         -- Poll for the last logs about deal changes
-        poll_result <- FluenceAuroraConnector.poll_deal_changes(api_endpoint, deals)
+        poll_result <- ChainConnector.poll_deal_changes(api_endpoint, deals)
         if poll_result.success:
             spell_log(spell_id, ["deal changes from poll:", poll_result.changes.length])
             changes <<- poll_result.changes

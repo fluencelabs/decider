@@ -31,12 +31,12 @@ dependencies:
     marine: 0.14.0
     mrepl: 0.21.3
 
-# Here I define services. Can have as many as I want. Right now it's just 'fluence_aurora_connector'.
+# Here I define services. Can have as many as I want. Right now it's just 'chain_connector'.
 services:
   # this is the service name, it can be anything. after deploy will become an alias.
-  fluence_aurora_connector:
+  chain_connector:
     # this is the path to directory with 'service.yaml'
-    get: src/services/fluence-aurora-connector
+    get: src/services/chain-connector
 
 # Here I define spells. Can have as many as I want, right now it's just 'decider'
 spells:
@@ -51,7 +51,7 @@ workers:
   decider:
     services:
       # ... one service ...
-      - fluence_aurora_connector
+      - chain_connector
     spells:
       # ... and one spell
       - decider

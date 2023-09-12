@@ -7,5 +7,5 @@ logger_enabled = true
   curl = "/usr/bin/curl"
 
 [[module]]
-name = "fluence_aurora_connector"
+name = "chain_connector"
 logger_enabled = true
