@@ -21,7 +21,7 @@ system-services = { git = "https://github.com/fluencelabs/nox.git", branch = "pl
 fluence-app-service = { version = "=0.26.4-feat-wasm-backend-interface-update-b3cf050-636-1.0", registry = "fluence" }
 
 tokio = { version = "1.29.1", features = ["full", "tracing"] }
-toml = "0.5.10"
+toml = "0.7.0"
 
 [build-dependencies]
 built = "0.6.0"

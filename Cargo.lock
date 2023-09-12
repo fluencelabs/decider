@@ -1537,7 +1537,7 @@ dependencies = [
  "serde_json",
  "system-services",
  "tokio",
- "toml 0.5.11",
+ "toml 0.7.6",
 ]
 
 [[package]]
