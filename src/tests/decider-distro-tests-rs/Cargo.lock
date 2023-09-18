@@ -95,7 +95,7 @@ dependencies = [
 [[package]]
 name = "air-interpreter-fs"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "air-interpreter-wasm",
  "blake3",
@@ -229,7 +229,7 @@ dependencies = [
 [[package]]
 name = "aquamarine"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -341,6 +341,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "assert-json-diff"
+version = "2.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "47e4f2b81832e72834d7518d8487a0396a28cc408186a2e8854c0f98011faf12"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "async-io"
 version = "1.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -383,7 +393,7 @@ dependencies = [
 [[package]]
 name = "async-unlock"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "tokio",
 ]
@@ -682,6 +692,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "built"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1462f4ab147e1378c64dacd28f03a56d4771d93eab6c325265a35355ce47213d"
+
+[[package]]
 name = "bumpalo"
 version = "3.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -867,7 +883,7 @@ dependencies = [
 [[package]]
 name = "cid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "base64 0.21.4",
  "bytes",
@@ -904,9 +920,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.4.2"
+version = "4.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a13b88d2c62ff462f88e4a121f17a82c1af05693a2f192b5c38d14de73c19f6"
+checksum = "84ed82781cea27b43c9b106a979fe450a13a31aab0500595fb3fc06616de08e6"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -949,6 +965,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
 
 [[package]]
+name = "colored"
+version = "2.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2674ec482fbc38012cf31e6c42ba0177b431a0cb6f15fe40efa5aab1bda516f6"
+dependencies = [
+ "is-terminal",
+ "lazy_static",
+ "windows-sys 0.48.0",
+]
+
+[[package]]
 name = "concurrent-queue"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -974,7 +1001,7 @@ dependencies = [
 [[package]]
 name = "config-utils"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "libp2p-identity",
 ]
@@ -982,7 +1009,7 @@ dependencies = [
 [[package]]
 name = "connected-client"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "derivative",
  "either",
@@ -1006,7 +1033,7 @@ dependencies = [
 [[package]]
 name = "connection-pool"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "fluence-libp2p",
  "futures",
@@ -1074,7 +1101,7 @@ checksum = "f7144d30dcf0fafbce74250a3963025d8d52177934239851c917d29f1df280c2"
 [[package]]
 name = "control-macro"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 
 [[package]]
 name = "core-foundation"
@@ -1230,7 +1257,7 @@ dependencies = [
 [[package]]
 name = "created-swarm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "air-interpreter-fs",
  "aquamarine",
@@ -1446,7 +1473,7 @@ dependencies = [
 name = "decider-distro"
 version = "0.5.1"
 dependencies = [
- "built 0.6.1",
+ "built 0.7.0",
  "fluence-spell-dtos",
  "maplit",
  "serde_json",
@@ -1473,11 +1500,16 @@ dependencies = [
  "decider-distro 0.5.1",
  "fluence-app-service",
  "fluence-spell-dtos",
+ "log-utils",
  "maplit",
+ "mockito",
+ "serde",
  "serde_json",
  "system-services",
  "tokio",
  "toml 0.5.11",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
@@ -1878,7 +1910,7 @@ dependencies = [
 [[package]]
 name = "fluence-libp2p"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "base64 0.21.4",
  "bs58",
@@ -1959,7 +1991,7 @@ dependencies = [
 [[package]]
 name = "fs-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "eyre",
  "rand 0.8.5",
@@ -2235,7 +2267,7 @@ dependencies = [
 [[package]]
 name = "health"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "eyre",
 ]
@@ -2682,7 +2714,7 @@ dependencies = [
 [[package]]
 name = "ivalue-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "fluence-it-types",
  "serde_json",
@@ -2709,7 +2741,7 @@ dependencies = [
 [[package]]
 name = "json-utils"
 version = "0.0.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "base64 0.21.4",
  "itertools 0.11.0",
@@ -2720,7 +2752,7 @@ dependencies = [
 [[package]]
 name = "kademlia"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "bs58",
  "control-macro",
@@ -2758,7 +2790,7 @@ dependencies = [
 [[package]]
 name = "key-manager"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "eyre",
  "fluence-keypair",
@@ -2786,9 +2818,9 @@ checksum = "884e2677b40cc8c339eaefcb701c32ef1fd2493d71118dc0ca4b6a736c93bd67"
 
 [[package]]
 name = "libc"
-version = "0.2.147"
+version = "0.2.148"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
+checksum = "9cdc71e17332e86d2e1d38c1f99edcb6288ee11b815fb1a4b049eaa2114d369b"
 
 [[package]]
 name = "libipld"
@@ -3350,7 +3382,7 @@ checksum = "1a9bad9f94746442c783ca431b22403b519cd7fbeed0533fdd6328b2f2212128"
 [[package]]
 name = "local-vm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -3388,6 +3420,18 @@ name = "log"
 version = "0.4.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
+
+[[package]]
+name = "log-utils"
+version = "0.1.0"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+dependencies = [
+ "console-subscriber",
+ "log",
+ "tracing",
+ "tracing-logfmt",
+ "tracing-subscriber",
+]
 
 [[package]]
 name = "lru"
@@ -4087,6 +4131,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "mockito"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09c762b6267c4593555bb38f1df19e9318985bc4de60b5e8462890856a9a5b4c"
+dependencies = [
+ "assert-json-diff",
+ "colored",
+ "futures",
+ "hyper",
+ "lazy_static",
+ "log",
+ "rand 0.8.5",
+ "regex",
+ "serde_json",
+ "serde_urlencoded",
+ "similar",
+ "tokio",
+]
+
+[[package]]
 name = "multiaddr"
 version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4277,12 +4341,12 @@ dependencies = [
 [[package]]
 name = "now-millis"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 
 [[package]]
 name = "nox"
 version = "0.14.5"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -4560,7 +4624,7 @@ dependencies = [
 [[package]]
 name = "particle-args"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "avm-server",
  "bs58",
@@ -4576,7 +4640,7 @@ dependencies = [
 [[package]]
 name = "particle-builtins"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "async-trait",
  "avm-server",
@@ -4622,7 +4686,7 @@ dependencies = [
 [[package]]
 name = "particle-execution"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "async-trait",
  "fluence-app-service",
@@ -4641,7 +4705,7 @@ dependencies = [
 [[package]]
 name = "particle-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "base64 0.21.4",
  "bytesize",
@@ -4669,7 +4733,7 @@ dependencies = [
 [[package]]
 name = "particle-protocol"
 version = "0.3.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "base64 0.21.4",
  "derivative",
@@ -4692,7 +4756,7 @@ dependencies = [
 [[package]]
 name = "particle-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "derivative",
  "eyre",
@@ -4748,7 +4812,7 @@ dependencies = [
 [[package]]
 name = "peer-metrics"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "bytesize",
  "fluence-app-service",
@@ -5510,7 +5574,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 [[package]]
 name = "script-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "async-unlock",
  "chrono",
@@ -5678,13 +5742,13 @@ dependencies = [
 [[package]]
 name = "server-config"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "air-interpreter-fs",
  "base64 0.21.4",
  "bs58",
  "bytesize",
- "clap 4.4.2",
+ "clap 4.4.3",
  "config",
  "config-utils",
  "derivative",
@@ -5710,7 +5774,7 @@ dependencies = [
 [[package]]
 name = "service-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "cid-utils",
  "eyre",
@@ -5810,6 +5874,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e1788eed21689f9cf370582dfc467ef36ed9c707f073528ddafa8d83e3b8500"
 
 [[package]]
+name = "similar"
+version = "2.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "420acb44afdae038210c99e69aae24109f32f15500aa708e81d46c9f29d55fcf"
+
+[[package]]
 name = "slab"
 version = "0.4.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5885,7 +5955,7 @@ dependencies = [
 [[package]]
 name = "sorcerer"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "aquamarine",
  "connection-pool",
@@ -5924,7 +5994,7 @@ dependencies = [
 [[package]]
 name = "spell-event-bus"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "connection-pool",
  "derivative",
@@ -5951,7 +6021,7 @@ dependencies = [
 [[package]]
 name = "spell-service-api"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "fluence-libp2p",
  "fluence-spell-dtos",
@@ -5966,7 +6036,7 @@ dependencies = [
 [[package]]
 name = "spell-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "derivative",
  "eyre",
@@ -6108,7 +6178,7 @@ dependencies = [
 [[package]]
 name = "system-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "aqua-ipfs-distro",
  "decider-distro 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -6155,7 +6225,7 @@ dependencies = [
 [[package]]
 name = "test-constants"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 
 [[package]]
 name = "textwrap"
@@ -6329,7 +6399,7 @@ dependencies = [
 [[package]]
 name = "toml-utils"
 version = "0.0.1"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "toml 0.5.11",
 ]
@@ -6419,7 +6489,7 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "toy-vms"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "aquamarine",
  "avm-server",
@@ -6612,9 +6682,9 @@ checksum = "92888ba5573ff080736b3648696b70cafad7d250551175acbaa4e0385b3e1460"
 
 [[package]]
 name = "unicode-ident"
-version = "1.0.11"
+version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "301abaae475aa91687eb82514b328ab47a211a533026cb25fc3e519b86adfc3c"
+checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
 
 [[package]]
 name = "unicode-normalization"
@@ -6704,7 +6774,7 @@ dependencies = [
 [[package]]
 name = "uuid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#74e5d6786e2d8f90fdc395ee203937b641079b02"
+source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
 dependencies = [
  "uuid",
 ]
