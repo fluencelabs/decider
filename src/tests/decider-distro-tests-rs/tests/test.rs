@@ -276,13 +276,44 @@ async fn test_decider_installed() {
     }
 }
 
-/// Required IPFS node
+/// Test the basic flow
+///
+/// 1. *Decider* asks the last block of the chain from which to start polling
+///    The block number is `0x10`
+///
+/// 2. *Decider* asks for the logs from the block `0x10` to the `0x10 + 500` blocks (range configured in the connector)
+///    We return the logs with pre-defined CID of the url-downloader app. This step required IPFS node with the app.
+///
+/// 3. *Decider* creates a worker for the deal, deploys the worker-spell with the CID from the deal
+///    and marks the deal joined
+///    We check the `joined_deal` list in the KV that it contains:
+///    - correct `deal_id` from the logs
+///    - existing `worker_id` with a Worker Spell and the installed app from the deal
+///    We check that the Worker Spell has the correct CID
+///
+/// 4. *Decider* registers the worker on chain
+///    TODO: We CAN check that the registration request is correct and contains the correct worker_id
+///
+/// 5. *Decider* updates the last_seen_block to the previous block from the processed one
+///    to be sure that we don't miss any logs if we won't have time to process the whole list of deals,
+///    so we can process them on the next iteration.
+///
+/// 6. *Decider* looks for the updates from the already joined deals (not the new ones) and checks mailbox.
+///    In this test we don't have any updates or mailbox messages.
+///
+/// 7. After creation, *Worker Spell* downloads the app from IPFS and deploys it on the worker
+///    Here, as a part of testing the basic flow, we check that the app was deployed correctly:
+///    - `srv.list` on the worker returns the `worker-spell` spell and the `url-downloader` service
+///
+/// NOTE: This test REQUIRES an IPFS node to be up and have the url-downloader app uploaded.
+/// TODO: provide the app in the tests resources
+///
 #[tokio::test]
 async fn test_deploy_deal() {
     //enable_decider_logs();
 
-    let mut server = test_rpc_server::run_test_server_predefined(async move |method, params| {
-        match method.as_str() {
+    let mut server =
+        run_test_server_predefined(async move |method, params| match method.as_str() {
             "eth_blockNumber" => {
                 json!("0x10")
             }
@@ -296,8 +327,7 @@ async fn test_deploy_deal() {
             "eth_getTransactionCount" => json!("0x1"),
             "eth_gasPrice" => json!("0x3b9aca07"),
             _ => panic!("unexpected method: {}", method),
-        }
-    });
+        });
 
     let url = server.url.clone();
 
@@ -316,8 +346,8 @@ async fn test_deploy_deal() {
     .await
     .unwrap();
 
-    // how to wait until decider is over?
-    tokio::time::sleep(std::time::Duration::from_secs(10)).await;
+    // TODO: wait a signal from the decider that the run is over
+    tokio::time::sleep(std::time::Duration::from_secs(2)).await;
 
     let mut result = execute(
         &mut client,
@@ -336,7 +366,7 @@ async fn test_deploy_deal() {
     let counter_value = result.remove(0);
     let counter = serde_json::from_value::<U32Value>(counter_value).unwrap();
 
-    // Here we check that decider was really run. Maybe remove it when I figure out how to
+    // Check that decider was really run
     assert!(
         !counter.absent,
         "decider hasn't started yet (no counter in kv)"
@@ -402,9 +432,10 @@ async fn test_deploy_deal() {
 
     // Here we also test that the Installation Spell worked correctly to ensure that the distro is fine,
     // but deep Installation Spell testing is out of scope of this test suits
-    let result = serde_json::from_value::<Vec<ServiceInfo>>(result[0].clone()).unwrap();
+    let worker_service_list =
+        serde_json::from_value::<Vec<ServiceInfo>>(result[0].clone()).unwrap();
     let test_app_1 = TestApp::test_app1();
-    let worker_spell = result
+    let worker_spell = worker_service_list
         .iter()
         .find(|info| info.aliases.contains(&"worker-spell".to_string()));
     assert!(worker_spell.is_some(), "no worker-spell on the worker");
@@ -416,23 +447,6 @@ async fn test_deploy_deal() {
     assert_eq!(
         worker_spell.worker_id, deal.worker_id,
         "worker-spell has different worker_id"
-    );
-
-    let test_service = result
-        .iter()
-        .find(|info| info.aliases.contains(&test_app_1.services_names[0]));
-    assert!(
-        test_service.is_some(),
-        "no test service on the worker from a deal"
-    );
-    let test_service = test_service.unwrap();
-    assert_eq!(
-        test_service.service_type, "service",
-        "test service is not a service"
-    );
-    assert_eq!(
-        test_service.worker_id, deal.worker_id,
-        "test service has different worker_id"
     );
 
     // 4. Check that the worker-spell has the same CID as we wanted to deploy
@@ -454,31 +468,51 @@ async fn test_deploy_deal() {
     .unwrap();
     let result = serde_json::from_value::<StringValue>(result.remove(0)).unwrap();
     assert!(!result.absent, "worker-spell doesn't have worker_def_cid");
+    let cid = serde_json::from_str::<String>(&result.str).unwrap();
+    assert_eq!(cid, test_app_1.cid, "Deal CID on worker-spell is different");
+
+    // Then check that the app from CID was deployed
+    let test_service = worker_service_list
+        .iter()
+        .find(|info| info.aliases.contains(&test_app_1.services_names[0]));
+    assert!(
+        test_service.is_some(),
+        "no test service on the worker from a deal"
+    );
+    let test_service = test_service.unwrap();
+    assert_eq!(
+        test_service.service_type, "service",
+        "test service is not a service"
+    );
+    assert_eq!(
+        test_service.worker_id, deal.worker_id,
+        "test service has different worker_id"
+    );
 
     server.shutdown().await
 }
 
 ///
-/// Test how Decider calculates the block to poll.
+/// Test how *Decider* calculates the block to poll.
 /// Block numbers sequence:
-/// 1. 0x0  -- Decider should be able to poll from the beginning and don't break,so
-///            saved last_seen_block should be 0x0
-///            In the eth_getLogs request: we can check that fromBlock is 0x0
+/// 1. `0x0`  -- Decider should be able to poll from the beginning and don't break,so
+///            saved last_seen_block should be `0x0`
+///            In the eth_getLogs request: we can check that fromBlock is `0x0`
 ///
-/// 2. 0x10 -- the number is less then the range decider polls
+/// 2. `0x10` -- the number is less then the range decider polls
 ///            Decider should move it's left boundary to this block, so
-///            saved last_seen_block should be 0x10
-///            In the eth_getLogs request: we can check that fromBlock is 0x1
+///            saved last_seen_block should be `0x10`
+///            In the eth_getLogs request: we can check that fromBlock is `0x1`
 ///
-/// 3. 0x10 -- again the same number in not very realistic case when Decider is too fast and the chain is too slow
+/// 3. `0x10` -- again the same number in not very realistic case when Decider is too fast and the chain is too slow
 ///            Decider shouldn't move it's left boundary anywhere, so
-///            saved last_seen_block should be 0x10
-///            In the eth_getLogs request: we can check that fromBlock is 0x11
+///            saved last_seen_block should be `0x10`
+///            In the eth_getLogs request: we can check that fromBlock is `0x11`
 ///
-/// 4. 0xffffff -- big number which Decider shouldn't be able to process during one iteration
+/// 4. `0xffffff` -- big number which Decider shouldn't be able to process during one iteration
 ///            Decider should move to some boundary configured boundary, which is 500 blocks, so
-///            saved last_seen_block should be 0x205
-///            In the eth_getLogs request: we can check that fromBlock is 0x11
+///            saved last_seen_block should be `0x205`
+///            In the eth_getLogs request: we can check that fromBlock is `0x11`
 ///            Note: the test depend on the knowledge that the range is 500 blocks,
 ///                  we don't evaluate the number automatically
 ///
