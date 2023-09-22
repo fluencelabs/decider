@@ -7,11 +7,13 @@ edition = "2021"
 
 [dev-dependencies]
 decider-distro = { path = "../../distro" }
-created-swarm = { git = "https://github.com/fluencelabs/nox.git", branch = "plugable-system-services" }
-connected-client = { git = "https://github.com/fluencelabs/nox.git", branch = "plugable-system-services" }
-system-services = { git = "https://github.com/fluencelabs/nox.git", branch = "plugable-system-services" }
-log-utils = { git = "https://github.com/fluencelabs/nox.git", branch = "plugable-system-services" }
+created-swarm = { git = "https://github.com/fluencelabs/nox.git", branch = "fix-rescheduling-spells" }
+connected-client = { git = "https://github.com/fluencelabs/nox.git", branch = "fix-rescheduling-spells" }
+system-services = { git = "https://github.com/fluencelabs/nox.git", branch = "fix-rescheduling-spells" }
+log-utils = { git = "https://github.com/fluencelabs/nox.git", branch = "fix-rescheduling-spells" }
 fluence-app-service = { version = "=0.26.4-feat-wasm-backend-interface-update-b3cf050-636-1.0", registry = "fluence" }
+
+fluence-keypair = "0.10.3"
 
 
 tracing = { version = "0.1.37", default-features = false, features = ["log"] }
@@ -25,3 +27,5 @@ serde_json = "1.0.96"
 serde = { version = "1.0.130", features = ["derive"] }
 fluence-spell-dtos = "0.5.11"
 mockito = "1.1.0"
+hyper = "0.14.27"
+eyre = "0.6.8"

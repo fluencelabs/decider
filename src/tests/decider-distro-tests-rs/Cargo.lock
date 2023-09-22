@@ -85,9 +85,9 @@ dependencies = [
 
 [[package]]
 name = "aho-corasick"
-version = "1.0.5"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0c378d78423fdad8089616f827526ee33c19f2fddbd5de1629152c9593ba4783"
+checksum = "0f2135563fb5c609d2b2b87c1e8ce7bc41b0b45430fa9661f457981503dd5bf0"
 dependencies = [
  "memchr",
 ]
@@ -95,7 +95,7 @@ dependencies = [
 [[package]]
 name = "air-interpreter-fs"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "air-interpreter-wasm",
  "blake3",
@@ -119,9 +119,9 @@ dependencies = [
 
 [[package]]
 name = "air-interpreter-wasm"
-version = "0.46.0"
+version = "0.47.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53c987980876074321ebf701a922b5c9644f17760c716832cfdc4f37775f6c31"
+checksum = "80917e2bca037c70a5a6d9fa60010b15e9637b0a4ff9fa9e8517b94e179d625f"
 dependencies = [
  "built 0.6.1",
 ]
@@ -229,7 +229,7 @@ dependencies = [
 [[package]]
 name = "aquamarine"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -387,13 +387,13 @@ checksum = "bc00ceb34980c03614e35a3a4e218276a0a824e911d07651cd0d858a51e8c0f0"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
 name = "async-unlock"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "tokio",
 ]
@@ -538,7 +538,7 @@ dependencies = [
  "heck 0.4.1",
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -699,9 +699,9 @@ checksum = "1462f4ab147e1378c64dacd28f03a56d4771d93eab6c325265a35355ce47213d"
 
 [[package]]
 name = "bumpalo"
-version = "3.13.0"
+version = "3.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a3e2c3daef883ecc1b5d58c15adae93470a91d425f3532ba1695849656af3fc1"
+checksum = "7f30e7476521f6f8af1a1c4c0b8cc94f0bee37d91763d0ca2665f299b6cd8aec"
 
 [[package]]
 name = "byteorder"
@@ -854,9 +854,9 @@ dependencies = [
 
 [[package]]
 name = "chrono"
-version = "0.4.30"
+version = "0.4.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "defd4e7873dbddba6c7c91e199c7fcb946abc4a6a4ac3195400bcfb01b5de877"
+checksum = "7f2c685bad3eb3d45a01354cedb7d5faa66194d1d58ba6e267a8de788f79db38"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
@@ -883,7 +883,7 @@ dependencies = [
 [[package]]
 name = "cid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "base64 0.21.4",
  "bytes",
@@ -920,9 +920,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.4.3"
+version = "4.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "84ed82781cea27b43c9b106a979fe450a13a31aab0500595fb3fc06616de08e6"
+checksum = "b1d7b8d5ec32af0fadc644bf1fd509a688c2103b185644bb1e29d164e0703136"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -930,9 +930,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.4.2"
+version = "4.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2bb9faaa7c2ef94b2743a21f5a29e6f0010dff4caa69ac8e9d6cf8b6fa74da08"
+checksum = "5179bb514e4d7c2051749d8fcefa2ed6d06a9f4e6d69faf3805f5d80b8cf8d56"
 dependencies = [
  "anstream",
  "anstyle",
@@ -949,7 +949,7 @@ dependencies = [
  "heck 0.4.1",
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -1001,7 +1001,7 @@ dependencies = [
 [[package]]
 name = "config-utils"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "libp2p-identity",
 ]
@@ -1009,7 +1009,7 @@ dependencies = [
 [[package]]
 name = "connected-client"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "derivative",
  "either",
@@ -1033,7 +1033,7 @@ dependencies = [
 [[package]]
 name = "connection-pool"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "fluence-libp2p",
  "futures",
@@ -1101,7 +1101,7 @@ checksum = "f7144d30dcf0fafbce74250a3963025d8d52177934239851c917d29f1df280c2"
 [[package]]
 name = "control-macro"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 
 [[package]]
 name = "core-foundation"
@@ -1257,7 +1257,7 @@ dependencies = [
 [[package]]
 name = "created-swarm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "air-interpreter-fs",
  "aquamarine",
@@ -1405,7 +1405,7 @@ checksum = "83fdaf97f4804dcebfa5862639bc9ce4121e82140bec2a987ac5140294865b5b"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -1429,7 +1429,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "strsim 0.10.0",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -1440,7 +1440,7 @@ checksum = "836a9bbc7ad63342d6d6e7b815ccab164bc77a2d95d84bc3117a8c0d5c98e2d5"
 dependencies = [
  "darling_core",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -1498,8 +1498,11 @@ dependencies = [
  "connected-client",
  "created-swarm",
  "decider-distro 0.5.1",
+ "eyre",
  "fluence-app-service",
+ "fluence-keypair",
  "fluence-spell-dtos",
+ "hyper",
  "log-utils",
  "maplit",
  "mockito",
@@ -1625,7 +1628,7 @@ checksum = "487585f4d0c6655fe74905e2504d8ad6908e4db67f744eb140876906c2f3175d"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -1910,7 +1913,7 @@ dependencies = [
 [[package]]
 name = "fluence-libp2p"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "base64 0.21.4",
  "bs58",
@@ -1930,9 +1933,9 @@ dependencies = [
 
 [[package]]
 name = "fluence-spell-distro"
-version = "0.5.18"
+version = "0.5.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "174efca468bbec69a038a36cee16c97278c0b0344a79e29e64039f5fb2da3772"
+checksum = "935ef5b70f35a76678ca9e84e0ef420bd7baf0a9f6aae04a1b97957bb7e27a88"
 dependencies = [
  "built 0.6.1",
  "maplit",
@@ -1940,9 +1943,9 @@ dependencies = [
 
 [[package]]
 name = "fluence-spell-dtos"
-version = "0.5.18"
+version = "0.5.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c64895a909e535e4e772b5632c137d4e34a1ac3cb8885d47fb374f608cb6ca66"
+checksum = "2c4611f6423809910e948c75251d61f5ca879892bd0529a622537d1831a36f23"
 dependencies = [
  "eyre",
  "marine-rs-sdk 0.9.0",
@@ -1991,7 +1994,7 @@ dependencies = [
 [[package]]
 name = "fs-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "eyre",
  "rand 0.8.5",
@@ -2091,7 +2094,7 @@ checksum = "89ca545a94061b6365f2c7355b4b32bd20df3ff95f02da9329b34ccc3bd6ee72"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -2267,7 +2270,7 @@ dependencies = [
 [[package]]
 name = "health"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "eyre",
 ]
@@ -2298,9 +2301,9 @@ dependencies = [
 
 [[package]]
 name = "hermit-abi"
-version = "0.3.2"
+version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "443144c8cdadd93ebf52ddb4056d257f5b52c04d3c804e657d19eb73fc33668b"
+checksum = "d77f7ec81a6d05a3abb01ab6eb7590f6083d08449fe5a1c8b1e620283546ccb7"
 
 [[package]]
 name = "hex"
@@ -2573,7 +2576,7 @@ version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "eae7b9aee968036d54dce06cebaefd919e4472e753296daccd6d344e3e2df0c2"
 dependencies = [
- "hermit-abi 0.3.2",
+ "hermit-abi 0.3.3",
  "libc",
  "windows-sys 0.48.0",
 ]
@@ -2608,7 +2611,7 @@ version = "0.4.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cb0889898416213fab133e1d33a0e5858a48177452750691bde3666d0fdbaf8b"
 dependencies = [
- "hermit-abi 0.3.2",
+ "hermit-abi 0.3.3",
  "rustix 0.38.13",
  "windows-sys 0.48.0",
 ]
@@ -2714,7 +2717,7 @@ dependencies = [
 [[package]]
 name = "ivalue-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "fluence-it-types",
  "serde_json",
@@ -2741,7 +2744,7 @@ dependencies = [
 [[package]]
 name = "json-utils"
 version = "0.0.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "base64 0.21.4",
  "itertools 0.11.0",
@@ -2752,7 +2755,7 @@ dependencies = [
 [[package]]
 name = "kademlia"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "bs58",
  "control-macro",
@@ -2790,7 +2793,7 @@ dependencies = [
 [[package]]
 name = "key-manager"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "eyre",
  "fluence-keypair",
@@ -3235,7 +3238,7 @@ dependencies = [
  "proc-macro-warning",
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -3382,7 +3385,7 @@ checksum = "1a9bad9f94746442c783ca431b22403b519cd7fbeed0533fdd6328b2f2212128"
 [[package]]
 name = "local-vm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -3424,7 +3427,7 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 [[package]]
 name = "log-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "console-subscriber",
  "log",
@@ -4073,11 +4076,11 @@ checksum = "8f232d6ef707e1956a43342693d2a31e72989554d58299d7a88738cc95b0d35c"
 
 [[package]]
 name = "memfd"
-version = "0.6.3"
+version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ffc89ccdc6e10d6907450f753537ebc5c5d3460d2e4e62ea74bd571db62c0f9e"
+checksum = "b2cffa4ad52c6f791f4f8b15f0c05f9824b2ced1160e88cc393d64fff9a8ac64"
 dependencies = [
- "rustix 0.37.23",
+ "rustix 0.38.13",
 ]
 
 [[package]]
@@ -4132,15 +4135,14 @@ dependencies = [
 
 [[package]]
 name = "mockito"
-version = "1.1.0"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09c762b6267c4593555bb38f1df19e9318985bc4de60b5e8462890856a9a5b4c"
+checksum = "f8d3038e23466858569c2d30a537f691fa0d53b51626630ae08262943e3bbb8b"
 dependencies = [
  "assert-json-diff",
  "colored",
  "futures",
  "hyper",
- "lazy_static",
  "log",
  "rand 0.8.5",
  "regex",
@@ -4341,12 +4343,12 @@ dependencies = [
 [[package]]
 name = "now-millis"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 
 [[package]]
 name = "nox"
-version = "0.14.5"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+version = "0.14.6"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -4442,7 +4444,7 @@ version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4161fcb6d602d4d2081af7c3a45852d875a03dd337a6bfdd6e06407b61342a43"
 dependencies = [
- "hermit-abi 0.3.2",
+ "hermit-abi 0.3.3",
  "libc",
 ]
 
@@ -4624,7 +4626,7 @@ dependencies = [
 [[package]]
 name = "particle-args"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "avm-server",
  "bs58",
@@ -4640,7 +4642,7 @@ dependencies = [
 [[package]]
 name = "particle-builtins"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "async-trait",
  "avm-server",
@@ -4686,7 +4688,7 @@ dependencies = [
 [[package]]
 name = "particle-execution"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "async-trait",
  "fluence-app-service",
@@ -4705,7 +4707,7 @@ dependencies = [
 [[package]]
 name = "particle-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "base64 0.21.4",
  "bytesize",
@@ -4733,7 +4735,7 @@ dependencies = [
 [[package]]
 name = "particle-protocol"
 version = "0.3.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "base64 0.21.4",
  "derivative",
@@ -4756,7 +4758,7 @@ dependencies = [
 [[package]]
 name = "particle-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "derivative",
  "eyre",
@@ -4812,7 +4814,7 @@ dependencies = [
 [[package]]
 name = "peer-metrics"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "bytesize",
  "fluence-app-service",
@@ -4860,7 +4862,7 @@ checksum = "4359fd9c9171ec6e8c62926d6faaf553a8dc3f64e1507e76da7911b4f6a04405"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -5028,14 +5030,14 @@ checksum = "3d1eaa7fa0aa1929ffdf7eeb6eac234dde6268914a14ad44d23521ab6a9b258e"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.66"
+version = "1.0.67"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "18fb31db3f9bddb2ea821cde30a9f70117e3f119938b5ee630b7403aa6e2ead9"
+checksum = "3d433d9f1a3e8c1263d9456598b16fec66f4acc9a74dacffd35c7bb09b3a1328"
 dependencies = [
  "unicode-ident",
 ]
@@ -5060,7 +5062,7 @@ checksum = "440f724eba9f6996b75d63681b0a92b06947f1457076d503a4d2e2c8f56442b8"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -5574,7 +5576,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 [[package]]
 name = "script-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "async-unlock",
  "chrono",
@@ -5636,14 +5638,14 @@ checksum = "4eca7ac642d82aa35b60049a6eccb4be6be75e599bd2e9adb5f875a737654af2"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
 name = "serde_json"
-version = "1.0.106"
+version = "1.0.107"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2cc66a619ed80bf7a0f6b17dd063a84b88f6dea1813737cf469aef1d081142c2"
+checksum = "6b420ce6e3d8bd882e9b243c6eed35dbc9a6110c9769e74b584e0d68d1f20c65"
 dependencies = [
  "indexmap 2.0.0",
  "itoa",
@@ -5724,7 +5726,7 @@ dependencies = [
  "darling",
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -5736,19 +5738,19 @@ dependencies = [
  "darling",
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
 name = "server-config"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "air-interpreter-fs",
  "base64 0.21.4",
  "bs58",
  "bytesize",
- "clap 4.4.3",
+ "clap 4.4.4",
  "config",
  "config-utils",
  "derivative",
@@ -5774,7 +5776,7 @@ dependencies = [
 [[package]]
 name = "service-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "cid-utils",
  "eyre",
@@ -5955,7 +5957,7 @@ dependencies = [
 [[package]]
 name = "sorcerer"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "aquamarine",
  "connection-pool",
@@ -5994,7 +5996,7 @@ dependencies = [
 [[package]]
 name = "spell-event-bus"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "connection-pool",
  "derivative",
@@ -6021,7 +6023,7 @@ dependencies = [
 [[package]]
 name = "spell-service-api"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "fluence-libp2p",
  "fluence-spell-dtos",
@@ -6036,7 +6038,7 @@ dependencies = [
 [[package]]
 name = "spell-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "derivative",
  "eyre",
@@ -6111,9 +6113,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.32"
+version = "2.0.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "239814284fd6f1a4ffe4ca893952cdd93c224b6a1571c9a9eadd670295c0c9e2"
+checksum = "7303ef2c05cd654186cb250d29049a24840ca25d2747c25c0381c8d9e2f582e8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6178,7 +6180,7 @@ dependencies = [
 [[package]]
 name = "system-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "aqua-ipfs-distro",
  "decider-distro 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -6215,9 +6217,9 @@ checksum = "9d0e916b1148c8e263850e1ebcbd046f333e0683c724876bb0da63ea4373dc8a"
 
 [[package]]
 name = "termcolor"
-version = "1.2.0"
+version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be55cf8942feac5c765c2c993422806843c9a9a45d4d5c407ad6dd2ea95eb9b6"
+checksum = "6093bad37da69aab9d123a8091e4be0aa4a03e4d601ec641c327398315f62b64"
 dependencies = [
  "winapi-util",
 ]
@@ -6225,7 +6227,7 @@ dependencies = [
 [[package]]
 name = "test-constants"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 
 [[package]]
 name = "textwrap"
@@ -6253,7 +6255,7 @@ checksum = "49922ecae66cc8a249b77e68d1d0623c1b2c514f0060c27cdc68bd62a1219d35"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -6347,7 +6349,7 @@ checksum = "630bdcf245f78637c13ec01ffae6187cca34625e8c63150d424b59e55af2675e"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -6399,7 +6401,7 @@ dependencies = [
 [[package]]
 name = "toml-utils"
 version = "0.0.1"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "toml 0.5.11",
 ]
@@ -6489,7 +6491,7 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "toy-vms"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "aquamarine",
  "avm-server",
@@ -6522,7 +6524,7 @@ checksum = "5f4f31f56159e98206da9efd823404b79b6ef3143b4a7ab76e67b1751b25a4ab"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -6658,9 +6660,9 @@ checksum = "3528ecfd12c466c6f163363caf2d02a71161dd5e1cc6ae7b34207ea2d42d81ed"
 
 [[package]]
 name = "typenum"
-version = "1.16.0"
+version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "497961ef93d974e23eb6f433eb5fe1b7930b659f06d12dec6fc44a8f554c0bba"
+checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 
 [[package]]
 name = "uint"
@@ -6703,9 +6705,9 @@ checksum = "1dd624098567895118886609431a7c3b8f516e41d30e0643f03d94592a147e36"
 
 [[package]]
 name = "unicode-width"
-version = "0.1.10"
+version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0edd1e5b14653f783770bce4a4dabb4a5108a5370a5f5d8cfe8710c361f6c8b"
+checksum = "e51733f11c9c4f72aa0c160008246859e340b00807569a0da0e7a1079b27ba85"
 
 [[package]]
 name = "unicode-xid"
@@ -6774,7 +6776,7 @@ dependencies = [
 [[package]]
 name = "uuid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=plugable-system-services#c9bbfc139356536d7332ba807eb2d158ad1148df"
+source = "git+https://github.com/fluencelabs/nox.git?branch=fix-rescheduling-spells#eff3d50927293a70162395e616451fe3538b0e7b"
 dependencies = [
  "uuid",
 ]
@@ -6946,7 +6948,7 @@ dependencies = [
  "once_cell",
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
  "wasm-bindgen-shared",
 ]
 
@@ -6968,7 +6970,7 @@ checksum = "54681b18a46765f095758388f2d0cf16eb8d4169b639ab575a8f5693af210c7b"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]
@@ -6990,9 +6992,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-encoder"
-version = "0.32.0"
+version = "0.33.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ba64e81215916eaeb48fee292f29401d69235d62d8b8fd92a7b2844ec5ae5f7"
+checksum = "b39de0723a53d3c8f54bed106cfbc0d06b3e4d945c5c5022115a61e3b29183ae"
 dependencies = [
  "leb128",
 ]
@@ -7264,23 +7266,23 @@ dependencies = [
 
 [[package]]
 name = "wast"
-version = "64.0.0"
+version = "65.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a259b226fd6910225aa7baeba82f9d9933b6d00f2ce1b49b80fa4214328237cc"
+checksum = "5fd8c1cbadf94a0b0d1071c581d3cfea1b7ed5192c79808dd15406e508dd0afb"
 dependencies = [
  "leb128",
  "memchr",
  "unicode-width",
- "wasm-encoder 0.32.0",
+ "wasm-encoder 0.33.1",
 ]
 
 [[package]]
 name = "wat"
-version = "1.0.71"
+version = "1.0.73"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53253d920ab413fca1c7dc2161d601c79b4fdf631d0ba51dd4343bf9b556c3f6"
+checksum = "3209e35eeaf483714f4c6be93f4a03e69aad5f304e3fa66afa7cb90fe1c8051f"
 dependencies = [
- "wast 64.0.0",
+ "wast 65.0.1",
 ]
 
 [[package]]
@@ -7698,7 +7700,7 @@ checksum = "ce36e65b0d2999d2aafac989fb249189a141aee1f53c612c1f37d72631959f69"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.32",
+ "syn 2.0.37",
 ]
 
 [[package]]
