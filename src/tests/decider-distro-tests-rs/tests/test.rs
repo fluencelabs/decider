@@ -165,7 +165,8 @@ fn enable_decider_logs() {
         // "spell_event_bus=trace",
         //"system_services=debug", //"ipfs_effector=debug",
         //ipfs_pure=debug",
-        //"aquamarine::log=debug",
+        "aquamarine::log=debug",
+        "particle_reap=debug",
     ];
 
     let namespaces = namespaces
@@ -355,7 +356,6 @@ struct JoinedDeal {
 fn parse_joined_deals(deals: Value) -> Vec<JoinedDeal> {
     let deals = serde_json::from_value::<StringListValue>(deals).unwrap();
     assert!(deals.success);
-    assert!(!deals.strings.is_empty());
     deals
         .strings
         .iter()
@@ -363,13 +363,48 @@ fn parse_joined_deals(deals: Value) -> Vec<JoinedDeal> {
         .collect()
 }
 
+async fn get_joined_deals(mut client: &mut ConnectedClient) -> Vec<JoinedDeal> {
+    let mut deals = execute(
+        &mut client,
+        r#"
+            (call relay ("decider" "list_get_strings") ["joined_deals"] deals)
+        "#,
+        "deals",
+        hashmap! {},
+    )
+    .await
+    .unwrap();
+    parse_joined_deals(deals.remove(0))
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct LogsReq {
     address: String,
-    from_block: String,
-    to_block: String,
+    #[serde(deserialize_with = "hex_u32_deserialize")]
+    from_block: u32,
+    #[serde(deserialize_with = "hex_u32_deserialize")]
+    to_block: u32,
     topics: Vec<String>,
+}
+
+fn hex_u32_deserialize<'de, D>(deserializer: D) -> Result<u32, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let s: String = serde::Deserialize::deserialize(deserializer)?;
+    if s.starts_with("0x") {
+        u32::from_str_radix(&s[2..], 16).map_err(serde::de::Error::custom)
+    } else {
+        Err(serde::de::Error::custom(format!(
+            "Invalid hex format: {}",
+            s
+        )))
+    }
+}
+
+fn to_hex(x: u32) -> String {
+    format!("0x{:x}", x)
 }
 
 struct TestApp {
@@ -386,7 +421,7 @@ impl TestApp {
         }
     }
 
-    fn log_test_app1(deal_id: &str, block: &str, host_topic: &str) -> Value {
+    fn log_test_app1(deal_id: &str, block: u32, host_topic: &str) -> Value {
         // Encoded CID (url-downloader): bafkreifolrizgmusl4y7or5e5xmvr623a6i3ca4d5rwv457cezhschqj4m
         // TODO: generate this on fly
         json!(
@@ -396,7 +431,7 @@ impl TestApp {
                 "transactionIndex": "0x0",
                 "transactionHash": "0x1",
                 "blockHash": "0x2",
-                "blockNumber": block,
+                "blockNumber": to_hex(block),
                 "address": "0xb971228a3af887c8c50e7ab946df9def0d12cab2",
                 "data": format!("0x000000000000000000000000{deal_id}00000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000000500155122000000000000000000000000000000000000000000000000000000000ae5c519332925f31f747a4edd958fb5b0791b10383ec6d5e77e2264f211e09e300000000000000000000000000000000000000000000000000000000000000036c9d5e8bcc73a422dd6f968f13cd6fc92ccd5609b455cf2c7978cbc694297853fef3b95696986bf289166835e05f723f0fdea97d2bc5fea0ebbbf87b6a866cfa5a5a0f4fa4d41a4f976e799895cce944d5080041dba7d528d30e81c67973bac3"),
                 "topics": [
@@ -414,7 +449,7 @@ impl TestApp {
         }
     }
 
-    fn log_test_app2(deal_id: &str, block: &str, host_topic: &str) -> Value {
+    fn log_test_app2(deal_id: &str, block: u32, host_topic: &str) -> Value {
         // CID: bafkreicdwo6xrumiqc5a7oghbkay4tmmejlmokpweyut5uhe2tehsycvmu
         // some default fcli app name: newService1
         json!(
@@ -424,7 +459,7 @@ impl TestApp {
                 "transactionIndex": "0x0",
                 "transactionHash": "0x54ae26abd742239bb492abe1b9ee98c27edde8454d7acc2e398ad365914071b5",
                 "blockHash": "0x4e301dc22b7eb4bfd9c22865d36dfb68d4eb96a218f7b5f92c71760497e111ca",
-                "blockNumber": block,
+                "blockNumber": to_hex(block),
                 "address": "0x0f68c702dc151d07038fa40ab3ed1f9b8bac2981",
                 "data": format!("0x000000000000000000000000{deal_id}88924347d3eddcdaa6e6a3844bea08cfc8dae2d5b43d8c6fa35de5fd9ab6cc750000000000000000000000000000000000000000000000000000000000000103015512200000000000000000000000000000000000000000000000000000000043b3bd78d18880ba0fb8c70a818e4d8c2256c729f626293ed0e4d4c879605565"),
                 "topics": [
@@ -498,7 +533,6 @@ async fn test_decider_installed() {
         assert!(names.contains(&alias2), "{alias2} service is not installed");
     }
 }
-
 /// Test the basic flow
 ///
 /// 1. *Decider* asks the last block of the chain from which to start polling
@@ -538,9 +572,8 @@ async fn test_decider_installed() {
 ///
 #[tokio::test]
 async fn test_deploy_a_deal_single() {
-    enable_decider_logs();
     const DEAL_ID: &'static str = DEAL_IDS[0];
-    const BLOCK: &'static str = "0x20";
+    const BLOCK: u32 = 32;
 
     let mut server = run_test_server_predefined(async move |method, params| {
         match method.as_str() {
@@ -637,7 +670,11 @@ async fn test_deploy_a_deal_single() {
     assert_eq!(deal.deal_id, format!("0x{DEAL_ID}"));
 
     let state = get_deal_state(&mut client, &deal.deal_id).await;
-    assert_eq!(state.left_boundary, BLOCK, "wrong saved state for the deal");
+    assert_eq!(
+        state.left_boundary,
+        to_hex(BLOCK),
+        "wrong saved state for the deal"
+    );
 
     // Check that we can see the list of services on the worker
 
@@ -736,10 +773,10 @@ async fn test_deploy_a_deal_single() {
 async fn test_deploy_deals_diff_blocks() {
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
     let deal_id_1 = format!("0x{DEAL_ID_1}");
-    const BLOCK_NUMBER_1: &'static str = "0x20";
+    const BLOCK_NUMBER_1: u32 = 32;
     const DEAL_ID_2: &'static str = DEAL_IDS[1];
     let deal_id_2 = format!("0x{DEAL_ID_2}");
-    const BLOCK_NUMBER_2: &'static str = "0x21";
+    const BLOCK_NUMBER_2: u32 = 33;
 
     //let counter = Arc::new(Mutex::new(0));
     let (mut server, mut recv_request, send_response) = run_test_server();
@@ -833,7 +870,7 @@ async fn test_deploy_deals_diff_blocks() {
         (last_seen, deals, workers)
     };
     // Note that it must not be BLOCK_NUMBER_2 since we save BLOCK_NUMBER_2 - 1
-    assert_eq!(last_seen.str, BLOCK_NUMBER_1);
+    assert_eq!(last_seen.str, to_hex(BLOCK_NUMBER_1));
 
     let mut expected = hashmap! {
         deal_id_1 => (TestApp::test_app1(), BLOCK_NUMBER_1),
@@ -855,7 +892,7 @@ async fn test_deploy_deals_diff_blocks() {
         let cid = get_worker_app_cid(&mut client, &deal.worker_id).await;
         assert_eq!(cid, app.cid, "wrong cid");
         let deal_state = get_deal_state(&mut client, &deal.deal_id).await;
-        assert_eq!(deal_state.left_boundary, block, "wrong saved state");
+        assert_eq!(deal_state.left_boundary, to_hex(block), "wrong saved state");
     }
 
     server.shutdown().await;
@@ -873,15 +910,15 @@ async fn test_deploy_deals_diff_blocks() {
 /// 3. Install a
 #[tokio::test]
 async fn test_deploy_a_deal_in_seq() {
-    const BLOCK_INIT: &'static str = "0x1";
+    //enable_decider_logs();
+    const BLOCK_INIT: u32 = 1;
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
     let deal_id_1 = format!("0x{DEAL_ID_1}");
-    const BLOCK_NUMBER_1: &'static str = "0x20";
+    const BLOCK_NUMBER_1: u32 = 32;
     const DEAL_ID_2: &'static str = DEAL_IDS[1];
     let deal_id_2 = format!("0x{DEAL_ID_2}");
     // This block should be out of range of the first deal (+ 500 from
-    const BLOCK_NUMBER_2: &'static str = "0x213";
-    const BLOCK_NUMBER_2_PREV: &'static str = "0x212";
+    const BLOCK_NUMBER_2: u32 = 531;
 
     let (mut server, mut recv_request, send_response) = run_test_server();
     let url = server.url.clone();
@@ -906,11 +943,13 @@ async fn test_deploy_a_deal_in_seq() {
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
         // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction
-        for _ in 0..5 {
+        for step in 0..5 {
+            println!("step {step}");
             let (method, params) = recv_request.recv().await.unwrap();
+            println!("\n\n{method}\n\n");
             let response = match method.as_str() {
                 "eth_blockNumber" => {
-                    json!(BLOCK_INIT)
+                    json!(to_hex(BLOCK_INIT))
                 }
                 "eth_getLogs" => {
                     let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
@@ -931,15 +970,19 @@ async fn test_deploy_a_deal_in_seq() {
         }
     }
     wait_decider(&mut client).await;
+    let deals = get_joined_deals(&mut client).await;
+    assert!(!deals.is_empty(), "decider didn't join any deal");
     // The second run
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
         // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction and getLogs for the old deal
         for step in 0..6 {
+            println!("step {step}");
             let (method, params) = recv_request.recv().await.unwrap();
+            println!("\n\n{method}\n\n");
             let response = match method.as_str() {
                 "eth_blockNumber" => {
-                    json!(BLOCK_NUMBER_2)
+                    json!(to_hex(BLOCK_NUMBER_2))
                 }
                 "eth_getLogs" => {
                     let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
@@ -1003,7 +1046,7 @@ async fn test_deploy_a_deal_in_seq() {
     };
     // Note that it must not be BLOCK_NUMBER_2 since we save BLOCK_NUMBER_2 - 1
     // TODO: not in this case! Why?
-    assert_eq!(last_seen.str, BLOCK_NUMBER_2_PREV);
+    assert_eq!(last_seen.str, to_hex(BLOCK_NUMBER_2 - 1));
 
     let mut expected = hashmap! {
         deal_id_1 => (TestApp::test_app1(), BLOCK_NUMBER_1),
@@ -1025,7 +1068,7 @@ async fn test_deploy_a_deal_in_seq() {
         let cid = get_worker_app_cid(&mut client, &deal.worker_id).await;
         assert_eq!(cid, app.cid, "wrong cid");
         let deal_state = get_deal_state(&mut client, &deal.deal_id).await;
-        assert_eq!(deal_state.left_boundary, block, "wrong saved state");
+        assert_eq!(deal_state.left_boundary, to_hex(block), "wrong saved state");
     }
 
     server.shutdown().await;
@@ -1037,13 +1080,12 @@ async fn test_deploy_a_deal_in_seq() {
 ///    We can simulate it by returning not all deals on the first run, and on the second add deals to the block
 #[tokio::test]
 async fn test_deploy_deals_in_one_block() {
-    const BLOCK_INIT: &'static str = "0x1";
+    const BLOCK_INIT: u32 = 1;
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
     let deal_id_1 = format!("0x{DEAL_ID_1}");
     const DEAL_ID_2: &'static str = DEAL_IDS[1];
     let deal_id_2 = format!("0x{DEAL_ID_2}");
-    const BLOCK_NUMBER: &'static str = "0x20";
-    const BLOCK_NUMBER_PREV: &'static str = "0x1f";
+    const BLOCK_NUMBER: u32 = 32;
 
     let (mut server, mut recv_request, send_response) = run_test_server();
     let url = server.url.clone();
@@ -1072,7 +1114,7 @@ async fn test_deploy_deals_in_one_block() {
             let (method, params) = recv_request.recv().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => {
-                    json!(BLOCK_INIT)
+                    json!(to_hex(BLOCK_INIT))
                 }
                 "eth_getLogs" => {
                     let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
@@ -1162,7 +1204,7 @@ async fn test_deploy_deals_in_one_block() {
 
         (last_seen, deals, workers)
     };
-    assert_eq!(last_seen.str, BLOCK_NUMBER_PREV);
+    assert_eq!(last_seen.str, to_hex(BLOCK_NUMBER - 1));
 
     let mut expected = hashmap! {
         deal_id_1 => (TestApp::test_app1(), BLOCK_NUMBER),
@@ -1184,7 +1226,7 @@ async fn test_deploy_deals_in_one_block() {
         let cid = get_worker_app_cid(&mut client, &deal.worker_id).await;
         assert_eq!(cid, app.cid, "wrong cid");
         let deal_state = get_deal_state(&mut client, &deal.deal_id).await;
-        assert_eq!(deal_state.left_boundary, block, "wrong saved state");
+        assert_eq!(deal_state.left_boundary, to_hex(block), "wrong saved state");
     }
 
     server.shutdown().await;
@@ -1193,18 +1235,15 @@ async fn test_deploy_deals_in_one_block() {
 /// Test worker registering scenarios  
 ///
 /// Note that atm *Decider* doesn't process the case when worker registration fails
-/// The deal is joined nevertheless
+/// the deal is joined nevertheless
 ///
 #[tokio::test]
 async fn test_register_worker_fails() {
     enable_decider_logs();
-    const BLOCK_INIT: &'static str = "0x1";
-    const DEAL_ID_1: &'static str = DEAL_IDS[0];
-    let deal_id_1 = format!("0x{DEAL_ID_1}");
-    const DEAL_ID_2: &'static str = DEAL_IDS[1];
-    let deal_id_2 = format!("0x{DEAL_ID_2}");
-    const BLOCK_NUMBER: &'static str = "0x20";
-    const BLOCK_NUMBER_PREV: &'static str = "0x1f";
+    const BLOCK_INIT: u32 = 1;
+    const DEAL_ID: &'static str = DEAL_IDS[0];
+    const BLOCK_NUMBER: u32 = 32;
+    const BLOCK_NUMBER_LATER: u32 = 200;
 
     let (mut server, mut recv_request, send_response) = run_test_server();
     let url = server.url.clone();
@@ -1234,16 +1273,16 @@ async fn test_register_worker_fails() {
         });
         // Reqs: blockNumber, getLogs and one of gasPrice, getTransactionCount and sendRawTransaction
         // (try all to not depend on the order)
-        for _ in 0..3 {
+        for step in 0..3 {
             let (method, params) = recv_request.recv().await.unwrap();
             let response = match method.as_str() {
-                "eth_blockNumber" => Ok(json!(BLOCK_INIT)),
+                "eth_blockNumber" => Ok(json!(to_hex(BLOCK_INIT))),
                 "eth_getLogs" => {
                     let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-                    Ok(json!([TestApp::log_test_app1(
-                        DEAL_ID_1,
+                    Ok(json!([TestApp::log_test_app2(
+                        DEAL_ID,
                         BLOCK_NUMBER,
-                        log.topics[1].as_str(),
+                        log.topics[1].as_str()
                     )]))
                 }
                 "eth_sendRawTransaction" => Err(error_value.clone()),
@@ -1255,19 +1294,7 @@ async fn test_register_worker_fails() {
         }
     }
     wait_decider(&mut client).await;
-    let deals = {
-        let mut deals = execute(
-            &mut client,
-            r#"
-            (call relay ("decider" "list_get_strings") ["joined_deals"] deals)
-        "#,
-            "deals",
-            hashmap! {},
-        )
-        .await
-        .unwrap();
-        parse_joined_deals(deals.remove(0))
-    };
+    let deals = get_joined_deals(&mut client).await;
     assert!(
         deals.is_empty(),
         "since the registration failed, the deal must not be joined"
@@ -1279,26 +1306,31 @@ async fn test_register_worker_fails() {
         for _ in 0..5 {
             let (method, params) = recv_request.recv().await.unwrap();
             let response = match method.as_str() {
-                "eth_blockNumber" => Ok(json!(BLOCK_INIT)),
+                "eth_blockNumber" => json!(to_hex(BLOCK_NUMBER_LATER)),
                 "eth_getLogs" => {
                     let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-                    Ok(json!([TestApp::log_test_app1(
-                        DEAL_ID_1,
+                    assert!(log.from_block <= BLOCK_NUMBER);
+                    assert!(log.to_block <= BLOCK_NUMBER);
+                    json!([TestApp::log_test_app1(
+                        DEAL_ID,
                         BLOCK_NUMBER,
-                        log.topics[1].as_str(),
-                    )]))
+                        log.topics[1].as_str()
+                    ),])
                 }
                 "eth_sendRawTransaction" => {
+                    // TODO: how not to wait for the registration if Decider failed?
                     json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
                 }
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
                 _ => panic!("unexpected method: {}", method),
             };
-            send_response.send(response).unwrap();
+            send_response.send(Ok(response)).unwrap();
         }
     }
     wait_decider(&mut client).await;
+    let deals = get_joined_deals(&mut client).await;
+    assert!(!deals.is_empty(), "the deal must be joined after fail")
 }
 
 /*
@@ -1484,7 +1516,7 @@ async fn test_left_boundary_idle() {
             assert_eq!(method, "eth_getLogs");
             assert!(!params.is_empty());
             let log_req = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-            assert_eq!(log_req.from_block, expected_from_blocks[step]);
+            assert_eq!(to_hex(log_req.from_block), expected_from_blocks[step]);
 
             send_response.send(Ok(json!([]))).unwrap();
         }
