@@ -39,10 +39,10 @@ impl ServerHandle {
 pub fn run_test_server() -> (
     ServerHandle,
     UnboundedReceiver<(String, Vec<Value>)>,
-    UnboundedSender<Value>,
+    UnboundedSender<Result<Value, Value>>,
 ) {
     let (send_req, recv_req) = unbounded_channel();
-    let (send_resp, recv_resp) = unbounded_channel();
+    let (send_resp, recv_resp) = unbounded_channel::<Result<Value, Value>>();
     let recv_resp = Arc::new(Mutex::new(recv_resp));
 
     let process_http_request =
@@ -51,43 +51,59 @@ pub fn run_test_server() -> (
             let mut buf = body::aggregate(raw_body).await.unwrap();
             let body = buf.copy_to_bytes(buf.remaining()).to_vec();
             let raw_request = serde_json::from_slice::<Value>(&body).unwrap();
-            /*
-            if raw_request.is_array() {
-                // if it's a batch request
-                let batch_req = serde_json::from_value::<Vec<JrpcReq>>(raw_request)?;
-                let mut expect_id = 0;
-                let mut result = Vec::new();
-                for req in batch_req {
-                    let result = Self::check_request(&req, expect_id);
-                    if result.is_ok() {
-                        result.push(handler(req.method, req.params));
-                    }
-                    expect_id += 1;
+
+            let response = if raw_request.is_array() {
+                let reqs = serde_json::from_value::<Vec<JrpcReq>>(raw_request).unwrap();
+                let mut results = Vec::new();
+                for (idx, req) in reqs.into_iter().enumerate() {
+                    assert_eq!(req.jsonrpc, "2.0", "wrong jsonrpc version: {}", req.jsonrpc);
+                    assert_eq!(req.id, idx as u32, "wrong jsonrpc id: {}", req.id);
+
+                    send_req
+                        .send((req.method, req.params))
+                        .wrap_err("send request")
+                        .unwrap();
+                    let result = recv_resp.lock().await.recv().await.unwrap();
+                    let result = match result {
+                        Ok(value) => json!({
+                                "jsonrpc": "2.0",
+                                "id": req.id,
+                                "result": value,
+                        }),
+                        Err(error_value) => json!({
+                            "jsonrpc": "2.0",
+                            "id": 0,
+                            "error": error_value,
+                        }),
+                    };
+
+                    results.push(result);
                 }
-
-                // do smth with result
+                json!(results)
             } else {
+                let req = serde_json::from_value::<JrpcReq>(raw_request).unwrap();
+                assert_eq!(req.jsonrpc, "2.0", "wrong jsonrpc version: {}", req.jsonrpc);
+                assert_eq!(req.id, 0, "wrong jsonrpc id: {}", req.id);
 
-             */
-            let req = serde_json::from_value::<JrpcReq>(raw_request).unwrap();
-            assert_eq!(req.jsonrpc, "2.0", "wrong jsonrpc version: {}", req.jsonrpc);
-            assert_eq!(req.id, 0, "wrong jsonrpc id: {}", req.id);
-
-            //let handler = handler.clone();
-            send_req
-                .send((req.method, req.params))
-                .wrap_err("send request")
-                .unwrap();
-            let result = recv_resp.lock().await.recv().await.unwrap();
-
-            //let result = handler(req.method, req.params).await;
-            let response_body: Vec<u8> = serde_json::to_string(&json!({
-                    "jsonrpc": "2.0",
-                    "id": 0,
-                    "result": result,
-            }))
-            .unwrap()
-            .into();
+                send_req
+                    .send((req.method, req.params))
+                    .wrap_err("send request")
+                    .unwrap();
+                let result = recv_resp.lock().await.recv().await.unwrap();
+                match result {
+                    Ok(value) => json!({
+                            "jsonrpc": "2.0",
+                            "id": 0,
+                            "result": value,
+                    }),
+                    Err(error_value) => json!({
+                        "jsonrpc": "2.0",
+                        "id": 0,
+                        "error": error_value,
+                    }),
+                }
+            };
+            let response_body: Vec<u8> = serde_json::to_string(&response).unwrap().into();
             Ok::<Response<Body>, Infallible>(Response::new(Body::from(response_body)))
         };
     let address = SocketAddr::from(([127, 0, 0, 1], 0));
@@ -126,7 +142,7 @@ where
     tokio::task::spawn((async move || loop {
         if let Some((method, params)) = recv_req.recv().await {
             let response = handle(method, params).await;
-            send_resp.send(response).unwrap();
+            send_resp.send(Ok(response)).unwrap();
         } else {
             break;
         }
