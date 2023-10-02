@@ -7,29 +7,21 @@ mod utils;
 use utils::test_rpc_server::{run_test_server, run_test_server_predefined};
 use utils::*;
 
-//use crate::test_rpc_server::{run_test_server, run_test_server_predefined};
 use connected_client::ConnectedClient;
 use created_swarm::make_swarms_with_cfg;
-use decider_distro::DeciderConfig;
 use eyre::WrapErr;
 use fluence_app_service::TomlMarineConfig;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use fluence_spell_dtos::value::{ScriptValue, StringListValue, StringValue, U32Value, UnitValue};
 use hyper::body::Buf;
-use maplit::{hashmap, hashset};
+use maplit::hashmap;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::collections::{HashMap, HashSet};
-use std::fs;
+use std::collections::HashSet;
 use std::future::Future;
 use std::io::Read;
-use std::path::PathBuf;
-use std::sync::atomic::AtomicU32;
-use std::sync::Arc;
 use std::time::Duration;
-use system_services::{PackageDistro, ServiceDistro, SpellDistro};
 use tokio::io::AsyncWriteExt;
-use tokio::sync::Mutex;
 use tracing::log::Log;
 
 const DEAL_IDS: &[&'static str] = &[
