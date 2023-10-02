@@ -36,6 +36,30 @@ impl ServerHandle {
     }
 }
 
+async fn process_request(
+    send_req: &UnboundedSender<(String, Vec<Value>)>,
+    recv_resp: &Arc<Mutex<UnboundedReceiver<Result<Value, Value>>>>,
+    req: JrpcReq,
+) -> Value {
+    send_req
+        .send((req.method, req.params))
+        .wrap_err("send request")
+        .unwrap();
+    let result = recv_resp.lock().await.recv().await.unwrap();
+    match result {
+        Ok(value) => json!({
+                "jsonrpc": "2.0",
+                "id": req.id,
+                "result": value,
+        }),
+        Err(error_value) => json!({
+            "jsonrpc": "2.0",
+            "id": req.id,
+            "error": error_value,
+        }),
+    }
+}
+
 pub fn run_test_server() -> (
     ServerHandle,
     UnboundedReceiver<(String, Vec<Value>)>,
@@ -58,25 +82,7 @@ pub fn run_test_server() -> (
                 for (idx, req) in reqs.into_iter().enumerate() {
                     assert_eq!(req.jsonrpc, "2.0", "wrong jsonrpc version: {}", req.jsonrpc);
                     assert_eq!(req.id, idx as u32, "wrong jsonrpc id: {}", req.id);
-
-                    send_req
-                        .send((req.method, req.params))
-                        .wrap_err("send request")
-                        .unwrap();
-                    let result = recv_resp.lock().await.recv().await.unwrap();
-                    let result = match result {
-                        Ok(value) => json!({
-                                "jsonrpc": "2.0",
-                                "id": req.id,
-                                "result": value,
-                        }),
-                        Err(error_value) => json!({
-                            "jsonrpc": "2.0",
-                            "id": 0,
-                            "error": error_value,
-                        }),
-                    };
-
+                    let result = process_request(&send_req, &recv_resp, req).await;
                     results.push(result);
                 }
                 json!(results)
@@ -85,23 +91,7 @@ pub fn run_test_server() -> (
                 assert_eq!(req.jsonrpc, "2.0", "wrong jsonrpc version: {}", req.jsonrpc);
                 assert_eq!(req.id, 0, "wrong jsonrpc id: {}", req.id);
 
-                send_req
-                    .send((req.method, req.params))
-                    .wrap_err("send request")
-                    .unwrap();
-                let result = recv_resp.lock().await.recv().await.unwrap();
-                match result {
-                    Ok(value) => json!({
-                            "jsonrpc": "2.0",
-                            "id": 0,
-                            "result": value,
-                    }),
-                    Err(error_value) => json!({
-                        "jsonrpc": "2.0",
-                        "id": 0,
-                        "error": error_value,
-                    }),
-                }
+                process_request(&send_req, &recv_resp, req).await
             };
             let response_body: Vec<u8> = serde_json::to_string(&response).unwrap().into();
             Ok::<Response<Body>, Infallible>(Response::new(Body::from(response_body)))

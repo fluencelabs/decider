@@ -166,6 +166,135 @@
             },
             "nullable": true,
             "required": []
+          },
+          "deploy": {
+            "type": "array",
+            "title": "Deployment list",
+            "nullable": true,
+            "description": "[DEPRECATED!] List of deployments for the particular service",
+            "items": {
+              "type": "object",
+              "title": "Deployment",
+              "description": "A small config for a particular deployment. You can have specific overrides for each and specific deployment properties like count, etc.",
+              "properties": {
+                "keyPairName": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "The name of the Key Pair to use. It is resolved in the following order (from the lowest to the highest priority):\n1. \"defaultKeyPairName\" property from user-secrets.yaml\n1. \"defaultKeyPairName\" property from project-secrets.yaml\n1. \"keyPairName\" property from the top level of fluence.yaml\n1. \"keyPairName\" property from the \"services\" level of fluence.yaml\n1. \"keyPairName\" property from the individual \"deploy\" property item level of fluence.yaml"
+                },
+                "deployId": {
+                  "type": "string",
+                  "description": "This id can be used in Aqua to access actually deployed peer and service ids. The ID must start with a lowercase letter and contain only letters, numbers, and underscores."
+                },
+                "count": {
+                  "type": "number",
+                  "minimum": 1,
+                  "nullable": true,
+                  "description": "Number of services to deploy. Default: 1 or if \"peerIds\" property is provided - exactly the number of peerIds"
+                },
+                "peerId": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Peer id or peer id name to deploy to. Default: Peer ids from the \"relay\" property of fluence.yaml are selected for each deploy. Named peerIds can be listed in \"peerIds\" property of fluence.yaml)"
+                },
+                "peerIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "nullable": true,
+                  "title": "Peer ids",
+                  "description": "Peer ids or peer id names to deploy to. Overrides \"peerId\" property. Named peerIds can be listed in \"peerIds\" property of fluence.yaml)"
+                },
+                "overrideModules": {
+                  "type": "object",
+                  "title": "Overrides",
+                  "description": "A map of modules to override",
+                  "additionalProperties": {
+                    "type": "object",
+                    "title": "Module overrides",
+                    "description": "Module names as keys and overrides for the module config as values",
+                    "properties": {
+                      "maxHeapSize": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+                      },
+                      "loggerEnabled": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Set true to allow module to use the Marine SDK logger"
+                      },
+                      "loggingMask": {
+                        "type": "number",
+                        "nullable": true,
+                        "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
+                      },
+                      "volumes": {
+                        "type": "object",
+                        "nullable": true,
+                        "required": [],
+                        "title": "Volumes",
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "properties": {
+                          "Alias": {
+                            "type": "string",
+                            "description": "path"
+                          }
+                        },
+                        "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                      },
+                      "envs": {
+                        "type": "object",
+                        "title": "Environment variables",
+                        "nullable": true,
+                        "required": [],
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "properties": {
+                          "Environment_variable_name": {
+                            "type": "string",
+                            "description": "Environment variable value"
+                          }
+                        },
+                        "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME). Please note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
+                      },
+                      "mountedBinaries": {
+                        "title": "Mounted binaries",
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "properties": {
+                          "Mounted_binary_name": {
+                            "type": "string",
+                            "description": "Path to a mounted binary"
+                          }
+                        },
+                        "nullable": true,
+                        "required": [],
+                        "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                      }
+                    },
+                    "required": [],
+                    "nullable": true
+                  },
+                  "nullable": true,
+                  "required": []
+                }
+              },
+              "required": [
+                "deployId"
+              ]
+            }
+          },
+          "keyPairName": {
+            "type": "string",
+            "nullable": true,
+            "description": "The name of the Key Pair to use. It is resolved in the following order (from the lowest to the highest priority):\n1. \"defaultKeyPairName\" property from user-secrets.yaml\n1. \"defaultKeyPairName\" property from project-secrets.yaml\n1. \"keyPairName\" property from the top level of fluence.yaml\n1. \"keyPairName\" property from the \"services\" level of fluence.yaml\n1. \"keyPairName\" property from the individual \"deploy\" property item level of fluence.yaml"
           }
         },
         "required": [
@@ -334,6 +463,135 @@
               },
               "nullable": true,
               "required": []
+            },
+            "deploy": {
+              "type": "array",
+              "title": "Deployment list",
+              "nullable": true,
+              "description": "[DEPRECATED!] List of deployments for the particular service",
+              "items": {
+                "type": "object",
+                "title": "Deployment",
+                "description": "A small config for a particular deployment. You can have specific overrides for each and specific deployment properties like count, etc.",
+                "properties": {
+                  "keyPairName": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "The name of the Key Pair to use. It is resolved in the following order (from the lowest to the highest priority):\n1. \"defaultKeyPairName\" property from user-secrets.yaml\n1. \"defaultKeyPairName\" property from project-secrets.yaml\n1. \"keyPairName\" property from the top level of fluence.yaml\n1. \"keyPairName\" property from the \"services\" level of fluence.yaml\n1. \"keyPairName\" property from the individual \"deploy\" property item level of fluence.yaml"
+                  },
+                  "deployId": {
+                    "type": "string",
+                    "description": "This id can be used in Aqua to access actually deployed peer and service ids. The ID must start with a lowercase letter and contain only letters, numbers, and underscores."
+                  },
+                  "count": {
+                    "type": "number",
+                    "minimum": 1,
+                    "nullable": true,
+                    "description": "Number of services to deploy. Default: 1 or if \"peerIds\" property is provided - exactly the number of peerIds"
+                  },
+                  "peerId": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Peer id or peer id name to deploy to. Default: Peer ids from the \"relay\" property of fluence.yaml are selected for each deploy. Named peerIds can be listed in \"peerIds\" property of fluence.yaml)"
+                  },
+                  "peerIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "nullable": true,
+                    "title": "Peer ids",
+                    "description": "Peer ids or peer id names to deploy to. Overrides \"peerId\" property. Named peerIds can be listed in \"peerIds\" property of fluence.yaml)"
+                  },
+                  "overrideModules": {
+                    "type": "object",
+                    "title": "Overrides",
+                    "description": "A map of modules to override",
+                    "additionalProperties": {
+                      "type": "object",
+                      "title": "Module overrides",
+                      "description": "Module names as keys and overrides for the module config as values",
+                      "properties": {
+                        "maxHeapSize": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+                        },
+                        "loggerEnabled": {
+                          "type": "boolean",
+                          "nullable": true,
+                          "description": "Set true to allow module to use the Marine SDK logger"
+                        },
+                        "loggingMask": {
+                          "type": "number",
+                          "nullable": true,
+                          "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
+                        },
+                        "volumes": {
+                          "type": "object",
+                          "nullable": true,
+                          "required": [],
+                          "title": "Volumes",
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {
+                            "Alias": {
+                              "type": "string",
+                              "description": "path"
+                            }
+                          },
+                          "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                        },
+                        "envs": {
+                          "type": "object",
+                          "title": "Environment variables",
+                          "nullable": true,
+                          "required": [],
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {
+                            "Environment_variable_name": {
+                              "type": "string",
+                              "description": "Environment variable value"
+                            }
+                          },
+                          "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME). Please note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
+                        },
+                        "mountedBinaries": {
+                          "title": "Mounted binaries",
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {
+                            "Mounted_binary_name": {
+                              "type": "string",
+                              "description": "Path to a mounted binary"
+                            }
+                          },
+                          "nullable": true,
+                          "required": [],
+                          "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                        }
+                      },
+                      "required": [],
+                      "nullable": true
+                    },
+                    "nullable": true,
+                    "required": []
+                  }
+                },
+                "required": [
+                  "deployId"
+                ]
+              }
+            },
+            "keyPairName": {
+              "type": "string",
+              "nullable": true,
+              "description": "The name of the Key Pair to use. It is resolved in the following order (from the lowest to the highest priority):\n1. \"defaultKeyPairName\" property from user-secrets.yaml\n1. \"defaultKeyPairName\" property from project-secrets.yaml\n1. \"keyPairName\" property from the top level of fluence.yaml\n1. \"keyPairName\" property from the \"services\" level of fluence.yaml\n1. \"keyPairName\" property from the individual \"deploy\" property item level of fluence.yaml"
             }
           },
           "required": [
@@ -373,6 +631,11 @@
       ],
       "nullable": true
     },
+    "keyPairName": {
+      "type": "string",
+      "nullable": true,
+      "description": "The name of the Key Pair to use. It is resolved in the following order (from the lowest to the highest priority):\n1. \"defaultKeyPairName\" property from user-secrets.yaml\n1. \"defaultKeyPairName\" property from project-secrets.yaml\n1. \"keyPairName\" property from the top level of fluence.yaml\n1. \"keyPairName\" property from the \"services\" level of fluence.yaml\n1. \"keyPairName\" property from the individual \"deploy\" property item level of fluence.yaml"
+    },
     "version": {
       "type": "number",
       "const": 2
@@ -387,7 +650,7 @@
           "type": "object",
           "title": "npm dependencies",
           "nullable": true,
-          "description": "A map of npm dependency versions. Fluence CLI ensures dependencies are installed each time you run aqua",
+          "description": "A map of npm dependency versions. CLI ensures dependencies are installed each time you run aqua",
           "additionalProperties": {
             "type": "string"
           },
@@ -403,7 +666,7 @@
           "type": "object",
           "title": "Cargo dependencies",
           "nullable": true,
-          "description": "A map of cargo dependency versions. Fluence CLI ensures dependencies are installed each time you run commands that depend on Marine or Marine REPL",
+          "description": "A map of cargo dependency versions. CLI ensures dependencies are installed each time you run commands that depend on Marine or Marine REPL",
           "required": [],
           "additionalProperties": {
             "type": "string"
@@ -577,10 +840,8 @@
       "type": "string",
       "description": "The network in which the transactions will be carried out",
       "enum": [
-        "kras",
-        "testnet",
-        "stage",
-        "local"
+        "local",
+        "testnet"
       ],
       "default": "testnet",
       "nullable": true
@@ -743,21 +1004,10 @@
       },
       "nullable": true
     },
-    "marineBuildArgs": {
-      "type": "string",
-      "description": "Space separated `cargo build` flags and args to pass to marine build. Can be overridden using --marine-build-args flag Default: --release",
-      "nullable": true
-    },
     "cliVersion": {
       "type": "string",
-      "description": "The version of the Fluence CLI that is compatible with this project. Set this to enforce a particular set of versions of all fluence components",
+      "description": "The version of the CLI that is compatible with this project. Set this to enforce a particular set of versions of all fluence components",
       "nullable": true
-    },
-    "ipfsAddr": {
-      "type": "string",
-      "description": "IPFS multiaddress to use when uploading workers with 'deal deploy'. Default: /dns4/ipfs.fluence.dev/tcp/5001 (for 'workers deploy' IPFS address provided by relay that you are connected to is used)",
-      "nullable": true,
-      "default": "/dns4/ipfs.fluence.dev/tcp/5001"
     }
   },
   "required": [

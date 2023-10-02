@@ -1,6 +1,7 @@
 use ethabi::param_type::ParamType;
 use ethabi::Token;
 use marine_rs_sdk::marine;
+use cid::Cid;
 
 use crate::chain::chain_data::EventField::NotIndexed;
 use crate::chain::chain_data::{ChainData, ChainDataError, EventField};
@@ -37,13 +38,27 @@ impl ChainData for DealChangedData {
 
     fn signature() -> Vec<EventField> {
         vec![
-            NotIndexed(ParamType::String), // appCID
+//            NotIndexed(ParamType::String), // appCID
+// app_cid
+            NotIndexed(ParamType::Tuple(vec![
+                // prefixes
+                ParamType::FixedBytes(4),
+                // hash
+                ParamType::FixedBytes(32),
+            ]))
         ]
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
     fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, ChainDataError> {
-        let app_cid = next_opt(data_tokens, "app_cid", |t| t.into_string())?;
+//        let app_cid = next_opt(data_tokens, "app_cid", |t| t.into_string())?;
+
+        let tokens = &mut data_tokens.into_iter();
+        let app_cid = &mut next_opt(tokens, "app_cid", Token::into_tuple)?.into_iter();
+        let cid_prefixes = next_opt(app_cid, "app_cid.prefixes", Token::into_fixed_bytes)?;
+        let cid_hash = next_opt(app_cid, "app_cid.cid_hash", Token::into_fixed_bytes)?;
+        let cid_bytes = [cid_prefixes, cid_hash].concat();
+        let app_cid = Cid::read_bytes(cid_bytes.as_slice())?.to_string();
         Ok(DealChangedData { app_cid })
     }
 }
