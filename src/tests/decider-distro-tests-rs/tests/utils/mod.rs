@@ -1,3 +1,5 @@
+// need this to avoid warnings about unused code in the test crates that don't use some functions from this module
+#![allow(dead_code)]
 pub mod test_rpc_server;
 
 use connected_client::ConnectedClient;
@@ -6,19 +8,23 @@ use eyre::WrapErr;
 use fluence_app_service::TomlMarineConfig;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use fluence_spell_dtos::value::{ScriptValue, StringListValue, StringValue};
-use hyper::body::Buf;
 use maplit::hashmap;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::fs;
-use std::future::Future;
-use std::io::Read;
 use std::path::PathBuf;
 use std::time::Duration;
 use system_services::{PackageDistro, ServiceDistro, SpellDistro};
-use tokio::io::AsyncWriteExt;
-use tracing::log::Log;
+
+pub const DEAL_IDS: &[&'static str] = &[
+    "ffa0611a099ab68ad7c3c67b4ca5bbbee7a58b99",
+    "880a53a54785df22ba804aee81ce8bd0d45bdedc",
+    "67b2ad3866429282e16e55b715d12a77f85b7ce8",
+    "1234563866429282e16e55b715d12a77f85b7cc9",
+    "991b64a54785df22ba804aee81ce8bd0d45bdabb",
+    "3665748409e712cd91b428c18e07a8e37b44c47e",
+];
 
 pub fn enable_decider_logs() {
     let namespaces = vec![
@@ -116,7 +122,7 @@ pub fn make_distro_with_api(api: String) -> PackageDistro {
             .to_string(),
     };
     // decider will run once
-    let mut trigger_config = TriggerConfig::default();
+    let trigger_config = TriggerConfig::default();
     make_distro(trigger_config, decider_settings)
 }
 
@@ -241,7 +247,7 @@ pub async fn wait_worker_spell_stopped(
     worker_id: String,
     timeout_per_try: Duration,
 ) {
-    for step in 0..5 {
+    for _ in 0..5 {
         // if only we can import these keys from Aqua files
         let result = execute(
             client,
