@@ -1,6 +1,6 @@
 #![feature(async_closure)]
 
-mod utils;
+pub mod utils;
 
 use connected_client::ConnectedClient;
 use created_swarm::make_swarms_with_cfg;

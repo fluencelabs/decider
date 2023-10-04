@@ -1,5 +1,3 @@
-// need this to avoid warnings about unused code in the test crates that don't use some functions from this module
-#![allow(dead_code)]
 pub mod test_rpc_server;
 
 use connected_client::ConnectedClient;

@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use eyre::WrapErr;
 use hyper::body::Buf;
 use hyper::service::{make_service_fn, service_fn};

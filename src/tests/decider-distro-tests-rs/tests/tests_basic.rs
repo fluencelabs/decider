@@ -1,7 +1,7 @@
 #![feature(async_closure)]
 #![feature(try_blocks)]
 
-mod utils;
+pub mod utils;
 
 use utils::test_rpc_server::run_test_server;
 
