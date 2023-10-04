@@ -1,5 +1,6 @@
 #![feature(async_closure)]
 #![feature(try_blocks)]
+#![feature(async_fn_in_trait)]
 
 pub mod utils;
 
@@ -90,7 +91,7 @@ async fn test_update_deal() {
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const BLOCK_NUMBER: u32 = 32;
 
-    let (server, mut recv_request, send_response) = run_test_server();
+    let mut server = run_test_server();
     let url = server.url.clone();
 
     let distro = make_distro_with_api(url);
@@ -114,7 +115,7 @@ async fn test_update_deal() {
     {
         let expected_reqs = 5;
         for _ in 0..expected_reqs {
-            let (method, params) = recv_request.recv().await.unwrap();
+            let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => json!(to_hex(BLOCK_INIT)),
                 "eth_getLogs" => {
@@ -132,7 +133,7 @@ async fn test_update_deal() {
                 "eth_gasPrice" => json!("0x3b9aca07"),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
-            send_response.send(Ok(response)).unwrap();
+            server.send_response(Ok(response));
         }
     }
     wait_decider_stopped(&mut client).await;
@@ -145,20 +146,20 @@ async fn test_update_deal() {
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
         {
-            let (method, _) = recv_request.recv().await.unwrap();
+            let (method, _params) = server.receive_request().await.unwrap();
             assert_eq!(method, "eth_blockNumber");
-            send_response.send(Ok(json!("0x200"))).unwrap();
+            server.send_response(Ok(json!("0x200")));
         }
         // no new deals
         {
-            let (method, _) = recv_request.recv().await.unwrap();
+            let (method, _params) = server.receive_request().await.unwrap();
             assert_eq!(method, "eth_getLogs");
-            send_response.send(Ok(json!([]))).unwrap();
+            server.send_response(Ok(json!([])));
         }
     }
     // deal update phase
     {
-        let (method, params) = recv_request.recv().await.unwrap();
+        let (method, params) = server.receive_request().await.unwrap();
         assert_eq!(method, "eth_getLogs");
         let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
         assert_eq!(
@@ -184,7 +185,7 @@ async fn test_update_deal() {
               }
             ]
         );
-        send_response.send(Ok(response)).unwrap();
+        server.send_response(Ok(json!(response)));
     }
     wait_decider_stopped(&mut client).await;
 
@@ -218,7 +219,7 @@ async fn test_remove_deal() {
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const BLOCK_NUMBER: u32 = 32;
 
-    let (server, mut recv_request, send_response) = run_test_server();
+    let mut server = run_test_server();
     let url = server.url.clone();
 
     let distro = make_distro_with_api(url);
@@ -242,7 +243,7 @@ async fn test_remove_deal() {
     {
         let expected_reqs = 5;
         for _ in 0..expected_reqs {
-            let (method, params) = recv_request.recv().await.unwrap();
+            let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => json!(to_hex(BLOCK_INIT)),
                 "eth_getLogs" => {
@@ -260,7 +261,7 @@ async fn test_remove_deal() {
                 "eth_gasPrice" => json!("0x3b9aca07"),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
-            send_response.send(Ok(response)).unwrap();
+            server.send_response(Ok(json!(response)));
         }
     }
     wait_decider_stopped(&mut client).await;
@@ -307,7 +308,7 @@ async fn test_remove_deal() {
     // run again
     update_config(&mut client, &oneshot_config()).await.unwrap();
     for _step in 0..3 {
-        let (method, _params) = recv_request.recv().await.unwrap();
+        let (method, _params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
             "eth_blockNumber" => json!("0x10"),
             "eth_getLogs" => {
@@ -315,7 +316,7 @@ async fn test_remove_deal() {
             }
             _ => panic!("mock http got an unexpected rpc method: {}", method),
         };
-        send_response.send(Ok(response)).unwrap();
+        server.send_response(Ok(json!(response)));
     }
     wait_decider_stopped(&mut client).await;
     /*
@@ -369,9 +370,7 @@ async fn test_remove_deal() {
 ///
 #[tokio::test]
 async fn test_left_boundary_idle() {
-    //enable_decider_logs();
-
-    let (server, mut recv_request, send_response) = run_test_server();
+    let mut server = run_test_server();
     let url = server.url.clone();
 
     let empty_config = TriggerConfig::default();
@@ -402,20 +401,20 @@ async fn test_left_boundary_idle() {
     for step in 0..block_numbers.len() {
         update_config(&mut client, &oneshot_config).await.unwrap();
         {
-            let (method, params) = recv_request.recv().await.unwrap();
+            let (method, params) = server.receive_request().await.unwrap();
             assert_eq!(method, "eth_blockNumber");
             assert!(params.is_empty());
-            send_response.send(Ok(json!(block_numbers[step]))).unwrap();
+            server.send_response(Ok(json!(block_numbers[step])));
         }
 
         {
-            let (method, params) = recv_request.recv().await.unwrap();
+            let (method, params) = server.receive_request().await.unwrap();
             assert_eq!(method, "eth_getLogs");
             assert!(!params.is_empty());
             let log_req = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
             assert_eq!(to_hex(log_req.from_block), expected_from_blocks[step]);
 
-            send_response.send(Ok(json!([]))).unwrap();
+            server.send_response(Ok(json!([])));
         }
         wait_decider_stopped(&mut client).await;
 

@@ -1,4 +1,6 @@
 #![feature(async_closure)]
+#![feature(async_fn_in_trait)]
+#![feature(return_position_impl_trait_in_trait)]
 
 pub mod utils;
 
@@ -10,6 +12,7 @@ use maplit::hashmap;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::collections::HashSet;
+use std::ops::Add;
 use std::time::Duration;
 use utils::test_rpc_server::{run_test_server, run_test_server_predefined};
 use utils::DEAL_IDS;
@@ -268,8 +271,7 @@ async fn test_deploy_deals_diff_blocks() {
     let deal_id_2 = format!("0x{DEAL_ID_2}");
     const BLOCK_NUMBER_2: u32 = 33;
 
-    //let counter = Arc::new(Mutex::new(0));
-    let (server, mut recv_request, send_response) = run_test_server();
+    let mut server = run_test_server();
     let url = server.url.clone();
 
     let empty_config = TriggerConfig::default();
@@ -294,7 +296,7 @@ async fn test_deploy_deals_diff_blocks() {
     {
         let mut register_worker_counter = 0;
         for _ in 0..expected_reqs_count {
-            let (method, params) = recv_request.recv().await.unwrap();
+            let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => {
                     json!("0x10")
@@ -315,7 +317,7 @@ async fn test_deploy_deals_diff_blocks() {
                 "eth_gasPrice" => json!("0x3b9aca07"),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
-            send_response.send(Ok(response)).unwrap();
+            server.send_response(Ok(response));
         }
         assert_eq!(
             register_worker_counter, 2,
@@ -409,7 +411,7 @@ async fn test_deploy_a_deal_in_seq() {
     // This block should be out of range of the first deal (+ 500 from
     const BLOCK_NUMBER_2: u32 = 531;
 
-    let (server, mut recv_request, send_response) = run_test_server();
+    let mut server = run_test_server();
     let url = server.url.clone();
 
     let empty_config = TriggerConfig::default();
@@ -433,7 +435,7 @@ async fn test_deploy_a_deal_in_seq() {
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction
     for _step in 0..5 {
-        let (method, params) = recv_request.recv().await.unwrap();
+        let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
             "eth_blockNumber" => {
                 json!(to_hex(BLOCK_INIT))
@@ -453,7 +455,7 @@ async fn test_deploy_a_deal_in_seq() {
             "eth_gasPrice" => json!("0x3b9aca07"),
             _ => panic!("mock http got an unexpected rpc method: {}", method),
         };
-        send_response.send(Ok(response)).unwrap();
+        server.send_response(Ok(response));
     }
     wait_decider_stopped(&mut client).await;
 
@@ -464,7 +466,7 @@ async fn test_deploy_a_deal_in_seq() {
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction and getLogs for the old deal
     for step in 0..6 {
-        let (method, params) = recv_request.recv().await.unwrap();
+        let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
             "eth_blockNumber" => {
                 json!(to_hex(BLOCK_NUMBER_2))
@@ -490,7 +492,7 @@ async fn test_deploy_a_deal_in_seq() {
             "eth_gasPrice" => json!("0x3b9aca07"),
             _ => panic!("mock http got an unexpected rpc method: {}", method),
         };
-        send_response.send(Ok(response)).unwrap();
+        server.send_response(Ok(response));
     }
     wait_decider_stopped(&mut client).await;
 
@@ -574,7 +576,7 @@ async fn test_deploy_deals_in_one_block() {
     let deal_id_2 = format!("0x{DEAL_ID_2}");
     const BLOCK_NUMBER: u32 = 32;
 
-    let (server, mut recv_request, send_response) = run_test_server();
+    let mut server = run_test_server();
     let url = server.url.clone();
 
     let empty_config = TriggerConfig::default();
@@ -598,7 +600,7 @@ async fn test_deploy_deals_in_one_block() {
     {
         // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction
         for _ in 0..5 {
-            let (method, params) = recv_request.recv().await.unwrap();
+            let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => {
                     json!(to_hex(BLOCK_INIT))
@@ -618,7 +620,7 @@ async fn test_deploy_deals_in_one_block() {
                 "eth_gasPrice" => json!("0x3b9aca07"),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
-            send_response.send(Ok(response)).unwrap();
+            server.send_response(Ok(response));
         }
     }
     // TODO: detect unexpected jsonrpc requests
@@ -627,7 +629,7 @@ async fn test_deploy_deals_in_one_block() {
     {
         // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction and getLogs for the old deal
         for step in 0..6 {
-            let (method, params) = recv_request.recv().await.unwrap();
+            let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => {
                     json!(to_hex(BLOCK_INIT))
@@ -650,7 +652,7 @@ async fn test_deploy_deals_in_one_block() {
                 "eth_gasPrice" => json!("0x3b9aca07"),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
-            send_response.send(Ok(response)).unwrap();
+            server.send_response(Ok(response));
         }
     }
     wait_decider_stopped(&mut client).await;
@@ -719,7 +721,7 @@ async fn test_deploy_deals_in_one_block() {
     server.shutdown().await;
 }
 
-/// Test worker registering scenarios  
+/// Test worker registering scenarios
 ///
 /// Note that atm *Decider* doesn't process the case when worker registration fails
 /// the deal is joined nevertheless
@@ -739,7 +741,7 @@ async fn test_register_worker_fails() {
     const BLOCK_NUMBER: u32 = 32;
     const BLOCK_NUMBER_LATER: u32 = 200;
 
-    let (server, mut recv_request, send_response) = run_test_server();
+    let mut server = run_test_server();
     let url = server.url.clone();
 
     let empty_config = TriggerConfig::default();
@@ -768,7 +770,7 @@ async fn test_register_worker_fails() {
         // Reqs: blockNumber, getLogs and 2x of one of gasPrice, getTransactionCount and sendRawTransaction
         // (try all to not depend on the order)
         for _step in 0..3 {
-            let (method, params) = recv_request.recv().await.unwrap();
+            let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => Ok(json!(to_hex(BLOCK_INIT))),
                 "eth_getLogs" => {
@@ -784,44 +786,45 @@ async fn test_register_worker_fails() {
                 "eth_gasPrice" => Err(error_value.clone()),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
-            send_response.send(response).unwrap();
+            server.send_response(response);
         }
     }
     wait_decider_stopped(&mut client).await;
     let deals = get_joined_deals(&mut client).await;
     assert!(
-        deals.is_empty(),
+        !deals.is_empty(),
         "since the registration failed, the deal must not be joined"
     );
 
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    {
-        // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction
-        for _ in 0..5 {
-            let (method, params) = recv_request.recv().await.unwrap();
-            let response = match method.as_str() {
-                "eth_blockNumber" => json!(to_hex(BLOCK_NUMBER_LATER)),
-                "eth_getLogs" => {
-                    let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-                    assert!(log.from_block <= BLOCK_NUMBER);
-                    assert!(log.to_block <= BLOCK_NUMBER);
-                    json!([TestApp::log_test_app1(
-                        DEAL_ID,
-                        BLOCK_NUMBER,
-                        log.topics[1].as_str()
-                    ),])
-                }
-                "eth_sendRawTransaction" => {
-                    // TODO: how not to wait for the registration if Decider failed?
-                    json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
-                }
-                "eth_getTransactionCount" => json!("0x1"),
-                "eth_gasPrice" => json!("0x3b9aca07"),
-                _ => panic!("mock http got an unexpected rpc method: {}", method),
-            };
-            send_response.send(Ok(response)).unwrap();
-        }
+
+    // TODO: rewrite cycle to seq execution
+    // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction
+    for _ in 0..5 {
+        let (method, params) = server.receive_request().await.unwrap();
+        let response = match method.as_str() {
+            "eth_blockNumber" => json!(to_hex(BLOCK_NUMBER_LATER)),
+            "eth_getLogs" => {
+                let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
+                assert!(log.from_block <= BLOCK_NUMBER);
+                assert!(log.to_block <= BLOCK_NUMBER);
+                json!([TestApp::log_test_app1(
+                    DEAL_ID,
+                    BLOCK_NUMBER,
+                    log.topics[1].as_str()
+                ),])
+            }
+            "eth_sendRawTransaction" => {
+                // TODO: how not to wait for the registration if Decider failed?
+                json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
+            }
+            "eth_getTransactionCount" => json!("0x1"),
+            "eth_gasPrice" => json!("0x3b9aca07"),
+            _ => panic!("mock http got an unexpected rpc method: {}", method),
+        };
+        server.send_response(Ok(response));
     }
+
     wait_decider_stopped(&mut client).await;
     let deals = get_joined_deals(&mut client).await;
     assert!(!deals.is_empty(), "the deal must be joined after fail")

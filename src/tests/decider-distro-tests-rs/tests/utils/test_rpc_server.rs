@@ -1,30 +1,55 @@
 use eyre::WrapErr;
 use hyper::body::Buf;
 use hyper::service::{make_service_fn, service_fn};
-use hyper::{body, Body, Request, Response};
+use hyper::{body, Body, Request, Response, Server};
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::convert::Infallible;
 use std::future::Future;
 use std::net::SocketAddr;
+use std::ops::{Deref, DerefMut};
 use std::sync::Arc;
+use std::time::Duration;
 use tokio::sync::mpsc::{channel, unbounded_channel, Sender, UnboundedReceiver, UnboundedSender};
 use tokio::sync::Mutex;
 use tokio::task;
+use tokio::time::timeout;
 
-#[derive(Deserialize, Debug)]
-#[serde(deny_unknown_fields)]
-pub struct JrpcReq {
-    jsonrpc: String,
-    id: u32,
-    method: String,
-    params: Vec<Value>,
+type RpcMethod = String;
+type RpcParams = Vec<Value>;
+
+type RpcResult = Value;
+type RpcError = Value;
+
+#[derive(Clone)]
+pub struct ServerChannels {
+    recv: Arc<Mutex<UnboundedReceiver<(RpcMethod, RpcParams)>>>,
+    send: Arc<UnboundedSender<Result<RpcResult, RpcError>>>,
+}
+
+impl ServerChannels {
+    pub async fn receive_request(&mut self) -> Option<(RpcMethod, RpcParams)> {
+        // need to move out to the top level?
+        timeout(Duration::from_secs(60), self.recv.lock().await.recv())
+            .await
+            .ok()
+            .flatten()
+    }
+
+    pub fn send_response(&mut self, response: Result<RpcResult, RpcError>) {
+        self.send.send(response).unwrap();
+    }
+
+    pub fn view(&self) -> ServerChannels {
+        self.clone()
+    }
 }
 
 pub struct ServerHandle {
     pub url: String,
     shutdown: Sender<()>,
     shutdown_confirm: Option<task::JoinHandle<()>>,
+    channels: ServerChannels,
 }
 
 impl ServerHandle {
@@ -34,9 +59,32 @@ impl ServerHandle {
     }
 }
 
+impl Deref for ServerHandle {
+    type Target = ServerChannels;
+
+    fn deref(&self) -> &Self::Target {
+        &self.channels
+    }
+}
+
+impl DerefMut for ServerHandle {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.channels
+    }
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct JrpcReq {
+    jsonrpc: String,
+    id: u32,
+    method: RpcMethod,
+    params: RpcParams,
+}
+
 async fn process_request(
-    send_req: &UnboundedSender<(String, Vec<Value>)>,
-    recv_resp: &Arc<Mutex<UnboundedReceiver<Result<Value, Value>>>>,
+    send_req: &UnboundedSender<(RpcMethod, RpcParams)>,
+    recv_resp: &Arc<Mutex<UnboundedReceiver<Result<RpcResult, RpcError>>>>,
     req: JrpcReq,
 ) -> Value {
     send_req
@@ -58,11 +106,7 @@ async fn process_request(
     }
 }
 
-pub fn run_test_server() -> (
-    ServerHandle,
-    UnboundedReceiver<(String, Vec<Value>)>,
-    UnboundedSender<Result<Value, Value>>,
-) {
+pub fn run_test_server() -> ServerHandle {
     let (send_req, recv_req) = unbounded_channel();
     let (send_resp, recv_resp) = unbounded_channel::<Result<Value, Value>>();
     let recv_resp = Arc::new(Mutex::new(recv_resp));
@@ -116,9 +160,13 @@ pub fn run_test_server() -> (
         url: format!("http://{}/", address),
         shutdown: shutdown_send,
         shutdown_confirm: Some(handle),
+        channels: ServerChannels {
+            recv: Arc::new(Mutex::new(recv_req)),
+            send: Arc::new(send_resp),
+        },
     };
 
-    (hdl, recv_req, send_resp)
+    hdl
 }
 
 pub fn run_test_server_predefined<T, S>(handle: T) -> ServerHandle
@@ -126,11 +174,12 @@ where
     T: Fn(String, Vec<Value>) -> S + Send + Sync + 'static,
     S: Future<Output = Value> + Send + Sync,
 {
-    let (server, mut recv_req, send_resp) = run_test_server();
+    let server = run_test_server();
+    let mut view = server.view();
     tokio::task::spawn((async move || loop {
-        if let Some((method, params)) = recv_req.recv().await {
+        if let Some((method, params)) = view.receive_request().await {
             let response = handle(method, params).await;
-            send_resp.send(Ok(response)).unwrap();
+            view.send_response(Ok(response));
         } else {
             break;
         }
