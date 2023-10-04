@@ -313,7 +313,7 @@ async fn test_deploy_deals_diff_blocks() {
                 }
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
-                _ => panic!("unexpected method: {}", method),
+                _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             send_response.send(Ok(response)).unwrap();
         }
@@ -451,7 +451,7 @@ async fn test_deploy_a_deal_in_seq() {
             }
             "eth_getTransactionCount" => json!("0x1"),
             "eth_gasPrice" => json!("0x3b9aca07"),
-            _ => panic!("unexpected method: {}", method),
+            _ => panic!("mock http got an unexpected rpc method: {}", method),
         };
         send_response.send(Ok(response)).unwrap();
     }
@@ -488,7 +488,7 @@ async fn test_deploy_a_deal_in_seq() {
             }
             "eth_getTransactionCount" => json!("0x1"),
             "eth_gasPrice" => json!("0x3b9aca07"),
-            _ => panic!("unexpected method: {}", method),
+            _ => panic!("mock http got an unexpected rpc method: {}", method),
         };
         send_response.send(Ok(response)).unwrap();
     }
@@ -616,7 +616,7 @@ async fn test_deploy_deals_in_one_block() {
                 }
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
-                _ => panic!("unexpected method: {}", method),
+                _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             send_response.send(Ok(response)).unwrap();
         }
@@ -648,7 +648,7 @@ async fn test_deploy_deals_in_one_block() {
                 }
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
-                _ => panic!("unexpected method: {}", method),
+                _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             send_response.send(Ok(response)).unwrap();
         }
@@ -782,7 +782,7 @@ async fn test_register_worker_fails() {
                 "eth_sendRawTransaction" => Err(error_value.clone()),
                 "eth_getTransactionCount" => Err(error_value.clone()),
                 "eth_gasPrice" => Err(error_value.clone()),
-                _ => panic!("unexpected method: {}", method),
+                _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             send_response.send(response).unwrap();
         }
@@ -817,7 +817,7 @@ async fn test_register_worker_fails() {
                 }
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
-                _ => panic!("unexpected method: {}", method),
+                _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             send_response.send(Ok(response)).unwrap();
         }
