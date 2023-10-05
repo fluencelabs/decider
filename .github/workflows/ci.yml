@@ -27,7 +27,7 @@ jobs:
       ref: ${{ github.ref }}
 
   tests:
-    name: "Run tests"
+    name: "distro"
     uses: ./.github/workflows/tests.yml
     with:
       ref: ${{ github.ref }}
