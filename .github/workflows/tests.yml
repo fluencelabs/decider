@@ -62,6 +62,9 @@ jobs:
       - name: Build distro
         run: ./build.sh
 
+      - name: Setup IPFS CLI
+        uses: nahsi/setup-ipfs@v1
+
       - name: Upload resources to IPFS
         working-directory: src/tests/decider-distro-tests-rs/resources
         run: ./upload.sh
@@ -70,7 +73,9 @@ jobs:
         uses: taiki-e/install-action@nextest
 
       - name: Run cargo nextest
-        run: cargo nextest run --release --all-features --profile ci - name: Upload test report
+        run: cargo nextest run --release --all-features --profile ci
+
+      - name: Upload test report
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
