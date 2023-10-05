@@ -1,0 +1,84 @@
+name: Run tests with workflow_call
+
+on:
+  workflow_call:
+    inputs:
+      cargo-dependencies:
+        description: "Cargo dependencies map"
+        type: string
+        default: "null"
+      ref:
+        description: "git ref to checkout to"
+        type: string
+        default: "main"
+
+env:
+  FORCE_COLOR: true
+  CI: true
+
+jobs:
+  tests:
+    name: "Run tests"
+    runs-on: builder
+    timeout-minutes: 60
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: fluencelabs/decider
+          ref: ${{ inputs.ref }}
+
+      - name: Setup Rust toolchain
+        uses: dsherret/rust-toolchain-file@v1
+
+      - name: Setup cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: decider
+          save-if: false
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Run IPFS
+        run: |
+          docker-compose -f .github/e2e/docker-compose.yml up -d
+
+      - name: Install fluence-cli
+        run: npm i -g @fluencelabs/cli@unstable
+
+      - name: Set dependencies
+        if: inputs.cargo-dependencies != 'null'
+        uses: fluencelabs/github-actions/cargo-set-dependency@main
+        with:
+          dependencies: ${{ inputs.cargo-dependencies }}
+
+      - name: Build distro
+        run: ./build.sh
+
+      - name: Upload resources to IPFS
+        working-directory: src/tests/decider-distro-tests-rs/resources
+        run: ./upload.sh
+
+      - name: Setup nextest
+        uses: taiki-e/install-action@nextest
+
+      - name: Run cargo nextest
+        run: cargo nextest run --release --all-features --profile ci - name: Upload test report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: decider report
+          path: target/nextest/ci/junit.xml
+          reporter: java-junit
+
+      - name: Post Run IPFS
+        if: always()
+        run: |
+          docker-compose -f .github/e2e/docker-compose.yml down --volumes

@@ -25,3 +25,9 @@ jobs:
     uses: ./.github/workflows/snapshot.yml
     with:
       ref: ${{ github.ref }}
+
+  tests:
+    name: "Run tests"
+    uses: ./.github/workflows/tests.yml
+    with:
+      ref: ${{ github.ref }}
