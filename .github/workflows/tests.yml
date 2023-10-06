@@ -73,6 +73,7 @@ jobs:
         uses: taiki-e/install-action@nextest
 
       - name: Run cargo nextest
+        working-directory: src/tests/decider-distro-tests-rs
         run: cargo nextest run --release --all-features --profile ci
 
       - name: Upload test report
@@ -80,7 +81,7 @@ jobs:
         if: success() || failure()
         with:
           name: decider report
-          path: target/nextest/ci/junit.xml
+          path: src/tests/decider-distro-tests-rs/target/nextest/ci/junit.xml
           reporter: java-junit
 
       - name: Post Run IPFS
