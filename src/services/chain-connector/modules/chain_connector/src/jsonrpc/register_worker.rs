@@ -199,7 +199,7 @@ fn make_tx(
 
 #[cfg(test)]
 mod tests {
-    use marine_rs_sdk::CallParameters;
+    use marine_rs_sdk_test::CallParameters;
     use marine_rs_sdk_test::marine_test;
 
     use crate::hex::decode_hex;
