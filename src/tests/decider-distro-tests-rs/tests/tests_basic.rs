@@ -8,8 +8,9 @@ use utils::test_rpc_server::run_test_server;
 
 use crate::utils::{
     execute, get_joined_deals, make_distro_default, make_distro_with_api,
-    make_distro_with_api_and_config, oneshot_config, package_items_names, to_hex, update_config,
-    update_decider_script_for_tests, wait_decider_stopped, LogsReq, TestApp, DEAL_IDS,
+    make_distro_with_api_and_config, oneshot_config, package_items_names, setup_nox, to_hex,
+    update_config, update_decider_script_for_tests, wait_decider_stopped, LogsReq, TestApp,
+    DEAL_IDS,
 };
 use connected_client::ConnectedClient;
 use created_swarm::make_swarms_with_cfg;
@@ -93,23 +94,10 @@ async fn test_update_deal() {
 
     let mut server = run_test_server();
     let url = server.url.clone();
-
     let distro = make_distro_with_api(url);
-    let swarms = make_swarms_with_cfg(1, move |mut cfg| {
-        cfg.enabled_system_services = vec!["aqua-ipfs".to_string()];
-        cfg.extend_system_services = vec![distro.clone()];
-        cfg
-    })
-    .await;
+    let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    let mut client = ConnectedClient::connect_with_keypair(
-        swarms[0].multiaddr.clone(),
-        Some(swarms[0].management_keypair.clone()),
-    )
-    .await
-    .unwrap();
-
-    update_decider_script_for_tests(&mut client, swarms[0].tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Deploy a deal
     {
@@ -223,21 +211,9 @@ async fn test_remove_deal() {
     let url = server.url.clone();
 
     let distro = make_distro_with_api(url);
-    let swarms = make_swarms_with_cfg(1, move |mut cfg| {
-        cfg.enabled_system_services = vec!["aqua-ipfs".to_string()];
-        cfg.extend_system_services = vec![distro.clone()];
-        cfg
-    })
-    .await;
+    let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    let mut client = ConnectedClient::connect_with_keypair(
-        swarms[0].multiaddr.clone(),
-        Some(swarms[0].management_keypair.clone()),
-    )
-    .await
-    .unwrap();
-
-    update_decider_script_for_tests(&mut client, swarms[0].tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Deploy a deal
     {
@@ -375,21 +351,10 @@ async fn test_left_boundary_idle() {
 
     let empty_config = TriggerConfig::default();
     let distro = make_distro_with_api_and_config(url, empty_config);
-    let swarms = make_swarms_with_cfg(1, move |mut cfg| {
-        cfg.enabled_system_services = vec!["aqua-ipfs".to_string()];
-        cfg.extend_system_services = vec![distro.clone()];
-        cfg
-    })
-    .await;
-    let mut client = ConnectedClient::connect_with_keypair(
-        swarms[0].multiaddr.clone(),
-        Some(swarms[0].management_keypair.clone()),
-    )
-    .await
-    .unwrap();
+    let (swarm, mut client) = setup_nox(distro.clone()).await;
 
     // To be able to wait 'til the end of one cycle
-    update_decider_script_for_tests(&mut client, swarms[0].tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
 
     let mut oneshot_config = TriggerConfig::default();
     oneshot_config.clock.start_sec = 1;

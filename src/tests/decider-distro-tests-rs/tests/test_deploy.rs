@@ -4,24 +4,16 @@
 
 pub mod utils;
 
-use connected_client::ConnectedClient;
-use created_swarm::make_swarms_with_cfg;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use fluence_spell_dtos::value::{StringListValue, StringValue, U32Value};
 use maplit::hashmap;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::collections::HashSet;
-use std::ops::Add;
 use std::time::Duration;
 use utils::test_rpc_server::{run_test_server, run_test_server_predefined};
 use utils::DEAL_IDS;
-use utils::{
-    enable_decider_logs, execute, get_deal_state, get_joined_deals, get_worker_app_cid,
-    make_distro_with_api, make_distro_with_api_and_config, oneshot_config, parse_joined_deals,
-    to_hex, update_config, update_decider_script_for_tests, wait_decider_stopped,
-    wait_worker_spell_stopped, JoinedDeal, LogsReq, TestApp,
-};
+use utils::*;
 
 /// Test the basic flow
 ///
@@ -92,21 +84,9 @@ async fn test_deploy_a_deal_single() {
     let url = server.url.clone();
 
     let distro = make_distro_with_api(url);
-    let swarms = make_swarms_with_cfg(1, move |mut cfg| {
-        cfg.enabled_system_services = vec!["aqua-ipfs".to_string()];
-        cfg.extend_system_services = vec![distro.clone()];
-        cfg
-    })
-    .await;
+    let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    let mut client = ConnectedClient::connect_with_keypair(
-        swarms[0].multiaddr.clone(),
-        Some(swarms[0].management_keypair.clone()),
-    )
-    .await
-    .unwrap();
-
-    update_decider_script_for_tests(&mut client, swarms[0].tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
 
     wait_decider_stopped(&mut client).await;
@@ -276,20 +256,9 @@ async fn test_deploy_deals_diff_blocks() {
 
     let empty_config = TriggerConfig::default();
     let distro = make_distro_with_api_and_config(url, empty_config);
-    let swarms = make_swarms_with_cfg(1, move |mut cfg| {
-        cfg.enabled_system_services = vec!["aqua-ipfs".to_string()];
-        cfg.extend_system_services = vec![distro.clone()];
-        cfg
-    })
-    .await;
-    let mut client = ConnectedClient::connect_with_keypair(
-        swarms[0].multiaddr.clone(),
-        Some(swarms[0].management_keypair.clone()),
-    )
-    .await
-    .unwrap();
+    let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarms[0].tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Reqs: blockNumber, getLogs, 2x of gasPrice, getTransactionCount and sendRawTransaction
     let expected_reqs_count = 8;
@@ -416,20 +385,9 @@ async fn test_deploy_a_deal_in_seq() {
 
     let empty_config = TriggerConfig::default();
     let distro = make_distro_with_api_and_config(url, empty_config);
-    let swarms = make_swarms_with_cfg(1, move |mut cfg| {
-        cfg.enabled_system_services = vec!["aqua-ipfs".to_string()];
-        cfg.extend_system_services = vec![distro.clone()];
-        cfg
-    })
-    .await;
-    let mut client = ConnectedClient::connect_with_keypair(
-        swarms[0].multiaddr.clone(),
-        Some(swarms[0].management_keypair.clone()),
-    )
-    .await
-    .unwrap();
+    let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarms[0].tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
 
     // Initial run for installing the first deal
     update_config(&mut client, &oneshot_config()).await.unwrap();
@@ -568,7 +526,8 @@ async fn test_deploy_a_deal_in_seq() {
 ///    We can simulate it by returning not all deals on the first run, and on the second add deals to the block
 #[tokio::test]
 async fn test_deploy_deals_in_one_block() {
-    enable_decider_logs();
+    //enable_decider_logs();
+    log_utils::enable_logs();
     const BLOCK_INIT: u32 = 1;
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
     let deal_id_1 = format!("0x{DEAL_ID_1}");
@@ -581,20 +540,9 @@ async fn test_deploy_deals_in_one_block() {
 
     let empty_config = TriggerConfig::default();
     let distro = make_distro_with_api_and_config(url, empty_config);
-    let swarms = make_swarms_with_cfg(1, move |mut cfg| {
-        cfg.enabled_system_services = vec!["aqua-ipfs".to_string()];
-        cfg.extend_system_services = vec![distro.clone()];
-        cfg
-    })
-    .await;
-    let mut client = ConnectedClient::connect_with_keypair(
-        swarms[0].multiaddr.clone(),
-        Some(swarms[0].management_keypair.clone()),
-    )
-    .await
-    .unwrap();
+    let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarms[0].tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     // Initial run for installing the first deal
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
@@ -746,20 +694,9 @@ async fn test_register_worker_fails() {
 
     let empty_config = TriggerConfig::default();
     let distro = make_distro_with_api_and_config(url, empty_config);
-    let swarms = make_swarms_with_cfg(1, move |mut cfg| {
-        cfg.enabled_system_services = vec!["aqua-ipfs".to_string()];
-        cfg.extend_system_services = vec![distro.clone()];
-        cfg
-    })
-    .await;
-    let mut client = ConnectedClient::connect_with_keypair(
-        swarms[0].multiaddr.clone(),
-        Some(swarms[0].management_keypair.clone()),
-    )
-    .await
-    .unwrap();
+    let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarms[0].tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     // Initial run for installing the first deal
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {

@@ -38,8 +38,7 @@ impl ChainData for DealChangedData {
 
     fn signature() -> Vec<EventField> {
         vec![
-//            NotIndexed(ParamType::String), // appCID
-// app_cid
+
             NotIndexed(ParamType::Tuple(vec![
                 // prefixes
                 ParamType::FixedBytes(4),
@@ -51,8 +50,6 @@ impl ChainData for DealChangedData {
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
     fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, ChainDataError> {
-//        let app_cid = next_opt(data_tokens, "app_cid", |t| t.into_string())?;
-
         let tokens = &mut data_tokens.into_iter();
         let app_cid = &mut next_opt(tokens, "app_cid", Token::into_tuple)?.into_iter();
         let cid_prefixes = next_opt(app_cid, "app_cid.prefixes", Token::into_fixed_bytes)?;
