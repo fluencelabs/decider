@@ -77,7 +77,8 @@ jobs:
 
       - name: Run cargo nextest
         working-directory: src/tests/decider-distro-tests-rs
-        run: cargo nextest run --release --all-features --profile ci
+        run: cargo nextest run --release --all-features --profile ci  --success-output=immediate --failure-output=immediate
+
 
       - name: Upload test report
         uses: dorny/test-reporter@v1
