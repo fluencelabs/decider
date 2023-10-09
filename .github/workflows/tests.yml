@@ -65,6 +65,9 @@ jobs:
       - name: Setup IPFS CLI
         uses: nahsi/setup-ipfs@v1
 
+      - name: Get IPFS path
+        run: echo "IPFS_PATH=$(which ipfs)" >> $GITHUB_ENV
+
       - name: Upload resources to IPFS
         working-directory: src/tests/decider-distro-tests-rs/resources
         run: ./upload.sh
