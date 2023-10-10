@@ -26,12 +26,16 @@ pub const DEAL_IDS: &[&'static str] = &[
     "3665748409e712cd91b428c18e07a8e37b44c47e",
 ];
 
+pub const IPFS_MULTIADDR: &str = "/ip4/127.0.0.1/tcp/5001";
+
 pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
     let mut config = AquaIpfsConfig::default();
     static IPFS_CLI_PATH: Option<&str> = option_env!("IPFS_CLI_PATH");
     if let Some(path) = IPFS_CLI_PATH {
         config.ipfs_binary_path = path.to_string();
     }
+    config.external_ipfs_multiaddr = IPFS_MULTIADDR.to_string();
+    config.external_ipfs_nultiaddr = IPFS_MULTIADDR.to_string();
     config
 }
 
@@ -135,7 +139,7 @@ pub fn make_distro(trigger_config: TriggerConfig, settings: DeciderConfig) -> Pa
 pub fn make_distro_default() -> PackageDistro {
     let decider_settings = DeciderConfig {
         worker_period_sec: 0,
-        worker_ipfs_multiaddr: "/ip4/127.0.0.1/tcp/5001".to_string(),
+        worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),
         chain_api_endpoint: "http://127.0.0.1:12009".to_string(),
         chain_network_id: 11,
         chain_contract_block_hex: "0x0".to_string(),
@@ -153,7 +157,7 @@ pub fn make_distro_with_api(api: String) -> PackageDistro {
     let decider_settings = DeciderConfig {
         // worker will run once
         worker_period_sec: 0,
-        worker_ipfs_multiaddr: "/ip4/127.0.0.1/tcp/5001".to_string(),
+        worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),
         chain_api_endpoint: api,
         chain_network_id: 11,
         chain_contract_block_hex: "0x0".to_string(),
@@ -171,7 +175,7 @@ pub fn make_distro_with_api_and_config(api: String, config: TriggerConfig) -> Pa
     let decider_settings = DeciderConfig {
         // worker will run once
         worker_period_sec: 0,
-        worker_ipfs_multiaddr: "/ip4/127.0.0.1/tcp/5001".to_string(),
+        worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),
         chain_api_endpoint: api,
         chain_network_id: 11,
         chain_contract_block_hex: "0x0".to_string(),
