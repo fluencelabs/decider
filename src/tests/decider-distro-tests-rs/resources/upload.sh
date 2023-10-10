@@ -11,7 +11,10 @@ done
 echo "check uploaded file: cat"
 ipfs cat bafkreifolrizgmusl4y7or5e5xmvr623a6i3ca4d5rwv457cezhschqj4m --api /ip4/127.0.0.1/tcp/5001 --timeout 10s
 
-sleep 1
-echo "check uploaded file: get"
+echo "\n\ncheck uploaded file: get"
+
+ipfs get -o /tmp/test.json bafkreifolrizgmusl4y7or5e5xmvr623a6i3ca4d5rwv457cezhschqj4m --api /ip4/127.0.0.1/tcp/5001 --timeout 10s
+
+echo "\n\ncheck uploaded file: get"
 
 ipfs get -o /tmp/test.wasm bafkreici665k2iypfxyxgc7zh6wyho6gqogyald7zz3k6tsjzxcuhgpx7u --api /ip4/127.0.0.1/tcp/5001 --timeout 10s
