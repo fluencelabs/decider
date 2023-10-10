@@ -9,7 +9,7 @@ do
     for fl in $(find . -mindepth 1 -type f)
     do
         echo "uploading file $fl"
-    	ipfs add --cid-version 1 --hash sha2-256 -r "$fl" --api /ip4/127.0.0.1/tcp/5001
+    	ipfs add --cid-version 1 --hash sha2-256 -r "$fl" --api /ip4/127.0.0.1/tcp/5001 -Q
     done
     cd -
 done
