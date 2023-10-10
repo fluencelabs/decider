@@ -8,7 +8,7 @@ pub enum RequestError {
     #[error("`curl` returned error: {0}")]
     CurlError(String),
     #[error(
-        "the response isn't in JSON RPC `eth_getLogs` reponse format: {0}. Full response: {1}"
+        "the response isn't in required JSON RPC reponse format: {0}. Full response: {1}"
     )]
     ParseError(serde_json::Error, String),
     #[error("error occured with `curl`: {0}")]

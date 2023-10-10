@@ -2,7 +2,6 @@
 resolver = "2"
 members = [
   "src/services/chain-connector/modules/curl_adapter",
-  "src/services/chain-connector/modules/chain_connector",
-  "src/distro"
+  "src/services/chain-connector/modules/chain_connector"
 ]
-exclude = [ "src/tests" ]
+exclude = [ "src/tests", "src/distro/" ]

@@ -1,0 +1,1 @@
+{"name":"local_storage","wasi":{"mapped_dirs":{"sites":"./tmp"}},"logger_enabled":true}

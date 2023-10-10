@@ -81,7 +81,7 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
 #[cfg(test)]
 mod tests {
     use libp2p_identity::PeerId;
-    use marine_rs_sdk::CallParameters;
+    use marine_rs_sdk_test::CallParameters;
     use marine_rs_sdk_test::marine_test;
     use std::str::FromStr;
 
@@ -98,11 +98,11 @@ mod tests {
 
     // Set env RUST_LOGGER="mockito=debug" to enable Mockito's logs
     #[marine_test(config_path = "../../../../../../../src/distro/decider-spell/Config.toml")]
-    fn poll(connector: marine_test_env::fluence_aurora_connector::ModuleInterface) {
+    fn poll(connector: marine_test_env::chain_connector::ModuleInterface) {
         let _ = ::env_logger::builder()
             .filter_level(log::LevelFilter::Debug)
             .filter_module("mockito", log::LevelFilter::Debug)
-            .filter_module("fluence_aurora_connector", log::LevelFilter::Debug)
+            .filter_module("chain_connector", log::LevelFilter::Debug)
             .filter_module("marine_core", log::LevelFilter::Debug)
             .filter_module("wasmer_interface_types_fl", log::LevelFilter::Off)
             .is_test(true)
@@ -151,7 +151,7 @@ mod tests {
         let mock = server
             .mock("POST", "/")
             // expect to receive this exact body in POST
-            .match_body(r#"{"jsonrpc":"2.0","id":0,"method":"eth_getLogs","params":[{"fromBlock":"0x52","toBlock":"0x246","address":"0x6328bb918a01603adc91eae689b848a9ecaef26d","topics":["0x55e61a24ecdae954582245e5e611fb06905d6af967334fff4db72793bebc72a9","0x7a82a5feefcaad4a89c689412031e5f87c02b29e3fced583be5f05c7077354b7"]}]}"#)
+            .match_body(r#"{"jsonrpc":"2.0","id":0,"method":"eth_getLogs","params":[{"fromBlock":"0x52","toBlock":"0x246","address":"0x6328bb918a01603adc91eae689b848a9ecaef26d","topics":["0x1c13422d2375fe8a96ddbe3f6e2efc794f2befbfe247217479ef4b68030d42c3","0x7a82a5feefcaad4a89c689412031e5f87c02b29e3fced583be5f05c7077354b7"]}]}"#)
             // expect exactly 1 POST request
             .expect(1)
             .with_status(200)
@@ -167,7 +167,7 @@ mod tests {
             .create();
 
         let compute_peer = "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE";
-        let chain = marine_test_env::fluence_aurora_connector::ChainInfo {
+        let chain = marine_test_env::chain_connector::ChainInfo {
             api_endpoint: url,
             matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
             workers_gas: <_>::default(),
