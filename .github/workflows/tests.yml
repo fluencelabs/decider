@@ -87,6 +87,10 @@ jobs:
           path: src/tests/decider-distro-tests-rs/target/nextest/ci/junit.xml
           reporter: java-junit
 
+      - name: Setup tmate session
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
+
       - name: Dump docker logs
         if: always()
         uses: jwalton/gh-docker-logs@v2
