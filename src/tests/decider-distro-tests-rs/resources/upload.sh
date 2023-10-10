@@ -12,3 +12,7 @@ do
     done
     cd -
 done
+
+
+echo "try get"
+ipfs get -o /tmp/test.wasm bafkreici665k2iypfxyxgc7zh6wyho6gqogyald7zz3k6tsjzxcuhgpx7u --api /ip4/127.0.0.1/tcp/5001 --timeout 60s
