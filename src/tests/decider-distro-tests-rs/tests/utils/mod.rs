@@ -34,8 +34,8 @@ pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
     if let Some(path) = IPFS_CLI_PATH {
         config.ipfs_binary_path = path.to_string();
     }
-    config.external_ipfs_multiaddr = IPFS_MULTIADDR.to_string();
-    config.external_ipfs_nultiaddr = IPFS_MULTIADDR.to_string();
+    config.external_api_multiaddr = IPFS_MULTIADDR.to_string();
+    config.local_api_multiaddr = IPFS_MULTIADDR.to_string();
     config
 }
 
