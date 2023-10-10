@@ -76,11 +76,11 @@ pub fn enable_decider_logs() {
     let namespaces = vec![
         "run-console=debug",
         "chain_connector=debug",
+        "ipfs_effector=debug",
+        "ipfs_pure=debug",
         /*
         "spell_event_bus=trace",
         "system_services=debug",
-        "ipfs_effector=debug",
-        "ipfs_pure=debug",
         "particle_reap=debug",
         "aquamarine::actor=debug",
         "aquamarine::aqua_runtime=off",
@@ -292,6 +292,7 @@ pub async fn wait_worker_spell_stopped(
     worker_id: String,
     timeout_per_try: Duration,
 ) {
+    let mut finished = false;
     for _ in 0..5 {
         // if only we can import these keys from Aqua files
         let result = execute(
@@ -328,17 +329,21 @@ pub async fn wait_worker_spell_stopped(
             let last_status = strings.strings.last().unwrap();
             let state = serde_json::from_str::<State>(last_status).unwrap();
             let in_progress_statuses = ["INSTALLATION_IN_PROGRESS", "NOT_STARTED"];
-            println!("WORKER STATUS: {}", state.state);
             if !in_progress_statuses.contains(&state.state.as_str()) {
                 assert_eq!(
                     state.state, "INSTALLATION_SUCCESSFUL",
                     "wrong installation spell status"
                 );
+                finished = true;
                 break;
             }
         }
         tokio::time::sleep(timeout_per_try).await;
     }
+    assert!(
+        finished,
+        "installation spell didn't finish in time or failed"
+    );
 }
 
 pub async fn wait_decider_stopped(client: &mut ConnectedClient) {
