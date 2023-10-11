@@ -1,6 +1,7 @@
 pub mod test_rpc_server;
 
 use connected_client::ConnectedClient;
+use created_swarm::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
 use created_swarm::{make_swarms_with_cfg, CreatedSwarm};
 use decider_distro::DeciderConfig;
 use eyre::WrapErr;
@@ -10,7 +11,6 @@ use fluence_spell_dtos::value::{ScriptValue, StringListValue, StringValue};
 use maplit::hashmap;
 use serde::Deserialize;
 use serde_json::{json, Value};
-use server_config::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
