@@ -1,0 +1,1 @@
+{"name":"curl_adapter","wasi":{},"logger_enabled":true,"mounted_binaries":{"curl":"/usr/bin/curl"}}

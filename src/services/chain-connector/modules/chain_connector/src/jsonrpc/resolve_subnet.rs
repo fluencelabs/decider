@@ -151,11 +151,11 @@ mod tests {
 
     // Set env RUST_LOGGER="mockito=debug" to enable Mockito's logs
     #[marine_test(config_path = "../../../../../../../src/distro/decider-spell/Config.toml")]
-    fn get_pats(connector: marine_test_env::fluence_aurora_connector::ModuleInterface) {
+    fn get_pats(connector: marine_test_env::chain_connector::ModuleInterface) {
         let _ = ::env_logger::builder()
             .filter_level(log::LevelFilter::Debug)
             .filter_module("mockito", log::LevelFilter::Debug)
-            .filter_module("fluence_aurora_connector", log::LevelFilter::Debug)
+            .filter_module("chain_connector", log::LevelFilter::Debug)
             .filter_module("marine_core", log::LevelFilter::Debug)
             .filter_module("wasmer_interface_types_fl", log::LevelFilter::Off)
             .is_test(true)
