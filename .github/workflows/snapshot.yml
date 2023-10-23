@@ -48,7 +48,7 @@ jobs:
           node-version: "18"
 
       - name: Install fluence-cli
-        run: npm i -g @fluencelabs/cli@unstable && echo heh
+        run: npm i -g @fluencelabs/cli@0.11.1
 
       - name: Set dependencies
         if: inputs.cargo-dependencies != 'null'
