@@ -51,7 +51,7 @@ jobs:
           docker-compose -f .github/e2e/docker-compose.yml up -d
 
       - name: Install fluence-cli
-        run: npm i -g @fluencelabs/cli@unstable
+        run: npm i -g @fluencelabs/cli@0.11.1
 
       - name: Set dependencies
         if: inputs.cargo-dependencies != 'null'
