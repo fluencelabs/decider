@@ -52,7 +52,7 @@ jobs:
 
       - name: Set dependencies
         if: inputs.cargo-dependencies != 'null'
-        uses: fluencelabs/github-actions/cargo-set-dependency@FLU-477
+        uses: fluencelabs/github-actions/cargo-set-dependency@main
         with:
           dependencies: ${{ inputs.cargo-dependencies }}
           path: src/decider
