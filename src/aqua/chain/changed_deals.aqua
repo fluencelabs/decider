@@ -5,13 +5,28 @@ import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 import deal_log, spell_log, get_string from "../fluence/spell.aqua"
 import Json from "../fluence/peer.aqua"
 import ChainInfo from "../chain/chain.aqua"
-import JoinedDeal, JsonDealState, DealState, store_deal_state, make_change_reqs from "../decider/deal_storage.aqua"
+import JoinedDeal, JsonDealState, DealState, store_deal_state, get_deal_state  from "../decider/deal_storage.aqua"
 import SpellId, DealId from "../types.aqua"
 
 import DealInfo, DealChangesReq, ChainConnector, DealChangedResult from "services.aqua"
 
 use "../chain/blocks.aqua" as Blocks
 use "../hex.aqua" as Hex
+
+func make_change_reqs(spell_id: SpellId, deals: []JoinedDeal) -> []DealChangesReq:
+    requests: *DealChangesReq
+
+    if deals != nil:
+        -- Collect info about all known deals
+        deal_updates: *DealChangesReq
+        for joined_deal <- deals:
+            deal_id = joined_deal.deal_id
+            deal_state <- get_deal_state(spell_id, deal_id)
+            if deal_state != nil:
+                deal_info = DealInfo(deal_id = deal_id, worker_id = joined_deal.worker_id)
+                requests <<- DealChangesReq(deal_info = deal_info, left_boundary = deal_state!.left_boundary)
+
+    <- requests
 
 -- Get DealChanged logs from RPC
 func get_deal_changes(spell_id: SpellId, api_endpoint: string, joined: []JoinedDeal) -> ?[]DealChangedResult:

@@ -443,6 +443,57 @@ pub async fn get_joined_deals(mut client: &mut ConnectedClient) -> Vec<JoinedDea
     parse_joined_deals(deals.remove(0))
 }
 
+#[derive(Deserialize, Debug)]
+#[serde(tag = "type", content = "content")]
+pub enum FailedDealPayload {
+    InstallationFailed { log: Value },
+    TxFailed { tx_hash: Vec<String> },
+}
+
+#[derive(Deserialize, Debug)]
+pub struct FailedDeal {
+    deal_id: String,
+    worker_id: Vec<String>,
+    message: String,
+    payload: FailedDealPayload,
+}
+
+pub async fn get_failed_deals(mut client: &mut ConnectedClient) -> Vec<FailedDeal> {
+    let mut deals = execute(
+        &mut client,
+        r#"
+            (call relay ("decider" "list_get_strings") ["failed_deals"] deals)
+        "#,
+        "deals",
+        hashmap! {},
+    )
+    .await
+    .unwrap();
+    let lst = serde_json::from_value::<StringListValue>(deals.remove(0)).unwrap();
+    assert!(lst.success, "can't receive failed_deals: {}", lst.error);
+    lst.strings
+        .iter()
+        .map(|s| serde_json::from_str::<FailedDeal>(s))
+        .collect::<Result<Vec<_>, _>>()
+        .unwrap()
+}
+
+pub async fn get_worker(mut client: &mut ConnectedClient, deal: &str) -> Vec<String> {
+    let mut worker = execute(
+        &mut client,
+        r#"
+            (call relay ("worker" "get_worker_id") [dealid] worker)
+        "#,
+        "worker",
+        hashmap! {
+            "dealid" => json!(format!("0x{deal}"))
+        },
+    )
+    .await
+    .unwrap();
+    serde_json::from_value::<Vec<String>>(worker.remove(0)).unwrap()
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LogsReq {
@@ -452,6 +503,15 @@ pub struct LogsReq {
     #[serde(deserialize_with = "hex_u32_deserialize")]
     pub to_block: u32,
     pub topics: Vec<String>,
+}
+
+pub fn filter_logs<'a, T>(blocks: &'a [(u32, T)], req: &LogsReq) -> Vec<&'a (u32, T)> {
+    blocks
+        .iter()
+        .filter(|(block_number, _)| {
+            *block_number >= req.from_block && *block_number <= req.to_block
+        })
+        .collect::<_>()
 }
 
 pub fn hex_u32_deserialize<'de, D>(deserializer: D) -> Result<u32, D::Error>

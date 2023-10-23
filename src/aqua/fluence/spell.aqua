@@ -1,4 +1,4 @@
-module Spell declares get_string, spell_log, get_counter, deal_log
+module Spell declares get_string, spell_log, get_counter, deal_log, list_push
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 import Op from "@fluencelabs/aqua-lib/builtin.aqua"
@@ -44,3 +44,10 @@ func get_counter(spell_id: SpellId) -> u32:
     else:
         result <<- 0
     <- result!
+
+func list_push(spell_id: SpellId, key: string, val: ⊤):
+    Spell spell_id
+    str <- Json.stringify(val)
+    result <- Spell.list_push_string(key, str)
+    if !result.success:
+        spell_log(spell_id, ["can't store value in list by key", key, "error:", result.error])

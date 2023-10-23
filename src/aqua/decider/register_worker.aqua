@@ -1,12 +1,26 @@
-module RegisterWorker declares register_worker
+module RegisterWorker declares register_worker, WorkerTxInfo
 
 import DealId, SpellId, WorkerId, PAT from "../types.aqua"
-import spell_log, deal_log from "../fluence/spell.aqua"
-import ChainConnector from "services.aqua"
+import spell_log, deal_log, list_push from "../fluence/spell.aqua"
+import ChainConnector, RegisterWorkerResult from "services.aqua"
 import ChainInfo from "../chain/chain.aqua"
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+import Json from "../fluence/peer.aqua"
+import store_tx_failed_deal from "decider/deal_storage.aqua"
+alias TxHash: string
 
-func register_call() -> string:
-    <- "OK"
+const REGISTRATION_KEY = "worker_registration_txs"
+
+data WorkerTxInfo:
+    deal_id: DealId
+    worker_id: WorkerId
+    tx_hash: TxHash
+
+service JsonWorkerTxInfo("json"):
+    parse(str: string) -> WorkerTxInfo 
+
+func store_tx(spell_id: SpellId, tx_info: WorkerTxInfo):
+    list_push(spell_id, REGISTRATION_KEY, tx_info)
 
 -- TODO:
 -- Store joined worker in KV, status = unregistered
@@ -27,9 +41,13 @@ func register_call() -> string:
 --  so we'll load same Chain Events and repeat the whole deployment and registration once again.
 -- Remember to track registration failures though, and retry them
 
-func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, pat_id: []u8):
-    err <- ChainConnector.register_worker(pat_id, worker_id, chain, deal_id)
-    if err == nil:
-        deal_log(spell_id, deal_id, "registered worker")
+func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, pat_id: []u8) -> bool:
+    result <- ChainConnector.register_worker(pat_id, worker_id, chain, deal_id)
+    is_ok = result.success
+    if result.success:
+        deal_log(spell_id, deal_id, ["registered worker", result.tx_hash])
+        store_tx(spell_id, WorkerTxInfo(deal_id = deal_id, worker_id = worker_id, tx_hash = result.tx_hash!))
     else:
-        deal_log(spell_id, deal_id, ["error registering worker", err!])
+        deal_log(spell_id, deal_id, ["error registering worker", result.error!])
+        store_tx_failed_deal(spell_id, deal_id, worker_id, result.error!, nil)
+    <- is_ok

@@ -680,12 +680,23 @@ async fn test_deploy_deals_in_one_block() {
 ///
 ///
 #[tokio::test]
-#[should_panic]
 async fn test_register_worker_fails() {
+    //enable_decider_logs();
+
     const BLOCK_INIT: u32 = 1;
     const DEAL_ID: &'static str = DEAL_IDS[0];
+    const DEAL_ID_2: &'static str = DEAL_IDS[1];
+    const DEAL_ID_3: &'static str = DEAL_IDS[2];
     const BLOCK_NUMBER: u32 = 32;
+    const BLOCK_NUMBER_2: u32 = 50;
+    const BLOCK_NUMBER_3: u32 = 100;
     const BLOCK_NUMBER_LATER: u32 = 200;
+
+    let deals_in_blocks = vec![
+        (BLOCK_NUMBER, DEAL_ID),
+        (BLOCK_NUMBER_2, DEAL_ID_2),
+        (BLOCK_NUMBER_3, DEAL_ID_3),
+    ];
 
     let mut server = run_test_server();
     let url = server.url.clone();
@@ -702,65 +713,53 @@ async fn test_register_worker_fails() {
             "code": -32000,
             "message": "intentional error",
         });
-        // Reqs: blockNumber, getLogs and 2x of one of gasPrice, getTransactionCount and sendRawTransaction
-        // (try all to not depend on the order)
-        for _step in 0..3 {
+        // Reqs: blockNumber, getLogs and 3x of one of gasPrice, getTransactionCount and sendRawTransaction
+        // deal 2 should be ok, but deal 1 and deal 3 should fail in registration
+        for step in 0..11 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
-                "eth_blockNumber" => Ok(json!(to_hex(BLOCK_INIT))),
+                "eth_blockNumber" => Ok(json!(to_hex(BLOCK_INIT))), // step 0
                 "eth_getLogs" => {
+                    // step 1
                     let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-                    Ok(json!([TestApp::log_test_app2(
-                        DEAL_ID,
-                        BLOCK_NUMBER,
-                        log.topics[1].as_str()
-                    )]))
+                    let logs = filter_logs(&deals_in_blocks, &log);
+                    let reply = logs
+                        .iter()
+                        .map(|(block, deal_id)| {
+                            println!("install {} from block {}", deal_id, block);
+                            TestApp::log_test_app1(deal_id, *block, log.topics[1].as_str())
+                        })
+                        .collect::<Vec<_>>();
+                    Ok(json!(reply))
                 }
-                "eth_sendRawTransaction" => Err(error_value.clone()),
-                "eth_getTransactionCount" => Err(error_value.clone()),
-                "eth_gasPrice" => Err(error_value.clone()),
+                "eth_sendRawTransaction" => {
+                    // step 4 for deal 1, step 7 for deal 2, step 9 for deal 3
+                    if step == 7 {
+                        Ok(json!(
+                            "0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05"
+                        ))
+                    } else {
+                        Err(error_value.clone())
+                    }
+                }
+                // step 3 for deal 1, step 6 for deal 2, step 9 for deal 3,
+                "eth_getTransactionCount" => Ok(json!("0x1")),
+                // step 2 for deal 1, step 5 for deal 2, step 8 for deal 3
+                "eth_gasPrice" => Ok(json!("0x3b9aca07")),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(response);
         }
     }
     wait_decider_stopped(&mut client).await;
-    let deals = get_joined_deals(&mut client).await;
-    assert!(
-        !deals.is_empty(),
-        "since the registration failed, the deal must not be joined"
+    let failed = get_failed_deals(&mut client).await;
+    assert_eq!(
+        failed.len(),
+        2,
+        "only one deal must be joined: {:?}",
+        failed
     );
 
-    update_config(&mut client, &oneshot_config()).await.unwrap();
-
-    // TODO: rewrite cycle to seq execution
-    // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction
-    for _ in 0..5 {
-        let (method, params) = server.receive_request().await.unwrap();
-        let response = match method.as_str() {
-            "eth_blockNumber" => json!(to_hex(BLOCK_NUMBER_LATER)),
-            "eth_getLogs" => {
-                let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-                assert!(log.from_block <= BLOCK_NUMBER);
-                assert!(log.to_block <= BLOCK_NUMBER);
-                json!([TestApp::log_test_app1(
-                    DEAL_ID,
-                    BLOCK_NUMBER,
-                    log.topics[1].as_str()
-                ),])
-            }
-            "eth_sendRawTransaction" => {
-                // TODO: how not to wait for the registration if Decider failed?
-                json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
-            }
-            "eth_getTransactionCount" => json!("0x1"),
-            "eth_gasPrice" => json!("0x3b9aca07"),
-            _ => panic!("mock http got an unexpected rpc method: {}", method),
-        };
-        server.send_response(Ok(response));
-    }
-
-    wait_decider_stopped(&mut client).await;
     let deals = get_joined_deals(&mut client).await;
-    assert!(!deals.is_empty(), "the deal must be joined after fail")
+    assert_eq!(deals.len(), 1, "only one deal must be joined: {:?}", deals);
 }

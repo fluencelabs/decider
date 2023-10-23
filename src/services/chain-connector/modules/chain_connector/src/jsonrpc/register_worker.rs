@@ -39,12 +39,37 @@ pub enum RegisterWorkerError {
 }
 
 #[marine]
+pub struct RegisterWorkerResult {
+    success: bool,
+    tx_hash: Vec<String>,
+    error: Vec<String>,
+}
+
+impl RegisterWorkerResult {
+    fn ok(tx_hash: String) ->  Self {
+        Self {
+            success: true,
+            tx_hash: vec![tx_hash],
+            error: vec![],
+        }
+    }
+
+    fn error(err: RegisterWorkerError) -> Self {
+        Self {
+            success: false,
+            tx_hash: vec![],
+            error: vec![err.to_string()]
+        }
+    }
+}
+
+#[marine]
 pub fn register_worker(
     pat_id: Vec<u8>,
     worker_id: &str,
     chain: ChainInfo,
     deal_addr: &str,
-) -> Vec<String> {
+) -> RegisterWorkerResult {
     let endpoint = &chain.api_endpoint;
     let gas = chain.workers_gas;
     let network_id = chain.network_id;
@@ -59,8 +84,8 @@ pub fn register_worker(
     };
 
     match r {
-        Ok(_) => vec![],
-        Err(err) => vec![format!("{}", err)],
+        Ok(tx_hash) => RegisterWorkerResult::ok(tx_hash),
+        Err(err) => RegisterWorkerResult::error(err),
     }
 }
 
@@ -296,18 +321,17 @@ mod tests {
             particle_id: "".to_string(),
             tetraplets: vec![],
         };
-        let error_opt = connector.register_worker_cp(
+        let result = connector.register_worker_cp(
             pat_id().into(),
             WORKER_ID.into(),
             chain,
             "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
             cp,
         );
-        assert_eq!(
-            error_opt.len(),
-            0,
+        assert!(
+            result.success,
             "error in register_worker: {}",
-            error_opt[0]
+            result.error[0]
         );
 
         // assert that there was no invalid requests
