@@ -55,6 +55,7 @@ jobs:
         uses: fluencelabs/github-actions/cargo-set-dependency@main
         with:
           dependencies: ${{ inputs.cargo-dependencies }}
+          path: src/distro
 
       - name: Build distro
         run: ./build.sh
