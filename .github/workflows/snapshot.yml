@@ -52,13 +52,10 @@ jobs:
 
       - name: Set dependencies
         if: inputs.cargo-dependencies != 'null'
-        uses: fluencelabs/github-actions/cargo-set-dependency@main
+        uses: fluencelabs/github-actions/cargo-set-dependency@FLU-477
         with:
           dependencies: ${{ inputs.cargo-dependencies }}
-
-      - name: Setup tmate session
-        if: failure()
-        uses: mxschmitt/action-tmate@v3
+          path: src/decider
 
       - name: Build distro
         run: ./build.sh
