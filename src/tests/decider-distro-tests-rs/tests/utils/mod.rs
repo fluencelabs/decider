@@ -444,6 +444,54 @@ pub async fn get_joined_deals(mut client: &mut ConnectedClient) -> Vec<JoinedDea
 }
 
 #[derive(Deserialize, Debug)]
+pub struct WorkerTxInfo {
+    deal_id: String,
+    worker_id: String,
+    tx_hash: String,
+}
+
+pub async fn get_tx_queue(mut client: &mut ConnectedClient) -> Vec<WorkerTxInfo> {
+    let mut result = execute(
+        &mut client,
+        r#"
+            (seq
+                (call relay ("decider" "list_get_strings") ["worker_registration_txs"] txs)
+                (call relay ("decider" "list_get_strings") ["worker_registration_txs_helper"] txs_helper)
+            )
+        "#,
+        "txs txs_helper",
+        hashmap! {},
+    )
+    .await
+    .unwrap();
+    let txs = serde_json::from_value::<StringListValue>(result.remove(0)).unwrap();
+    assert!(
+        txs.success,
+        "can't receive `worker_registration_txs`: {}",
+        txs.error
+    );
+    let mut txs = txs
+        .strings
+        .iter()
+        .map(|tx| serde_json::from_str::<WorkerTxInfo>(tx).unwrap())
+        .collect::<Vec<_>>();
+
+    let txs_helper = serde_json::from_value::<StringListValue>(result.remove(0)).unwrap();
+    assert!(
+        txs_helper.success,
+        "can't receive `worker_registration_txs`: {}",
+        txs_helper.error
+    );
+    let mut txs_helper = txs_helper
+        .strings
+        .iter()
+        .map(|tx| serde_json::from_str::<WorkerTxInfo>(tx).unwrap())
+        .collect::<Vec<_>>();
+    txs.append(&mut txs_helper);
+    txs
+}
+
+#[derive(Deserialize, Debug)]
 #[serde(tag = "type", content = "content")]
 pub enum FailedDealPayload {
     InstallationFailed { log: Value },

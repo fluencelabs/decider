@@ -101,7 +101,7 @@ async fn test_update_deal() {
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Deploy a deal
     {
-        let expected_reqs = 5;
+        let expected_reqs = 6;
         for _ in 0..expected_reqs {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
@@ -119,6 +119,7 @@ async fn test_update_deal() {
                 }
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
+                "eth_getTransactionReceipt" => json!({"status" : "0x1"}),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(Ok(response));
@@ -217,7 +218,7 @@ async fn test_remove_deal() {
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Deploy a deal
     {
-        let expected_reqs = 5;
+        let expected_reqs = 6;
         for _ in 0..expected_reqs {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
@@ -235,6 +236,7 @@ async fn test_remove_deal() {
                 }
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
+                "eth_getTransactionReceipt" => json!({"status" : "0x1"}),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(Ok(json!(response)));

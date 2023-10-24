@@ -1,15 +1,17 @@
-module RegisterWorker declares register_worker, WorkerTxInfo
+module RegisterWorker declares register_worker, WorkerTxInfo, poll_txs
 
 import DealId, SpellId, WorkerId, PAT from "../types.aqua"
 import spell_log, deal_log, list_push from "../fluence/spell.aqua"
-import ChainConnector, RegisterWorkerResult from "services.aqua"
+import ChainConnector, RegisterWorkerResult, TxStatusResult from "services.aqua"
 import ChainInfo from "../chain/chain.aqua"
-import Spell from "@fluencelabs/spell/spell_service.aqua"
+import Spell, StringListValue from "@fluencelabs/spell/spell_service.aqua"
 import Json from "../fluence/peer.aqua"
 import store_tx_failed_deal from "decider/deal_storage.aqua"
+
 alias TxHash: string
 
 const REGISTRATION_KEY = "worker_registration_txs"
+const REGISTRATION_KEY_HELPER = "worker_registration_txs_helper"
 
 data WorkerTxInfo:
     deal_id: DealId
@@ -51,3 +53,47 @@ func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worke
         deal_log(spell_id, deal_id, ["error registering worker", result.error!])
         store_tx_failed_deal(spell_id, deal_id, worker_id, result.error!, nil)
     <- is_ok
+
+func move_to_helper_stack(spell_id: SpellId):
+    Spell spell_id
+    result <- Spell.list_get_strings(REGISTRATION_KEY)
+    if result.success:
+        for val_unused <- result.strings:
+            val <- Spell.list_pop_string(REGISTRATION_KEY) 
+            if val.success:
+                Spell.list_push_string(REGISTRATION_KEY_HELPER, val.str)
+
+func poll_txs(spell_id: SpellId, api_endpoint: string):
+    Spell spell_id
+
+    failed_txs: *StringListValue
+
+    -- inefficient now due to lack of api from the spell service
+    failed_txs_helper <- Spell.list_get_strings(REGISTRATION_KEY_HELPER)
+    if failed_txs_helper.success && failed_txs_helper.strings.length == 0:
+        move_to_helper_stack(spell_id) 
+        failed_txs <<- Spell.list_get_strings(REGISTRATION_KEY_HELPER)
+    else:
+        failed_txs <<- failed_txs_helper
+    
+    if failed_txs!.success:
+        for tx_unsued <- failed_txs!.strings:
+            tx_str <- Spell.list_pop_string(REGISTRATION_KEY_HELPER)
+            if tx_str.success:
+                tx <- JsonWorkerTxInfo.parse(tx_str.str)
+                tx_status <- ChainConnector.get_tx_status(api_endpoint, tx.tx_hash)
+                deal_log(spell_id, tx.deal_id, ["status", tx_status])
+                if !tx_status.success:
+                    deal_log(spell_id, tx.deal_id, ["failed to poll tx status", tx, "error:", tx_status.error, "reschedule polling"])
+                    store_tx(spell_id, tx)
+                else:
+                    if tx_status.status == "failed":
+                        deal_log(spell_id, tx.deal_id, ["transaction failed", tx.tx_hash])
+                        store_tx_failed_deal(spell_id, tx.deal_id, tx.worker_id, "transaction failed", ?[tx.tx_hash])
+                    else:
+                        if tx_status.status == "pending":
+                            deal_log(spell_id, tx.deal_id, ["transaction still pending", tx.tx_hash])
+                            store_tx(spell_id, tx)
+                        else:
+                            if tx_status.status == "ok":
+                                deal_log(spell_id, tx.deal_id, ["transaction done, can find receipt by tx hash:", tx.tx_hash])
