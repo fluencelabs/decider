@@ -58,6 +58,8 @@ jobs:
           path: src/distro
 
       - name: Build distro
+        env:
+          FLUENCE_USER_DIR: "${{ github.workspace }}/tmp/.fluence"
         run: ./build.sh
 
       - name: Import secrets
@@ -83,3 +85,7 @@ jobs:
         with:
           id: ${{ steps.version.outputs.id }}
           path: src/distro
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf tmp ~/.fluence
