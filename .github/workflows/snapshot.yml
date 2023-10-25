@@ -48,15 +48,18 @@ jobs:
           node-version: "18"
 
       - name: Install fluence-cli
-        run: npm i -g @fluencelabs/cli@unstable
+        run: npm i -g @fluencelabs/cli@0.11.1
 
       - name: Set dependencies
         if: inputs.cargo-dependencies != 'null'
         uses: fluencelabs/github-actions/cargo-set-dependency@main
         with:
           dependencies: ${{ inputs.cargo-dependencies }}
+          path: src/distro
 
       - name: Build distro
+        env:
+          FLUENCE_USER_DIR: "${{ github.workspace }}/tmp/.fluence"
         run: ./build.sh
 
       - name: Import secrets
@@ -82,3 +85,7 @@ jobs:
         with:
           id: ${{ steps.version.outputs.id }}
           path: src/distro
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf tmp ~/.fluence
