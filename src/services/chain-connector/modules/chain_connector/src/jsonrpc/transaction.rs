@@ -10,6 +10,9 @@ use thiserror::Error;
 use super::JsonRpcError;
 
 #[marine]
+pub struct TxStatusResults {}
+
+#[marine]
 pub struct TxStatusResult {
     success: bool,
     error: Vec<String>,
@@ -45,7 +48,7 @@ impl TxStatusResult {
         Self {
             success: false,
             error: vec![msg],
-            status: "failed".to_string(),
+            status: "error".to_string(),
         }
     }
 }
@@ -64,6 +67,32 @@ enum TxError {
     RequestError(#[from] RequestError),
     #[error("unknown transaction status `{0}`")]
     UnexpectedStatus(String),
+}
+
+#[marine]
+pub fn get_tx_statuses(api_endpoint: String, tx_hash: Vec<String>) -> TxStatusResult {
+    let req = TxReq::new(tx_hash).to_jsonrpc(0);
+
+    let result: Result<TxStatus, TxError> = try {
+        let result: JsonRpcResp<Option<TxResp>> = send_jsonrpc(&api_endpoint, req)?;
+        let result = result.get_result()?;
+        log::debug!("result {:?}", result);
+        if let Some(result) = result {
+            match result.status.as_str() {
+                "0x1" => Ok(TxStatus::Ok),
+                "0x0" => Ok(TxStatus::Failed),
+                x => Err(TxError::UnexpectedStatus(x.to_string())),
+            }?
+        } else {
+            TxStatus::Pending
+        }
+    };
+    match result {
+        Err(err) => TxStatusResult::error(err.to_string()),
+        Ok(TxStatus::Ok) => TxStatusResult::ok(),
+        Ok(TxStatus::Pending) => TxStatusResult::pending(),
+        Ok(TxStatus::Failed) => TxStatusResult::failed(),
+    }
 }
 
 #[marine]
@@ -93,8 +122,10 @@ pub fn get_tx_status(api_endpoint: String, tx_hash: String) -> TxStatusResult {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct TxResp {
     status: String,
+    block_number: String,
 }
 
 #[derive(Serialize, Deserialize)]
