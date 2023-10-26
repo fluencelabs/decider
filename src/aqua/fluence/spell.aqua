@@ -27,11 +27,12 @@ func get_string(spell_id: SpellId, key: string) -> ?string:
     result: *string
 
     value <- Spell.get_string(key)
-    if value.success == false:
+    if !value.success:
         spell_log(spell_id, ["get_string failed", key, value.error])
     else:
-        if value.absent == false:
+        if !value.absent:
             result <<- value.str
+            
     <- result
 
 
