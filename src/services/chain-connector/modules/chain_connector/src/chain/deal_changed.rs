@@ -28,7 +28,7 @@ pub struct DealChanged {
 }
 
 impl DealChanged {
-    pub const EVENT_NAME: &str = "AppCIDChanged";
+    pub const EVENT_NAME: &'static str = "AppCIDChanged";
 }
 
 impl ChainData for DealChangedData {

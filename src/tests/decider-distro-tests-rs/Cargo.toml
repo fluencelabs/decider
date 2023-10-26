@@ -7,12 +7,12 @@ edition = "2021"
 
 [dev-dependencies]
 decider-distro = { path = "../../distro" }
-created-swarm = { git = "https://github.com/fluencelabs/nox.git", branch = "created-swarm-system-services-config-override" }
-connected-client = { git = "https://github.com/fluencelabs/nox.git", branch = "created-swarm-system-services-config-override" }
-system-services = { git = "https://github.com/fluencelabs/nox.git", branch = "created-swarm-system-services-config-override" }
-server-config = { git = "https://github.com/fluencelabs/nox.git", branch = "created-swarm-system-services-config-override" }
-log-utils = { git = "https://github.com/fluencelabs/nox.git", branch = "created-swarm-system-services-config-override" }
-fluence-app-service = { version = "=0.26.4-feat-wasm-backend-interface-update-b3cf050-636-1.0", registry = "fluence" }
+created-swarm = { git = "https://github.com/fluencelabs/nox.git", branch = "master" }
+connected-client = { git = "https://github.com/fluencelabs/nox.git", branch = "master" }
+system-services = { git = "https://github.com/fluencelabs/nox.git", branch = "master" }
+server-config = { git = "https://github.com/fluencelabs/nox.git", branch = "master" }
+log-utils = { git = "https://github.com/fluencelabs/nox.git", branch = "master" }
+fluence-app-service = "0.29.0"
 
 fluence-keypair = "0.10.3"
 
