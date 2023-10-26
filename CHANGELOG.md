@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.2](https://github.com/fluencelabs/decider/compare/connector-v0.5.1...connector-v0.5.2) (2023-10-25)
+
+
+### Bug Fixes
+
+* **connector:** Rename connector to ChainConnector [NET-537] ([#73](https://github.com/fluencelabs/decider/issues/73)) ([26cde44](https://github.com/fluencelabs/decider/commit/26cde44acdd9d5e678141d1c482a88b7ee9037b8))
+* **decider:** update AppCIDChanged topic [NET-573] ([#94](https://github.com/fluencelabs/decider/issues/94)) ([2261def](https://github.com/fluencelabs/decider/commit/2261defa3ac7fc0b14f3f41199512e348f097a0a))
+* **decider:** use new logs api [NET-543] ([#79](https://github.com/fluencelabs/decider/issues/79)) ([3dabea9](https://github.com/fluencelabs/decider/commit/3dabea9903ca450b6d93fa111949bdd18395929f))
+
 ## [0.5.1](https://github.com/fluencelabs/decider/compare/connector-v0.5.0...connector-v0.5.1) (2023-09-06)
 
 
