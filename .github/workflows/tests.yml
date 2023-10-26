@@ -25,6 +25,7 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      checks: write
 
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +43,7 @@ jobs:
           save-if: false
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
 

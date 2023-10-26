@@ -1,7 +1,7 @@
+use cid::Cid;
 use ethabi::param_type::ParamType;
 use ethabi::Token;
 use marine_rs_sdk::marine;
-use cid::Cid;
 
 use crate::chain::chain_data::EventField::NotIndexed;
 use crate::chain::chain_data::{ChainData, ChainDataError, EventField};
@@ -28,7 +28,7 @@ pub struct DealChanged {
 }
 
 impl DealChanged {
-    pub const EVENT_NAME: &str = "NewAppCID";
+    pub const EVENT_NAME: &str = "AppCIDChanged";
 }
 
 impl ChainData for DealChangedData {
@@ -37,15 +37,12 @@ impl ChainData for DealChangedData {
     }
 
     fn signature() -> Vec<EventField> {
-        vec![
-
-            NotIndexed(ParamType::Tuple(vec![
-                // prefixes
-                ParamType::FixedBytes(4),
-                // hash
-                ParamType::FixedBytes(32),
-            ]))
-        ]
+        vec![NotIndexed(ParamType::Tuple(vec![
+            // prefixes
+            ParamType::FixedBytes(4),
+            // hash
+            ParamType::FixedBytes(32),
+        ]))]
     }
 
     /// Parse data from chain. Accepts data with and without "0x" prefix.
@@ -69,4 +66,18 @@ impl ChainEvent<DealChangedData> for DealChanged {
 pub fn parse_deal_changed(log: Log) -> Option<DealChanged> {
     // TODO: should we communicate these failures to Aqua code?
     parse_log::<DealChangedData, DealChanged>(log).ok()
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::chain::chain_data::ChainData;
+    use crate::chain::deal_changed::DealChangedData;
+
+    #[test]
+    fn topic() {
+        assert_eq!(
+            DealChangedData::topic(),
+            String::from("0xc820a66d3bdd50a45cf12cda6dc8ec9e94fb5123edd7da736eea18316f8523a0")
+        );
+    }
 }
