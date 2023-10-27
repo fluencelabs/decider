@@ -16,43 +16,35 @@ func get_latest(spell_id: SpellId, chain: ChainInfo) -> ?string:
         spell_log(spell_id, ["error retrieving latest block number", latest_block.error])
     <- latest
 
--- implements Less Than or Equal for two hex strings, i.e. `hex_a <= hex_b`
+-- Implements comparison for two hex strings
+-- spell_id - spell id for error log
+-- hex_a - left hex string
+-- hex_b - right hex string
+-- pred - func from ordering to result 
+--        ordering is -1 for <, 0 for =, 1 for >
 -- returns nil if either `hex_a` or `hex_b` is an invalid hex
-func lte(spell_id: string, hex_a: string, hex_b: string) -> ?bool:
-    lte: ?bool
+func hex_cmp(spell_id: SpellId, hex_a: string, hex_b: string, pred: i8 -> bool) -> ?bool:
+    result: ?bool
 
     cmp <- ChainConnector.hex_cmp(hex_a, hex_b)
+
     if cmp.success:
-        -- `hex_a` is less than `hex_b`
-        if cmp.ordering == -1:
-            lte <<- true
-        -- `hex_a` equals to `hex_b`
-        if cmp.ordering == 0:
-            lte <<- true
-        -- `hex_a` is greater than `hex_b`
-        if cmp.ordering == 1:
-            lte <<- false
+        result <- pred(cmp.ordering)
     else:
         spell_log(spell_id, ["hex_cmp error", cmp.error])
 
-    <- lte
+    <- result
 
--- `hex_a > hex_b`
+-- LTE for two hex strings, i.e. `hex_a <= hex_b`
+func lte(spell_id: SpellId, hex_a: string, hex_b: string) -> ?bool:
+    pred = (ord: i8) -> bool:
+        <- ord <= 0
+
+    <- hex_cmp(spell_id, hex_a, hex_b, pred)
+
+-- GT for two hex strings, i.e. `hex_a > hex_b`
 func gt(spell_id: string, hex_a: string, hex_b: string) -> ?bool:
-    gt: ?bool
+    pred = (ord: i8) -> bool:
+        <- ord > 0
 
-    cmp <- ChainConnector.hex_cmp(hex_a, hex_b)
-    if cmp.success:
-        -- `hex_a` is less than `hex_b`
-        if cmp.ordering == -1:
-            gt <<- false
-        -- `hex_a` equals to `hex_b`
-        if cmp.ordering == 0:
-            gt <<- false
-        -- `hex_a` is greater than `hex_b`
-        if cmp.ordering == 1:
-            gt <<- true
-    else:
-        spell_log(spell_id, ["hex_cmp error", cmp.error])
-
-    <- gt
+    <- hex_cmp(spell_id, hex_a, hex_b, pred)

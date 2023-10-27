@@ -1,7 +1,6 @@
 module DealStorage declares *
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
-import or, not, and from "@fluencelabs/aqua-lib/binary.aqua"
 
 import Json from "../fluence/peer.aqua"
 import spell_log, get_string, deal_log, list_push from "../fluence/spell.aqua"
@@ -28,7 +27,7 @@ func get_deal_state(decider_id: SpellId, deal_id: DealId) -> ?DealState:
     state: ?DealState
 
     json <- Spell.get_string(deal_id)
-    if and(json.success, not(json.absent)):
+    if json.success && !json.absent:
         try:
             state <- JsonDealState.parse(json.str)
         catch e:
@@ -57,13 +56,12 @@ func get_joined_deals(spell_id: SpellId) -> []JoinedDeal:
     joined_deals: *JoinedDeal
 
     list <- Spell.list_get_strings("joined_deals")
-    if list.success == false:
+    if !list.success:
         spell_log(spell_id, ["can't restrive joined deals", list.error])
     else:
         for joined_deal_str <- list.strings:
             try:
-                joined_deal <- JsonJoinedDeal.parse(joined_deal_str)
-                joined_deals <<- joined_deal
+                joined_deals <- JsonJoinedDeal.parse(joined_deal_str)
             catch e:
                 spell_log(spell_id, ["error parsing JoinedDeal", joined_deal_str, e])
 
