@@ -97,13 +97,10 @@ jobs:
       - name: Setup Rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
-      - name: Setup node
-        uses: actions/setup-node@v4
+      - name: Setup fcli
+        uses: fluencelabs/setup-fluence@v1
         with:
-          node-version: "18"
-
-      - name: Install fluence-cli
-        run: npm i -g @fluencelabs/cli@unstable
+          version: unstable
 
       # TODO: remove 'Install ipfs'?
       - name: Install ipfs
@@ -120,7 +117,6 @@ jobs:
           jwtTtl: 300
           exportToken: false
           secrets: |
-            kv/npmjs/fluencebot token | NODE_AUTH_TOKEN ;
             kv/crates.io/fluencebot token | CARGO_REGISTRY_TOKEN
 
       - name: Setup Rust toolchain

@@ -42,13 +42,10 @@ jobs:
       - name: Setup rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
-      - name: Setup node
-        uses: actions/setup-node@v4
+      - name: Setup fcli
+        uses: fluencelabs/setup-fluence@v1
         with:
-          node-version: "18"
-
-      - name: Install fluence-cli
-        run: npm i -g @fluencelabs/cli@unstable
+          version: unstable
 
       - name: Set dependencies
         if: inputs.cargo-dependencies != 'null'
