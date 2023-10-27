@@ -42,17 +42,14 @@ jobs:
           shared-key: decider
           save-if: false
 
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-
       - name: Run IPFS
         run: |
           docker-compose -f .github/e2e/docker-compose.yml up -d
 
-      - name: Install fluence-cli
-        run: npm i -g @fluencelabs/cli@unstable
+      - name: Setup fcli
+        uses: fluencelabs/setup-fluence@v1
+        with:
+          version: unstable
 
       - name: Set dependencies
         if: inputs.cargo-dependencies != 'null'
