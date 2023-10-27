@@ -104,7 +104,6 @@ impl TxReq {
 
 #[marine]
 pub fn get_tx_statuses(api_endpoint: String, txs: Vec<WorkerTxInfo>) -> TxStatusBatchResult {
-    //let req = TxReq::new(tx_hash).to_jsonrpc(0);
     let req_batch = txs
         .iter()
         .enumerate()
@@ -115,27 +114,11 @@ pub fn get_tx_statuses(api_endpoint: String, txs: Vec<WorkerTxInfo>) -> TxStatus
         send_jsonrpc_batch(&api_endpoint, req_batch);
     match result {
         Ok(result) => {
+            // TODO: is the order the same? can we just to zip?
             let results = result
                 .into_iter()
                 .zip(txs)
-                .map(|(resp, tx)| {
-                    let result: Result<_, TxError> = try {
-                        if let Some(result) = resp.get_result()? {
-                            let status = match result.status.as_str() {
-                                "0x1" => TxStatus::Ok,
-                                "0x0" => TxStatus::Failed,
-                                x => Err(TxError::UnexpectedStatus(x.to_string()))?,
-                            };
-                            (status, Some(result.block_number))
-                        } else {
-                            (TxStatus::Pending, None)
-                        }
-                    };
-                    match result {
-                        Err(err) => TxStatusResult::error(tx, err.to_string()),
-                        Ok((status, block_number)) => TxStatusResult::ok(tx, status, block_number),
-                    }
-                })
+                .map(|(response, tx_info)| make_tx_status_result(response, tx_info))
                 .collect::<Vec<_>>();
             TxStatusBatchResult {
                 success: true,
@@ -148,5 +131,27 @@ pub fn get_tx_statuses(api_endpoint: String, txs: Vec<WorkerTxInfo>) -> TxStatus
             error: vec![err.to_string()],
             results: vec![],
         },
+    }
+}
+
+fn make_tx_status_result(
+    response: JsonRpcResp<Option<TxResp>>,
+    tx_info: WorkerTxInfo,
+) -> TxStatusResult {
+    let result: Result<_, TxError> = try {
+        if let Some(result) = response.get_result()? {
+            let status = match result.status.as_str() {
+                "0x1" => TxStatus::Ok,
+                "0x0" => TxStatus::Failed,
+                x => Err(TxError::UnexpectedStatus(x.to_string()))?,
+            };
+            (status, Some(result.block_number))
+        } else {
+            (TxStatus::Pending, None)
+        }
+    };
+    match result {
+        Err(err) => TxStatusResult::error(tx_info, err.to_string()),
+        Ok((status, block_number)) => TxStatusResult::ok(tx_info, status, block_number),
     }
 }

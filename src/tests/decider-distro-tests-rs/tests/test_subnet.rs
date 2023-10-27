@@ -230,7 +230,6 @@ async fn test_transaction_tracking() {
         // Reqs: blockNumber, getLogs, 3x getLogs for updates, 1x of eth_getTransactionReceipt
         for _step in 0..6 {
             let (method, _params) = server.receive_request().await.unwrap();
-            println!("{_step} {method}");
             let response = match method.as_str() {
                 "eth_blockNumber" => json!(to_hex(BLOCK_NUMBER_LATER)),
                 "eth_getLogs" => json!([]),
