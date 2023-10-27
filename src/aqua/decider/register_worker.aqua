@@ -66,7 +66,6 @@ func txs_unknown(spell_id: SpellId) -> []WorkerTxInfo:
     Spell spell_id
 
     all_txs <- Spell.list_get_strings(TXS_KEY)
-    spell_log(spell_id, ["all", all_txs.strings])
 
     known_txs_statuses  <- Spell.list_get_strings(TXS_STATUS_KEY)
     known_txs: *string
@@ -76,7 +75,6 @@ func txs_unknown(spell_id: SpellId) -> []WorkerTxInfo:
             known_txs <<- Json.stringify(status.tx_info)
         catch e:
             spell_log(spell_id, ["can't parse worker tx status:", status_str, "error:", e])
-    spell_log(spell_id, ["known", known_txs])
 
 
     unknown_txs_str <- Array.diff(all_txs.strings, known_txs)
@@ -87,7 +85,6 @@ func txs_unknown(spell_id: SpellId) -> []WorkerTxInfo:
             unknown_txs <<- JsonWorkerTxInfo.parse(tx)
         catch e:
             spell_log(spell_id, ["can't parse worker tx info:", tx, "error:", e])
-    spell_log(spell_id, ["unknown", unknown_txs])
 
     <- unknown_txs 
 
