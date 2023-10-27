@@ -6,12 +6,7 @@ pub mod utils;
 
 use utils::test_rpc_server::run_test_server;
 
-use crate::utils::{
-    execute, get_joined_deals, make_distro_default, make_distro_with_api,
-    make_distro_with_api_and_config, oneshot_config, package_items_names, setup_nox, to_hex,
-    update_config, update_decider_script_for_tests, wait_decider_stopped, LogsReq, TestApp,
-    DEAL_IDS,
-};
+use crate::utils::*;
 use connected_client::ConnectedClient;
 use created_swarm::make_swarms_with_cfg;
 use fluence_app_service::TomlMarineConfig;
@@ -119,7 +114,7 @@ async fn test_update_deal() {
                 }
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
-                "eth_getTransactionReceipt" => json!({"status" : "0x1"}),
+                "eth_getTransactionReceipt" => default_receipt(),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(Ok(response));
@@ -236,7 +231,7 @@ async fn test_remove_deal() {
                 }
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
-                "eth_getTransactionReceipt" => json!({"status" : "0x1"}),
+                "eth_getTransactionReceipt" => default_receipt(),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(Ok(json!(response)));

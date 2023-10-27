@@ -346,7 +346,7 @@
     },
     "version": {
       "type": "number",
-      "const": 3
+      "const": 4
     },
     "dependencies": {
       "type": "object",
@@ -416,7 +416,8 @@
             "description": "An array of peer IDs to deploy on",
             "items": {
               "type": "string"
-            }
+            },
+            "minItems": 1
           }
         },
         "required": [
@@ -432,7 +433,8 @@
               "description": "An array of peer IDs to deploy on",
               "items": {
                 "type": "string"
-              }
+              },
+              "minItems": 1
             }
           },
           "required": [
@@ -714,7 +716,7 @@
     },
     "ipfsAddr": {
       "type": "string",
-      "description": "IPFS multiaddress to use when uploading workers with 'deal deploy'. Default: /dns4/ipfs.fluence.dev/tcp/5001 (for 'workers deploy' IPFS address provided by relay that you are connected to is used)",
+      "description": "IPFS multiaddress to use when uploading workers with 'deal deploy'. Default: /dns4/ipfs.fluence.dev/tcp/5001 or /ip4/127.0.0.1/tcp/5001 if using local local env (for 'workers deploy' IPFS address provided by relay that you are connected to is used)",
       "nullable": true,
       "default": "/dns4/ipfs.fluence.dev/tcp/5001"
     },
@@ -746,6 +748,16 @@
         "contractsEnv",
         "relays"
       ]
+    },
+    "defaultSecretKeyName": {
+      "description": "Secret key with this name will be used by default by js-client inside CLI to run Aqua code",
+      "type": "string",
+      "nullable": true
+    },
+    "relaysPath": {
+      "description": "Path to the directory where you want relays.json file to be generated. Must be relative to the project root dir. This file contains a list of relays to use when connecting to Fluence network and depends on the default environment that you use in your project",
+      "type": "string",
+      "nullable": true
     }
   },
   "required": [

@@ -1,28 +1,36 @@
-module RegisterWorker declares register_worker, WorkerTxInfo, poll_txs
+module RegisterWorker declares register_worker, poll_txs
 
 import DealId, SpellId, WorkerId, PAT from "../types.aqua"
 import spell_log, deal_log, list_push from "../fluence/spell.aqua"
-import ChainConnector, RegisterWorkerResult, TxStatusResult from "services.aqua"
+import ChainConnector, RegisterWorkerResult, WorkerTxInfo from "services.aqua"
 import ChainInfo from "../chain/chain.aqua"
 import Spell, StringListValue from "@fluencelabs/spell/spell_service.aqua"
+import Array from "@fluencelabs/aqua-lib/math.aqua"
 import Json from "../fluence/peer.aqua"
 import store_tx_failed_deal from "decider/deal_storage.aqua"
 
 alias TxHash: string
 
 const TXS_KEY = "worker_registration_txs"
-const TXS_STATUS_KEY = "worker_registration_txs_statuses"
-
-data WorkerTxInfo:
-    deal_id: DealId
-    worker_id: WorkerId
-    tx_hash: TxHash
 
 service JsonWorkerTxInfo("json"):
     parse(str: string) -> WorkerTxInfo 
 
 func store_tx(spell_id: SpellId, tx_info: WorkerTxInfo):
     list_push(spell_id, TXS_KEY, tx_info)
+
+
+const TXS_STATUS_KEY = "worker_registration_txs_statuses"
+
+data WorkerTxStatus:
+    tx_info: WorkerTxInfo
+    status: string
+
+service JsonWorkerTxStatus("json"):
+    parse(str: string) -> WorkerTxStatus
+
+func store_tx_status(spell_id: SpellId, status: WorkerTxStatus):
+    list_push(spell_id, TXS_STATUS_KEY, status)
 
 -- TODO:
 -- Store joined worker in KV, status = unregistered
@@ -48,11 +56,53 @@ func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worke
     is_ok = result.success
     if result.success:
         deal_log(spell_id, deal_id, ["registered worker", result.tx_hash])
-        store_tx(spell_id, WorkerTxInfo(deal_id = deal_id, worker_id = worker_id, tx_hash = result.tx_hash!))
+        store_tx(spell_id, WorkerTxInfo(deal_id = deal_id, tx_hash = result.tx_hash!))
     else:
         deal_log(spell_id, deal_id, ["error registering worker", result.error!])
-        store_tx_failed_deal(spell_id, deal_id, worker_id, result.error!, nil)
+        store_tx_failed_deal(spell_id, deal_id, result.error!, nil, nil)
     <- is_ok
 
+func txs_unknown(spell_id: SpellId) -> []WorkerTxInfo:
+    Spell spell_id
+
+    all_txs <- Spell.list_get_strings(TXS_KEY)
+    spell_log(spell_id, ["all", all_txs.strings])
+
+    known_txs_statuses  <- Spell.list_get_strings(TXS_STATUS_KEY)
+    known_txs: *string
+    for status_str <- known_txs_statuses.strings:
+        try:
+            status <- JsonWorkerTxStatus.parse(status_str)
+            known_txs <<- Json.stringify(status.tx_info)
+        catch e:
+            spell_log(spell_id, ["can't parse worker tx status:", status_str, "error:", e])
+    spell_log(spell_id, ["known", known_txs])
+
+
+    unknown_txs_str <- Array.diff(all_txs.strings, known_txs)
+
+    unknown_txs: *WorkerTxInfo
+    for tx <- unknown_txs_str:
+        try:
+            unknown_txs <<- JsonWorkerTxInfo.parse(tx)
+        catch e:
+            spell_log(spell_id, ["can't parse worker tx info:", tx, "error:", e])
+    spell_log(spell_id, ["unknown", unknown_txs])
+
+    <- unknown_txs 
+
 func poll_txs(spell_id: SpellId, api_endpoint: string):
-    Op.noop()
+    txs <- txs_unknown(spell_id)
+    result <- ChainConnector.get_tx_statuses(api_endpoint, txs)
+    if !result.success:
+        spell_log(spell_id, ["couldn't make batch jsonrpc request:", result.error])
+    else:
+        for status <- result.results:
+            if !status.success:
+                deal_log(spell_id, status.tx.deal_id, ["couldn't find tx status:", "tx_hash:", status.tx.tx_hash, "error:", status.error ])
+            else:
+                if status.status != "pending":
+                    store_tx_status(spell_id, WorkerTxStatus(tx_info = status.tx, status = status.status))
+                    if status.status == "failed":
+                        store_tx_failed_deal(spell_id, status.tx.deal_id, "transaction failed", ?[status.tx.tx_hash], status.block_number)
+                        deal_log(spell_id, status.tx.deal_id, ["transaction failed, tx_hash:", status.tx.tx_hash, "block_number:", status.block_number])

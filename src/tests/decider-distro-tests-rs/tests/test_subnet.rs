@@ -23,7 +23,6 @@ async fn test_register_worker_fails() {
     const BLOCK_NUMBER: u32 = 32;
     const BLOCK_NUMBER_2: u32 = 50;
     const BLOCK_NUMBER_3: u32 = 100;
-    const BLOCK_NUMBER_LATER: u32 = 200;
 
     let deals_in_blocks = vec![
         (BLOCK_NUMBER, DEAL_ID),
@@ -78,7 +77,7 @@ async fn test_register_worker_fails() {
                 "eth_getTransactionCount" => Ok(json!("0x1")),
                 // step 2 for deal 1, step 5 for deal 2, step 8 for deal 3
                 "eth_gasPrice" => Ok(json!("0x3b9aca07")),
-                "eth_getTransactionReceipt" => Ok(json!({"status" : "0x1"})),
+                "eth_getTransactionReceipt" => Ok(default_receipt()),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(response);
@@ -95,6 +94,7 @@ async fn test_register_worker_fails() {
 
     let deals = get_joined_deals(&mut client).await;
     assert_eq!(deals.len(), 1, "only one deal must be joined: {:?}", deals);
+    server.shutdown().await;
 }
 
 /// Test registering worker transactions tracking
@@ -164,8 +164,10 @@ async fn test_transaction_tracking() {
         }
     }
     wait_decider_stopped(&mut client).await;
+
     let failed = get_failed_deals(&mut client).await;
     assert!(failed.is_empty(), "should be no failed deals");
+
     let deals = get_joined_deals(&mut client).await;
     assert_eq!(
         deals.len(),
@@ -173,20 +175,27 @@ async fn test_transaction_tracking() {
         "all deals should be joined, currently joined: {:?}",
         deals
     );
-    let txs = get_tx_queue(&mut client).await;
+
+    let txs = get_txs(&mut client).await;
     assert_eq!(
         deals.len(),
         txs.len(),
-        "all deals txs should be in queue, currently in joined: {:?}, currently in queue: {:?}",
+        "all deals txs should be in the txs list\nCurrently in joined: {:?}\nCurrently in queue: {:?}",
         deals,
         txs,
+    );
+
+    let txs_statuses = get_txs_statuses(&mut client).await;
+    assert!(
+        txs_statuses.is_empty(),
+        "no txs status should be known at this stage"
     );
 
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
         let mut receipts = vec![
-            Ok(json!({"status": "0x0"})), // failed
-            Ok(json!({"status": "0x1"})), // ok
+            Ok(json!({"status": "0x0", "blockNumber": "0x50"})), // failed
+            Ok(json!({"status": "0x1", "blockNumber": "0x51"})), // ok
             Err(json!({
                 "code": -32000,
                 "message": "intentional error",
@@ -205,15 +214,15 @@ async fn test_transaction_tracking() {
         }
     }
     wait_decider_stopped(&mut client).await;
+
     let failed = get_failed_deals(&mut client).await;
     assert_eq!(failed.len(), 1, "should be exactly one failed deal");
 
-    let txs = get_tx_queue(&mut client).await;
+    let txs_statuses = get_txs_statuses(&mut client).await;
     assert_eq!(
-        txs.len(),
-        1,
-        "only one deal should be in queue since it received an error, currently in queue: {:?}",
-        txs
+        txs_statuses.len(),
+        2,
+        "should be exactly known two txs statuses"
     );
 
     update_config(&mut client, &oneshot_config()).await.unwrap();
@@ -221,20 +230,27 @@ async fn test_transaction_tracking() {
         // Reqs: blockNumber, getLogs, 3x getLogs for updates, 1x of eth_getTransactionReceipt
         for _step in 0..6 {
             let (method, _params) = server.receive_request().await.unwrap();
+            println!("{_step} {method}");
             let response = match method.as_str() {
                 "eth_blockNumber" => json!(to_hex(BLOCK_NUMBER_LATER)),
                 "eth_getLogs" => json!([]),
-                "eth_getTransactionReceipt" => json!({"status": "0x1"}),
+                "eth_getTransactionReceipt" => json!({"status": "0x1", "blockNumber": "0x55"}),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(Ok(response));
         }
     }
     wait_decider_stopped(&mut client).await;
-    let txs = get_tx_queue(&mut client).await;
-    assert!(
-        txs.is_empty(),
-        "nothing should be in queue since all must be processed, currently in queue: {:?}",
-        txs
+
+    let failed = get_failed_deals(&mut client).await;
+    assert_eq!(failed.len(), 1, "should be exactly one failed deal");
+
+    let txs_statuses = get_txs_statuses(&mut client).await;
+    assert_eq!(
+        txs_statuses.len(),
+        3,
+        "should be exactly known two txs statuses"
     );
+
+    server.shutdown().await;
 }

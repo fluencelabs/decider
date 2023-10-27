@@ -83,6 +83,7 @@ data InstallationFailed:
 
 data TxFailed:
     tx_hash: ?string
+    block_number: ?string
 
 data FailedDealError:
     type: string
@@ -91,7 +92,6 @@ data FailedDealError:
 -- Deal for which we weren't able to create a worker
 data FailedDeal:
    deal_id: DealId
-   worker_id: ?WorkerId
    message: string
    payload: FailedDealError
 
@@ -104,7 +104,6 @@ service JsonFailedDeal("json"):
 func store_installation_failed_deal(spell_id: SpellId, deal_id: DealId, log: DealMatched, error: string):
     deal = FailedDeal(
         deal_id = deal_id, 
-        worker_id = nil,
         message = error, 
         payload = FailedDealError(
             type = "InstallationFailed",
@@ -113,14 +112,13 @@ func store_installation_failed_deal(spell_id: SpellId, deal_id: DealId, log: Dea
     )
     list_push(spell_id, FAILED_DEALS, deal)
 
-func store_tx_failed_deal(spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, error: string, tx_hash: ?string):
+func store_tx_failed_deal(spell_id: SpellId, deal_id: DealId, error: string, tx_hash: ?string, block_number: ?string):
     deal = FailedDeal(
         deal_id = deal_id, 
-        worker_id = ?[worker_id],
         message = error, 
         payload = FailedDealError(
             type = "TxFailed",
-            content = TxFailed(tx_hash = tx_hash)
+            content = TxFailed(tx_hash = tx_hash, block_number = block_number)
         )
     )
     list_push(spell_id, FAILED_DEALS, deal)

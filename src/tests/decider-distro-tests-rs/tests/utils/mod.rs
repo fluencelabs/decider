@@ -28,6 +28,10 @@ pub const DEAL_IDS: &[&'static str] = &[
 
 pub const IPFS_MULTIADDR: &str = "/ip4/127.0.0.1/tcp/5001";
 
+pub fn default_receipt() -> Value {
+    json!({"status" : "0x1", "blockNumber": "0x300"})
+}
+
 pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
     let mut config = AquaIpfsConfig::default();
     static IPFS_CLI_PATH: Option<&str> = option_env!("IPFS_CLI_PATH");
@@ -122,7 +126,7 @@ pub fn make_distro(trigger_config: TriggerConfig, settings: DeciderConfig) -> Pa
     let distro_spell = decider_distro::decider_spell(settings);
     let spell = SpellDistro {
         name: "decider".to_string(),
-        air: distro_spell.air.clone(),
+        air: distro_spell.air,
         kv: distro_spell.kv.clone(),
         trigger_config,
     };
@@ -443,23 +447,21 @@ pub async fn get_joined_deals(mut client: &mut ConnectedClient) -> Vec<JoinedDea
     parse_joined_deals(deals.remove(0))
 }
 
+// atm the we don't use some fields in the tests, but will do in future
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct WorkerTxInfo {
     deal_id: String,
-    worker_id: String,
     tx_hash: String,
 }
 
-pub async fn get_tx_queue(mut client: &mut ConnectedClient) -> Vec<WorkerTxInfo> {
+pub async fn get_txs(mut client: &mut ConnectedClient) -> Vec<WorkerTxInfo> {
     let mut result = execute(
         &mut client,
         r#"
-            (seq
-                (call relay ("decider" "list_get_strings") ["worker_registration_txs"] txs)
-                (call relay ("decider" "list_get_strings") ["worker_registration_txs_helper"] txs_helper)
-            )
+            (call relay ("decider" "list_get_strings") ["worker_registration_txs"] txs)
         "#,
-        "txs txs_helper",
+        "txs",
         hashmap! {},
     )
     .await
@@ -470,25 +472,40 @@ pub async fn get_tx_queue(mut client: &mut ConnectedClient) -> Vec<WorkerTxInfo>
         "can't receive `worker_registration_txs`: {}",
         txs.error
     );
-    let mut txs = txs
-        .strings
+    txs.strings
         .iter()
         .map(|tx| serde_json::from_str::<WorkerTxInfo>(tx).unwrap())
-        .collect::<Vec<_>>();
+        .collect::<Vec<_>>()
+}
 
-    let txs_helper = serde_json::from_value::<StringListValue>(result.remove(0)).unwrap();
+#[allow(dead_code)]
+#[derive(Deserialize, Debug)]
+pub struct WorkerTxStatus {
+    tx_info: WorkerTxInfo,
+    status: String,
+}
+
+pub async fn get_txs_statuses(mut client: &mut ConnectedClient) -> Vec<WorkerTxStatus> {
+    let mut result = execute(
+        &mut client,
+        r#"
+            (call relay ("decider" "list_get_strings") ["worker_registration_txs_statuses"] txs)
+        "#,
+        "txs",
+        hashmap! {},
+    )
+    .await
+    .unwrap();
+    let txs = serde_json::from_value::<StringListValue>(result.remove(0)).unwrap();
     assert!(
-        txs_helper.success,
-        "can't receive `worker_registration_txs`: {}",
-        txs_helper.error
+        txs.success,
+        "can't receive `worker_registration_txs_statuses`: {}",
+        txs.error
     );
-    let mut txs_helper = txs_helper
-        .strings
+    txs.strings
         .iter()
-        .map(|tx| serde_json::from_str::<WorkerTxInfo>(tx).unwrap())
-        .collect::<Vec<_>>();
-    txs.append(&mut txs_helper);
-    txs
+        .map(|tx| serde_json::from_str::<WorkerTxStatus>(tx).unwrap())
+        .collect::<Vec<_>>()
 }
 
 #[derive(Deserialize, Debug)]
@@ -498,10 +515,10 @@ pub enum FailedDealPayload {
     TxFailed { tx_hash: Vec<String> },
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct FailedDeal {
     deal_id: String,
-    worker_id: Vec<String>,
     message: String,
     payload: FailedDealPayload,
 }

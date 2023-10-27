@@ -117,14 +117,25 @@ data Subnet:
   workers: []Worker
   error: []string
 
+data WorkerTxInfo:
+  deal_id: string
+  tx_hash: string
+
 data TxStatusResult:
   success: bool
   error: []string
+  tx: WorkerTxInfo
   status: string
+  block_number: []string
+
+data TxStatusBatchResult:
+  success: bool
+  error: []string
+  results: []TxStatusResult
 
 service ChainConnector("chain_connector"):
   get_env() -> Env
-  get_tx_status(api_endpoint: string, tx_hash: string) -> TxStatusResult
+  get_tx_statuses(api_endpoint: string, txs: []WorkerTxInfo) -> TxStatusBatchResult
   hex_add(hex: string, add: u32) -> HexAdd
   hex_cmp(hex_a: string, hex_b: string) -> HexCmp
   hex_diff(from: string, to: string) -> u64
