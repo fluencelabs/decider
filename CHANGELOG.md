@@ -1,12 +1,5 @@
 # Changelog
 
-## [0.5.3](https://github.com/fluencelabs/decider/compare/connector-v0.5.2...connector-v0.5.3) (2023-10-28)
-
-
-### Bug Fixes
-
-* **deps:** update rust crate marine-rs-sdk-test to 0.11.0 ([#91](https://github.com/fluencelabs/decider/issues/91)) ([68cab1d](https://github.com/fluencelabs/decider/commit/68cab1d2b498d1706e0c6f9a8a4c51ff8f6088f5))
-
 ## [0.5.2](https://github.com/fluencelabs/decider/compare/connector-v0.5.1...connector-v0.5.2) (2023-10-25)
 
 
