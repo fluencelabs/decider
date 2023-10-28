@@ -132,6 +132,7 @@ jobs:
         run: ./build.sh
 
       - name: Publish to crates.io
+        working-directory: src/distro
         run: |
           cargo ws publish \
             --no-git-commit \
