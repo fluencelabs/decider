@@ -8,10 +8,9 @@ import Spell, StringListValue from "@fluencelabs/spell/spell_service.aqua"
 import Array from "@fluencelabs/aqua-lib/math.aqua"
 import Json from "../fluence/peer.aqua"
 import store_tx_failed_deal from "decider/deal_storage.aqua"
+import TXS_KEY, TXS_STATUS_KEY from "./consts.aqua"
 
 alias TxHash: string
-
-const TXS_KEY = "worker_registration_txs"
 
 service JsonWorkerTxInfo("json"):
     parse(str: string) -> WorkerTxInfo 
@@ -20,7 +19,6 @@ func store_tx(spell_id: SpellId, tx_info: WorkerTxInfo):
     list_push(spell_id, TXS_KEY, tx_info)
 
 
-const TXS_STATUS_KEY = "worker_registration_txs_statuses"
 
 data WorkerTxStatus:
     tx_info: WorkerTxInfo

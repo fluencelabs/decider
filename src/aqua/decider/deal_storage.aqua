@@ -2,12 +2,12 @@ module DealStorage declares *
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 
+import FAILED_DEALS, JOINED_DEALS from "./consts.aqua"
 import Json from "../fluence/peer.aqua"
 import spell_log, get_string, deal_log, list_push from "../fluence/spell.aqua"
 import DealId, SpellId, WorkerId, Block from "../types.aqua"
 
 import DealInfo, DealMatched from "services.aqua"
-
 
 data DealState:
     left_boundary: string
@@ -48,14 +48,14 @@ func store_joined_deal(decider_id: SpellId, deal_id: DealId, worker_id: WorkerId
     Spell decider_id
     deal = JoinedDeal(deal_id = deal_id, worker_id = worker_id)
     msg <- Json.stringify(deal)
-    Spell.list_push_string("joined_deals", msg)
+    Spell.list_push_string(JOINED_DEALS, msg)
 
 func get_joined_deals(spell_id: SpellId) -> []JoinedDeal:
     Spell spell_id
 
     joined_deals: *JoinedDeal
 
-    list <- Spell.list_get_strings("joined_deals")
+    list <- Spell.list_get_strings(JOINED_DEALS)
     if !list.success:
         spell_log(spell_id, ["can't restrive joined deals", list.error])
     else:
@@ -93,8 +93,6 @@ data FailedDeal:
    message: string
    payload: FailedDealError
 
-
-const FAILED_DEALS = "failed_deals"
 
 service JsonFailedDeal("json"):
     parse(str: string) -> FailedDeal 
@@ -137,4 +135,3 @@ func get_failed_deals(spell_id: SpellId) -> []FailedDeal, []string:
             catch e:
                 errors <- Json.stringify(["can't parse FaileDeal", e, str])
     <- deals, errors
-        

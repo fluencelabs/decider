@@ -1565,8 +1565,6 @@ dependencies = [
  "mockito",
  "serde",
  "serde_json",
- "server-config",
- "system-services",
  "tokio",
  "toml 0.5.11",
  "tracing",
