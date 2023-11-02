@@ -33,8 +33,8 @@ func get_deal_changes(spell_id: SpellId, api_endpoint: string, joined: []JoinedD
     changes: ?[]DealChangedResult
 
     deals <- make_change_reqs(spell_id, joined)
-    spell_log(spell_id, ["try to find updates for", deals.length, "deals"])
-    if deals != nil:
+    if deals.length != 0:
+        spell_log(spell_id, ["try to find updates for", deals.length, "deals"])
         -- Poll for the last logs about deal changes
         poll_result <- ChainConnector.poll_deal_changes(api_endpoint, deals)
         if poll_result.success:
