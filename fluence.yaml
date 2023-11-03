@@ -4,7 +4,8 @@
 
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/fluence.md
 
-version: 2
+version: 4
+
 # This is like the "main" Aqua file, but
 # mostly it just points to the vague location of the code
 #
@@ -41,9 +42,9 @@ services:
 # Here I define spells. Can have as many as I want, right now it's just 'decider'
 spells:
   # spell name. after deploy will become an alias.
-   decider:
-     # path to directory containing 'spell.yaml'
-     get: src/aqua
+  decider:
+    # path to directory containing 'spell.yaml'
+    get: src/aqua
 
 # Here I define workers. Can have as many as I want, right now it's just 'decider', that contains...
 workers:
@@ -63,6 +64,9 @@ hosts:
     peerIds:
       # that's where to deploy it
       - 12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ
+
 relays:
   - /ip4/127.0.0.1/tcp/9999/ws/p2p/12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ
   # - /dns4/stage.fluence.dev/tcp/19001/wss/p2p/12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv
+
+contractsEnv: testnet

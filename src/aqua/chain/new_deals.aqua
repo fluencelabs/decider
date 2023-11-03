@@ -9,7 +9,7 @@ import deal_log, spell_log, get_counter, get_string from "../fluence/spell.aqua"
 import is_worker_created from "../fluence/worker.aqua"
 import Json from "../fluence/peer.aqua"
 import join_deal from "../decider/join_deal.aqua"
-import JoinedDeal from "../decider/deal_storage.aqua"
+import JoinedDeal, store_deal, store_installation_failed_deal from "../decider/deal_storage.aqua"
 import SpellId from "../types.aqua"
 import register_worker from "../decider/register_worker.aqua"
 
@@ -55,20 +55,25 @@ func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: 
     -- TODO: I assume that `logs` are sorted by `block_number`. Is that a correct assumption?
     for log <- logs:
         deal_id = log.info.deal_id
-        worker_id <- join_deal(spell_id, log.block_number, deal_id, log.info.app_cid)
-        if worker_id != nil:
-            -- TODO: track if register worker fails, and retry later
-            register_worker(chain, spell_id, deal_id, worker_id!, log.info.pat_id)
+        worker_id, error <- join_deal(spell_id, log.block_number, deal_id, log.info.app_cid)
+        if worker_id == nil:
+            store_installation_failed_deal(spell_id, deal_id, log, error!)
+        else:
+            -- At this point, if worker registration return is_ok=false, it did all it could do
+            -- so here we move forward anyway
+            is_ok <- register_worker(chain, spell_id, deal_id, worker_id!, log.info.pat_id)
+            if is_ok:
+                store_deal(spell_id, deal_id, worker_id!, log.block_number)
 
-        -- Use `log.block_number - 1` as a `last seen block`
-        -- Can not use `log.block_number` because it is unknown if there are more events from that block in `logs`
-        -- If a log from block N is received, then the whole `N-1` block was processed, so save it as the `last seen`
-        prev_block <- Hex.dec(spell_id, log.block_number)
-        if prev_block != nil:
-            -- Set `last seen block` to the `log.block_number - 1` (if it is > `left`)
-            -- This way, if particle has timed out during process of a log, `last seen block` would not be updated
-            -- And we will try all events from that block again
-            LastSeen.gt_set(spell_id, prev_block!, left)
+            -- Use `log.block_number - 1` as a `last seen block`
+            -- Can not use `log.block_number` because it is unknown if there are more events from that block in `logs`
+            -- If a log from block N is received, then the whole `N-1` block was processed, so save it as the `last seen`
+            prev_block <- Hex.dec(spell_id, log.block_number)
+            if prev_block != nil:
+                -- Set `last seen block` to the `log.block_number - 1` (if it is > `left`)
+                -- This way, if particle has timed out during process of a log, `last seen block` would not be updated
+                -- And we will try all events from that block again
+                LastSeen.gt_set(spell_id, prev_block!, left)
 
 -- Returns 'matches' that were not yet joined
 func filter_new(spell_id: SpellId, matches: []DealMatched, joined_deals: []JoinedDeal) -> []DealMatched:

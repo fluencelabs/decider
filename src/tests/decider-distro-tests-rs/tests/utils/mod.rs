@@ -1,6 +1,7 @@
 pub mod test_rpc_server;
 
 use connected_client::ConnectedClient;
+use created_swarm::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
 use created_swarm::{make_swarms_with_cfg, CreatedSwarm};
 use decider_distro::DeciderConfig;
 use eyre::WrapErr;
@@ -10,7 +11,6 @@ use fluence_spell_dtos::value::{ScriptValue, StringListValue, StringValue};
 use maplit::hashmap;
 use serde::Deserialize;
 use serde_json::{json, Value};
-use server_config::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
@@ -27,6 +27,10 @@ pub const DEAL_IDS: &[&'static str] = &[
 ];
 
 pub const IPFS_MULTIADDR: &str = "/ip4/127.0.0.1/tcp/5001";
+
+pub fn default_receipt() -> Value {
+    json!({"status" : "0x1", "blockNumber": "0x300"})
+}
 
 pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
     let mut config = AquaIpfsConfig::default();
@@ -122,7 +126,7 @@ pub fn make_distro(trigger_config: TriggerConfig, settings: DeciderConfig) -> Pa
     let distro_spell = decider_distro::decider_spell(settings);
     let spell = SpellDistro {
         name: "decider".to_string(),
-        air: distro_spell.air.clone(),
+        air: distro_spell.air,
         kv: distro_spell.kv.clone(),
         trigger_config,
     };
@@ -443,6 +447,118 @@ pub async fn get_joined_deals(mut client: &mut ConnectedClient) -> Vec<JoinedDea
     parse_joined_deals(deals.remove(0))
 }
 
+// atm the we don't use some fields in the tests, but will do in future
+#[allow(dead_code)]
+#[derive(Deserialize, Debug)]
+pub struct WorkerTxInfo {
+    deal_id: String,
+    tx_hash: String,
+}
+
+pub async fn get_txs(mut client: &mut ConnectedClient) -> Vec<WorkerTxInfo> {
+    let mut result = execute(
+        &mut client,
+        r#"
+            (call relay ("decider" "list_get_strings") ["worker_registration_txs"] txs)
+        "#,
+        "txs",
+        hashmap! {},
+    )
+    .await
+    .unwrap();
+    let txs = serde_json::from_value::<StringListValue>(result.remove(0)).unwrap();
+    assert!(
+        txs.success,
+        "can't receive `worker_registration_txs`: {}",
+        txs.error
+    );
+    txs.strings
+        .iter()
+        .map(|tx| serde_json::from_str::<WorkerTxInfo>(tx).unwrap())
+        .collect::<Vec<_>>()
+}
+
+#[allow(dead_code)]
+#[derive(Deserialize, Debug)]
+pub struct WorkerTxStatus {
+    tx_info: WorkerTxInfo,
+    status: String,
+}
+
+pub async fn get_txs_statuses(mut client: &mut ConnectedClient) -> Vec<WorkerTxStatus> {
+    let mut result = execute(
+        &mut client,
+        r#"
+            (call relay ("decider" "list_get_strings") ["worker_registration_txs_statuses"] txs)
+        "#,
+        "txs",
+        hashmap! {},
+    )
+    .await
+    .unwrap();
+    let txs = serde_json::from_value::<StringListValue>(result.remove(0)).unwrap();
+    assert!(
+        txs.success,
+        "can't receive `worker_registration_txs_statuses`: {}",
+        txs.error
+    );
+    txs.strings
+        .iter()
+        .map(|tx| serde_json::from_str::<WorkerTxStatus>(tx).unwrap())
+        .collect::<Vec<_>>()
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(tag = "type", content = "content")]
+pub enum FailedDealPayload {
+    InstallationFailed { log: Value },
+    TxFailed { tx_hash: Vec<String> },
+}
+
+#[allow(dead_code)]
+#[derive(Deserialize, Debug)]
+pub struct FailedDeal {
+    deal_id: String,
+    message: String,
+    payload: FailedDealPayload,
+}
+
+pub async fn get_failed_deals(mut client: &mut ConnectedClient) -> Vec<FailedDeal> {
+    let mut deals = execute(
+        &mut client,
+        r#"
+            (call relay ("decider" "list_get_strings") ["failed_deals"] deals)
+        "#,
+        "deals",
+        hashmap! {},
+    )
+    .await
+    .unwrap();
+    let lst = serde_json::from_value::<StringListValue>(deals.remove(0)).unwrap();
+    assert!(lst.success, "can't receive failed_deals: {}", lst.error);
+    lst.strings
+        .iter()
+        .map(|s| serde_json::from_str::<FailedDeal>(s))
+        .collect::<Result<Vec<_>, _>>()
+        .unwrap()
+}
+
+pub async fn get_worker(mut client: &mut ConnectedClient, deal: &str) -> Vec<String> {
+    let mut worker = execute(
+        &mut client,
+        r#"
+            (call relay ("worker" "get_worker_id") [dealid] worker)
+        "#,
+        "worker",
+        hashmap! {
+            "dealid" => json!(format!("0x{deal}"))
+        },
+    )
+    .await
+    .unwrap();
+    serde_json::from_value::<Vec<String>>(worker.remove(0)).unwrap()
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LogsReq {
@@ -452,6 +568,15 @@ pub struct LogsReq {
     #[serde(deserialize_with = "hex_u32_deserialize")]
     pub to_block: u32,
     pub topics: Vec<String>,
+}
+
+pub fn filter_logs<'a, T>(blocks: &'a [(u32, T)], req: &LogsReq) -> Vec<&'a (u32, T)> {
+    blocks
+        .iter()
+        .filter(|(block_number, _)| {
+            *block_number >= req.from_block && *block_number <= req.to_block
+        })
+        .collect::<_>()
 }
 
 pub fn hex_u32_deserialize<'de, D>(deserializer: D) -> Result<u32, D::Error>

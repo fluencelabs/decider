@@ -1,27 +1,19 @@
-module DealStorage declares DealState, JoinedDeal, JsonDealState, JsonJoinedDeal, store_deal_state, get_deal_state, store_joined_deal, get_joined_deals, make_change_reqs, get_joined_deals
+module DealStorage declares *
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 
+import FAILED_DEALS, JOINED_DEALS from "./consts.aqua"
 import Json from "../fluence/peer.aqua"
-import spell_log, get_string, deal_log from "../fluence/spell.aqua"
-import DealId, SpellId, WorkerId from "../types.aqua"
+import spell_log, get_string, deal_log, list_push from "../fluence/spell.aqua"
+import DealId, SpellId, WorkerId, Block from "../types.aqua"
 
-import DealInfo, DealChangesReq from "services.aqua"
-
+import DealInfo, DealMatched from "services.aqua"
 
 data DealState:
     left_boundary: string
 
-data JoinedDeal:
-    deal_id: DealId
-    worker_id: WorkerId
-
 service JsonDealState("json"):
     parse(str: string) -> DealState
-
-service JsonJoinedDeal("json"):
-    parse(str: string) -> JoinedDeal
-
 
 func store_deal_state(decider_id: SpellId, deal_id: DealId, state: DealState):
     Spell decider_id
@@ -45,18 +37,25 @@ func get_deal_state(decider_id: SpellId, deal_id: DealId) -> ?DealState:
 
     <- state
 
+data JoinedDeal:
+    deal_id: DealId
+    worker_id: WorkerId
+
+service JsonJoinedDeal("json"):
+    parse(str: string) -> JoinedDeal
+
 func store_joined_deal(decider_id: SpellId, deal_id: DealId, worker_id: WorkerId):
     Spell decider_id
     deal = JoinedDeal(deal_id = deal_id, worker_id = worker_id)
     msg <- Json.stringify(deal)
-    Spell.list_push_string("joined_deals", msg)
+    Spell.list_push_string(JOINED_DEALS, msg)
 
 func get_joined_deals(spell_id: SpellId) -> []JoinedDeal:
     Spell spell_id
 
     joined_deals: *JoinedDeal
 
-    list <- Spell.list_get_strings("joined_deals")
+    list <- Spell.list_get_strings(JOINED_DEALS)
     if !list.success:
         spell_log(spell_id, ["can't restrive joined deals", list.error])
     else:
@@ -68,17 +67,71 @@ func get_joined_deals(spell_id: SpellId) -> []JoinedDeal:
 
     <- joined_deals
 
-func make_change_reqs(spell_id: SpellId, deals: []JoinedDeal) -> []DealChangesReq:
-    requests: *DealChangesReq
+func store_deal(spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, block: Block):
+    try:
+        store_joined_deal(spell_id, deal_id, worker_id)
+        store_deal_state(spell_id, deal_id, DealState(left_boundary = block))
+        deal_log(spell_id, deal_id, "deal state saved to kv")
+    catch e:
+        deal_log(spell_id, deal_id, ["cannot store deal state, deal join failed", e.message])
 
-    if deals != nil:
-        -- Collect info about all known deals
-        deal_updates: *DealChangesReq
-        for joined_deal <- deals:
-            deal_id = joined_deal.deal_id
-            deal_state <- get_deal_state(spell_id, deal_id)
-            if deal_state != nil:
-                deal_info = DealInfo(deal_id = deal_id, worker_id = joined_deal.worker_id)
-                requests <<- DealChangesReq(deal_info = deal_info, left_boundary = deal_state!.left_boundary)
 
-    <- requests
+data InstallationFailed:
+    log: DealMatched
+
+data TxFailed:
+    tx_hash: ?string
+    block_number: ?string
+
+data FailedDealError:
+    type: string
+    content: ⊤
+
+-- Deal for which we weren't able to create a worker
+data FailedDeal:
+   deal_id: DealId
+   message: string
+   payload: FailedDealError
+
+
+service JsonFailedDeal("json"):
+    parse(str: string) -> FailedDeal 
+
+func store_installation_failed_deal(spell_id: SpellId, deal_id: DealId, log: DealMatched, error: string):
+    deal = FailedDeal(
+        deal_id = deal_id, 
+        message = error, 
+        payload = FailedDealError(
+            type = "InstallationFailed",
+            content = InstallationFailed(log = log)
+        )
+    )
+    list_push(spell_id, FAILED_DEALS, deal)
+
+func store_tx_failed_deal(spell_id: SpellId, deal_id: DealId, error: string, tx_hash: ?string, block_number: ?string):
+    deal = FailedDeal(
+        deal_id = deal_id, 
+        message = error, 
+        payload = FailedDealError(
+            type = "TxFailed",
+            content = TxFailed(tx_hash = tx_hash, block_number = block_number)
+        )
+    )
+    list_push(spell_id, FAILED_DEALS, deal)
+
+func get_failed_deals(spell_id: SpellId) -> []FailedDeal, []string:
+    Spell spell_id
+
+    deals: *FailedDeal
+    errors: *string
+
+    result <- Spell.list_get_strings(FAILED_DEALS)
+    if !result.success:
+        errors <<- result.error
+    else:
+        for str <- result.strings:
+            try:
+                deals <<- JsonFailedDeal.parse(str)
+            catch e:
+                errors <- Json.stringify(["can't parse FaileDeal", e, str])
+    <- deals, errors

@@ -103,6 +103,11 @@ data MultipleDealsChanged:
   success: bool
   error: []string
 
+data RegisterWorkerResult:
+  success: bool
+  tx_hash: []string
+  error: []string
+
 data Worker:
   pat_id: string
   host_id: string
@@ -112,8 +117,25 @@ data Subnet:
   workers: []Worker
   error: []string
 
+data WorkerTxInfo:
+  deal_id: string
+  tx_hash: string
+
+data TxStatusResult:
+  success: bool
+  error: []string
+  tx: WorkerTxInfo
+  status: string
+  block_number: []string
+
+data TxStatusBatchResult:
+  success: bool
+  error: []string
+  results: []TxStatusResult
+
 service ChainConnector("chain_connector"):
   get_env() -> Env
+  get_tx_statuses(api_endpoint: string, txs: []WorkerTxInfo) -> TxStatusBatchResult
   hex_add(hex: string, add: u32) -> HexAdd
   hex_cmp(hex_a: string, hex_b: string) -> HexCmp
   hex_diff(from: string, to: string) -> u64
@@ -123,5 +145,5 @@ service ChainConnector("chain_connector"):
   poll_deal_changes(api_endpoint: string, deals: []DealChangesReq) -> MultipleDealsChanged
   poll_deal_created(api_endpoint: string, address: string, left_boundary: string) -> DealCreatedResult
   poll_deal_matches(chain: ChainInfo, left_boundary: string) -> MatchedResult
-  register_worker(pat_id: []u8, worker_id: string, chain: ChainInfo, deal_addr: string) -> []string
+  register_worker(pat_id: []u8, worker_id: string, chain: ChainInfo, deal_addr: string) -> RegisterWorkerResult
   resolve_subnet(deal_id: string, api_endpoint: string) -> Subnet

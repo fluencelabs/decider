@@ -14,6 +14,7 @@ pub mod register_worker;
 pub mod request;
 pub mod resolve_subnet;
 pub mod right_boundary;
+pub mod transaction;
 
 const JSON_RPC_VERSION: &str = "2.0";
 

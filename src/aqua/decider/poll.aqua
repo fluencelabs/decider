@@ -9,6 +9,7 @@ import poll_deal_changes_batch from "../chain/changed_deals.aqua"
 import spell_log from "../fluence/spell.aqua"
 import get_joined_deals from "../decider/deal_storage.aqua"
 import poll_mailbox from "../decider/mailbox.aqua"
+import poll_txs from "./decider/register_worker.aqua"
 
 use "../chain/blocks.aqua" as Blocks
 
@@ -29,6 +30,9 @@ func main(spell_id: SpellId, chain: ChainInfo):
         try:
             -- Update existing deals
             poll_deal_changes_batch(spell_id, chain, joined_deals, latest_block!)
+
+        try:
+            poll_txs(spell_id, chain.api_endpoint)
 
         try:
             poll_mailbox(spell_id)

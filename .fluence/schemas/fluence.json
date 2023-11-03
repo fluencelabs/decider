@@ -344,38 +344,9 @@
       "required": [],
       "nullable": true
     },
-    "relays": {
-      "title": "Relays",
-      "description": "List of Fluence Peer multi addresses or a name of the network. This multi addresses are used for connecting to the Fluence network when deploying. Peer ids from these addresses are also used for deploying in case if you don't specify \"peerId\" or \"peerIds\" property in the deployment config. Default: kras",
-      "type": [
-        "string",
-        "array",
-        "null"
-      ],
-      "oneOf": [
-        {
-          "type": "string",
-          "title": "Network name",
-          "enum": [
-            "kras",
-            "stage",
-            "testnet"
-          ]
-        },
-        {
-          "type": "array",
-          "title": "Multi addresses",
-          "items": {
-            "type": "string"
-          },
-          "minItems": 1
-        }
-      ],
-      "nullable": true
-    },
     "version": {
       "type": "number",
-      "const": 2
+      "const": 4
     },
     "dependencies": {
       "type": "object",
@@ -445,7 +416,8 @@
             "description": "An array of peer IDs to deploy on",
             "items": {
               "type": "string"
-            }
+            },
+            "minItems": 1
           }
         },
         "required": [
@@ -461,7 +433,8 @@
               "description": "An array of peer IDs to deploy on",
               "items": {
                 "type": "string"
-              }
+              },
+              "minItems": 1
             }
           },
           "required": [
@@ -572,18 +545,6 @@
         }
       },
       "required": []
-    },
-    "chainNetwork": {
-      "type": "string",
-      "description": "The network in which the transactions will be carried out",
-      "enum": [
-        "kras",
-        "testnet",
-        "stage",
-        "local"
-      ],
-      "default": "testnet",
-      "nullable": true
     },
     "spells": {
       "type": "object",
@@ -755,9 +716,48 @@
     },
     "ipfsAddr": {
       "type": "string",
-      "description": "IPFS multiaddress to use when uploading workers with 'deal deploy'. Default: /dns4/ipfs.fluence.dev/tcp/5001 (for 'workers deploy' IPFS address provided by relay that you are connected to is used)",
+      "description": "IPFS multiaddress to use when uploading workers with 'deal deploy'. Default: /dns4/ipfs.fluence.dev/tcp/5001 or /ip4/127.0.0.1/tcp/5001 if using local local env (for 'workers deploy' IPFS address provided by relay that you are connected to is used)",
       "nullable": true,
       "default": "/dns4/ipfs.fluence.dev/tcp/5001"
+    },
+    "customFluenceEnv": {
+      "type": "object",
+      "description": "Custom Fluence environment to use when connecting to Fluence network",
+      "nullable": true,
+      "properties": {
+        "contractsEnv": {
+          "type": "string",
+          "description": "Contracts environment to use for this fluence network to sign contracts on the blockchain",
+          "enum": [
+            "kras",
+            "testnet",
+            "stage",
+            "local"
+          ]
+        },
+        "relays": {
+          "type": "array",
+          "description": "List of custom relay multiaddresses to use when connecting to Fluence network",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "contractsEnv",
+        "relays"
+      ]
+    },
+    "defaultSecretKeyName": {
+      "description": "Secret key with this name will be used by default by js-client inside CLI to run Aqua code",
+      "type": "string",
+      "nullable": true
+    },
+    "relaysPath": {
+      "description": "Path to the directory where you want relays.json file to be generated. Must be relative to the project root dir. This file contains a list of relays to use when connecting to Fluence network and depends on the default environment that you use in your project",
+      "type": "string",
+      "nullable": true
     }
   },
   "required": [
