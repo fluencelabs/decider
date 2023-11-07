@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.4](https://github.com/fluencelabs/decider/compare/connector-v0.5.3...connector-v0.5.4) (2023-11-07)
+
+
+### Features
+
+* **decider,chain_connector,tests:** Worker registration tx tracking [NET-575, NET-538] ([#90](https://github.com/fluencelabs/decider/issues/90)) ([22c1065](https://github.com/fluencelabs/decider/commit/22c1065ab3508374635076175078683988904a5e))
+* **decider:** Use streams instead of options [LNG-277] ([#106](https://github.com/fluencelabs/decider/issues/106)) ([9e92d8f](https://github.com/fluencelabs/decider/commit/9e92d8f78eedee4c93b23ac07c7b5b39c30712f4))
+
 ## [0.5.3](https://github.com/fluencelabs/decider/compare/connector-v0.5.2...connector-v0.5.3) (2023-10-28)
 
 
