@@ -8,7 +8,7 @@ import ChainConnector from "services.aqua"
 
 -- Get latest block number from RPC
 func get_latest(spell_id: SpellId, chain: ChainInfo) -> ?string:
-    latest: ?string
+    latest: *string
     latest_block <- ChainConnector.latest_block_number(chain.api_endpoint)
     if latest_block.success:
         latest <<- latest_block.number_hex
@@ -24,7 +24,7 @@ func get_latest(spell_id: SpellId, chain: ChainInfo) -> ?string:
 --        ordering is -1 for <, 0 for =, 1 for >
 -- returns nil if either `hex_a` or `hex_b` is an invalid hex
 func hex_cmp(spell_id: SpellId, hex_a: string, hex_b: string, pred: i8 -> bool) -> ?bool:
-    result: ?bool
+    result: *bool
 
     cmp <- ChainConnector.hex_cmp(hex_a, hex_b)
 

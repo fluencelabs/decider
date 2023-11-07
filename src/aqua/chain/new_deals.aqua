@@ -22,7 +22,7 @@ use "../hex.aqua" as Hex
 -- return a value to use as a left boundary in `eth_newLogs`
 -- it usually equals to `last seen block + 1`, except on first iteration it is equal to evaluated `from_block`
 func get_left_boundary(spell_id: SpellId, chain: ChainInfo) -> ?string:
-    left: ?string
+    left: *string
 
     -- load "last seen" block number
     -- `last seen block` is initialized to the first `left boundary` this function returns
@@ -80,7 +80,7 @@ func filter_new(spell_id: SpellId, matches: []DealMatched, joined_deals: []Joine
     new: *DealMatched
     -- TODO: replace with a more optimal implementation once hashmaps land in AquaVM
     for match <- matches:
-        joined: ?bool
+        joined: *bool
         match_deal_id = match.info.deal_id
         -- first, check if worker for that deal is created
         if is_worker_created(spell_id, match_deal_id):
@@ -100,7 +100,7 @@ data Poll:
     right_boundary: string
 
 func poll_logs(spell_id: SpellId, chain: ChainInfo, left: string) -> ?Poll:
-    poll: ?Poll
+    poll: *Poll
 
     result <- ChainConnector.poll_deal_matches(chain, left)
     if !result.success:

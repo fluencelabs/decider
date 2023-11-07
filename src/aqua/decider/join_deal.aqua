@@ -29,8 +29,8 @@ func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID) 
         deal_log(spell_id, deal_id, msg)
 
     log(["joining a deal from_block", block])
-    worker_id: ?WorkerId
-    error: ?string
+    worker_id: *WorkerId
+    error: *string
     try:
         id <- Worker.create(spell_id, deal_id)
         if id != nil:

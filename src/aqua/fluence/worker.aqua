@@ -65,7 +65,7 @@ func is_worker_created(spell_id: SpellId, deal_id: DealId) -> bool:
     <- created!
 
 func create(spell_id: SpellId, deal_id: DealId) -> ?WorkerId:
-    worker_id: ?WorkerId
+    worker_id: *WorkerId
     try:
         worker_id <- Worker.create(?[deal_id])
         deal_log(spell_id, deal_id, ["created worker for deal", worker_id!])

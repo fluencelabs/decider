@@ -28,7 +28,7 @@ func get_from_block(spell_id: SpellId) -> string:
 -- "latest" => latest block on chain
 -- "earliest" => 0x0
 func evaluate_from_block(spell_id: SpellId, chain: ChainInfo) -> ?string:
-    left: ?string
+    left: *string
     from_block <- get_from_block(spell_id)
     if from_block == "latest":
         latest <- get_latest(spell_id, chain)
