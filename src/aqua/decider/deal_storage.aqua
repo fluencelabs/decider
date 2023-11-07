@@ -24,7 +24,7 @@ func store_deal_state(decider_id: SpellId, deal_id: DealId, state: DealState):
 
 func get_deal_state(decider_id: SpellId, deal_id: DealId) -> ?DealState:
     Spell decider_id
-    state: ?DealState
+    state: *DealState
 
     json <- Spell.get_string(deal_id)
     if json.success && !json.absent:
