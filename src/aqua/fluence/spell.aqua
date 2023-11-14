@@ -32,7 +32,7 @@ func get_string(spell_id: SpellId, key: string) -> ?string:
     else:
         if !value.absent:
             result <<- value.str
-            
+
     <- result
 
 

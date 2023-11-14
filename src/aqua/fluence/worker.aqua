@@ -2,7 +2,7 @@ module Worker declares WorkerArgs, WorkerSettings, get_worker_settings, is_worke
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
 import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
-import DealWorker as Worker from "@fluencelabs/aqua-lib/workers.aqua"
+import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 
 import spell_log, deal_log, get_string from "../fluence/spell.aqua"
 import Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
@@ -57,24 +57,31 @@ func get_worker_settings(spell_id: SpellId) ->  ?WorkerSettings:
 -- Check if a worker for a deal is already created
 func is_worker_created(spell_id: SpellId, deal_id: DealId) -> bool:
     created: *bool
-    try:
-        worker_id <- Worker.get_peer_id(?[deal_id])
+
+    existing_worker <- Worker.get_worker_id(deal_id)
+    if existing_worker != nil:
         created <<- true
-    otherwise:
+    else:
         created <<- false
+
     <- created!
 
 func create(spell_id: SpellId, deal_id: DealId) -> ?WorkerId:
     worker_id: *WorkerId
-    try:
-        worker_id <- Worker.create(?[deal_id])
-        deal_log(spell_id, deal_id, ["created worker for deal", worker_id!])
-    otherwise:
-        -- if worker was already created, get its id
-        worker_id <- Worker.get_peer_id(?[deal_id])
 
-    if worker_id == nil:
-        deal_log(spell_id, deal_id, "error creating worker")
+    existing_worker <- Worker.get_worker_id(deal_id)
+
+    if existing_worker == nil:
+        -- if worker was not created yet, create it
+        try:
+            worker_id <- Worker.create(deal_id)
+            deal_log(spell_id, deal_id, ["created worker for deal", worker_id!])
+        otherwise:
+            deal_log(spell_id, deal_id, "error creating worker")
+    else:
+        -- if worker was already created, get its id
+        worker_id <<- existing_worker!
+
 
     <- worker_id
 

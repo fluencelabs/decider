@@ -13,7 +13,7 @@ import TXS_KEY, TXS_STATUS_KEY from "./consts.aqua"
 alias TxHash: string
 
 service JsonWorkerTxInfo("json"):
-    parse(str: string) -> WorkerTxInfo 
+    parse(str: string) -> WorkerTxInfo
 
 func store_tx(spell_id: SpellId, tx_info: WorkerTxInfo):
     list_push(spell_id, TXS_KEY, tx_info)
@@ -84,12 +84,12 @@ func txs_unknown(spell_id: SpellId) -> []WorkerTxInfo:
         catch e:
             spell_log(spell_id, ["can't parse worker tx info:", tx, "error:", e])
 
-    <- unknown_txs 
+    <- unknown_txs
 
 func poll_txs(spell_id: SpellId, api_endpoint: string):
     txs <- txs_unknown(spell_id)
     if txs.length != 0:
-        spell_log(spell_id, ["tracking txs for", txs.length, "deals"]) 
+        spell_log(spell_id, ["tracking txs for", txs.length, "deals"])
         result <- ChainConnector.get_tx_statuses(api_endpoint, txs)
         if !result.success:
             spell_log(spell_id, ["couldn't make batch jsonrpc request:", result.error])
