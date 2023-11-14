@@ -15,9 +15,7 @@ use utils::*;
 ///
 #[tokio::test]
 async fn test_register_worker_fails() {
-    //enable_decider_logs();
-
-    const BLOCK_INIT: u32 = 1;
+    const LATEST_BLOCK_FIRST_RUN: u32 = 110;
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const DEAL_ID_2: &'static str = DEAL_IDS[1];
     const DEAL_ID_3: &'static str = DEAL_IDS[2];
@@ -51,7 +49,7 @@ async fn test_register_worker_fails() {
         for step in 0..12 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
-                "eth_blockNumber" => Ok(json!(to_hex(BLOCK_INIT))), // step 0
+                "eth_blockNumber" => Ok(json!(to_hex(LATEST_BLOCK_FIRST_RUN))), // step 0
                 "eth_getLogs" => {
                     // step 1
                     let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
@@ -111,7 +109,7 @@ async fn test_register_worker_fails() {
 /// 3. On the third run, we send ok status to the `retry` transaction and expect that the deal is removed from the queue
 #[tokio::test]
 async fn test_transaction_tracking() {
-    const BLOCK_INIT: u32 = 1;
+    const LATEST_BLOCK: u32 = 110;
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const DEAL_ID_2: &'static str = DEAL_IDS[1];
     const DEAL_ID_3: &'static str = DEAL_IDS[2];
@@ -141,7 +139,7 @@ async fn test_transaction_tracking() {
         for _step in 0..14 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
-                "eth_blockNumber" => json!(to_hex(BLOCK_INIT)),
+                "eth_blockNumber" => json!(to_hex(LATEST_BLOCK)),
                 "eth_getLogs" => {
                     let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
                     let logs = filter_logs(&deals_in_blocks, &log);

@@ -81,7 +81,7 @@ async fn test_decider_installed() {
 
 #[tokio::test]
 async fn test_remove_deal() {
-    const BLOCK_INIT: u32 = 10;
+    const BLOCK_INIT: u32 = 33;
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const BLOCK_NUMBER: u32 = 32;
 
@@ -165,7 +165,7 @@ async fn test_remove_deal() {
     for _step in 0..3 {
         let (method, _params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
-            "eth_blockNumber" => json!("0x10"),
+            "eth_blockNumber" => json!(to_hex(BLOCK_INIT)),
             "eth_getLogs" => {
                 json!([])
             }

@@ -13,7 +13,7 @@ use utils::TestApp;
 
 #[tokio::test]
 async fn test_update_deal() {
-    const BLOCK_INIT: u32 = 10;
+    const BLOCK_INIT: u32 = 35;
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const BLOCK_NUMBER: u32 = 32;
 
@@ -175,7 +175,7 @@ async fn test_update_deal_from_later_blocks() {
     }
     wait_decider_stopped(&mut client).await;
 
-    let mut deals = get_joined_deals(&mut client).await;
+    let deals = get_joined_deals(&mut client).await;
     assert_eq!(deals.len(), 1, "decider should join only one deal");
 
     // Check that the queried window is moving
