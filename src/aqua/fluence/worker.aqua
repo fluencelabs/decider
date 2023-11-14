@@ -76,8 +76,8 @@ func create(spell_id: SpellId, deal_id: DealId) -> ?WorkerId:
         try:
             worker_id <- Worker.create(deal_id)
             deal_log(spell_id, deal_id, ["created worker for deal", worker_id!])
-        otherwise:
-            deal_log(spell_id, deal_id, "error creating worker")
+        catch e:
+            deal_log(spell_id, deal_id, ["error creating worker", e.message])
     else:
         -- if worker was already created, get its id
         worker_id <<- existing_worker!
