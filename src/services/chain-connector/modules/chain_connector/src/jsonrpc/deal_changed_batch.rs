@@ -76,10 +76,8 @@ pub fn poll_deal_changes(api_endpoint: &str, deals: Vec<DealChangesReq>) -> Mult
             Ok(result) => {
                 let last_log = result.into_iter().filter(|deal| !deal.removed).last();
                 let change = last_log.and_then(parse_deal_changed);
-                if let Some(change) = change {
-                    let result = DealChangedResult::ok(to_block, deal.deal_info, change);
-                    updated_deals.push(result);
-                }
+                let result = DealChangedResult::ok(to_block, deal.deal_info, change);
+                updated_deals.push(result);
             }
         }
     }

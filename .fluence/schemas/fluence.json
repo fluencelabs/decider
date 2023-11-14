@@ -346,7 +346,7 @@
     },
     "version": {
       "type": "number",
-      "const": 4
+      "const": 5
     },
     "dependencies": {
       "type": "object",
@@ -405,12 +405,29 @@
       "description": "Path to the default compilation target dir from aqua to js. Must be relative to the project root dir. Overrides 'aquaOutputTSPath' property"
     },
     "hosts": {
-      "description": "A map of objects with worker names as keys, each object defines a list of peer IDs to host the worker on",
+      "description": "A map of objects with worker names as keys, each object defines a list of peer IDs to host the worker on. Intended to be used by providers to deploy directly without using the blockchain",
       "type": "object",
       "nullable": true,
       "additionalProperties": {
         "type": "object",
+        "description": "Worker config",
         "properties": {
+          "services": {
+            "description": "An array of service names to include in this worker. Service names must be listed in fluence.yaml",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "spells": {
+            "description": "An array of spell names to include in this worker. Spell names must be listed in fluence.yaml",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
           "peerIds": {
             "type": "array",
             "description": "An array of peer IDs to deploy on",
@@ -420,14 +437,29 @@
             "minItems": 1
           }
         },
-        "required": [
-          "peerIds"
-        ]
+        "required": []
       },
       "properties": {
-        "Worker_to_host": {
+        "workerName": {
           "type": "object",
+          "description": "Worker config",
           "properties": {
+            "services": {
+              "description": "An array of service names to include in this worker. Service names must be listed in fluence.yaml",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "spells": {
+              "description": "An array of spell names to include in this worker. Spell names must be listed in fluence.yaml",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
             "peerIds": {
               "type": "array",
               "description": "An array of peer IDs to deploy on",
@@ -437,9 +469,7 @@
               "minItems": 1
             }
           },
-          "required": [
-            "peerIds"
-          ]
+          "required": []
         }
       },
       "required": []
@@ -504,7 +534,24 @@
       "nullable": true,
       "additionalProperties": {
         "type": "object",
+        "description": "Worker config",
         "properties": {
+          "services": {
+            "description": "An array of service names to include in this worker. Service names must be listed in fluence.yaml",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "spells": {
+            "description": "An array of spell names to include in this worker. Spell names must be listed in fluence.yaml",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
           "minWorkers": {
             "type": "number",
             "description": "Required workers to activate the deal",
@@ -523,9 +570,26 @@
         "required": []
       },
       "properties": {
-        "Worker_to_create_deal_for": {
+        "dealName": {
           "type": "object",
+          "description": "Worker config",
           "properties": {
+            "services": {
+              "description": "An array of service names to include in this worker. Service names must be listed in fluence.yaml",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "spells": {
+              "description": "An array of spell names to include in this worker. Spell names must be listed in fluence.yaml",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
             "minWorkers": {
               "type": "number",
               "description": "Required workers to activate the deal",

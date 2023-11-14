@@ -12,6 +12,7 @@ use serde_json::{json, Value};
 use std::collections::HashSet;
 use std::time::Duration;
 use utils::test_rpc_server::{run_test_server, run_test_server_predefined};
+use utils::TestApp;
 use utils::DEAL_IDS;
 use utils::*;
 

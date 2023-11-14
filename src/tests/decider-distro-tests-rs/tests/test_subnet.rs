@@ -7,6 +7,7 @@ pub mod utils;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use serde_json::json;
 use utils::test_rpc_server::run_test_server;
+use utils::TestApp;
 use utils::*;
 
 /// Test worker registering scenarios
