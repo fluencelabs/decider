@@ -4,7 +4,7 @@
 
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/fluence.md
 
-version: 4
+version: 5
 
 # This is like the "main" Aqua file, but
 # mostly it just points to the vague location of the code
@@ -24,9 +24,8 @@ aquaImports:
 dependencies:
   npm:
     "@fluencelabs/aqua-ipfs": 0.5.17
-    "@fluencelabs/aqua-lib": 0.7.2
+    "@fluencelabs/aqua-lib": 0.8.0
     "@fluencelabs/spell": 0.5.20
-    "@fluencelabs/aqua": 0.11.7
     "@fluencelabs/installation-spell": 0.5.20
   cargo:
     marine: 0.14.0
@@ -46,17 +45,6 @@ spells:
     # path to directory containing 'spell.yaml'
     get: src/aqua
 
-# Here I define workers. Can have as many as I want, right now it's just 'decider', that contains...
-workers:
-  # note that worker is named same as 'spell'. that's arbitrary, just my choice, doesn't mean anything. glad it works.
-  decider:
-    services:
-      # ... one service ...
-      - chain_connector
-    spells:
-      # ... and one spell
-      - decider
-
 # Here I define where to deploy workers.
 hosts:
   # this is the _worker_ name
@@ -64,6 +52,10 @@ hosts:
     peerIds:
       # that's where to deploy it
       - 12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ
+    services:
+      - chain_connector
+    spells:
+      - decider
 
 relays:
   - /ip4/127.0.0.1/tcp/9999/ws/p2p/12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ

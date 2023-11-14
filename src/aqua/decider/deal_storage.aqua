@@ -95,12 +95,12 @@ data FailedDeal:
 
 
 service JsonFailedDeal("json"):
-    parse(str: string) -> FailedDeal 
+    parse(str: string) -> FailedDeal
 
 func store_installation_failed_deal(spell_id: SpellId, deal_id: DealId, log: DealMatched, error: string):
     deal = FailedDeal(
-        deal_id = deal_id, 
-        message = error, 
+        deal_id = deal_id,
+        message = error,
         payload = FailedDealError(
             type = "InstallationFailed",
             content = InstallationFailed(log = log)
@@ -110,8 +110,8 @@ func store_installation_failed_deal(spell_id: SpellId, deal_id: DealId, log: Dea
 
 func store_tx_failed_deal(spell_id: SpellId, deal_id: DealId, error: string, tx_hash: ?string, block_number: ?string):
     deal = FailedDeal(
-        deal_id = deal_id, 
-        message = error, 
+        deal_id = deal_id,
+        message = error,
         payload = FailedDealError(
             type = "TxFailed",
             content = TxFailed(tx_hash = tx_hash, block_number = block_number)

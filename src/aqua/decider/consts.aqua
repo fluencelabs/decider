@@ -12,5 +12,5 @@ const TXS_STATUS_KEY = "worker_registration_txs_statuses"
 const FAILED_DEALS = "failed_deals"
 
 -- List of joined deals. For each deal from the list a worker was created and
--- subnet registration request was sent 
+-- subnet registration request was sent
 const JOINED_DEALS = "joined_deals"
