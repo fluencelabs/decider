@@ -335,8 +335,8 @@ async fn test_deploy_deals_diff_blocks() {
 
         (last_seen, deals, workers)
     };
-    // Note that it must not be BLOCK_NUMBER_2 since we save BLOCK_NUMBER_2 - 1
-    assert_eq!(last_seen.str, to_hex(BLOCK_NUMBER_1));
+
+    assert_eq!(last_seen.str, to_hex(LATEST_BLOCK), "wrong last_seen block");
 
     let mut expected = hashmap! {
         deal_id_1 => (TestApp::test_app1(), BLOCK_NUMBER_1),
