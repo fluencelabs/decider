@@ -17,8 +17,7 @@ use "../fluence/worker.aqua" as Worker
 
 func install_deal_spell(deal_id: DealId, cid: CID, settings: WorkerSettings) -> string:
     args = WorkerArgs(deal_id = deal_id, worker_def_cid = cid, ipfs = settings.ipfs)
-    worker_spell_id <- PeerSpell.install(settings.script, args, settings.config)
-    Srv.add_alias("worker-spell", worker_spell_id)
+    worker_spell_id <- PeerSpell.install(settings.script, args, settings.config, "worker-spell")
     <- worker_spell_id
 
 -- TODO: what should happen if join_deal has failed? We might never receive it again

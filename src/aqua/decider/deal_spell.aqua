@@ -1,4 +1,4 @@
-module DealSpell declares main
+module DealSpells declares main
 
 export main
 
