@@ -12,6 +12,7 @@ use serde_json::{json, Value};
 use std::collections::HashSet;
 use std::time::Duration;
 use utils::test_rpc_server::{run_test_server, run_test_server_predefined};
+use utils::TestApp;
 use utils::DEAL_IDS;
 use utils::*;
 
@@ -57,11 +58,12 @@ use utils::*;
 async fn test_deploy_a_deal_single() {
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const BLOCK: u32 = 32;
+    const LATEST_BLOCK: u32 = 35;
 
     let server = run_test_server_predefined(async move |method, params| {
         match method.as_str() {
             "eth_blockNumber" => {
-                json!("0x10")
+                json!(to_hex(LATEST_BLOCK))
             }
             "eth_getLogs" => {
                 let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
@@ -245,6 +247,7 @@ async fn test_deploy_a_deal_single() {
 ///  4. *Decider* updated the `lest_seen_block` to the latest seen block from the logs - 1
 #[tokio::test]
 async fn test_deploy_deals_diff_blocks() {
+    const LATEST_BLOCK: u32 = 35;
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
     let deal_id_1 = format!("0x{DEAL_ID_1}");
     const BLOCK_NUMBER_1: u32 = 32;
@@ -269,7 +272,7 @@ async fn test_deploy_deals_diff_blocks() {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => {
-                    json!("0x10")
+                    json!(to_hex(LATEST_BLOCK))
                 }
                 "eth_getLogs" => {
                     let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
@@ -332,8 +335,8 @@ async fn test_deploy_deals_diff_blocks() {
 
         (last_seen, deals, workers)
     };
-    // Note that it must not be BLOCK_NUMBER_2 since we save BLOCK_NUMBER_2 - 1
-    assert_eq!(last_seen.str, to_hex(BLOCK_NUMBER_1));
+
+    assert_eq!(last_seen.str, to_hex(LATEST_BLOCK), "wrong last_seen block");
 
     let mut expected = hashmap! {
         deal_id_1 => (TestApp::test_app1(), BLOCK_NUMBER_1),
@@ -373,14 +376,14 @@ async fn test_deploy_deals_diff_blocks() {
 ///    c. both workers are installed and have correct CIDs
 #[tokio::test]
 async fn test_deploy_a_deal_in_seq() {
-    const BLOCK_INIT: u32 = 1;
+    const LATEST_BLOCK_FIRST_RUN: u32 = 35;
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
     let deal_id_1 = format!("0x{DEAL_ID_1}");
     const BLOCK_NUMBER_1: u32 = 32;
     const DEAL_ID_2: &'static str = DEAL_IDS[1];
     let deal_id_2 = format!("0x{DEAL_ID_2}");
-    // This block should be out of range of the first deal (+ 500 from
-    const BLOCK_NUMBER_2: u32 = 531;
+    // This block should be out of range of the first deal + 500
+    const LATEST_BLOCK_SECOND_RUN: u32 = 531;
 
     let mut server = run_test_server();
     let url = server.url.clone();
@@ -398,7 +401,7 @@ async fn test_deploy_a_deal_in_seq() {
         let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
             "eth_blockNumber" => {
-                json!(to_hex(BLOCK_INIT))
+                json!(to_hex(LATEST_BLOCK_FIRST_RUN))
             }
             "eth_getLogs" => {
                 let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
@@ -430,14 +433,14 @@ async fn test_deploy_a_deal_in_seq() {
         let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
             "eth_blockNumber" => {
-                json!(to_hex(BLOCK_NUMBER_2))
+                json!(to_hex(LATEST_BLOCK_SECOND_RUN))
             }
             "eth_getLogs" => {
                 let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
                 if step == 1 {
                     json!([TestApp::log_test_app2(
                         DEAL_ID_2,
-                        BLOCK_NUMBER_2,
+                        LATEST_BLOCK_SECOND_RUN,
                         log.topics[1].as_str(),
                     )])
                 } else if step == 5 {
@@ -494,13 +497,15 @@ async fn test_deploy_a_deal_in_seq() {
     };
     assert_eq!(
         last_seen.str,
-        to_hex(BLOCK_NUMBER_2),
+        to_hex(LATEST_BLOCK_SECOND_RUN),
         "saved wrong last_seen_block"
     );
 
     let mut expected = hashmap! {
-        deal_id_1 => (TestApp::test_app1(), BLOCK_NUMBER_1),
-        deal_id_2 => (TestApp::test_app2(), BLOCK_NUMBER_2),
+        // Deal installed on the first run. `left_boundary` should be updated to
+        // block min(BLOCK_NUMBER_1 + 500, latest) + 1
+        deal_id_1 => (TestApp::test_app1(), std::cmp::min(BLOCK_NUMBER_1 + DEFAULT_POLL_WINDOW_BLOCK_SIZE, LATEST_BLOCK_SECOND_RUN) + 1),
+        deal_id_2 => (TestApp::test_app2(), LATEST_BLOCK_SECOND_RUN),
     };
     for deal in deals {
         let worker_exist = workers.remove(&deal.worker_id);
@@ -518,7 +523,12 @@ async fn test_deploy_a_deal_in_seq() {
         let cid = get_worker_app_cid(&mut client, &deal.worker_id).await;
         assert_eq!(cid, app.cid, "wrong cid");
         let deal_state = get_deal_state(&mut client, &deal.deal_id).await;
-        assert_eq!(deal_state.left_boundary, to_hex(block), "wrong saved state");
+        assert_eq!(
+            deal_state.left_boundary,
+            to_hex(block),
+            "wrong saved state for {}",
+            deal.deal_id
+        );
     }
 
     server.shutdown().await;
@@ -530,12 +540,12 @@ async fn test_deploy_a_deal_in_seq() {
 ///    We can simulate it by returning not all deals on the first run, and on the second add deals to the block
 #[tokio::test]
 async fn test_deploy_deals_in_one_block() {
-    const BLOCK_INIT: u32 = 1;
+    const LATEST_BLOCK: u32 = 35;
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
     let deal_id_1 = format!("0x{DEAL_ID_1}");
     const DEAL_ID_2: &'static str = DEAL_IDS[1];
     let deal_id_2 = format!("0x{DEAL_ID_2}");
-    const BLOCK_NUMBER: u32 = 32;
+    const DEAL_BLOCK_NUMBER: u32 = 32;
 
     let mut server = run_test_server();
     let url = server.url.clone();
@@ -553,13 +563,13 @@ async fn test_deploy_deals_in_one_block() {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => {
-                    json!(to_hex(BLOCK_INIT))
+                    json!(to_hex(LATEST_BLOCK))
                 }
                 "eth_getLogs" => {
                     let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
                     json!([TestApp::log_test_app1(
                         DEAL_ID_1,
-                        BLOCK_NUMBER,
+                        DEAL_BLOCK_NUMBER,
                         log.topics[1].as_str(),
                     )])
                 }
@@ -583,14 +593,22 @@ async fn test_deploy_deals_in_one_block() {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => {
-                    json!(to_hex(BLOCK_INIT))
+                    json!(to_hex(LATEST_BLOCK))
                 }
                 "eth_getLogs" => {
                     if step == 1 {
                         let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
                         json!([
-                            TestApp::log_test_app1(DEAL_ID_1, BLOCK_NUMBER, log.topics[1].as_str()),
-                            TestApp::log_test_app2(DEAL_ID_2, BLOCK_NUMBER, log.topics[1].as_str())
+                            TestApp::log_test_app1(
+                                DEAL_ID_1,
+                                DEAL_BLOCK_NUMBER,
+                                log.topics[1].as_str()
+                            ),
+                            TestApp::log_test_app2(
+                                DEAL_ID_2,
+                                DEAL_BLOCK_NUMBER,
+                                log.topics[1].as_str()
+                            )
                         ])
                     } else {
                         json!([])
@@ -645,11 +663,12 @@ async fn test_deploy_deals_in_one_block() {
     };
     // TODO: difficult logic with last_seen_block, not sure on what circumstances it should be
     // incremented and when not
-    assert_eq!(last_seen.str, to_hex(BLOCK_NUMBER - 1));
+    assert_eq!(last_seen.str, to_hex(LATEST_BLOCK), "wrong last seen");
 
     let mut expected = hashmap! {
-        deal_id_1 => (TestApp::test_app1(), BLOCK_NUMBER),
-        deal_id_2 => (TestApp::test_app2(), BLOCK_NUMBER),
+        // It was installed on the first run, so on the second run the window is updated
+        deal_id_1 => (TestApp::test_app1(), std::cmp::min(DEAL_BLOCK_NUMBER + DEFAULT_POLL_WINDOW_BLOCK_SIZE, LATEST_BLOCK) + 1),
+        deal_id_2 => (TestApp::test_app2(), DEAL_BLOCK_NUMBER),
     };
     for deal in deals {
         let worker_exist = workers.remove(&deal.worker_id);
@@ -667,7 +686,12 @@ async fn test_deploy_deals_in_one_block() {
         let cid = get_worker_app_cid(&mut client, &deal.worker_id).await;
         assert_eq!(cid, app.cid, "wrong cid");
         let deal_state = get_deal_state(&mut client, &deal.deal_id).await;
-        assert_eq!(deal_state.left_boundary, to_hex(block), "wrong saved state");
+        assert_eq!(
+            deal_state.left_boundary,
+            to_hex(block),
+            "wrong saved state for {}",
+            deal.deal_id
+        );
     }
 
     server.shutdown().await;

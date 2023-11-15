@@ -50,12 +50,13 @@ pub struct DealChangedResult {
 }
 
 impl DealChangedResult {
-    pub fn ok(right_boundary: String, deal_info: DealInfo, change: DealChanged) -> Self {
+    /// Allow empty changes
+    pub fn ok(right_boundary: String, deal_info: DealInfo, change: Option<DealChanged>) -> Self {
         Self {
             success: true,
             error: vec![],
             // Optionals in AIR and marine are represented with Vec. Some(x) is [x]
-            log: vec![change],
+            log: change.map(|change| vec![change]).unwrap_or_default(),
             right_boundary,
             deal_info,
         }
