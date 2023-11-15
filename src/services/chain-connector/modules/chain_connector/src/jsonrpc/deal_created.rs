@@ -1,7 +1,7 @@
 use marine_rs_sdk::marine;
 
 use crate::chain::chain_data::ChainData;
-use crate::chain::deal_created::{DealCreated, DealCreatedData};
+use crate::chain::event::deal_created::{DealCreated, DealCreatedData};
 use crate::chain::log::parse_logs;
 use crate::jsonrpc::get_logs::get_logs;
 use crate::jsonrpc::request::check_url;

@@ -1,7 +1,7 @@
 use marine_rs_sdk::marine;
 
 use crate::chain::chain_data::ChainData;
-use crate::chain::deal_changed::{DealChanged, DealChangedData};
+use crate::chain::event::deal_changed::{DealChanged, DealChangedData};
 use crate::jsonrpc::get_logs::GetLogsReq;
 use crate::jsonrpc::right_boundary::default_right_boundary;
 use crate::jsonrpc::JsonRpcReq;
