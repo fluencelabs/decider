@@ -667,7 +667,6 @@ async fn test_deploy_deals_in_one_block() {
 
     let mut expected = hashmap! {
         // It was installed on the first run, so on the second run the window is updated
-        //
         deal_id_1 => (TestApp::test_app1(), std::cmp::min(DEAL_BLOCK_NUMBER + DEFAULT_POLL_WINDOW_BLOCK_SIZE, LATEST_BLOCK) + 1),
         deal_id_2 => (TestApp::test_app2(), DEAL_BLOCK_NUMBER),
     };
