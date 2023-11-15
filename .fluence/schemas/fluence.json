@@ -358,7 +358,7 @@
           "type": "object",
           "title": "npm dependencies",
           "nullable": true,
-          "description": "A map of npm dependency versions. Fluence CLI ensures dependencies are installed each time you run aqua",
+          "description": "A map of npm aqua dependency versions. Fluence CLI ensures dependencies are installed each time you run aqua",
           "additionalProperties": {
             "type": "string"
           },
@@ -467,60 +467,6 @@
                 "type": "string"
               },
               "minItems": 1
-            }
-          },
-          "required": []
-        }
-      },
-      "required": []
-    },
-    "workers": {
-      "nullable": true,
-      "description": "A Map with worker names as keys and worker configs as values",
-      "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "description": "Worker config",
-        "properties": {
-          "services": {
-            "description": "An array of service names to include in this worker. Service names must be listed in fluence.yaml",
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "spells": {
-            "description": "An array of spell names to include in this worker. Spell names must be listed in fluence.yaml",
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        },
-        "required": []
-      },
-      "properties": {
-        "Worker": {
-          "type": "object",
-          "description": "Worker config",
-          "properties": {
-            "services": {
-              "description": "An array of service names to include in this worker. Service names must be listed in fluence.yaml",
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "nullable": true
-            },
-            "spells": {
-              "description": "An array of spell names to include in this worker. Spell names must be listed in fluence.yaml",
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "nullable": true
             }
           },
           "required": []

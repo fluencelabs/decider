@@ -16,6 +16,7 @@ use utils::*;
 #[tokio::test]
 async fn test_register_worker_fails() {
     const LATEST_BLOCK_FIRST_RUN: u32 = 110;
+
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const DEAL_ID_2: &'static str = DEAL_IDS[1];
     const DEAL_ID_3: &'static str = DEAL_IDS[2];

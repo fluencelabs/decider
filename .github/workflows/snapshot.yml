@@ -39,8 +39,17 @@ jobs:
           repository: fluencelabs/decider
           ref: ${{ inputs.ref }}
 
-      - name: Setup rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Setup Rust toolchain
+        uses: dsherret/rust-toolchain-file@v1
+
+      - name: Setup cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: decider
+          # github allows only 10GB of cache
+          # so save cache only on merge to master
+          # to use less space and speed up CI
+          save-if: ${{ github.event_name == 'push' }}
 
       - name: Setup fcli
         uses: fluencelabs/setup-fluence@v1
