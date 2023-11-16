@@ -9,10 +9,11 @@ import Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
 import DealId, SpellId, WorkerId from "../types.aqua"
 
 -- Arguments of the worker
+-- Names must be in sync with Worker Spell.
 data WorkerArgs:
     -- Address of the deal is also an ID of the deal
     deal_id: DealId
-    -- CID of the worker's definition
+    -- CID of the worker's definition.
     worker_def_cid: string
     -- IPFS API where the related CID resides
     ipfs: string
@@ -32,6 +33,7 @@ func get_worker_settings(spell_id: SpellId) ->  ?WorkerSettings:
 
     settings: *WorkerSettings
 
+    -- TODO: I want to unite these guys to one structure but it won't be backward-compatible. 
     script_str <- get_string(spell_id, "worker_script")
     config_str <- get_string(spell_id, "worker_config")
     ipfs_str <- get_string(spell_id, "worker_ipfs")

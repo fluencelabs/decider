@@ -7,6 +7,7 @@ import Json from "../fluence/peer.aqua"
 import ChainInfo from "../chain/chain.aqua"
 import JoinedDeal, JsonDealState, DealState, store_deal_state, get_deal_state  from "../decider/deal_storage.aqua"
 import SpellId, DealId from "../types.aqua"
+import WORKER_DEF_CID from "../decider/consts.aqua"
 
 import DealInfo, DealChangesReq, ChainConnector, DealChangedResult, DealChanged from "services.aqua"
 
@@ -53,7 +54,7 @@ func update_worker(spell_id: SpellId, deal_info: DealInfo, log: DealChanged):
     on worker_id:
         -- stringify app_cid to be able to use it as an argument of a spell
         Spell "worker-spell"
-        Spell.set_string("worker_def_cid", app_cid)
+        Spell.set_string(WORKER_DEF_CID, app_cid)
 
 -- Move left boundary of the deal's block range to be `min(right boundary, latest_block) + 1`
 func move_left_boundary(spell_id: SpellId, deal_id: DealId, right_boundary: string, latest: string):
