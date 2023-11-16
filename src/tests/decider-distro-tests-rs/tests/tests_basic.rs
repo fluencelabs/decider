@@ -6,7 +6,6 @@ pub mod utils;
 
 use utils::test_rpc_server::run_test_server;
 
-use crate::utils::*;
 use connected_client::ConnectedClient;
 use created_swarm::make_swarms_with_cfg;
 use fluence_app_service::TomlMarineConfig;
@@ -15,6 +14,14 @@ use fluence_spell_dtos::value::{StringValue, UnitValue};
 use maplit::hashmap;
 use serde::Serialize;
 use serde_json::{json, Value};
+use utils::chain::LogsReq;
+use utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};
+use utils::deal::get_joined_deals;
+use utils::default::{default_receipt, DEAL_IDS};
+use utils::distro::*;
+use utils::setup::setup_nox;
+use utils::test_rpc_server::run_test_server_predefined;
+use utils::*;
 
 #[test]
 fn test_connector_config_check() {
@@ -235,15 +242,12 @@ async fn test_left_boundary_idle() {
     // To be able to wait 'til the end of one cycle
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
 
-    let mut oneshot_config = TriggerConfig::default();
-    oneshot_config.clock.start_sec = 1;
-
     let block_numbers = vec!["0x0", "0x10", "0x10", "0xffffff"];
     let expected_last_seen = vec!["0x0", "0x10", "0x10", "0x205"];
     let expected_from_blocks = vec!["0x0", "0x1", "0x11", "0x11"];
 
     for step in 0..block_numbers.len() {
-        update_config(&mut client, &oneshot_config).await.unwrap();
+        update_config(&mut client, &oneshot_config()).await.unwrap();
         {
             let (method, params) = server.receive_request().await.unwrap();
             assert_eq!(method, "eth_blockNumber");
