@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.5](https://github.com/fluencelabs/decider/compare/connector-v0.5.4...connector-v0.5.5) (2023-11-16)
+
+
+### Features
+
+* bump aqua-lib to 0.8.0 + [NET-623] ([#109](https://github.com/fluencelabs/decider/issues/109)) ([de473e5](https://github.com/fluencelabs/decider/commit/de473e58c6423d5993c8ed17cc579aa2f015a81b))
+* bump spell to 0.5.30 ([#111](https://github.com/fluencelabs/decider/issues/111)) ([089be2c](https://github.com/fluencelabs/decider/commit/089be2cd2e11bd2fa270abe5a60d60dee552c10d))
+* update deps ([#112](https://github.com/fluencelabs/decider/issues/112)) ([308bafd](https://github.com/fluencelabs/decider/commit/308bafdd699cd51be5de28acac230fd72e16e9f5))
+
+
+### Bug Fixes
+
+* **decider:** Move poll window of deal updates when there are no updates [NET-625] ([#108](https://github.com/fluencelabs/decider/issues/108)) ([16ae574](https://github.com/fluencelabs/decider/commit/16ae5747c63fc14a44415834761daf183be4ac79))
+
 ## [0.5.4](https://github.com/fluencelabs/decider/compare/connector-v0.5.3...connector-v0.5.4) (2023-11-07)
 
 
