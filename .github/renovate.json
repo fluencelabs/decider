@@ -10,6 +10,17 @@
   ],
   "rangeStrategy": "pin",
   "schedule": "every weekend",
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/examples/**",
+    "**/__tests__/**",
+    "**/test/**",
+    "**/tests/**",
+    "!src/tests/**",
+    "**/__fixtures__/**"
+  ],
   "regexManagers": [
     {
       "fileMatch": ["^src/tests/decider-distro-tests-rs/Cargo\\.toml$"],
