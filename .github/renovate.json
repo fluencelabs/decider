@@ -8,7 +8,6 @@
     "github-actions",
     "pip_requirements"
   ],
-  "rangeStrategy": "pin",
   "schedule": "every weekend",
   "ignorePresets": [":ignoreModulesAndTests"],
   "regexManagers": [
