@@ -4,9 +4,28 @@
     "config:base",
     ":semanticCommitTypeAll(chore)"
   ],
-  "enabledManagers": ["cargo", "npm", "github-actions", "pip_requirements"],
+  "enabledManagers": [
+    "cargo",
+    "npm",
+    "regex",
+    "github-actions",
+    "pip_requirements"
+  ],
   "rangeStrategy": "pin",
   "schedule": "every weekend",
+  "regexManagers": [
+    {
+      "fileMatch": ["^src/tests/decider-distro-tests-rs/Cargo\\.toml$"],
+      "matchStrings": [
+        "\"(?<depName>[^\"]+)\" = \\{ git = \"(?<lookupName>[^\"]+)\", branch = \"(?<currentValue>[^\"]+)\" \\}"
+      ],
+      "datasourceTemplate": "gitTags",
+      "versioningTemplate": "semver",
+      "depNameTemplate": "{{depName}}",
+      "lookupNameTemplate": "{{lookupName}}",
+      "currentValueTemplate": "{{#semver}}{{version}}{{/semver}}"
+    }
+  ],
   "packageRules": [
     {
       "matchManagers": ["cargo", "npm"],
@@ -18,6 +37,13 @@
       "semanticCommitType": "fix",
       "semanticCommitScope": "deps",
       "schedule": "at any time"
+    },
+    {
+      "managers": ["regex"],
+      "datasource": "gitTags",
+      "versioning": "semver",
+      "packagePatterns": ["^nox-"],
+      "allowedVersions": "/^nox-v/"
     },
     {
       "matchDepTypes": ["devDependencies"],
