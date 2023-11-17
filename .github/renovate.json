@@ -1,23 +1,40 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    ":semanticCommitTypeAll(chore)"
+  "extends": ["config:base", ":semanticCommitTypeAll(chore)"],
+  "enabledManagers": [
+    "cargo",
+    "npm",
+    "regex",
+    "github-actions",
+    "pip_requirements"
   ],
-  "enabledManagers": ["cargo", "npm", "github-actions", "pip_requirements"],
   "rangeStrategy": "pin",
   "schedule": "every weekend",
+  "regexManagers": [
+    {
+      "fileMatch": ["^src/tests/decider-distro-tests-rs/Cargo\\.toml$"],
+      "matchStrings": [
+        "\"(?<depName>[^\"]+)\" = \\{ git = \"(?<lookupName>[^\"]+)\", branch = \"(?<currentValue>[^\"]+)\" \\}"
+      ],
+      "datasourceTemplate": "gitTags",
+      "versioningTemplate": "semver",
+      "depNameTemplate": "{{depName}}",
+      "lookupNameTemplate": "{{lookupName}}",
+      "currentValueTemplate": "{{#semver}}{{version}}{{/semver}}"
+    }
+  ],
   "packageRules": [
     {
       "matchManagers": ["cargo", "npm"],
-      "matchPackagePatterns": [
-        "@fluencelabs/.*",
-        "fluence-.*",
-        "marine-.*"
-      ],
+      "matchPackagePatterns": ["@fluencelabs/.*", "fluence-.*", "marine-.*"],
       "semanticCommitType": "fix",
       "semanticCommitScope": "deps",
       "schedule": "at any time"
+    },
+    {
+      "matchManagers": ["regex"],
+      "matchPackagePatterns": ["^nox-"],
+      "allowedVersions": "/^nox-v/"
     },
     {
       "matchDepTypes": ["devDependencies"],
