@@ -18,8 +18,7 @@
       ],
       "datasourceTemplate": "github-tags",
       "versioningTemplate": "semver",
-      "depNameTemplate": "{{depName}}",
-      "lookupNameTemplate": "https://github.com/fluencelabs/nox.git",
+      "depNameTemplate": "fluencelabs/nox"
       "currentValueTemplate": "nox-{{#semver}}{{version}}{{/semver}}"
     }
   ],
