@@ -1,8 +1,9 @@
 use crate::utils;
+use crate::utils::spell;
 use connected_client::ConnectedClient;
 use eyre::WrapErr;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
-use fluence_spell_dtos::value::{ScriptValue, StringListValue};
+use fluence_spell_dtos::value::ScriptValue;
 use maplit::hashmap;
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -94,26 +95,14 @@ pub async fn wait_worker_spell_stopped(
     let mut finished = false;
     for _ in 0..5 {
         // if only we can import these keys from Aqua files
-        let result = utils::execute(
+        let strings = spell::list_get_strings_on(
             client,
-            r#"
-            (seq
-                (call relay ("op" "noop") [])
-                (call worker ("worker-spell" "list_get_strings") ["__installation_spell_status__"] status)
-            )
-        "#,
-            r#"status"#,
-            hashmap! {
-                "worker" => json!(worker_id),
-            },
+            &worker_id,
+            "worker-spell",
+            "__installation_spell_status__",
         )
-            .await
-            .wrap_err("getting installation spell status")
-            .unwrap();
-
-        assert!(!result.is_empty(), "no result from the worker-spell");
-
-        let strings = serde_json::from_value::<StringListValue>(result[0].clone()).unwrap();
+        .await
+        .unwrap();
         assert!(
             strings.success,
             "can't get installation spell status: {}",

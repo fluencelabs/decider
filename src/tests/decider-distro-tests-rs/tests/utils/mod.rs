@@ -9,6 +9,8 @@ pub mod chain;
 pub mod default;
 pub mod worker;
 
+pub mod spell;
+
 mod test_apps;
 pub mod test_rpc_server;
 

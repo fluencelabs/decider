@@ -1,10 +1,8 @@
-use crate::utils;
+use crate::utils::spell;
 use connected_client::ConnectedClient;
 use eyre::WrapErr;
-use fluence_spell_dtos::value::{StringListValue, StringValue};
-use maplit::hashmap;
 use serde::Deserialize;
-use serde_json::{json, Value};
+use serde_json::Value;
 
 #[derive(Deserialize, Debug)]
 pub struct DealState {
@@ -12,28 +10,17 @@ pub struct DealState {
 }
 
 pub async fn get_deal_state(client: &mut ConnectedClient, deal_id: &String) -> DealState {
-    let mut result = utils::execute(
-        client,
-        r#"
-            (call relay ("decider" "get_string") [deal_id] deal_state)
-        "#,
-        "deal_state",
-        hashmap! {
-            "deal_id" => json!(deal_id)
-        },
-    )
-    .await
-    .unwrap();
-    let str = serde_json::from_value::<StringValue>(result.remove(0))
-        .wrap_err("get deal_state")
+    let result = spell::get_string(client, "decider", deal_id)
+        .await
+        .wrap_err("getting deal state")
         .unwrap();
-    assert!(!str.absent, "no state for deal {}", deal_id);
+    assert!(!result.absent, "no state for deal {}", deal_id);
     assert!(
-        str.success,
+        result.success,
         "can't get state for deal {}: {}",
-        deal_id, str.error
+        deal_id, result.error
     );
-    serde_json::from_str::<DealState>(&str.str)
+    serde_json::from_str::<DealState>(&result.str)
         .wrap_err("parse deal_state")
         .unwrap()
 }
@@ -44,28 +31,16 @@ pub struct JoinedDeal {
     pub worker_id: String,
 }
 
-pub fn parse_joined_deals(deals: Value) -> Vec<JoinedDeal> {
-    let deals = serde_json::from_value::<StringListValue>(deals).unwrap();
-    assert!(deals.success);
+pub async fn get_joined_deals(client: &mut ConnectedClient) -> Vec<JoinedDeal> {
+    let deals = spell::list_get_strings(client, "decider", "joined_deals")
+        .await
+        .unwrap();
+    assert!(deals.success, "empty list of joined_deals: {}", deals.error);
     deals
         .strings
         .iter()
         .map(|deal| serde_json::from_str::<JoinedDeal>(deal).unwrap())
         .collect()
-}
-
-pub async fn get_joined_deals(mut client: &mut ConnectedClient) -> Vec<JoinedDeal> {
-    let mut deals = utils::execute(
-        &mut client,
-        r#"
-            (call relay ("decider" "list_get_strings") ["joined_deals"] deals)
-        "#,
-        "deals",
-        hashmap! {},
-    )
-    .await
-    .unwrap();
-    parse_joined_deals(deals.remove(0))
 }
 
 #[derive(Deserialize, Debug)]
@@ -83,20 +58,13 @@ pub struct FailedDeal {
     payload: FailedDealPayload,
 }
 
-pub async fn get_failed_deals(mut client: &mut ConnectedClient) -> Vec<FailedDeal> {
-    let mut deals = utils::execute(
-        &mut client,
-        r#"
-            (call relay ("decider" "list_get_strings") ["failed_deals"] deals)
-        "#,
-        "deals",
-        hashmap! {},
-    )
-    .await
-    .unwrap();
-    let lst = serde_json::from_value::<StringListValue>(deals.remove(0)).unwrap();
-    assert!(lst.success, "can't receive failed_deals: {}", lst.error);
-    lst.strings
+pub async fn get_failed_deals(client: &mut ConnectedClient) -> Vec<FailedDeal> {
+    let deals = spell::list_get_strings(client, "decider", "failed_deals")
+        .await
+        .unwrap();
+    assert!(deals.success, "can't receive failed_deals: {}", deals.error);
+    deals
+        .strings
         .iter()
         .map(|s| serde_json::from_str::<FailedDeal>(s))
         .collect::<Result<Vec<_>, _>>()

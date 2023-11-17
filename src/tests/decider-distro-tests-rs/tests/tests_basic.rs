@@ -8,9 +8,10 @@ use utils::test_rpc_server::run_test_server;
 
 use connected_client::ConnectedClient;
 use created_swarm::make_swarms_with_cfg;
+use eyre::WrapErr;
 use fluence_app_service::TomlMarineConfig;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
-use fluence_spell_dtos::value::{StringValue, UnitValue};
+use fluence_spell_dtos::value::UnitValue;
 use maplit::hashmap;
 use serde::Serialize;
 use serde_json::{json, Value};
@@ -266,15 +267,9 @@ async fn test_left_boundary_idle() {
         }
         wait_decider_stopped(&mut client).await;
 
-        let result = execute(
-            &mut client,
-            r#" (call relay ("decider" "get_string") ["last_seen_block"] last_seen) "#,
-            "last_seen",
-            hashmap! {},
-        )
-        .await
-        .unwrap();
-        let last_seen = serde_json::from_value::<StringValue>(result[0].clone()).unwrap();
+        let last_seen = spell::get_string(&mut client, "decider", "last_seen_block")
+            .await
+            .unwrap();
         assert_eq!(last_seen.str, expected_last_seen[step]);
     }
 

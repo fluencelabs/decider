@@ -15,7 +15,7 @@ use utils::chain::LogsReq;
 use utils::control::{
     update_config, update_decider_script_for_tests, wait_decider_stopped, wait_worker_spell_stopped,
 };
-use utils::deal::{get_deal_state, get_joined_deals, parse_joined_deals, JoinedDeal};
+use utils::deal::{get_deal_state, get_joined_deals, JoinedDeal};
 use utils::default::{default_receipt, DEAL_IDS, DEFAULT_POLL_WINDOW_BLOCK_SIZE};
 use utils::distro::{make_distro_with_api, make_distro_with_api_and_config};
 use utils::setup::setup_nox;
@@ -105,12 +105,9 @@ async fn test_deploy_a_deal_single() {
     let mut result = execute(
         &mut client,
         r#"
-            (seq
                 (call relay ("decider" "get_u32") ["counter"] counter)
-                (call relay ("decider" "list_get_strings") ["joined_deals"] deals)
-            )
         "#,
-        "counter deals",
+        "counter",
         hashmap! {},
     )
     .await
@@ -126,7 +123,7 @@ async fn test_deploy_a_deal_single() {
 
     // Analyse joined deals
     let deal = {
-        let mut deals = parse_joined_deals(result.remove(0));
+        let mut deals = get_joined_deals(&mut client).await;
         assert_eq!(deals.len(), 1, "decider joined more than one deal");
         deals.remove(0)
     };
