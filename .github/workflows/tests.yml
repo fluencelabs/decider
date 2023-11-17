@@ -95,6 +95,10 @@ jobs:
         if: always()
         run: rm -rf tmp ~/.fluence
 
+      - name: debug
+        if: always()
+        run: cat src/tests/decider/distro-tests-rs/Cargo.toml
+
       - name: Post Run IPFS
         if: always()
         run: |
