@@ -3,10 +3,8 @@
   "extends": ["config:base", ":semanticCommitTypeAll(chore)"],
   "enabledManagers": [
     "cargo",
-    "npm",
     "regex",
-    "github-actions",
-    "pip_requirements"
+    "github-actions"
   ],
   "schedule": "every weekend",
   "ignorePresets": [":ignoreModulesAndTests"],
@@ -14,7 +12,7 @@
     {
       "fileMatch": ["src/tests/decider-distro-tests-rs/Cargo\\.toml"],
       "matchStrings": [
-        "\"(?<depName>[^\"]+)\" = \\{ git = \"(?<lookupName>https://github.com/username/repository.git)\", tag = \"(?<currentValue>.*)\" \\}"
+        "\"(?<depName>[^\"]+)\" = \\{ git = \"(?<lookupName>https://github.com/fluencelabs/nox.git)\", tag = \"(?<currentValue>.*)\" \\}"
       ],
       "datasourceTemplate": "git-tags",
       "currentValueTemplate": "nox-{{#semver}}{{version}}{{/semver}}",
