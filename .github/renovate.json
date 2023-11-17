@@ -12,11 +12,11 @@
   "ignorePresets": [":ignoreModulesAndTests"],
   "regexManagers": [
     {
-      "fileMatch": ["src/tests/decider-distro-tests-rs/Cargo\\.toml$"],
+      "fileMatch": ["src/tests/decider-distro-tests-rs/Cargo\\.toml"],
       "matchStrings": [
         "\"(?<depName>[^\"]+)\" = \\{ git = \"https://github.com/fluencelabs/nox.git\", tag = \"(?<currentValue>[^\"]+)\" \\}"
       ],
-      "datasourceTemplate": "gitTags",
+      "datasourceTemplate": "github-tags",
       "versioningTemplate": "semver",
       "depNameTemplate": "{{depName}}",
       "lookupNameTemplate": "https://github.com/fluencelabs/nox.git",
