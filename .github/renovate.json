@@ -10,7 +10,7 @@
   ],
   "rangeStrategy": "pin",
   "schedule": "every weekend",
-  "ignorePresets": ["ignoreModulesAndTests"],
+  "ignorePresets": [":ignoreModulesAndTests"],
   "regexManagers": [
     {
       "fileMatch": ["^src/tests/decider-distro-tests-rs/Cargo\\.toml$"],
