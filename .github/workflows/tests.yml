@@ -67,6 +67,7 @@ jobs:
         with:
           path: src/tests/decider-distro-tests-rs
           dependencies: ${{ inputs.test-cargo-dependencies }}
+          no-check: true
 
       - name: Build distro
         env:
