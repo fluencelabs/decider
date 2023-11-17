@@ -6,6 +6,7 @@ pub mod utils;
 
 use utils::test_rpc_server::run_test_server;
 
+use crate::utils::default::DEFAULT_POLL_WINDOW_BLOCK_SIZE;
 use connected_client::ConnectedClient;
 use created_swarm::make_swarms_with_cfg;
 use eyre::WrapErr;
@@ -13,7 +14,7 @@ use fluence_app_service::TomlMarineConfig;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use fluence_spell_dtos::value::UnitValue;
 use maplit::hashmap;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use utils::chain::LogsReq;
 use utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};
@@ -21,7 +22,6 @@ use utils::deal::get_joined_deals;
 use utils::default::{default_receipt, DEAL_IDS};
 use utils::distro::*;
 use utils::setup::setup_nox;
-use utils::test_rpc_server::run_test_server_predefined;
 use utils::*;
 
 #[test]
@@ -272,6 +272,90 @@ async fn test_left_boundary_idle() {
             .unwrap();
         assert_eq!(last_seen.str, expected_last_seen[step]);
     }
+
+    server.shutdown().await;
+}
+#[tokio::test]
+async fn test_sync_info() {
+    const LATEST_BLOCK_FIRST_RUN: u32 = 100;
+    const LATEST_BLOCK_SECOND_RUN: u32 = 2000;
+
+    let mut server = run_test_server();
+
+    let url = server.url.clone();
+
+    let distro = make_distro_with_api(url);
+    let (swarm, mut client) = setup_nox(distro.clone()).await;
+
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_config(&mut client, &oneshot_config()).await.unwrap();
+    {
+        {
+            let (method, _params) = server.receive_request().await.unwrap();
+            assert_eq!(method, "eth_blockNumber");
+            server.send_response(Ok(json!(to_hex(LATEST_BLOCK_FIRST_RUN))));
+        }
+        {
+            let (method, _params) = server.receive_request().await.unwrap();
+            assert_eq!(method, "eth_getLogs");
+            server.send_response(Ok(json!([])));
+        }
+    }
+    wait_decider_stopped(&mut client).await;
+    #[derive(Deserialize, Debug)]
+    struct SyncInfo {
+        blocks_diff: u32,
+        run_updated: u32,
+    }
+
+    let result = spell::get_string(&mut client, "decider", "sync_info")
+        .await
+        .wrap_err("get sync_info failed")
+        .unwrap();
+    assert!(result.success, "get sync_info failed: {}", result.error);
+    let sync_info = serde_json::from_str::<SyncInfo>(&result.str)
+        .wrap_err("parse sync_info")
+        .unwrap();
+    assert_eq!(
+        sync_info.run_updated, 1,
+        "should be updated on the first run"
+    );
+    assert_eq!(sync_info.blocks_diff, 0, "must be in sync");
+
+    update_config(&mut client, &oneshot_config()).await.unwrap();
+    {
+        {
+            let (method, _params) = server.receive_request().await.unwrap();
+            assert_eq!(method, "eth_blockNumber");
+            server.send_response(Ok(json!(to_hex(LATEST_BLOCK_SECOND_RUN))));
+        }
+        {
+            let (method, _params) = server.receive_request().await.unwrap();
+            assert_eq!(method, "eth_getLogs");
+            server.send_response(Ok(json!([])));
+        }
+    }
+    wait_decider_stopped(&mut client).await;
+
+    let result = spell::get_string(&mut client, "decider", "sync_info")
+        .await
+        .wrap_err("get sync_info failed")
+        .unwrap();
+    assert!(result.success, "get sync_info failed: {}", result.error);
+    let sync_info = serde_json::from_str::<SyncInfo>(&result.str)
+        .wrap_err("parse sync_info")
+        .unwrap();
+    assert_eq!(
+        sync_info.run_updated, 2,
+        "should be updated on the first run"
+    );
+    let expected_last_seen = LATEST_BLOCK_FIRST_RUN + DEFAULT_POLL_WINDOW_BLOCK_SIZE;
+    assert_eq!(
+        sync_info.blocks_diff,
+        LATEST_BLOCK_SECOND_RUN - expected_last_seen - 1,
+        "must be not in sync with {} block range",
+        DEFAULT_POLL_WINDOW_BLOCK_SIZE
+    );
 
     server.shutdown().await;
 }

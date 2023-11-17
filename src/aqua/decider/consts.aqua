@@ -21,3 +21,5 @@ const LAST_SEEN_BLOCK = "last_seen_block"
 -- Decider puts in Worker Spell's KV storage CID of worker definition
 -- This name must be in sync with Worker Spell.
 const WORKER_DEF_CID = "worker_def_cid"
+
+const SYNC_INFO = "sync_info"

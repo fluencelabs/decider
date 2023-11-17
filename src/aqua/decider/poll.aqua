@@ -10,6 +10,7 @@ import spell_log from "../fluence/spell.aqua"
 import get_joined_deals from "../decider/deal_storage.aqua"
 import poll_mailbox from "../decider/mailbox.aqua"
 import poll_txs from "./decider/register_worker.aqua"
+import store_sync_info from "./decider/sync_info.aqua"
 
 use "../chain/blocks.aqua" as Blocks
 
@@ -35,4 +36,8 @@ func main(spell_id: SpellId, chain: ChainInfo):
             poll_txs(spell_id, chain.api_endpoint)
 
         try:
+            store_sync_info(spell_id, latest_block!)
+
+        try:
             poll_mailbox(spell_id)
+
