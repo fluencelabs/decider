@@ -12,7 +12,7 @@
   "ignorePresets": [":ignoreModulesAndTests"],
   "regexManagers": [
     {
-      "fileMatch": ["^src/tests/decider-distro-tests-rs/Cargo\\.toml$"],
+      "fileMatch": ["src/tests/decider-distro-tests-rs/Cargo\\.toml$"],
       "matchStrings": [
         "\"(?<depName>[^\"]+)\" = \\{ git = \"(?<lookupName>https://github.com/fluencelabs/nox.git)\", branch = \"(?<currentValue>[^\"]+)\" \\}"
       ],
