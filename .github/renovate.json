@@ -14,12 +14,11 @@
     {
       "fileMatch": ["src/tests/decider-distro-tests-rs/Cargo\\.toml"],
       "matchStrings": [
-        "\"(?<depName>[^\"]+)\" = \\{ git = \"https://github.com/fluencelabs/nox.git\", tag = \"(?<currentValue>[^\"]+)\" \\}"
+        "\"(?<depName>[^\"]+)\" = \\{ git = \"(?<lookupName>https://github.com/username/repository.git)\", tag = \"(?<currentValue>.*)\" \\}"
       ],
-      "datasourceTemplate": "github-tags",
-      "versioningTemplate": "semver",
-      "depNameTemplate": "fluencelabs/nox",
-      "currentValueTemplate": "nox-{{#semver}}{{version}}{{/semver}}"
+      "datasourceTemplate": "git-tags",
+      "currentValueTemplate": "nox-{{#semver}}{{version}}{{/semver}}",
+      "depNameTemplate": "{{depName}}"
     }
   ],
   "packageRules": [
