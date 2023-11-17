@@ -11,18 +11,18 @@ created-swarm = { git = "https://github.com/fluencelabs/nox.git", branch = "mast
 connected-client = { git = "https://github.com/fluencelabs/nox.git", branch = "master" }
 log-utils = { git = "https://github.com/fluencelabs/nox.git", branch = "master" }
 system-services = { git = "https://github.com/fluencelabs/nox.git", branch = "master" }
-fluence-app-service = "0.29.0"
+fluence-app-service = "=0.29.0"
 
-fluence-keypair = "0.10.3"
+fluence-keypair = "=0.10.3"
 
-tracing = { version = "0.1.37", default-features = false, features = ["log"] }
-tracing-subscriber = "0.3.17"
-tokio = { version = "1.29.1", features = ["full", "tracing"] }
-toml = "0.5.10"
-maplit = "1.0.2"
-serde_json = "1.0.96"
-serde = { version = "1.0.130", features = ["derive"] }
-fluence-spell-dtos = "0.5.11"
-mockito = "1.1.0"
-hyper = "0.14.27"
-eyre = "0.6.8"
+tracing = { version = "=0.1.37", default-features = false, features = ["log"] }
+tracing-subscriber = "=0.3.17"
+tokio = { version = "=1.29.1", features = ["full", "tracing"] }
+toml = "=0.5.10"
+maplit = "=1.0.2"
+serde_json = "=1.0.96"
+serde = { version = "=1.0.130", features = ["derive"] }
+fluence-spell-dtos = "=0.5.11"
+mockito = "=1.1.0"
+hyper = "=0.14.27"
+eyre = "=0.6.8"

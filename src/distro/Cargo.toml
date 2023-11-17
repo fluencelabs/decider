@@ -10,9 +10,9 @@ include = [ "/src", "built.rs", "Cargo.toml", "decider-spell" ]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-maplit = "1.0.2"
-serde_json = "1.0.96"
-fluence-spell-dtos = "0.5.11"
+maplit = "=1.0.2"
+serde_json = "=1.0.96"
+fluence-spell-dtos = "=0.5.11"
 
 [build-dependencies]
-built = "0.7.0"
+built = "=0.7.0"
