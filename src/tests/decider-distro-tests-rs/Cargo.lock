@@ -95,7 +95,7 @@ dependencies = [
 [[package]]
 name = "air-interpreter-fs"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "air-interpreter-wasm",
  "blake3",
@@ -112,18 +112,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c703c072daeb807cbdf62f5c8839198b18c97e058ffe30ff7f1016e72c5462bc"
 dependencies = [
  "fluence-it-types",
- "marine-rs-sdk 0.10.0",
+ "marine-rs-sdk",
  "serde",
  "serde_json",
 ]
 
 [[package]]
 name = "air-interpreter-wasm"
-version = "0.52.0"
+version = "0.54.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e254ceb3a78817792823f9569b28413de68a80574114b7390813e20748b46374"
+checksum = "c53b14a9c33e9bdf50b3493597c70bec0d668b525383096e09d365177c040d1f"
 dependencies = [
- "built 0.7.0",
+ "built 0.7.1",
 ]
 
 [[package]]
@@ -235,12 +235,12 @@ dependencies = [
 [[package]]
 name = "aquamarine"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "anyhow",
  "async-trait",
  "avm-server",
- "base64 0.21.4",
+ "base64 0.21.5",
  "bytesize",
  "chrono",
  "config-utils",
@@ -489,9 +489,9 @@ dependencies = [
 
 [[package]]
 name = "avm-server"
-version = "0.33.2"
+version = "0.33.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f466e8ded992d89b2e379dd4cdafa78edd8ede5114aed552790cd35de76d054d"
+checksum = "121fc94ffaa0a8eb116bdb189ea775c315ed47ec0ea51f53fb4b9c15b82d72a5"
 dependencies = [
  "air-interpreter-interface",
  "air-utils",
@@ -601,9 +601,9 @@ checksum = "9e1b586273c5702936fe7b7d6896644d8be71e6314cfe09d3167c95f712589e8"
 
 [[package]]
 name = "base64"
-version = "0.21.4"
+version = "0.21.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ba43ea6f343b788c8764558649e08df62f86c6ef251fdaeb1ffd010a9ae50a2"
+checksum = "35636a1494ede3b646cc98f74f8e62c773a38a659ebc777a2cf26b9b74171df9"
 
 [[package]]
 name = "base64ct"
@@ -744,9 +744,9 @@ dependencies = [
 
 [[package]]
 name = "built"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1462f4ab147e1378c64dacd28f03a56d4771d93eab6c325265a35355ce47213d"
+checksum = "38d17f4d6e4dc36d1a02fbedc2753a096848e7c1b0772f7654eab8e2c927dd53"
 
 [[package]]
 name = "bumpalo"
@@ -940,9 +940,9 @@ dependencies = [
 [[package]]
 name = "cid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
- "base64 0.21.4",
+ "base64 0.21.5",
  "bytes",
  "eyre",
  "libipld",
@@ -977,9 +977,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.4.6"
+version = "4.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d04704f56c2cde07f43e8e2c154b43f216dc5c92fc98ada720177362f953b956"
+checksum = "2275f18819641850fa26c89acc84d465c1bf91ce57bc2748b28c420473352f64"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -987,9 +987,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.4.6"
+version = "4.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e231faeaca65ebd1ea3c737966bf858971cd38c3849107aa3ea7de90a804e45"
+checksum = "07cdf1b148b25c1e1f7a42225e30a0d99a615cd4637eae7365548dd4529b95bc"
 dependencies = [
  "anstream",
  "anstyle",
@@ -999,9 +999,9 @@ dependencies = [
 
 [[package]]
 name = "clap_derive"
-version = "4.4.2"
+version = "4.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0862016ff20d69b84ef8247369fabf5c008a7417002411897d40ee1f4532b873"
+checksum = "cf9804afaaf59a91e75b022a30fb7229a7901f60c755489cc61c9b423b836442"
 dependencies = [
  "heck 0.4.1",
  "proc-macro2",
@@ -1011,9 +1011,9 @@ dependencies = [
 
 [[package]]
 name = "clap_lex"
-version = "0.5.1"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cd7cc57abe963c6d3b9d8be5b06ba7c8957a930305ca90304f24ef040aa6f961"
+checksum = "702fc72eb24e5a1e48ce58027a675bc24edd52096d5397d4aea7c6dd9eca0bd1"
 
 [[package]]
 name = "colorchoice"
@@ -1058,7 +1058,7 @@ dependencies = [
 [[package]]
 name = "config-utils"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "libp2p-identity",
 ]
@@ -1066,7 +1066,7 @@ dependencies = [
 [[package]]
 name = "connected-client"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "derivative",
  "either",
@@ -1084,13 +1084,14 @@ dependencies = [
  "serde_json",
  "test-constants",
  "tokio",
+ "tracing",
  "void",
 ]
 
 [[package]]
 name = "connection-pool"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "fluence-libp2p",
  "futures",
@@ -1159,7 +1160,7 @@ checksum = "f7144d30dcf0fafbce74250a3963025d8d52177934239851c917d29f1df280c2"
 [[package]]
 name = "control-macro"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 
 [[package]]
 name = "core-foundation"
@@ -1315,11 +1316,11 @@ dependencies = [
 [[package]]
 name = "created-swarm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "air-interpreter-fs",
  "aquamarine",
- "base64 0.21.4",
+ "base64 0.21.5",
  "config-utils",
  "connection-pool",
  "derivative",
@@ -1528,11 +1529,11 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.5.1"
+version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92c569dd630b417f6d389d5feaa0545afdd58a1800018ba924b262f908826daf"
+checksum = "c64dbe9a4b69b8d21d46d5ec1da18788a61358f3996b5f87219feb7c67e7a915"
 dependencies = [
- "built 0.6.1",
+ "built 0.7.1",
  "fluence-spell-dtos",
  "maplit",
  "serde_json",
@@ -1540,9 +1541,9 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.5.4"
+version = "0.5.5"
 dependencies = [
- "built 0.7.0",
+ "built 0.7.1",
  "fluence-spell-dtos",
  "maplit",
  "serde_json",
@@ -1554,7 +1555,7 @@ version = "0.1.0"
 dependencies = [
  "connected-client",
  "created-swarm",
- "decider-distro 0.5.4",
+ "decider-distro 0.5.5",
  "eyre",
  "fluence-app-service",
  "fluence-keypair",
@@ -1980,7 +1981,7 @@ dependencies = [
  "maplit",
  "marine-min-it-version",
  "marine-runtime",
- "marine-wasm-backend-traits",
+ "marine-wasm-backend-traits 0.3.0",
  "marine-wasmtime-backend",
  "serde",
  "serde_derive",
@@ -2027,9 +2028,9 @@ dependencies = [
 [[package]]
 name = "fluence-libp2p"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
- "base64 0.21.4",
+ "base64 0.21.5",
  "bs58",
  "failure",
  "futures",
@@ -2047,9 +2048,9 @@ dependencies = [
 
 [[package]]
 name = "fluence-spell-distro"
-version = "0.5.26"
+version = "0.5.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4bc35423cc48f28341f9a7c3a590b35c7fe529890d75aea60d498faf401a54cb"
+checksum = "9128780f968b1ef9ad0135733d773e4a186b3ba22ff9c7c68e23a03fa5ee2792"
 dependencies = [
  "built 0.6.1",
  "maplit",
@@ -2057,12 +2058,12 @@ dependencies = [
 
 [[package]]
 name = "fluence-spell-dtos"
-version = "0.5.26"
+version = "0.5.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c131e13a5339f1e67a831a37f4ce9ef23732e1754f91ef656dde42550ce5e317"
+checksum = "798bb6a5357a007d91e91da183cfaa1a3df7daea28729b9dd268ba5747fa341e"
 dependencies = [
  "eyre",
- "marine-rs-sdk 0.9.0",
+ "marine-rs-sdk",
  "marine-sqlite-connector",
  "serde",
  "thiserror",
@@ -2108,7 +2109,7 @@ dependencies = [
 [[package]]
 name = "fs-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "eyre",
  "rand 0.8.5",
@@ -2144,9 +2145,9 @@ checksum = "e6d5a32815ae3f33302d95fdcb2ce17862f8c65363dcfd29360480ba1001fc9c"
 
 [[package]]
 name = "futures"
-version = "0.3.28"
+version = "0.3.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23342abe12aba583913b2e62f22225ff9c950774065e4bfb61a19cd9770fec40"
+checksum = "da0290714b38af9b4a7b094b8a37086d1b4e61f2df9122c3cad2577669145335"
 dependencies = [
  "futures-channel",
  "futures-core",
@@ -2169,9 +2170,9 @@ dependencies = [
 
 [[package]]
 name = "futures-channel"
-version = "0.3.28"
+version = "0.3.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "955518d47e09b25bbebc7a18df10b81f0c766eaf4c4f1cccef2fca5f2a4fb5f2"
+checksum = "ff4dd66668b557604244583e3e1e1eada8c5c2e96a6d0d6653ede395b78bbacb"
 dependencies = [
  "futures-core",
  "futures-sink",
@@ -2179,15 +2180,15 @@ dependencies = [
 
 [[package]]
 name = "futures-core"
-version = "0.3.28"
+version = "0.3.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4bca583b7e26f571124fe5b7561d49cb2868d79116cfa0eefce955557c6fee8c"
+checksum = "eb1d22c66e66d9d72e1758f0bd7d4fd0bee04cad842ee34587d68c07e45d088c"
 
 [[package]]
 name = "futures-executor"
-version = "0.3.28"
+version = "0.3.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ccecee823288125bd88b4d7f565c9e58e41858e47ab72e8ea2d64e93624386e0"
+checksum = "0f4fb8693db0cf099eadcca0efe2a5a22e4550f98ed16aba6c48700da29597bc"
 dependencies = [
  "futures-core",
  "futures-task",
@@ -2197,9 +2198,9 @@ dependencies = [
 
 [[package]]
 name = "futures-io"
-version = "0.3.28"
+version = "0.3.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4fff74096e71ed47f8e023204cfd0aa1289cd54ae5430a9523be060cdb849964"
+checksum = "8bf34a163b5c4c52d0478a4d757da8fb65cabef42ba90515efee0f6f9fa45aaa"
 
 [[package]]
 name = "futures-lite"
@@ -2218,9 +2219,9 @@ dependencies = [
 
 [[package]]
 name = "futures-macro"
-version = "0.3.28"
+version = "0.3.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "89ca545a94061b6365f2c7355b4b32bd20df3ff95f02da9329b34ccc3bd6ee72"
+checksum = "53b153fd91e4b0147f4aced87be237c98248656bb01050b96bf3ee89220a8ddb"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2239,15 +2240,15 @@ dependencies = [
 
 [[package]]
 name = "futures-sink"
-version = "0.3.28"
+version = "0.3.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f43be4fe21a13b9781a69afa4985b0f6ee0e1afab2c6f454a8cf30e2b2237b6e"
+checksum = "e36d3378ee38c2a36ad710c5d30c2911d752cb941c00c72dbabfb786a7970817"
 
 [[package]]
 name = "futures-task"
-version = "0.3.28"
+version = "0.3.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "76d3d132be6c0e6aa1534069c705a74a5997a356c0dc2f86a47765e5617c5b65"
+checksum = "efd193069b0ddadc69c46389b740bbccdd97203899b48d09c5f7969591d6bae2"
 
 [[package]]
 name = "futures-timer"
@@ -2257,9 +2258,9 @@ checksum = "e64b03909df88034c26dc1547e8970b91f98bdb65165d6a4e9110d94263dbb2c"
 
 [[package]]
 name = "futures-util"
-version = "0.3.28"
+version = "0.3.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "26b01e40b772d54cf6c6d721c1d1abd0647a0106a12ecaa1c186273392a69533"
+checksum = "a19526d624e703a3179b3d322efec918b6246ea0fa51d41124525f00f1cc8104"
 dependencies = [
  "futures-channel",
  "futures-core",
@@ -2342,6 +2343,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6fb8d784f27acf97159b40fc4db5ecd8aa23b9ad5ef69cdd136d3bc80665f0c0"
 
 [[package]]
+name = "glob"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d2fabcfbdc87f4758337ca535fb41a6d701b65693ce38287d856d1674551ec9b"
+
+[[package]]
 name = "h2"
 version = "0.3.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2395,7 +2402,7 @@ dependencies = [
 [[package]]
 name = "health"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "eyre",
 ]
@@ -2809,7 +2816,7 @@ version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b58db92f96b720de98181bbbe63c831e87005ab460c1bf306eb2622b4707997f"
 dependencies = [
- "socket2 0.5.4",
+ "socket2 0.5.5",
  "widestring",
  "windows-sys 0.48.0",
  "winreg",
@@ -2842,7 +2849,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "thiserror",
- "wasmer-interface-types-fl",
+ "wasmer-interface-types-fl 0.26.1",
 ]
 
 [[package]]
@@ -2851,6 +2858,20 @@ version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f14693c2c3696b46349b0bc54f8b39de8eb67951b6623f42ff6b6b2d129ff00e"
 dependencies = [
+ "fluence-it-types",
+ "it-memory-traits",
+ "log",
+ "paste",
+ "thiserror",
+]
+
+[[package]]
+name = "it-lilo"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "20108e77e11eeb1ef019f54c3868e0f2e9227295502f0702fa2e7e730ea748f8"
+dependencies = [
+ "anyhow",
  "fluence-it-types",
  "it-memory-traits",
  "log",
@@ -2920,7 +2941,7 @@ dependencies = [
 [[package]]
 name = "ivalue-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "fluence-it-types",
  "serde_json",
@@ -2947,9 +2968,9 @@ dependencies = [
 [[package]]
 name = "json-utils"
 version = "0.0.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
- "base64 0.21.4",
+ "base64 0.21.5",
  "itertools 0.11.0",
  "serde",
  "serde_json",
@@ -3037,7 +3058,7 @@ dependencies = [
 [[package]]
 name = "kademlia"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "bs58",
  "control-macro",
@@ -3075,7 +3096,7 @@ dependencies = [
 [[package]]
 name = "key-manager"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "eyre",
  "fluence-keypair",
@@ -3387,7 +3408,7 @@ dependencies = [
  "log",
  "rand 0.8.5",
  "smallvec",
- "socket2 0.5.4",
+ "socket2 0.5.5",
  "tokio",
  "trust-dns-proto 0.22.0",
  "void",
@@ -3491,7 +3512,7 @@ dependencies = [
  "rand 0.8.5",
  "ring",
  "rustls",
- "socket2 0.5.4",
+ "socket2 0.5.5",
  "thiserror",
  "tokio",
 ]
@@ -3545,7 +3566,7 @@ dependencies = [
  "libp2p-core",
  "libp2p-identity",
  "log",
- "socket2 0.5.4",
+ "socket2 0.5.5",
  "tokio",
 ]
 
@@ -3692,7 +3713,7 @@ checksum = "da2479e8c062e40bf0066ffa0bc823de0a9368974af99c9f6df941d2c231e03f"
 [[package]]
 name = "local-vm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -3711,6 +3732,7 @@ dependencies = [
  "particle-execution",
  "particle-protocol",
  "serde_json",
+ "tokio",
  "tracing",
  "uuid-utils",
 ]
@@ -3734,7 +3756,7 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 [[package]]
 name = "log-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "console-subscriber",
  "log",
@@ -3778,12 +3800,12 @@ checksum = "3e2e65a1a2e43cfcb47a895c4c8b10d1f4a61097f9f254f183aee60cad9c651d"
 
 [[package]]
 name = "marine-call-parameters"
-version = "0.10.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9ca0439e5b2a812d8bc5c3b7d71e3691fb260a1f0384a7e842eec1b59f13069"
+checksum = "979e5c52888bae300c937e36240293c20e34bb7b29d058375b15f85e713dd854"
 dependencies = [
- "marine-macro 0.10.0",
- "marine-rs-sdk-main 0.10.0",
+ "marine-macro",
+ "marine-rs-sdk-main",
  "serde",
 ]
 
@@ -3795,17 +3817,17 @@ checksum = "c4f2db990567b2677d4b03d3f5b019c9f03e4365eaa8303cef083e388d960e47"
 dependencies = [
  "anyhow",
  "bytesize",
- "it-lilo",
+ "it-lilo 0.5.1",
  "it-memory-traits",
  "log",
  "marine-it-generator",
- "marine-it-interfaces",
- "marine-it-parser",
+ "marine-it-interfaces 0.8.1",
+ "marine-it-parser 0.13.0",
  "marine-min-it-version",
  "marine-module-info-parser",
- "marine-module-interface",
+ "marine-module-interface 0.7.1",
  "marine-utils",
- "marine-wasm-backend-traits",
+ "marine-wasm-backend-traits 0.3.0",
  "marine-wasmtime-backend",
  "multimap",
  "once_cell",
@@ -3813,7 +3835,7 @@ dependencies = [
  "semver",
  "serde",
  "thiserror",
- "wasmer-interface-types-fl",
+ "wasmer-interface-types-fl 0.26.1",
 ]
 
 [[package]]
@@ -3822,15 +3844,15 @@ version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b0cc0ce2ee4ee0986abf71327b84ef3fb26dcb33b866226f9e659d1cce922fd"
 dependencies = [
- "it-lilo",
- "marine-it-parser",
+ "it-lilo 0.5.1",
+ "marine-it-parser 0.13.0",
  "marine-macro-impl 0.7.1",
  "once_cell",
  "serde",
  "serde_json",
  "thiserror",
  "walrus 0.20.1",
- "wasmer-interface-types-fl",
+ "wasmer-interface-types-fl 0.26.1",
 ]
 
 [[package]]
@@ -3840,7 +3862,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d3bdc1a0d26f38f8d0375c7f8aa0621de90b5966e38b407c7505ead9649bbd92"
 dependencies = [
  "multimap",
- "wasmer-interface-types-fl",
+ "wasmer-interface-types-fl 0.26.1",
+]
+
+[[package]]
+name = "marine-it-interfaces"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "942f05f37d694802550d9dfed55a1d56fe53f15ef3a3219b9345e9a235c042cd"
+dependencies = [
+ "multimap",
+ "wasmer-interface-types-fl 0.27.0",
 ]
 
 [[package]]
@@ -3851,35 +3883,44 @@ checksum = "52907d7e7b9487a029dd3d99e647307c8808d7fba327e27113b0807d4868b315"
 dependencies = [
  "anyhow",
  "itertools 0.10.5",
- "marine-it-interfaces",
- "marine-module-interface",
- "marine-wasm-backend-traits",
+ "marine-it-interfaces 0.8.1",
+ "marine-module-interface 0.7.1",
+ "marine-wasm-backend-traits 0.3.0",
  "nom",
  "semver",
  "serde",
  "thiserror",
  "walrus 0.20.1",
- "wasmer-interface-types-fl",
+ "wasmer-interface-types-fl 0.26.1",
+]
+
+[[package]]
+name = "marine-it-parser"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6c9bda472e259f5994eaf7cb94fe1fa99add703de35986c1fe17889f60f16cbe"
+dependencies = [
+ "anyhow",
+ "itertools 0.10.5",
+ "marine-it-interfaces 0.9.0",
+ "marine-module-interface 0.8.0",
+ "marine-wasm-backend-traits 0.4.0",
+ "nom",
+ "semver",
+ "serde",
+ "thiserror",
+ "walrus 0.20.1",
+ "wasmer-interface-types-fl 0.27.0",
 ]
 
 [[package]]
 name = "marine-macro"
-version = "0.9.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd5d4c95570c141d4a92e8c08d6253788154315a66bb3c89d266f0825e9b49db"
+checksum = "93835918915610947b5ce96a4b3d89268fde2842a6d18d893c86ffe1b605c16e"
 dependencies = [
- "marine-macro-impl 0.9.0",
- "marine-rs-sdk-main 0.9.0",
-]
-
-[[package]]
-name = "marine-macro"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0088fc9cb6a970dc17a510c3cb28fe459c368d566e8cb7f8354e06ef3395c883"
-dependencies = [
- "marine-macro-impl 0.10.0",
- "marine-rs-sdk-main 0.10.0",
+ "marine-macro-impl 0.10.1",
+ "marine-rs-sdk-main",
 ]
 
 [[package]]
@@ -3897,22 +3938,9 @@ dependencies = [
 
 [[package]]
 name = "marine-macro-impl"
-version = "0.9.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f91ed66c39016565a422807dd3fe3fbc3c36ee88d2f0b69c2e6345168b7d9320"
-dependencies = [
- "proc-macro2",
- "quote",
- "serde",
- "serde_json",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "marine-macro-impl"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e457b58c826679139896f04e6cfa38c5d23870a88e957e8e0a6f646e7c3f0ac4"
+checksum = "c794126e4a2f5b78b43bc7c82329dc6ffa0c2511591803f89a6d97c037feb068"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3940,8 +3968,8 @@ dependencies = [
  "anyhow",
  "chrono",
  "derivative",
- "marine-rs-sdk-main 0.10.0",
- "marine-wasm-backend-traits",
+ "marine-rs-sdk-main",
+ "marine-wasm-backend-traits 0.3.0",
  "semver",
  "serde",
  "thiserror",
@@ -3956,55 +3984,50 @@ checksum = "49d8f21255b94f1c8b2731a2b49c2ed34f955ed2e11dae3fb6c580a346d10bdd"
 dependencies = [
  "anyhow",
  "itertools 0.10.5",
- "marine-it-interfaces",
+ "marine-it-interfaces 0.8.1",
  "nom",
  "semver",
  "serde",
  "thiserror",
  "walrus 0.19.0",
- "wasmer-interface-types-fl",
+ "wasmer-interface-types-fl 0.26.1",
 ]
 
 [[package]]
-name = "marine-rs-sdk"
-version = "0.9.0"
+name = "marine-module-interface"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "647206070db6f592f6a9783b1326c1b6a535c739d5238e478a9fa8529234ad70"
+checksum = "8ace780e273bfa9c2124e53da578af10059e053ba9c22400e1e86a99c00576c4"
 dependencies = [
- "marine-macro 0.9.0",
- "marine-rs-sdk-main 0.9.0",
- "marine-timestamp-macro 0.9.0",
+ "anyhow",
+ "itertools 0.10.5",
+ "marine-it-interfaces 0.9.0",
+ "nom",
+ "semver",
  "serde",
+ "thiserror",
+ "walrus 0.20.1",
+ "wasmer-interface-types-fl 0.27.0",
 ]
 
 [[package]]
 name = "marine-rs-sdk"
-version = "0.10.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6ecd45528096514b4db8d23523eadaf9e5d5a7d3fce637e4bb684afccc0e9a3"
+checksum = "85eeb2e2a1ab3f7a2ba270ff42bc2d4fa0d1a0b0f6bdb377b2db4403030a854a"
 dependencies = [
  "marine-call-parameters",
- "marine-macro 0.10.0",
- "marine-rs-sdk-main 0.10.0",
- "marine-timestamp-macro 0.10.0",
+ "marine-macro",
+ "marine-rs-sdk-main",
+ "marine-timestamp-macro",
  "serde",
 ]
 
 [[package]]
 name = "marine-rs-sdk-main"
-version = "0.9.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a69e17cc63a434d19ca9c312a29a1e06847758041f8429f333d3a91469f62594"
-dependencies = [
- "log",
- "serde",
-]
-
-[[package]]
-name = "marine-rs-sdk-main"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11eabbc74c69ad11874fb6cf686604833d084633293324524a40ec581663f978"
+checksum = "997cdfb9fdef7066a527e9436938618d0596e00f4cceea1ab3b5bb32d20947f6"
 dependencies = [
  "log",
  "serde",
@@ -4022,11 +4045,11 @@ dependencies = [
  "itertools 0.10.5",
  "log",
  "marine-core",
- "marine-module-interface",
- "marine-rs-sdk 0.10.0",
- "marine-rs-sdk-main 0.10.0",
+ "marine-module-interface 0.7.1",
+ "marine-rs-sdk",
+ "marine-rs-sdk-main",
  "marine-utils",
- "marine-wasm-backend-traits",
+ "marine-wasm-backend-traits 0.3.0",
  "marine-wasmtime-backend",
  "parking_lot",
  "safe-transmute",
@@ -4036,34 +4059,24 @@ dependencies = [
  "serde_with 2.3.3",
  "thiserror",
  "toml 0.5.11",
- "wasmer-interface-types-fl",
+ "wasmer-interface-types-fl 0.26.1",
 ]
 
 [[package]]
 name = "marine-sqlite-connector"
-version = "0.9.0"
+version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02b2f62a0f56af2d5467d294133e264e13e24c15cfb21588f7c61c680f241baf"
+checksum = "92552a0cc893d708ac324f45e687dae9ac9e1333b06ecc7e2c3d81abaf6b2d7d"
 dependencies = [
  "bytesize",
- "marine-rs-sdk 0.9.0",
+ "marine-rs-sdk",
 ]
 
 [[package]]
 name = "marine-timestamp-macro"
-version = "0.9.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c33b9d6dd721e2d55e3737a4ba5374887cef56caa80b0a49849a06b0f2e46a4e"
-dependencies = [
- "chrono",
- "quote",
-]
-
-[[package]]
-name = "marine-timestamp-macro"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "acf956d174fdbf940b474089d5388aa35b4fc73fedbfade2a92dc198084b9afa"
+checksum = "55ccb7870fd62eb4cc34a86b0ae8bdca680067138c3bb10fca7fb67e03242ca4"
 dependencies = [
  "chrono",
  "quote",
@@ -4086,7 +4099,22 @@ dependencies = [
  "multimap",
  "paste",
  "thiserror",
- "wasmer-interface-types-fl",
+ "wasmer-interface-types-fl 0.26.1",
+ "wasmparser 0.101.1",
+]
+
+[[package]]
+name = "marine-wasm-backend-traits"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8a7523253125d02600f8f8cfe2689620ff3b21dae08bc6708404f9bd7cafabcc"
+dependencies = [
+ "anyhow",
+ "it-memory-traits",
+ "multimap",
+ "paste",
+ "thiserror",
+ "wasmer-interface-types-fl 0.27.0",
  "wasmparser 0.101.1",
 ]
 
@@ -4099,10 +4127,10 @@ dependencies = [
  "anyhow",
  "it-memory-traits",
  "log",
- "marine-wasm-backend-traits",
+ "marine-wasm-backend-traits 0.3.0",
  "multimap",
  "paste",
- "wasmer-interface-types-fl",
+ "wasmer-interface-types-fl 0.26.1",
  "wasmtime",
  "wasmtime-wasi",
 ]
@@ -4196,9 +4224,9 @@ dependencies = [
 
 [[package]]
 name = "mio"
-version = "0.8.8"
+version = "0.8.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "927a765cd3fc26206e66b296465fa9d3e5ab003e651c1b3c060e7956d96b19d2"
+checksum = "3dce281c5e46beae905d4de1870d8b1509a9142b62eedf18b443b011ca8343d0"
 dependencies = [
  "libc",
  "wasi 0.11.0+wasi-snapshot-preview1",
@@ -4415,19 +4443,19 @@ dependencies = [
 [[package]]
 name = "now-millis"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 
 [[package]]
 name = "nox"
-version = "0.15.1"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+version = "0.16.1"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
  "aquamarine",
  "avm-server",
  "axum",
- "base64 0.21.4",
+ "base64 0.21.5",
  "config-utils",
  "connection-pool",
  "console-subscriber",
@@ -4446,8 +4474,11 @@ dependencies = [
  "libp2p-metrics",
  "libp2p-swarm",
  "log",
+ "once_cell",
  "opentelemetry",
  "opentelemetry-otlp",
+ "opentelemetry-stdout",
+ "opentelemetry_sdk",
  "parking_lot",
  "particle-builtins",
  "particle-execution",
@@ -4463,7 +4494,7 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tracing",
- "tracing-log",
+ "tracing-log 0.2.0",
  "tracing-logfmt",
  "tracing-opentelemetry",
  "tracing-subscriber",
@@ -4569,26 +4600,32 @@ checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
 
 [[package]]
 name = "opentelemetry"
-version = "0.20.0"
+version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9591d937bc0e6d2feb6f71a559540ab300ea49955229c347a517a28d27784c54"
+checksum = "1e32339a5dc40459130b3bd269e9892439f55b33e772d2a9d402a789baaf4e8a"
 dependencies = [
- "opentelemetry_api",
- "opentelemetry_sdk",
+ "futures-core",
+ "futures-sink",
+ "indexmap 2.0.2",
+ "js-sys",
+ "once_cell",
+ "pin-project-lite 0.2.13",
+ "thiserror",
+ "urlencoding",
 ]
 
 [[package]]
 name = "opentelemetry-otlp"
-version = "0.13.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e5e5a5c4135864099f3faafbe939eb4d7f9b80ebf68a8448da961b32a7c1275"
+checksum = "f24cda83b20ed2433c68241f918d0f6fdec8b1d43b7a9590ab4420c5095ca930"
 dependencies = [
  "async-trait",
  "futures-core",
  "http",
+ "opentelemetry",
  "opentelemetry-proto",
  "opentelemetry-semantic-conventions",
- "opentelemetry_api",
  "opentelemetry_sdk",
  "prost 0.11.9",
  "thiserror",
@@ -4598,11 +4635,11 @@ dependencies = [
 
 [[package]]
 name = "opentelemetry-proto"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1e3f814aa9f8c905d0ee4bde026afd3b2577a97c10e1699912e3e44f0c4cbeb"
+checksum = "a2e155ce5cc812ea3d1dffbd1539aed653de4bf4882d60e6e04dcf0901d674e1"
 dependencies = [
- "opentelemetry_api",
+ "opentelemetry",
  "opentelemetry_sdk",
  "prost 0.11.9",
  "tonic 0.9.2",
@@ -4610,47 +4647,45 @@ dependencies = [
 
 [[package]]
 name = "opentelemetry-semantic-conventions"
-version = "0.12.0"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73c9f9340ad135068800e7f1b24e9e09ed9e7143f5bf8518ded3d3ec69789269"
+checksum = "f5774f1ef1f982ef2a447f6ee04ec383981a3ab99c8e77a1a7b30182e65bbc84"
 dependencies = [
  "opentelemetry",
 ]
 
 [[package]]
-name = "opentelemetry_api"
-version = "0.20.0"
+name = "opentelemetry-stdout"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a81f725323db1b1206ca3da8bb19874bbd3f57c3bcd59471bfb04525b265b9b"
+checksum = "c13b2df4cd59c176099ac82806725ba340c8fa7b1a7004c0912daad30470f63e"
 dependencies = [
- "futures-channel",
+ "chrono",
  "futures-util",
- "indexmap 1.9.3",
- "js-sys",
- "once_cell",
- "pin-project-lite 0.2.13",
- "thiserror",
- "urlencoding",
+ "opentelemetry",
+ "opentelemetry_sdk",
+ "ordered-float",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
 name = "opentelemetry_sdk"
-version = "0.20.0"
+version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fa8e705a0612d48139799fcbaba0d4a90f06277153e43dd2bdc16c6f0edd8026"
+checksum = "968ba3f2ca03e90e5187f5e4f46c791ef7f2c163ae87789c8ce5f5ca3b7b7de5"
 dependencies = [
  "async-trait",
  "crossbeam-channel",
  "futures-channel",
  "futures-executor",
  "futures-util",
+ "glob",
  "once_cell",
- "opentelemetry_api",
+ "opentelemetry",
  "ordered-float",
  "percent-encoding",
  "rand 0.8.5",
- "regex",
- "serde_json",
  "thiserror",
  "tokio",
  "tokio-stream",
@@ -4658,9 +4693,9 @@ dependencies = [
 
 [[package]]
 name = "ordered-float"
-version = "3.9.1"
+version = "4.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a54938017eacd63036332b4ae5c8a49fc8c0c1d6d629893057e4f13609edd06"
+checksum = "536900a8093134cf9ccf00a27deb3532421099e958d9dd431135d0c7543ca1e8"
 dependencies = [
  "num-traits",
 ]
@@ -4729,7 +4764,7 @@ dependencies = [
 [[package]]
 name = "particle-args"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "avm-server",
  "bs58",
@@ -4745,11 +4780,11 @@ dependencies = [
 [[package]]
 name = "particle-builtins"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "async-trait",
  "avm-server",
- "base64 0.21.4",
+ "base64 0.21.5",
  "bs58",
  "bytesize",
  "connection-pool",
@@ -4791,7 +4826,7 @@ dependencies = [
 [[package]]
 name = "particle-execution"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "async-trait",
  "fluence-app-service",
@@ -4810,9 +4845,9 @@ dependencies = [
 [[package]]
 name = "particle-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
- "base64 0.21.4",
+ "base64 0.21.5",
  "bytesize",
  "cid",
  "eyre",
@@ -4823,7 +4858,7 @@ dependencies = [
  "json-utils",
  "libipld",
  "log",
- "marine-it-parser",
+ "marine-it-parser 0.14.0",
  "marine-utils",
  "parking_lot",
  "particle-args",
@@ -4838,11 +4873,12 @@ dependencies = [
 [[package]]
 name = "particle-protocol"
 version = "0.3.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
- "base64 0.21.4",
+ "base64 0.21.5",
  "derivative",
  "eyre",
+ "faster-hex",
  "fluence-keypair",
  "fluence-libp2p",
  "futures",
@@ -4861,7 +4897,7 @@ dependencies = [
 [[package]]
 name = "particle-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "derivative",
  "eyre",
@@ -4917,7 +4953,7 @@ dependencies = [
 [[package]]
 name = "peer-metrics"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "bytesize",
  "fluence-app-service",
@@ -5305,7 +5341,7 @@ checksum = "055b4e778e8feb9f93c4e439f71dc2156ef13360b432b799e179a8c4cdf0b1d7"
 dependencies = [
  "bytes",
  "libc",
- "socket2 0.5.4",
+ "socket2 0.5.5",
  "tracing",
  "windows-sys 0.48.0",
 ]
@@ -5683,7 +5719,7 @@ version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2d3987094b1d07b653b7dfdc3f70ce9a1da9c51ac18c1b06b662e4f9a0e9f4b2"
 dependencies = [
- "base64 0.21.4",
+ "base64 0.21.5",
 ]
 
 [[package]]
@@ -5775,18 +5811,18 @@ dependencies = [
 
 [[package]]
 name = "semver"
-version = "1.0.19"
+version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad977052201c6de01a8ef2aa3378c4bd23217a056337d1d6da40468d267a4fb0"
+checksum = "836fa6a3e1e547f9a2c4040802ec865b5d85f4014efe00555d7090a3dcaa1090"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "serde"
-version = "1.0.190"
+version = "1.0.192"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "91d3c334ca1ee894a2c6f6ad698fe8c435b76d504b13d436f0685d648d6d96f7"
+checksum = "bca2a08484b285dcb282d0f67b26cadc0df8b19f8c12502c13d966bf9482f001"
 dependencies = [
  "serde_derive",
 ]
@@ -5802,9 +5838,9 @@ dependencies = [
 
 [[package]]
 name = "serde_derive"
-version = "1.0.190"
+version = "1.0.192"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67c5609f394e5c2bd7fc51efda478004ea80ef42fee983d5c67a65e34f32c0e3"
+checksum = "d6c7207fbec9faa48073f3e3074cbe553af6ea512d7c21ba46e434e70ea9fbc1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5813,9 +5849,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.107"
+version = "1.0.108"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b420ce6e3d8bd882e9b243c6eed35dbc9a6110c9769e74b584e0d68d1f20c65"
+checksum = "3d1c7e3eac408d115102c4c24ad393e0821bb3a5df4d506a80f85f7a742a526b"
 dependencies = [
  "indexmap 2.0.2",
  "itoa",
@@ -5876,7 +5912,7 @@ version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "64cd236ccc1b7a29e7e2739f27c0b2dd199804abc4290e32f59f3b68d6405c23"
 dependencies = [
- "base64 0.21.4",
+ "base64 0.21.5",
  "chrono",
  "hex",
  "indexmap 1.9.3",
@@ -5914,13 +5950,13 @@ dependencies = [
 [[package]]
 name = "server-config"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "air-interpreter-fs",
- "base64 0.21.4",
+ "base64 0.21.5",
  "bs58",
  "bytesize",
- "clap 4.4.6",
+ "clap 4.4.8",
  "config",
  "config-utils",
  "derivative",
@@ -5946,7 +5982,7 @@ dependencies = [
 [[package]]
 name = "service-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "cid-utils",
  "eyre",
@@ -6068,9 +6104,9 @@ checksum = "826167069c09b99d56f31e9ae5c99049e932a98c9dc2dac47645b08dbbf76ba7"
 
 [[package]]
 name = "smallvec"
-version = "1.11.1"
+version = "1.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "942b4a808e05215192e39f4ab80813e599068285906cc91aa64f923db842bd5a"
+checksum = "4dccd0940a2dcdf68d092b8cbab7dc0ad8fa938bf95787e1b916b0e3d0e8e970"
 
 [[package]]
 name = "snow"
@@ -6101,9 +6137,9 @@ dependencies = [
 
 [[package]]
 name = "socket2"
-version = "0.5.4"
+version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4031e820eb552adee9295814c0ced9e5cf38ddf1e8b7d566d6de8e2538ea989e"
+checksum = "7b5fac59a5cb5dd637972e5fca70daf0523c9067fcdc4842f053dae04a18f8e9"
 dependencies = [
  "libc",
  "windows-sys 0.48.0",
@@ -6127,7 +6163,7 @@ dependencies = [
 [[package]]
 name = "sorcerer"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "aquamarine",
  "connection-pool",
@@ -6166,7 +6202,7 @@ dependencies = [
 [[package]]
 name = "spell-event-bus"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "connection-pool",
  "derivative",
@@ -6193,7 +6229,7 @@ dependencies = [
 [[package]]
 name = "spell-service-api"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "fluence-libp2p",
  "fluence-spell-dtos",
@@ -6208,7 +6244,7 @@ dependencies = [
 [[package]]
 name = "spell-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "derivative",
  "eyre",
@@ -6267,7 +6303,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 [[package]]
 name = "subnet-resolver"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "ethabi",
  "eyre",
@@ -6366,10 +6402,10 @@ dependencies = [
 [[package]]
 name = "system-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "aqua-ipfs-distro",
- "decider-distro 0.5.1",
+ "decider-distro 0.5.4",
  "eyre",
  "fluence-app-service",
  "fluence-spell-dtos",
@@ -6393,6 +6429,7 @@ dependencies = [
  "toml 0.5.11",
  "tracing",
  "trust-graph-distro",
+ "uuid-utils",
 ]
 
 [[package]]
@@ -6419,7 +6456,7 @@ dependencies = [
 [[package]]
 name = "test-constants"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 
 [[package]]
 name = "textwrap"
@@ -6514,9 +6551,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.33.0"
+version = "1.34.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f38200e3ef7995e5ef13baec2f432a6da0aa9ac495b2c0e8f3b7eec2c92d653"
+checksum = "d0c014766411e834f7af5b8f4cf46257aab4036ca95e9d2c144a10f59ad6f5b9"
 dependencies = [
  "backtrace",
  "bytes",
@@ -6526,7 +6563,7 @@ dependencies = [
  "parking_lot",
  "pin-project-lite 0.2.13",
  "signal-hook-registry",
- "socket2 0.5.4",
+ "socket2 0.5.5",
  "tokio-macros",
  "tracing",
  "windows-sys 0.48.0",
@@ -6544,9 +6581,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-macros"
-version = "2.1.0"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "630bdcf245f78637c13ec01ffae6187cca34625e8c63150d424b59e55af2675e"
+checksum = "5b8a1e28f2deaa14e508979454cb3a223b10b938b45af148bc0986de36f1923b"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6576,9 +6613,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-util"
-version = "0.7.9"
+version = "0.7.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d68074620f57a0b21594d9735eb2e98ab38b17f80d3fcb189fca266771ca60d"
+checksum = "5419f34732d9eb6ee4c3578b7989078579b7f039cbbb9ca2c4da015749371e15"
 dependencies = [
  "bytes",
  "futures-core",
@@ -6612,7 +6649,7 @@ dependencies = [
 [[package]]
 name = "toml-utils"
 version = "0.0.1"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "toml 0.5.11",
 ]
@@ -6647,7 +6684,7 @@ checksum = "3082666a3a6433f7f511c7192923fa1fe07c69332d3c6a2e6bb040b569199d5a"
 dependencies = [
  "async-trait",
  "axum",
- "base64 0.21.4",
+ "base64 0.21.5",
  "bytes",
  "futures-core",
  "futures-util",
@@ -6676,7 +6713,7 @@ dependencies = [
  "async-stream",
  "async-trait",
  "axum",
- "base64 0.21.4",
+ "base64 0.21.5",
  "bytes",
  "h2",
  "http",
@@ -6729,7 +6766,7 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "toy-vms"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "aquamarine",
  "avm-server",
@@ -6786,6 +6823,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "tracing-log"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee855f1f400bd0e5c02d150ae5de3840039a3f54b025156404e34c23c03f47c3"
+dependencies = [
+ "log",
+ "once_cell",
+ "tracing-core",
+]
+
+[[package]]
 name = "tracing-logfmt"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6799,18 +6847,20 @@ dependencies = [
 
 [[package]]
 name = "tracing-opentelemetry"
-version = "0.21.0"
+version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "75327c6b667828ddc28f5e3f169036cb793c3f588d83bf0f262a7f062ffed3c8"
+checksum = "c67ac25c5407e7b961fafc6f7e9aa5958fd297aada2d20fa2ae1737357e55596"
 dependencies = [
+ "js-sys",
  "once_cell",
  "opentelemetry",
  "opentelemetry_sdk",
  "smallvec",
  "tracing",
  "tracing-core",
- "tracing-log",
+ "tracing-log 0.2.0",
  "tracing-subscriber",
+ "web-time",
 ]
 
 [[package]]
@@ -6829,7 +6879,7 @@ dependencies = [
  "thread_local",
  "tracing",
  "tracing-core",
- "tracing-log",
+ "tracing-log 0.1.3",
 ]
 
 [[package]]
@@ -7041,7 +7091,7 @@ dependencies = [
 [[package]]
 name = "uuid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=master#fca92218defcfc1a354ba54effc6227ccd559245"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.1#e58b8749f988f6694e62525a6e0e788d44884a7b"
 dependencies = [
  "uuid",
 ]
@@ -7271,7 +7321,29 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6cd52371bfc227c904a0ab1ff478c287d2f74fa371fcff1d2e157444faf8fda2"
 dependencies = [
  "fluence-it-types",
- "it-lilo",
+ "it-lilo 0.5.1",
+ "it-memory-traits",
+ "it-to-bytes",
+ "itertools 0.10.5",
+ "log",
+ "nom",
+ "safe-transmute",
+ "semver",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "wast 8.0.0",
+]
+
+[[package]]
+name = "wasmer-interface-types-fl"
+version = "0.27.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "62958478f282fbf2b05c12f9630972bd8194937de1ab22d6a59d43093be32886"
+dependencies = [
+ "anyhow",
+ "fluence-it-types",
+ "it-lilo 0.6.0",
  "it-memory-traits",
  "it-to-bytes",
  "itertools 0.10.5",
@@ -7555,6 +7627,16 @@ name = "web-sys"
 version = "0.3.64"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b85cbef8c220a6abc02aefd892dfc0fc23afb1c6a426316ec33253a3877249b"
+dependencies = [
+ "js-sys",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "web-time"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "57099a701fb3a8043f993e8228dc24229c7b942e2b009a1b962e54489ba1d3bf"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
