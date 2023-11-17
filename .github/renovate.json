@@ -14,13 +14,13 @@
     {
       "fileMatch": ["^src/tests/decider-distro-tests-rs/Cargo\\.toml$"],
       "matchStrings": [
-        "\"(?<depName>[^\"]+)\" = \\{ git = \"(?<lookupName>[^\"]+)\", branch = \"(?<currentValue>[^\"]+)\" \\}"
+        "\"(?<depName>[^\"]+)\" = \\{ git = \"(?<lookupName>[^\"]+)\", branch = \"(?<currentValue>master)\" \\}"
       ],
       "datasourceTemplate": "gitTags",
       "versioningTemplate": "semver",
       "depNameTemplate": "{{depName}}",
       "lookupNameTemplate": "{{lookupName}}",
-      "currentValueTemplate": "{{#semver}}{{version}}{{/semver}}"
+      "currentValueTemplate": "nox-{{#semver}}{{version}}{{/semver}}"
     }
   ],
   "packageRules": [
@@ -30,11 +30,6 @@
       "semanticCommitType": "fix",
       "semanticCommitScope": "deps",
       "schedule": "at any time"
-    },
-    {
-      "matchManagers": ["regex"],
-      "matchPackagePatterns": ["^nox-"],
-      "allowedVersions": "/^nox-v/"
     },
     {
       "matchDepTypes": ["devDependencies"],
