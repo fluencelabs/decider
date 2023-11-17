@@ -14,7 +14,7 @@
     {
       "fileMatch": ["^src/tests/decider-distro-tests-rs/Cargo\\.toml$"],
       "matchStrings": [
-        "\"(?<depName>[^\"]+)\" = \\{ git = \"(?<lookupName>[^\"]+)\", branch = \"(?<currentValue>master)\" \\}"
+        "\"(?<depName>[^\"]+)\" = \\{ git = \"(?<lookupName>https://github.com/fluencelabs/nox.git)\", branch = \"(?<currentValue>[^\"]+)\" \\}"
       ],
       "datasourceTemplate": "gitTags",
       "versioningTemplate": "semver",
