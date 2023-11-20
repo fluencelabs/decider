@@ -3,7 +3,7 @@
   "extends": ["config:base", ":semanticCommitTypeAll(chore)"],
   "enabledManagers": [
     "cargo",
-    "regex",
+    "custom.regex",
     "github-actions"
   ],
   "schedule": "every weekend",
