@@ -11,7 +11,7 @@ pub struct WorkerTxInfo {
 }
 
 pub async fn get_txs(mut client: &mut ConnectedClient) -> Vec<WorkerTxInfo> {
-    let txs = spell::list_get_strings(&mut client, "worker_registration_txs", "txs")
+    let txs = spell::list_get_strings(&mut client, "decider", "worker_registration_txs")
         .await
         .unwrap();
     assert!(
