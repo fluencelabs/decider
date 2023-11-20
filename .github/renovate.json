@@ -12,11 +12,11 @@
     {
       "fileMatch": ["src/tests/decider-distro-tests-rs/Cargo\\.toml"],
       "matchStrings": [
-        "\"(?<depName>[^\"]+)\" = \\{ git = \"(?<lookupName>https://github.com/fluencelabs/nox.git)\", tag = \"(?<currentValue>.*)\" \\}"
+        "\"(?<depName>.+)\" = \\{ git = \"https://github.com/fluencelabs/nox.git\", tag = \"(?<currentValue>.+)\" \\}"
       ],
-      "datasourceTemplate": "git-tags",
-      "currentValueTemplate": "nox-{{#semver}}{{version}}{{/semver}}",
-      "depNameTemplate": "{{depName}}"
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "https://github.com/fluencelabs/nox",
+      "extractVersionTemplate": "^nox-(?<version>.*?)$"
     }
   ],
   "packageRules": [
@@ -26,6 +26,10 @@
       "semanticCommitType": "fix",
       "semanticCommitScope": "deps",
       "schedule": "at any time"
+    },
+    {
+      "managers": ["regex"],
+      "groupName": "nox dependencies in tests"
     },
     {
       "matchDepTypes": ["devDependencies"],
