@@ -275,6 +275,7 @@ async fn test_left_boundary_idle() {
 
     server.shutdown().await;
 }
+
 #[tokio::test]
 async fn test_sync_info() {
     const LATEST_BLOCK_FIRST_RUN: u32 = 100;
