@@ -15,7 +15,7 @@
         "(?<depName>.+) = \\{ git = \"https://github.com/fluencelabs/nox.git\", tag = \"(?<currentValue>.+)\" \\}"
       ],
       "datasourceTemplate": "github-releases",
-      "packageNameTemplate": "https://github.com/fluencelabs/nox",
+      "packageNameTemplate": "fluencelabs/nox",
       "extractVersionTemplate": "^nox-(?<version>.*?)$"
     }
   ],
