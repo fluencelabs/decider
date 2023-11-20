@@ -12,7 +12,7 @@
     {
       "fileMatch": ["^src/tests/decider-distro-tests-rs/Cargo\\.toml$"],
       "matchStrings": [
-        "(?<depName>.+) = \\{ git = \"https://github.com/fluencelabs/nox.git\", tag = \"(?<currentValue>.+)\" \\}"
+        "(?<depName>.+) = \\{ git = \"https://github.com/fluencelabs/nox.git\", tag = \"nox-(?<currentValue>.+)\" \\}"
       ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "fluencelabs/nox",
