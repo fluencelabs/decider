@@ -3,14 +3,14 @@
   "extends": ["config:base", ":semanticCommitTypeAll(chore)"],
   "enabledManagers": [
     "cargo",
-    "custom.regex",
+    "regex",
     "github-actions"
   ],
   "schedule": "every weekend",
   "ignorePresets": [":ignoreModulesAndTests"],
   "regexManagers": [
     {
-      "fileMatch": ["src/tests/decider-distro-tests-rs/Cargo\\.toml"],
+      "fileMatch": ["^src/tests/decider-distro-tests-rs/Cargo\\.toml$"],
       "matchStrings": [
         "\"(?<depName>.+)\" = \\{ git = \"https://github.com/fluencelabs/nox.git\", tag = \"(?<currentValue>.+)\" \\}"
       ],
