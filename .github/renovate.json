@@ -29,7 +29,6 @@
     },
     {
       "managers": ["regex"],
-      "fileMatch": ["src/tests/decider-distro-tests-rs/Cargo\\.toml"],
       "groupName": "nox dependencies in tests"
     },
     {
