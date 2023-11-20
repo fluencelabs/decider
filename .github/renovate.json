@@ -16,8 +16,8 @@
       ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "https://github.com/fluencelabs/nox",
-      "extractVersionTemplate": "^nox-(?<version>.*?)$"
-      "depNameTemplate": "{{depName}}"
+      "extractVersionTemplate": "^nox-(?<version>.*?)$",
+      "groupName": "nox dependencies in tests"
     }
   ],
   "packageRules": [
