@@ -1,4 +1,4 @@
-use super::to_hex;
+use crate::to_hex;
 use serde_json::{json, Value};
 
 pub struct TestApp {

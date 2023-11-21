@@ -9,10 +9,11 @@ import Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
 import DealId, SpellId, WorkerId from "../types.aqua"
 
 -- Arguments of the worker
+-- Names must be in sync with Worker Spell.
 data WorkerArgs:
     -- Address of the deal is also an ID of the deal
     deal_id: DealId
-    -- CID of the worker's definition
+    -- CID of the worker's definition.
     worker_def_cid: string
     -- IPFS API where the related CID resides
     ipfs: string
@@ -26,31 +27,21 @@ data WorkerSettings:
     -- IPFS API for the worker to pull info from
     ipfs: string
 
--- Parse worker-settings from the decider's KV
+service JsonWorkerSettings("json"):
+    parse(str: string) -> WorkerSettings
+
+-- Parse worker-settings from the decider's KV 
 func get_worker_settings(spell_id: SpellId) ->  ?WorkerSettings:
     Spell spell_id
 
     settings: *WorkerSettings
-
-    script_str <- get_string(spell_id, "worker_script")
-    config_str <- get_string(spell_id, "worker_config")
-    ipfs_str <- get_string(spell_id, "worker_ipfs")
-
-    if script_str != nil:
-        if config_str != nil:
-            if ipfs_str != nil:
-                script <- Json.parse(script_str!)
-                config <- JsonTriggerConfig.parse(config_str!)
-                ipfs <- Json.parse(ipfs_str!)
-
-                ws = WorkerSettings(config = config, script = script, ipfs = ipfs)
-                settings <<- ws
-            else:
-                spell_log(spell_id, "get_worker_settings: worker_ipfs is not set")
-        else:
-            spell_log(spell_id, "get_worker_settings: worker_config is not set")
-    else:
-        spell_log(spell_id, "get_worker_settings: worker_script is not set")
+    -- TODO: I want to unite these guys to one structure but it won't be backward-compatible. 
+    settings_str <- get_string(spell_id, "worker_settings")
+    if settings_str != nil:
+        try:
+            settings <<- JsonWorkerSettings.parse(settings_str!)
+        catch e:
+            spell_log(spell_id, ["can't parse worker_settings", e, " original string:", settings_str!])
 
     <- settings
 

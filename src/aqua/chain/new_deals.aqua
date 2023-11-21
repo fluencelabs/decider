@@ -5,7 +5,7 @@ import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 import ChainConnector, DealMatched from "services.aqua"
 
 import ChainInfo from "../chain/chain.aqua"
-import deal_log, spell_log, get_counter, get_string from "../fluence/spell.aqua"
+import deal_log, spell_log, get_string from "../fluence/spell.aqua"
 import is_worker_created from "../fluence/worker.aqua"
 import Json from "../fluence/peer.aqua"
 import join_deal from "../decider/join_deal.aqua"

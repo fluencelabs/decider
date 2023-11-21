@@ -8,20 +8,21 @@ import spell_log, get_string from "../fluence/spell.aqua"
 import SpellId from "../types.aqua"
 import ChainInfo from "../chain/chain.aqua"
 import evaluate_from_block from "../chain/from_block.aqua"
+import LAST_SEEN_BLOCK from "../decider/consts.aqua"
 
 use "../chain/blocks.aqua" as Blocks
 
 -- `last seen block` is a block for which all events have been processed
 func get(spell_id: SpellId) -> ?string:
     Spell spell_id
-    last_seen <- get_string(spell_id, "last_seen_block")
+    last_seen <- get_string(spell_id, LAST_SEEN_BLOCK)
     <- last_seen
 
 func save(spell_id: SpellId, hex: string):
     Spell spell_id
     spell_log(spell_id, ["will set last seen to", hex])
     try:
-        r <- Spell.set_string("last_seen_block", hex)
+        r <- Spell.set_string(LAST_SEEN_BLOCK, hex)
         if r.success:
             spell_log(spell_id, ["saved last seen", hex])
         else:
