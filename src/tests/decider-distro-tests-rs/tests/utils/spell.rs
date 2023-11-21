@@ -50,6 +50,7 @@ pub async fn list_get_strings(
     let relay = client.node.to_string();
     list_get_strings_on(&mut client, &relay, spell_id, key).await
 }
+
 pub async fn list_get_strings_on(
     mut client: &mut ConnectedClient,
     worker_id: &str,

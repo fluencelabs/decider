@@ -18,7 +18,7 @@ pub async fn update_config(
     utils::execute(
         client,
         r#"(call relay ("spell" "update_trigger_config") ["decider" config])"#,
-        "\"done\"",
+        r#""done""#,
         hashmap! {
             "config" => json!(trigger_config),
         },

@@ -14,7 +14,7 @@ use fluence_app_service::TomlMarineConfig;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use fluence_spell_dtos::value::UnitValue;
 use maplit::hashmap;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use serde_json::{json, Value};
 use utils::chain::LogsReq;
 use utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};
@@ -303,19 +303,10 @@ async fn test_sync_info() {
         }
     }
     wait_decider_stopped(&mut client).await;
-    #[derive(Deserialize, Debug)]
-    struct SyncInfo {
-        blocks_diff: u32,
-        run_updated: u32,
-    }
 
-    let result = spell::get_string(&mut client, "decider", "sync_info")
+    let sync_info = decider::get_sync_info(&mut client)
         .await
-        .wrap_err("get sync_info failed")
-        .unwrap();
-    assert!(result.success, "get sync_info failed: {}", result.error);
-    let sync_info = serde_json::from_str::<SyncInfo>(&result.str)
-        .wrap_err("parse sync_info")
+        .wrap_err("get_sync_info")
         .unwrap();
     assert_eq!(
         sync_info.run_updated, 1,
@@ -338,18 +329,15 @@ async fn test_sync_info() {
     }
     wait_decider_stopped(&mut client).await;
 
-    let result = spell::get_string(&mut client, "decider", "sync_info")
+    let sync_info = decider::get_sync_info(&mut client)
         .await
-        .wrap_err("get sync_info failed")
-        .unwrap();
-    assert!(result.success, "get sync_info failed: {}", result.error);
-    let sync_info = serde_json::from_str::<SyncInfo>(&result.str)
-        .wrap_err("parse sync_info")
+        .wrap_err("get_sync_info")
         .unwrap();
     assert_eq!(
         sync_info.run_updated, 2,
         "should be updated on the first run"
     );
+
     let expected_last_seen = LATEST_BLOCK_FIRST_RUN + DEFAULT_POLL_WINDOW_BLOCK_SIZE;
     assert_eq!(
         sync_info.blocks_diff,

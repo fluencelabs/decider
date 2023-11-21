@@ -64,6 +64,7 @@ use utils::*;
 ///
 #[tokio::test]
 async fn test_deploy_a_deal_single() {
+    enable_decider_logs();
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const BLOCK: u32 = 32;
     const LATEST_BLOCK: u32 = 35;

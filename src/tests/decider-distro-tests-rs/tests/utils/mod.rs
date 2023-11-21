@@ -11,6 +11,8 @@ pub mod worker;
 
 pub mod spell;
 
+pub mod decider;
+
 mod test_apps;
 pub mod test_rpc_server;
 

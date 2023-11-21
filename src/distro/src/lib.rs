@@ -72,9 +72,11 @@ pub fn decider_spell(config: DeciderConfig) -> DistrSpell {
     DistrSpell {
         air: DECIDER_SPELL,
         kv: hashmap! {
-            "worker_script" => json!(WORKER_SPELL),
-            "worker_config" => json!(worker_config),
-            "worker_ipfs" => json!(config.worker_ipfs_multiaddr),
+            "worker_settings" => json!({
+                "script": WORKER_SPELL,
+                "config": worker_config,
+                "ipfs": config.worker_ipfs_multiaddr
+            }),
             "from_block" => json!(config.chain_contract_block_hex),
             "chain" => json!( {
                 "api_endpoint": config.chain_api_endpoint,
