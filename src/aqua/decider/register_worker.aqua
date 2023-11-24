@@ -7,7 +7,7 @@ import ChainInfo from "../chain/chain.aqua"
 import Spell, StringListValue from "@fluencelabs/spell/spell_service.aqua"
 import Array from "@fluencelabs/aqua-lib/math.aqua"
 import Json from "../fluence/peer.aqua"
-import store_tx_failed_deal from "decider/deal_storage.aqua"
+import store_tx_failed_deal from "./deal_storage.aqua"
 import TXS_KEY, TXS_STATUS_KEY from "./consts.aqua"
 
 alias TxHash: string

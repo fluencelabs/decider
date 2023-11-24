@@ -1,0 +1,4 @@
+aqua Deals declares *
+
+func get() -> ?u8:
+    <- nil

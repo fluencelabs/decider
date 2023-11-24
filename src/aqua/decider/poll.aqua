@@ -9,8 +9,8 @@ import poll_deal_changes_batch from "../chain/changed_deals.aqua"
 import spell_log from "../fluence/spell.aqua"
 import get_joined_deals from "../decider/deal_storage.aqua"
 import poll_mailbox from "../decider/mailbox.aqua"
-import poll_txs from "./decider/register_worker.aqua"
-import store_sync_info from "./decider/sync_info.aqua"
+import poll_txs from "./register_worker.aqua"
+import store_sync_info from "./sync_info.aqua"
 
 use "../chain/blocks.aqua" as Blocks
 
