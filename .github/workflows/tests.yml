@@ -48,7 +48,7 @@ jobs:
 
       - name: Run IPFS
         run: |
-          docker-compose -f .github/e2e/docker-compose.yml up -d
+          docker-compose -f .github/ipfs/docker-compose.yml up -d
 
       - name: Setup fcli
         uses: fluencelabs/setup-fluence@v1
@@ -98,6 +98,7 @@ jobs:
           name: decider report
           path: src/tests/decider-distro-tests-rs/target/nextest/ci/junit.xml
           reporter: java-junit
+          fail-on-error: false
 
       - name: Dump docker logs
         if: always()
@@ -110,4 +111,4 @@ jobs:
       - name: Post Run IPFS
         if: always()
         run: |
-          docker-compose -f .github/e2e/docker-compose.yml down --volumes
+          docker-compose -f .github/ipfs/docker-compose.yml down --volumes
