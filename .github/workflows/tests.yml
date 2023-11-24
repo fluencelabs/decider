@@ -48,7 +48,7 @@ jobs:
 
       - name: Run IPFS
         run: |
-          docker-compose -f .github/e2e/docker-compose.yml up -d
+          docker-compose -f .github/ipfs/docker-compose.yml up -d
 
       - name: Setup fcli
         uses: fluencelabs/setup-fluence@v1
@@ -110,4 +110,4 @@ jobs:
       - name: Post Run IPFS
         if: always()
         run: |
-          docker-compose -f .github/e2e/docker-compose.yml down --volumes
+          docker-compose -f .github/ipfs/docker-compose.yml down --volumes
