@@ -1,9 +1,11 @@
 # yaml-language-server: $schema=.fluence/schemas/fluence.json
 
-# Defines Fluence Project, most importantly - what exactly you want to deploy and how. You can use `fluence init` command to generate a template for new Fluence project
+# Documentation: https://github.com/fluencelabs/cli/tree/main/docs/configs/fluence.md
+# Defines Fluence Project
+# Most importantly - what exactly you want to deploy and how
+# You can use `fluence init` command to generate a template for new Fluence project
 
-# Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/fluence.md
-
+# config version
 version: 5
 
 # This is like the "main" Aqua file, but
@@ -44,21 +46,3 @@ spells:
   decider:
     # path to directory containing 'spell.yaml'
     get: src/aqua
-
-# Here I define where to deploy workers.
-hosts:
-  # this is the _worker_ name
-  decider:
-    peerIds:
-      # that's where to deploy it
-      - 12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ
-    services:
-      - chain_connector
-    spells:
-      - decider
-
-relays:
-  - /ip4/127.0.0.1/tcp/9999/ws/p2p/12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ
-  # - /dns4/stage.fluence.dev/tcp/19001/wss/p2p/12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv
-
-contractsEnv: testnet

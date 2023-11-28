@@ -86,7 +86,8 @@
         },
         "required": [
           "get"
-        ]
+        ],
+        "additionalProperties": false
       },
       "properties": {
         "facade": {
@@ -163,7 +164,8 @@
           },
           "required": [
             "get"
-          ]
+          ],
+          "additionalProperties": false
         },
         "Other_module_name": {
           "type": "object",
@@ -239,7 +241,8 @@
           },
           "required": [
             "get"
-          ]
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -255,5 +258,6 @@
     "version",
     "name",
     "modules"
-  ]
+  ],
+  "additionalProperties": false
 }

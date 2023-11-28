@@ -2,6 +2,7 @@
   "$id": "https://fluence.dev/schemas/workers.yaml",
   "title": "workers.yaml",
   "type": "object",
+  "additionalProperties": false,
   "description": "A result of app deployment. This file is created automatically after successful deployment using `fluence workers deploy` command",
   "properties": {
     "version": {
@@ -47,7 +48,8 @@
           "dealIdOriginal",
           "chainNetwork",
           "chainNetworkId"
-        ]
+        ],
+        "additionalProperties": false
       },
       "properties": {
         "Worker_deployed_using_deals": {
@@ -86,7 +88,8 @@
             "dealIdOriginal",
             "chainNetwork",
             "chainNetworkId"
-          ]
+          ],
+          "additionalProperties": false
         }
       },
       "required": [],
@@ -128,7 +131,8 @@
                 "host_id",
                 "spell_id",
                 "worker_id"
-              ]
+              ],
+              "additionalProperties": false
             }
           },
           "relayId": {
@@ -141,7 +145,8 @@
           "installation_spells",
           "relayId",
           "dummyDealId"
-        ]
+        ],
+        "additionalProperties": false
       },
       "properties": {
         "Worker_deployed_using_direct_hosting": {
@@ -177,7 +182,8 @@
                   "host_id",
                   "spell_id",
                   "worker_id"
-                ]
+                ],
+                "additionalProperties": false
               }
             },
             "relayId": {
@@ -190,7 +196,8 @@
             "installation_spells",
             "relayId",
             "dummyDealId"
-          ]
+          ],
+          "additionalProperties": false
         }
       },
       "required": [],

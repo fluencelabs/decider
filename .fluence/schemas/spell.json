@@ -23,6 +23,7 @@
     },
     "clock": {
       "type": "object",
+      "additionalProperties": false,
       "nullable": true,
       "description": "Trigger the spell execution periodically. If you want to disable this property by overriding it in fluence.yaml - pass empty config for it like this: `clock: {}`",
       "properties": {
@@ -65,5 +66,6 @@
     "version",
     "function",
     "aquaFilePath"
-  ]
+  ],
+  "additionalProperties": false
 }
