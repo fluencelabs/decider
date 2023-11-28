@@ -135,6 +135,7 @@ data TxStatusBatchResult:
 
 service ChainConnector("chain_connector"):
   get_env() -> Env
+  get_status(deal_id: string, api_endpoint: string)  
   get_tx_statuses(api_endpoint: string, txs: []WorkerTxInfo) -> TxStatusBatchResult
   hex_add(hex: string, add: u32) -> HexAdd
   hex_cmp(hex_a: string, hex_b: string) -> HexCmp
