@@ -1,17 +1,13 @@
+pub mod chain;
 pub mod control;
 pub mod deal;
+pub mod decider;
+pub mod default;
 pub mod distro;
 pub mod setup;
-pub mod subnet;
-
-pub mod chain;
-
-pub mod default;
-pub mod worker;
-
 pub mod spell;
-
-pub mod decider;
+pub mod subnet;
+pub mod worker;
 
 mod test_apps;
 pub mod test_rpc_server;
@@ -27,16 +23,17 @@ pub fn enable_decider_logs() {
     let namespaces = vec![
         "run-console=debug",
         "chain_connector=debug",
+        "spell=debug",
         "ipfs_effector=debug",
         "ipfs_pure=debug",
         /*
         "spell_event_bus=trace",
         "system_services=debug",
+        */
         "particle_reap=debug",
         "aquamarine::actor=debug",
         "aquamarine::aqua_runtime=off",
         "aquamarine=debug",
-        */
     ];
 
     let namespaces = namespaces

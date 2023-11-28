@@ -26,9 +26,9 @@ pub enum ResolveSubnetError {
     ChainData(#[from] ChainDataError),
     #[error("'{0}' not found in getPATs response")]
     MissingField(&'static str),
-    #[error("getPATs response is empty")]
+    #[error("getComputeUnits response is empty")]
     Empty,
-    #[error("'{1}' from getPATs is not a valid PeerId")]
+    #[error("'{1}' from getComputeUnits is not a valid PeerId")]
     InvalidPeerId(#[source] ParseError, &'static str),
 }
 
@@ -51,8 +51,6 @@ fn signature() -> ParamType {
     Array(Box::new(Tuple(vec![
         // bytes32 id
         FixedBytes(32),
-        // uint256 index
-        Uint(256),
         // bytes32 peerId
         FixedBytes(32),
         // bytes32 workerId
@@ -70,7 +68,7 @@ fn signature() -> ParamType {
 fn function() -> Function {
     #[allow(deprecated)]
     Function {
-        name: String::from("getPATs"),
+        name: String::from("getComputeUnits"),
         inputs: vec![],
         outputs: vec![],
         constant: None,
@@ -78,7 +76,7 @@ fn function() -> Function {
     }
 }
 
-fn decode_pats(data: String) -> Result<Vec<Worker>, ResolveSubnetError> {
+fn decode_compute_units(data: String) -> Result<Vec<Worker>, ResolveSubnetError> {
     let tokens = parse_chain_data(&data, &[signature()])?;
     let tokens = tokens.into_iter().next().ok_or(Empty)?;
     let tokens = tokens.into_array().ok_or(InvalidParsedToken("response"))?;
@@ -89,9 +87,6 @@ fn decode_pats(data: String) -> Result<Vec<Worker>, ResolveSubnetError> {
 
         let pat_id = next_opt(&mut tuple, "pat_id", Token::into_fixed_bytes)?;
         let pat_id = hex::encode(pat_id);
-
-        // skip 'index' field
-        let mut tuple = tuple.skip(1);
 
         let peer_id = next_opt(&mut tuple, "compute_peer_id", Token::into_fixed_bytes)?;
         let peer_id = parse_peer_id(peer_id).map_err(|e| InvalidPeerId(e, "compute_peer_id"))?;
@@ -130,7 +125,7 @@ pub fn resolve_subnet(deal_id: String, api_endpoint: &str) -> Subnet {
         let response = send_jsonrpc(api_endpoint, req)?;
         let pats = response.get_result()?;
 
-        decode_pats(pats)?
+        decode_compute_units(pats)?
     };
 
     match res {

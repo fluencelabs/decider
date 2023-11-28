@@ -1,0 +1,2542 @@
+(xor
+ (seq
+  (seq
+   (seq
+    (seq
+     (seq
+      (seq
+       (seq
+        (seq
+         (seq
+          (seq
+           (seq
+            (seq
+             (seq
+              (seq
+               (seq
+                (seq
+                 (seq
+                  (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                  (call %init_peer_id% ("getDataSrv" "spell_id") [] -spell_id-arg-)
+                 )
+                 (call %init_peer_id% ("getDataSrv" "ipfs") [] -ipfs-arg-)
+                )
+                (call %init_peer_id% ("getDataSrv" "deal_id") [] -deal_id-arg-)
+               )
+               (call %init_peer_id% ("getDataSrv" "worker_def_cid") [] -worker_def_cid-arg-)
+              )
+              (new $array-inline
+               (seq
+                (seq
+                 (seq
+                  (seq
+                   (seq
+                    (ap "worker" $array-inline)
+                    (ap -spell_id-arg- $array-inline)
+                   )
+                   (ap -deal_id-arg- $array-inline)
+                  )
+                  (ap -worker_def_cid-arg- $array-inline)
+                 )
+                 (ap -ipfs-arg- $array-inline)
+                )
+                (canon %init_peer_id% $array-inline  #array-inline-0)
+               )
+              )
+             )
+             (call %init_peer_id% ("run-console" "print") [#array-inline-0])
+            )
+            (new $array-inline-1
+             (seq
+              (seq
+               (ap "Installing worker for deal" $array-inline-1)
+               (ap -deal_id-arg- $array-inline-1)
+              )
+              (canon %init_peer_id% $array-inline-1  #array-inline-1-0)
+             )
+            )
+           )
+           (call %init_peer_id% ("debug" "stringify") [#array-inline-1-0] ret)
+          )
+          (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-0)
+         )
+         (par
+          (call %init_peer_id% (ret-0 "store_log") [ret] ret-1)
+          (seq
+           (new $array-inline-2
+            (seq
+             (seq
+              (ap ret-0 $array-inline-2)
+              (ap #array-inline-1-0 $array-inline-2)
+             )
+             (canon %init_peer_id% $array-inline-2  #array-inline-2-0)
+            )
+           )
+           (call %init_peer_id% ("run-console" "print") [#array-inline-2-0])
+          )
+         )
+        )
+        (xor
+         (seq
+          (call %init_peer_id% ("aqua-ipfs" "cat_from") [-worker_def_cid-arg- -ipfs-arg-] ret-2)
+          (new -if-else-error-
+           (new -else-error-
+            (new -if-error-
+             (xor
+              (match ret-2.$.success true
+               (seq
+                (seq
+                 (seq
+                  (seq
+                   (seq
+                    (seq
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (seq
+                          (call %init_peer_id% ("json" "parse") [ret-2.$.contents] ret-3)
+                          (new $array-inline-3
+                           (seq
+                            (seq
+                             (seq
+                              (ap "parsed worker definition" $array-inline-3)
+                              (ap -worker_def_cid-arg- $array-inline-3)
+                             )
+                             (ap ret-3 $array-inline-3)
+                            )
+                            (canon %init_peer_id% $array-inline-3  #array-inline-3-0)
+                           )
+                          )
+                         )
+                         (call %init_peer_id% ("debug" "stringify") [#array-inline-3-0] ret-4)
+                        )
+                        (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-5)
+                       )
+                       (par
+                        (call %init_peer_id% (ret-5 "store_log") [ret-4] ret-6)
+                        (seq
+                         (new $array-inline-4
+                          (seq
+                           (seq
+                            (ap ret-5 $array-inline-4)
+                            (ap #array-inline-3-0 $array-inline-4)
+                           )
+                           (canon %init_peer_id% $array-inline-4  #array-inline-4-0)
+                          )
+                         )
+                         (call %init_peer_id% ("run-console" "print") [#array-inline-4-0])
+                        )
+                       )
+                      )
+                      (fold ret-3.$.services s-0
+                       (seq
+                        (xor
+                         (seq
+                          (seq
+                           (new $hashes-0
+                            (seq
+                             (seq
+                              (fold s-0.$.modules m-0
+                               (seq
+                                (seq
+                                 (seq
+                                  (seq
+                                   (call %init_peer_id% ("aqua-ipfs" "get_from") [m-0.$.wasm -ipfs-arg-] ret-7)
+                                   (call %init_peer_id% ("aqua-ipfs" "cat_from") [m-0.$.config -ipfs-arg-] ret-8)
+                                  )
+                                  (xor
+                                   (match ret-7.$.success false
+                                    (ap ret-7.$.success and)
+                                   )
+                                   (ap ret-8.$.success and)
+                                  )
+                                 )
+                                 (new -if-else-error-
+                                  (new -else-error-
+                                   (new -if-error-
+                                    (xor
+                                     (match and true
+                                      (seq
+                                       (seq
+                                        (call %init_peer_id% ("json" "parse") [ret-8.$.contents] ret-9)
+                                        (call %init_peer_id% ("dist" "add_module_from_vault") [ret-7.$.path ret-9] ret-10)
+                                       )
+                                       (ap ret-10 $hashes-0)
+                                      )
+                                     )
+                                     (seq
+                                      (ap :error: -if-error-)
+                                      (xor
+                                       (match :error:.$.error_code 10001
+                                        (seq
+                                         (seq
+                                          (seq
+                                           (new $array-inline-5
+                                            (seq
+                                             (seq
+                                              (seq
+                                               (seq
+                                                (seq
+                                                 (seq
+                                                  (new $array-inline-6
+                                                   (seq
+                                                    (seq
+                                                     (seq
+                                                      (ap "wasm" $array-inline-6)
+                                                      (ap m-0.$.wasm $array-inline-6)
+                                                     )
+                                                     (ap ret-7 $array-inline-6)
+                                                    )
+                                                    (canon %init_peer_id% $array-inline-6  #array-inline-6-0)
+                                                   )
+                                                  )
+                                                  (new $array-inline-7
+                                                   (seq
+                                                    (seq
+                                                     (seq
+                                                      (ap "config" $array-inline-7)
+                                                      (ap m-0.$.config $array-inline-7)
+                                                     )
+                                                     (ap ret-8 $array-inline-7)
+                                                    )
+                                                    (canon %init_peer_id% $array-inline-7  #array-inline-7-0)
+                                                   )
+                                                  )
+                                                 )
+                                                 (ap s-0.$.name $array-inline-5)
+                                                )
+                                                (ap "error retrieving module" $array-inline-5)
+                                               )
+                                               (ap #array-inline-6-0 $array-inline-5)
+                                              )
+                                              (ap #array-inline-7-0 $array-inline-5)
+                                             )
+                                             (canon %init_peer_id% $array-inline-5  #array-inline-5-0)
+                                            )
+                                           )
+                                           (call %init_peer_id% ("debug" "stringify") [#array-inline-5-0] ret-11)
+                                          )
+                                          (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-12)
+                                         )
+                                         (par
+                                          (call %init_peer_id% (ret-12 "store_log") [ret-11] ret-13)
+                                          (seq
+                                           (new $array-inline-8
+                                            (seq
+                                             (seq
+                                              (ap ret-12 $array-inline-8)
+                                              (ap #array-inline-5-0 $array-inline-8)
+                                             )
+                                             (canon %init_peer_id% $array-inline-8  #array-inline-8-0)
+                                            )
+                                           )
+                                           (call %init_peer_id% ("run-console" "print") [#array-inline-8-0])
+                                          )
+                                         )
+                                        )
+                                       )
+                                       (seq
+                                        (seq
+                                         (ap :error: -else-error-)
+                                         (xor
+                                          (match :error:.$.error_code 10001
+                                           (ap -if-error- -if-else-error-)
+                                          )
+                                          (ap -else-error- -if-else-error-)
+                                         )
+                                        )
+                                        (fail -if-else-error-)
+                                       )
+                                      )
+                                     )
+                                    )
+                                   )
+                                  )
+                                 )
+                                )
+                                (next m-0)
+                               )
+                               (null)
+                              )
+                              (canon %init_peer_id% $hashes-0  #-hashes-fix-0)
+                             )
+                             (ap #-hashes-fix-0 -hashes-flat-0)
+                            )
+                           )
+                           (par
+                            (seq
+                             (ap -hashes-flat-0 -hashes-flat-0_to_functor)
+                             (ap -hashes-flat-0_to_functor.length -hashes-flat-0_length)
+                            )
+                            (seq
+                             (seq
+                              (ap s-0.$.modules s-0_flat)
+                              (ap s-0_flat s-0_flat_to_functor)
+                             )
+                             (ap s-0_flat_to_functor.length s-0_flat_length)
+                            )
+                           )
+                          )
+                          (new -if-else-error-
+                           (new -else-error-
+                            (new -if-error-
+                             (xor
+                              (match -hashes-flat-0_length s-0_flat_length
+                               (seq
+                                (seq
+                                 (seq
+                                  (seq
+                                   (seq
+                                    (seq
+                                     (seq
+                                      (seq
+                                       (call %init_peer_id% ("dist" "make_blueprint") [s-0.$.name -hashes-flat-0] ret-14)
+                                       (call %init_peer_id% ("dist" "add_blueprint") [ret-14] ret-15)
+                                      )
+                                      (call %init_peer_id% ("op" "concat_strings") ["blueprint:" "test_id"] ret-16)
+                                     )
+                                     (call %init_peer_id% ("debug" "stringify") [ret-16] ret-17)
+                                    )
+                                    (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-18)
+                                   )
+                                   (par
+                                    (call %init_peer_id% (ret-18 "store_log") [ret-17] ret-19)
+                                    (seq
+                                     (new $array-inline-9
+                                      (seq
+                                       (seq
+                                        (ap ret-18 $array-inline-9)
+                                        (ap ret-16 $array-inline-9)
+                                       )
+                                       (canon %init_peer_id% $array-inline-9  #array-inline-9-0)
+                                      )
+                                     )
+                                     (call %init_peer_id% ("run-console" "print") [#array-inline-9-0])
+                                    )
+                                   )
+                                  )
+                                  (new $result
+                                   (seq
+                                    (seq
+                                     (seq
+                                      (call %init_peer_id% ("worker-spell" "get_string") [s-0.$.name] ret-20)
+                                      (xor
+                                       (match ret-20.$.success false
+                                        (ap ret-20.$.success and-0)
+                                       )
+                                       (ap ret-20.$.absent and-0)
+                                      )
+                                     )
+                                     (new -if-else-error-
+                                      (new -else-error-
+                                       (new -if-error-
+                                        (xor
+                                         (match and-0 true
+                                          (ap false $result)
+                                         )
+                                         (seq
+                                          (ap :error: -if-error-)
+                                          (xor
+                                           (match :error:.$.error_code 10001
+                                            (seq
+                                             (seq
+                                              (ap ret-20.$.str ret-20_flat)
+                                              (call %init_peer_id% ("srv" "info") [ret-20_flat] ret-21)
+                                             )
+                                             (new -if-else-error-
+                                              (new -else-error-
+                                               (new -if-error-
+                                                (xor
+                                                 (match ret-21.$.blueprint_id ret-15
+                                                  (ap true $result)
+                                                 )
+                                                 (seq
+                                                  (ap :error: -if-error-)
+                                                  (xor
+                                                   (match :error:.$.error_code 10001
+                                                    (seq
+                                                     (seq
+                                                      (seq
+                                                       (seq
+                                                        (seq
+                                                         (new $array-inline-10
+                                                          (seq
+                                                           (seq
+                                                            (ap s-0.$.name $array-inline-10)
+                                                            (ap "blueprint changed, need to redeploy" $array-inline-10)
+                                                           )
+                                                           (canon %init_peer_id% $array-inline-10  #array-inline-10-0)
+                                                          )
+                                                         )
+                                                         (call %init_peer_id% ("debug" "stringify") [#array-inline-10-0] ret-22)
+                                                        )
+                                                        (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-23)
+                                                       )
+                                                       (par
+                                                        (call %init_peer_id% (ret-23 "store_log") [ret-22] ret-24)
+                                                        (seq
+                                                         (new $array-inline-11
+                                                          (seq
+                                                           (seq
+                                                            (ap ret-23 $array-inline-11)
+                                                            (ap #array-inline-10-0 $array-inline-11)
+                                                           )
+                                                           (canon %init_peer_id% $array-inline-11  #array-inline-11-0)
+                                                          )
+                                                         )
+                                                         (call %init_peer_id% ("run-console" "print") [#array-inline-11-0])
+                                                        )
+                                                       )
+                                                      )
+                                                      (xor
+                                                       (seq
+                                                        (seq
+                                                         (seq
+                                                          (seq
+                                                           (seq
+                                                            (seq
+                                                             (seq
+                                                              (seq
+                                                               (new $array-inline-12
+                                                                (seq
+                                                                 (seq
+                                                                  (seq
+                                                                   (ap s-0.$.name $array-inline-12)
+                                                                   (ap "removing old service" $array-inline-12)
+                                                                  )
+                                                                  (ap ret-20_flat $array-inline-12)
+                                                                 )
+                                                                 (canon %init_peer_id% $array-inline-12  #array-inline-12-0)
+                                                                )
+                                                               )
+                                                               (call %init_peer_id% ("debug" "stringify") [#array-inline-12-0] ret-25)
+                                                              )
+                                                              (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-26)
+                                                             )
+                                                             (par
+                                                              (call %init_peer_id% (ret-26 "store_log") [ret-25] ret-27)
+                                                              (seq
+                                                               (new $array-inline-13
+                                                                (seq
+                                                                 (seq
+                                                                  (ap ret-26 $array-inline-13)
+                                                                  (ap #array-inline-12-0 $array-inline-13)
+                                                                 )
+                                                                 (canon %init_peer_id% $array-inline-13  #array-inline-13-0)
+                                                                )
+                                                               )
+                                                               (call %init_peer_id% ("run-console" "print") [#array-inline-13-0])
+                                                              )
+                                                             )
+                                                            )
+                                                            (call %init_peer_id% ("srv" "remove") [ret-20_flat])
+                                                           )
+                                                           (new $array-inline-14
+                                                            (seq
+                                                             (seq
+                                                              (seq
+                                                               (ap s-0.$.name $array-inline-14)
+                                                               (ap "old service successfully removed" $array-inline-14)
+                                                              )
+                                                              (ap ret-20_flat $array-inline-14)
+                                                             )
+                                                             (canon %init_peer_id% $array-inline-14  #array-inline-14-0)
+                                                            )
+                                                           )
+                                                          )
+                                                          (call %init_peer_id% ("debug" "stringify") [#array-inline-14-0] ret-28)
+                                                         )
+                                                         (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-29)
+                                                        )
+                                                        (par
+                                                         (call %init_peer_id% (ret-29 "store_log") [ret-28] ret-30)
+                                                         (seq
+                                                          (new $array-inline-15
+                                                           (seq
+                                                            (seq
+                                                             (ap ret-29 $array-inline-15)
+                                                             (ap #array-inline-14-0 $array-inline-15)
+                                                            )
+                                                            (canon %init_peer_id% $array-inline-15  #array-inline-15-0)
+                                                           )
+                                                          )
+                                                          (call %init_peer_id% ("run-console" "print") [#array-inline-15-0])
+                                                         )
+                                                        )
+                                                       )
+                                                       (seq
+                                                        (seq
+                                                         (seq
+                                                          (new $array-inline-16
+                                                           (seq
+                                                            (seq
+                                                             (seq
+                                                              (ap "Error removing service" $array-inline-16)
+                                                              (ap s-0.$.name $array-inline-16)
+                                                             )
+                                                             (ap :error: $array-inline-16)
+                                                            )
+                                                            (canon %init_peer_id% $array-inline-16  #array-inline-16-0)
+                                                           )
+                                                          )
+                                                          (call %init_peer_id% ("debug" "stringify") [#array-inline-16-0] ret-31)
+                                                         )
+                                                         (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-32)
+                                                        )
+                                                        (par
+                                                         (call %init_peer_id% (ret-32 "store_log") [ret-31] ret-33)
+                                                         (seq
+                                                          (new $array-inline-17
+                                                           (seq
+                                                            (seq
+                                                             (ap ret-32 $array-inline-17)
+                                                             (ap #array-inline-16-0 $array-inline-17)
+                                                            )
+                                                            (canon %init_peer_id% $array-inline-17  #array-inline-17-0)
+                                                           )
+                                                          )
+                                                          (call %init_peer_id% ("run-console" "print") [#array-inline-17-0])
+                                                         )
+                                                        )
+                                                       )
+                                                      )
+                                                     )
+                                                     (ap false $result)
+                                                    )
+                                                   )
+                                                   (seq
+                                                    (seq
+                                                     (ap :error: -else-error-)
+                                                     (xor
+                                                      (match :error:.$.error_code 10001
+                                                       (ap -if-error- -if-else-error-)
+                                                      )
+                                                      (ap -else-error- -if-else-error-)
+                                                     )
+                                                    )
+                                                    (fail -if-else-error-)
+                                                   )
+                                                  )
+                                                 )
+                                                )
+                                               )
+                                              )
+                                             )
+                                            )
+                                           )
+                                           (seq
+                                            (seq
+                                             (ap :error: -else-error-)
+                                             (xor
+                                              (match :error:.$.error_code 10001
+                                               (ap -if-error- -if-else-error-)
+                                              )
+                                              (ap -else-error- -if-else-error-)
+                                             )
+                                            )
+                                            (fail -if-else-error-)
+                                           )
+                                          )
+                                         )
+                                        )
+                                       )
+                                      )
+                                     )
+                                    )
+                                    (new $result_test
+                                     (seq
+                                      (seq
+                                       (fold $result result_fold_var
+                                        (seq
+                                         (seq
+                                          (ap result_fold_var $result_test)
+                                          (canon %init_peer_id% $result_test  #result_iter_canon)
+                                         )
+                                         (xor
+                                          (match #result_iter_canon.length 1
+                                           (null)
+                                          )
+                                          (next result_fold_var)
+                                         )
+                                        )
+                                        (never)
+                                       )
+                                       (canon %init_peer_id% $result_test  #result_result_canon)
+                                      )
+                                      (ap #result_result_canon result_gate)
+                                     )
+                                    )
+                                   )
+                                  )
+                                 )
+                                 (xor
+                                  (match result_gate.$.[0] true
+                                   (ap false not)
+                                  )
+                                  (ap true not)
+                                 )
+                                )
+                                (new -if-else-error-
+                                 (new -else-error-
+                                  (new -if-error-
+                                   (xor
+                                    (match not true
+                                     (seq
+                                      (seq
+                                       (seq
+                                        (seq
+                                         (seq
+                                          (seq
+                                           (seq
+                                            (seq
+                                             (seq
+                                              (seq
+                                               (seq
+                                                (seq
+                                                 (call %init_peer_id% ("peer" "timestamp_sec") [] ret-34)
+                                                 (new %Status_obj_map
+                                                  (seq
+                                                   (seq
+                                                    (seq
+                                                     (ap ("message" "") %Status_obj_map)
+                                                     (ap ("state" "INSTALLATION_IN_PROGRESS") %Status_obj_map)
+                                                    )
+                                                    (ap ("timestamp" ret-34) %Status_obj_map)
+                                                   )
+                                                   (canon %init_peer_id% %Status_obj_map  Status_obj)
+                                                  )
+                                                 )
+                                                )
+                                                (call %init_peer_id% ("json" "stringify") [Status_obj] ret-35)
+                                               )
+                                               (call %init_peer_id% ("worker-spell" "list_push_string") ["__installation_spell_status__" ret-35] ret-36)
+                                              )
+                                              (call %init_peer_id% ("srv" "create") [ret-15] ret-37)
+                                             )
+                                             (new $array-inline-18
+                                              (seq
+                                               (seq
+                                                (seq
+                                                 (ap "Created service" $array-inline-18)
+                                                 (ap s-0.$.name $array-inline-18)
+                                                )
+                                                (ap ret-37 $array-inline-18)
+                                               )
+                                               (canon %init_peer_id% $array-inline-18  #array-inline-18-0)
+                                              )
+                                             )
+                                            )
+                                            (call %init_peer_id% ("debug" "stringify") [#array-inline-18-0] ret-38)
+                                           )
+                                           (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-39)
+                                          )
+                                          (par
+                                           (call %init_peer_id% (ret-39 "store_log") [ret-38] ret-40)
+                                           (seq
+                                            (new $array-inline-19
+                                             (seq
+                                              (seq
+                                               (ap ret-39 $array-inline-19)
+                                               (ap #array-inline-18-0 $array-inline-19)
+                                              )
+                                              (canon %init_peer_id% $array-inline-19  #array-inline-19-0)
+                                             )
+                                            )
+                                            (call %init_peer_id% ("run-console" "print") [#array-inline-19-0])
+                                           )
+                                          )
+                                         )
+                                         (xor
+                                          (call %init_peer_id% ("srv" "add_alias") [s-0.$.name ret-37])
+                                          (seq
+                                           (seq
+                                            (seq
+                                             (new $array-inline-20
+                                              (seq
+                                               (seq
+                                                (seq
+                                                 (seq
+                                                  (ap "Error creating alias for deployed service" $array-inline-20)
+                                                  (ap s-0.$.name $array-inline-20)
+                                                 )
+                                                 (ap ret-37 $array-inline-20)
+                                                )
+                                                (ap :error: $array-inline-20)
+                                               )
+                                               (canon %init_peer_id% $array-inline-20  #array-inline-20-0)
+                                              )
+                                             )
+                                             (call %init_peer_id% ("debug" "stringify") [#array-inline-20-0] ret-41)
+                                            )
+                                            (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-42)
+                                           )
+                                           (par
+                                            (call %init_peer_id% (ret-42 "store_log") [ret-41] ret-43)
+                                            (seq
+                                             (new $array-inline-21
+                                              (seq
+                                               (seq
+                                                (ap ret-42 $array-inline-21)
+                                                (ap #array-inline-20-0 $array-inline-21)
+                                               )
+                                               (canon %init_peer_id% $array-inline-21  #array-inline-21-0)
+                                              )
+                                             )
+                                             (call %init_peer_id% ("run-console" "print") [#array-inline-21-0])
+                                            )
+                                           )
+                                          )
+                                         )
+                                        )
+                                        (call %init_peer_id% ("op" "concat_strings") ["blueprint:" s-0.$.name] ret-44)
+                                       )
+                                       (call %init_peer_id% ("worker-spell" "set_string") [ret-44 ret-15] ret-45)
+                                      )
+                                      (call %init_peer_id% ("worker-spell" "set_string") [s-0.$.name ret-37] ret-46)
+                                     )
+                                    )
+                                    (seq
+                                     (ap :error: -if-error-)
+                                     (xor
+                                      (match :error:.$.error_code 10001
+                                       (seq
+                                        (seq
+                                         (seq
+                                          (new $array-inline-22
+                                           (seq
+                                            (seq
+                                             (ap s-0.$.name $array-inline-22)
+                                             (ap "service is already deployed, doing nothing" $array-inline-22)
+                                            )
+                                            (canon %init_peer_id% $array-inline-22  #array-inline-22-0)
+                                           )
+                                          )
+                                          (call %init_peer_id% ("debug" "stringify") [#array-inline-22-0] ret-47)
+                                         )
+                                         (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-48)
+                                        )
+                                        (par
+                                         (call %init_peer_id% (ret-48 "store_log") [ret-47] ret-49)
+                                         (seq
+                                          (new $array-inline-23
+                                           (seq
+                                            (seq
+                                             (ap ret-48 $array-inline-23)
+                                             (ap #array-inline-22-0 $array-inline-23)
+                                            )
+                                            (canon %init_peer_id% $array-inline-23  #array-inline-23-0)
+                                           )
+                                          )
+                                          (call %init_peer_id% ("run-console" "print") [#array-inline-23-0])
+                                         )
+                                        )
+                                       )
+                                      )
+                                      (seq
+                                       (seq
+                                        (ap :error: -else-error-)
+                                        (xor
+                                         (match :error:.$.error_code 10001
+                                          (ap -if-error- -if-else-error-)
+                                         )
+                                         (ap -else-error- -if-else-error-)
+                                        )
+                                       )
+                                       (fail -if-else-error-)
+                                      )
+                                     )
+                                    )
+                                   )
+                                  )
+                                 )
+                                )
+                               )
+                              )
+                              (seq
+                               (ap :error: -if-error-)
+                               (xor
+                                (match :error:.$.error_code 10001
+                                 (seq
+                                  (seq
+                                   (seq
+                                    (new $array-inline-24
+                                     (seq
+                                      (seq
+                                       (ap s-0.$.name $array-inline-24)
+                                       (ap "error retrieving some of the modules, see above" $array-inline-24)
+                                      )
+                                      (canon %init_peer_id% $array-inline-24  #array-inline-24-0)
+                                     )
+                                    )
+                                    (call %init_peer_id% ("debug" "stringify") [#array-inline-24-0] ret-50)
+                                   )
+                                   (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-51)
+                                  )
+                                  (par
+                                   (call %init_peer_id% (ret-51 "store_log") [ret-50] ret-52)
+                                   (seq
+                                    (new $array-inline-25
+                                     (seq
+                                      (seq
+                                       (ap ret-51 $array-inline-25)
+                                       (ap #array-inline-24-0 $array-inline-25)
+                                      )
+                                      (canon %init_peer_id% $array-inline-25  #array-inline-25-0)
+                                     )
+                                    )
+                                    (call %init_peer_id% ("run-console" "print") [#array-inline-25-0])
+                                   )
+                                  )
+                                 )
+                                )
+                                (seq
+                                 (seq
+                                  (ap :error: -else-error-)
+                                  (xor
+                                   (match :error:.$.error_code 10001
+                                    (ap -if-error- -if-else-error-)
+                                   )
+                                   (ap -else-error- -if-else-error-)
+                                  )
+                                 )
+                                 (fail -if-else-error-)
+                                )
+                               )
+                              )
+                             )
+                            )
+                           )
+                          )
+                         )
+                         (seq
+                          (seq
+                           (seq
+                            (new $array-inline-26
+                             (seq
+                              (seq
+                               (seq
+                                (ap s-0.$.name $array-inline-26)
+                                (ap "error deploying service" $array-inline-26)
+                               )
+                               (ap :error: $array-inline-26)
+                              )
+                              (canon %init_peer_id% $array-inline-26  #array-inline-26-0)
+                             )
+                            )
+                            (call %init_peer_id% ("debug" "stringify") [#array-inline-26-0] ret-53)
+                           )
+                           (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-54)
+                          )
+                          (par
+                           (call %init_peer_id% (ret-54 "store_log") [ret-53] ret-55)
+                           (seq
+                            (new $array-inline-27
+                             (seq
+                              (seq
+                               (ap ret-54 $array-inline-27)
+                               (ap #array-inline-26-0 $array-inline-27)
+                              )
+                              (canon %init_peer_id% $array-inline-27  #array-inline-27-0)
+                             )
+                            )
+                            (call %init_peer_id% ("run-console" "print") [#array-inline-27-0])
+                           )
+                          )
+                         )
+                        )
+                        (next s-0)
+                       )
+                       (null)
+                      )
+                     )
+                     (fold ret-3.$.spells sp-0
+                      (seq
+                       (xor
+                        (seq
+                         (seq
+                          (seq
+                           (seq
+                            (new $array-inline-28
+                             (seq
+                              (seq
+                               (ap "Deploying spell" $array-inline-28)
+                               (ap sp-0.$.name $array-inline-28)
+                              )
+                              (canon %init_peer_id% $array-inline-28  #array-inline-28-0)
+                             )
+                            )
+                            (call %init_peer_id% ("debug" "stringify") [#array-inline-28-0] ret-56)
+                           )
+                           (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-57)
+                          )
+                          (par
+                           (call %init_peer_id% (ret-57 "store_log") [ret-56] ret-58)
+                           (seq
+                            (new $array-inline-29
+                             (seq
+                              (seq
+                               (ap ret-57 $array-inline-29)
+                               (ap #array-inline-28-0 $array-inline-29)
+                              )
+                              (canon %init_peer_id% $array-inline-29  #array-inline-29-0)
+                             )
+                            )
+                            (call %init_peer_id% ("run-console" "print") [#array-inline-29-0])
+                           )
+                          )
+                         )
+                         (xor
+                          (seq
+                           (new $result-0
+                            (seq
+                             (xor
+                              (seq
+                               (seq
+                                (call %init_peer_id% ("worker-spell" "get_string") [sp-0.$.name] ret-59)
+                                (xor
+                                 (match ret-59.$.success false
+                                  (ap ret-59.$.success and-1)
+                                 )
+                                 (ap ret-59.$.absent and-1)
+                                )
+                               )
+                               (new -if-else-error-
+                                (new -else-error-
+                                 (new -if-error-
+                                  (xor
+                                   (match and-1 true
+                                    (ap false $result-0)
+                                   )
+                                   (seq
+                                    (ap :error: -if-error-)
+                                    (xor
+                                     (match :error:.$.error_code 10001
+                                      (seq
+                                       (seq
+                                        (seq
+                                         (seq
+                                          (seq
+                                           (seq
+                                            (seq
+                                             (ap ret-59.$.str ret-59_flat)
+                                             (call %init_peer_id% ("srv" "info") [ret-59_flat] ret-60)
+                                            )
+                                            (call %init_peer_id% (ret-59_flat "script_cid") [] ret-61)
+                                           )
+                                           (new $array-inline-30
+                                            (seq
+                                             (seq
+                                              (seq
+                                               (seq
+                                                (seq
+                                                 (ap ret-59_flat $array-inline-30)
+                                                 (ap "script cid was:" $array-inline-30)
+                                                )
+                                                (ap ret-61.$.v1_str $array-inline-30)
+                                               )
+                                               (ap "new:" $array-inline-30)
+                                              )
+                                              (ap sp-0.$.script $array-inline-30)
+                                             )
+                                             (canon %init_peer_id% $array-inline-30  #array-inline-30-0)
+                                            )
+                                           )
+                                          )
+                                          (call %init_peer_id% ("debug" "stringify") [#array-inline-30-0] ret-62)
+                                         )
+                                         (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-63)
+                                        )
+                                        (par
+                                         (call %init_peer_id% (ret-63 "store_log") [ret-62] ret-64)
+                                         (seq
+                                          (new $array-inline-31
+                                           (seq
+                                            (seq
+                                             (ap ret-63 $array-inline-31)
+                                             (ap #array-inline-30-0 $array-inline-31)
+                                            )
+                                            (canon %init_peer_id% $array-inline-31  #array-inline-31-0)
+                                           )
+                                          )
+                                          (call %init_peer_id% ("run-console" "print") [#array-inline-31-0])
+                                         )
+                                        )
+                                       )
+                                       (new -if-else-error-
+                                        (new -else-error-
+                                         (new -if-error-
+                                          (xor
+                                           (match ret-61.$.v1_str sp-0.$.script
+                                            (ap true $result-0)
+                                           )
+                                           (seq
+                                            (ap :error: -if-error-)
+                                            (xor
+                                             (match :error:.$.error_code 10001
+                                              (seq
+                                               (seq
+                                                (seq
+                                                 (seq
+                                                  (seq
+                                                   (seq
+                                                    (seq
+                                                     (seq
+                                                      (seq
+                                                       (seq
+                                                        (seq
+                                                         (seq
+                                                          (seq
+                                                           (new $array-inline-32
+                                                            (seq
+                                                             (seq
+                                                              (ap sp-0.$.name $array-inline-32)
+                                                              (ap "script changed, need to redeploy" $array-inline-32)
+                                                             )
+                                                             (canon %init_peer_id% $array-inline-32  #array-inline-32-0)
+                                                            )
+                                                           )
+                                                           (call %init_peer_id% ("debug" "stringify") [#array-inline-32-0] ret-65)
+                                                          )
+                                                          (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-66)
+                                                         )
+                                                         (par
+                                                          (call %init_peer_id% (ret-66 "store_log") [ret-65] ret-67)
+                                                          (seq
+                                                           (new $array-inline-33
+                                                            (seq
+                                                             (seq
+                                                              (ap ret-66 $array-inline-33)
+                                                              (ap #array-inline-32-0 $array-inline-33)
+                                                             )
+                                                             (canon %init_peer_id% $array-inline-33  #array-inline-33-0)
+                                                            )
+                                                           )
+                                                           (call %init_peer_id% ("run-console" "print") [#array-inline-33-0])
+                                                          )
+                                                         )
+                                                        )
+                                                        (new $array-inline-34
+                                                         (seq
+                                                          (seq
+                                                           (seq
+                                                            (ap sp-0.$.name $array-inline-34)
+                                                            (ap "removing old spell" $array-inline-34)
+                                                           )
+                                                           (ap ret-59_flat $array-inline-34)
+                                                          )
+                                                          (canon %init_peer_id% $array-inline-34  #array-inline-34-0)
+                                                         )
+                                                        )
+                                                       )
+                                                       (call %init_peer_id% ("debug" "stringify") [#array-inline-34-0] ret-68)
+                                                      )
+                                                      (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-69)
+                                                     )
+                                                     (par
+                                                      (call %init_peer_id% (ret-69 "store_log") [ret-68] ret-70)
+                                                      (seq
+                                                       (new $array-inline-35
+                                                        (seq
+                                                         (seq
+                                                          (ap ret-69 $array-inline-35)
+                                                          (ap #array-inline-34-0 $array-inline-35)
+                                                         )
+                                                         (canon %init_peer_id% $array-inline-35  #array-inline-35-0)
+                                                        )
+                                                       )
+                                                       (call %init_peer_id% ("run-console" "print") [#array-inline-35-0])
+                                                      )
+                                                     )
+                                                    )
+                                                    (call %init_peer_id% ("spell" "remove") [ret-59_flat])
+                                                   )
+                                                   (new $array-inline-36
+                                                    (seq
+                                                     (seq
+                                                      (seq
+                                                       (ap sp-0.$.name $array-inline-36)
+                                                       (ap "old spell successfully removed" $array-inline-36)
+                                                      )
+                                                      (ap ret-59_flat $array-inline-36)
+                                                     )
+                                                     (canon %init_peer_id% $array-inline-36  #array-inline-36-0)
+                                                    )
+                                                   )
+                                                  )
+                                                  (call %init_peer_id% ("debug" "stringify") [#array-inline-36-0] ret-71)
+                                                 )
+                                                 (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-72)
+                                                )
+                                                (par
+                                                 (call %init_peer_id% (ret-72 "store_log") [ret-71] ret-73)
+                                                 (seq
+                                                  (new $array-inline-37
+                                                   (seq
+                                                    (seq
+                                                     (ap ret-72 $array-inline-37)
+                                                     (ap #array-inline-36-0 $array-inline-37)
+                                                    )
+                                                    (canon %init_peer_id% $array-inline-37  #array-inline-37-0)
+                                                   )
+                                                  )
+                                                  (call %init_peer_id% ("run-console" "print") [#array-inline-37-0])
+                                                 )
+                                                )
+                                               )
+                                               (ap false $result-0)
+                                              )
+                                             )
+                                             (seq
+                                              (seq
+                                               (ap :error: -else-error-)
+                                               (xor
+                                                (match :error:.$.error_code 10001
+                                                 (ap -if-error- -if-else-error-)
+                                                )
+                                                (ap -else-error- -if-else-error-)
+                                               )
+                                              )
+                                              (fail -if-else-error-)
+                                             )
+                                            )
+                                           )
+                                          )
+                                         )
+                                        )
+                                       )
+                                      )
+                                     )
+                                     (seq
+                                      (seq
+                                       (ap :error: -else-error-)
+                                       (xor
+                                        (match :error:.$.error_code 10001
+                                         (ap -if-error- -if-else-error-)
+                                        )
+                                        (ap -else-error- -if-else-error-)
+                                       )
+                                      )
+                                      (fail -if-else-error-)
+                                     )
+                                    )
+                                   )
+                                  )
+                                 )
+                                )
+                               )
+                              )
+                              (seq
+                               (seq
+                                (seq
+                                 (seq
+                                  (new $array-inline-38
+                                   (seq
+                                    (seq
+                                     (seq
+                                      (ap "Error check spell deployed" $array-inline-38)
+                                      (ap sp-0.$.name $array-inline-38)
+                                     )
+                                     (ap :error: $array-inline-38)
+                                    )
+                                    (canon %init_peer_id% $array-inline-38  #array-inline-38-0)
+                                   )
+                                  )
+                                  (call %init_peer_id% ("debug" "stringify") [#array-inline-38-0] ret-74)
+                                 )
+                                 (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-75)
+                                )
+                                (par
+                                 (call %init_peer_id% (ret-75 "store_log") [ret-74] ret-76)
+                                 (seq
+                                  (new $array-inline-39
+                                   (seq
+                                    (seq
+                                     (ap ret-75 $array-inline-39)
+                                     (ap #array-inline-38-0 $array-inline-39)
+                                    )
+                                    (canon %init_peer_id% $array-inline-39  #array-inline-39-0)
+                                   )
+                                  )
+                                  (call %init_peer_id% ("run-console" "print") [#array-inline-39-0])
+                                 )
+                                )
+                               )
+                               (ap false $result-0)
+                              )
+                             )
+                             (new $result-0_test
+                              (seq
+                               (seq
+                                (fold $result-0 result-0_fold_var
+                                 (seq
+                                  (seq
+                                   (ap result-0_fold_var $result-0_test)
+                                   (canon %init_peer_id% $result-0_test  #result-0_iter_canon)
+                                  )
+                                  (xor
+                                   (match #result-0_iter_canon.length 1
+                                    (null)
+                                   )
+                                   (next result-0_fold_var)
+                                  )
+                                 )
+                                 (never)
+                                )
+                                (canon %init_peer_id% $result-0_test  #result-0_result_canon)
+                               )
+                               (ap #result-0_result_canon result-0_gate)
+                              )
+                             )
+                            )
+                           )
+                           (new -if-else-error-
+                            (new -else-error-
+                             (new -if-error-
+                              (xor
+                               (match result-0_gate.$.[0] true
+                                (seq
+                                 (seq
+                                  (seq
+                                   (seq
+                                    (seq
+                                     (seq
+                                      (seq
+                                       (seq
+                                        (seq
+                                         (new $array-inline-40
+                                          (seq
+                                           (seq
+                                            (ap sp-0.$.name $array-inline-40)
+                                            (ap "spell is already deployed, checking config and init_args" $array-inline-40)
+                                           )
+                                           (canon %init_peer_id% $array-inline-40  #array-inline-40-0)
+                                          )
+                                         )
+                                         (call %init_peer_id% ("debug" "stringify") [#array-inline-40-0] ret-77)
+                                        )
+                                        (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-78)
+                                       )
+                                       (par
+                                        (call %init_peer_id% (ret-78 "store_log") [ret-77] ret-79)
+                                        (seq
+                                         (new $array-inline-41
+                                          (seq
+                                           (seq
+                                            (ap ret-78 $array-inline-41)
+                                            (ap #array-inline-40-0 $array-inline-41)
+                                           )
+                                           (canon %init_peer_id% $array-inline-41  #array-inline-41-0)
+                                          )
+                                         )
+                                         (call %init_peer_id% ("run-console" "print") [#array-inline-41-0])
+                                        )
+                                       )
+                                      )
+                                      (call %init_peer_id% ("op" "concat_strings") ["trigger_config:" sp-0.$.name] ret-80)
+                                     )
+                                     (call %init_peer_id% ("worker-spell" "get_string") [ret-80] ret-81)
+                                    )
+                                    (new -if-error-
+                                     (xor
+                                      (mismatch ret-81.$.str sp-0.$.config
+                                       (seq
+                                        (seq
+                                         (seq
+                                          (seq
+                                           (seq
+                                            (new $array-inline-42
+                                             (seq
+                                              (seq
+                                               (ap sp-0.$.name $array-inline-42)
+                                               (ap "config mismath, updating config" $array-inline-42)
+                                              )
+                                              (canon %init_peer_id% $array-inline-42  #array-inline-42-0)
+                                             )
+                                            )
+                                            (call %init_peer_id% ("debug" "stringify") [#array-inline-42-0] ret-82)
+                                           )
+                                           (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-83)
+                                          )
+                                          (par
+                                           (call %init_peer_id% (ret-83 "store_log") [ret-82] ret-84)
+                                           (seq
+                                            (new $array-inline-43
+                                             (seq
+                                              (seq
+                                               (ap ret-83 $array-inline-43)
+                                               (ap #array-inline-42-0 $array-inline-43)
+                                              )
+                                              (canon %init_peer_id% $array-inline-43  #array-inline-43-0)
+                                             )
+                                            )
+                                            (call %init_peer_id% ("run-console" "print") [#array-inline-43-0])
+                                           )
+                                          )
+                                         )
+                                         (call %init_peer_id% ("aqua-ipfs" "cat_from") [sp-0.$.config -ipfs-arg-] ret-85)
+                                        )
+                                        (new -if-else-error-
+                                         (new -else-error-
+                                          (new -if-error-
+                                           (xor
+                                            (match ret-85.$.success true
+                                             (seq
+                                              (seq
+                                               (seq
+                                                (seq
+                                                 (seq
+                                                  (seq
+                                                   (seq
+                                                    (seq
+                                                     (call %init_peer_id% ("json" "parse") [ret-85.$.contents] ret-86)
+                                                     (call %init_peer_id% ("srv" "resolve_alias") [sp-0.$.name] ret-87)
+                                                    )
+                                                    (call %init_peer_id% ("spell" "update_trigger_config") [ret-87 ret-86])
+                                                   )
+                                                   (call %init_peer_id% ("op" "concat_strings") ["trigger_config:" sp-0.$.name] ret-88)
+                                                  )
+                                                  (call %init_peer_id% ("worker-spell" "set_string") [ret-88 sp-0.$.config] ret-89)
+                                                 )
+                                                 (new $array-inline-44
+                                                  (seq
+                                                   (seq
+                                                    (ap sp-0.$.name $array-inline-44)
+                                                    (ap "config successfully updated" $array-inline-44)
+                                                   )
+                                                   (canon %init_peer_id% $array-inline-44  #array-inline-44-0)
+                                                  )
+                                                 )
+                                                )
+                                                (call %init_peer_id% ("debug" "stringify") [#array-inline-44-0] ret-90)
+                                               )
+                                               (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-91)
+                                              )
+                                              (par
+                                               (call %init_peer_id% (ret-91 "store_log") [ret-90] ret-92)
+                                               (seq
+                                                (new $array-inline-45
+                                                 (seq
+                                                  (seq
+                                                   (ap ret-91 $array-inline-45)
+                                                   (ap #array-inline-44-0 $array-inline-45)
+                                                  )
+                                                  (canon %init_peer_id% $array-inline-45  #array-inline-45-0)
+                                                 )
+                                                )
+                                                (call %init_peer_id% ("run-console" "print") [#array-inline-45-0])
+                                               )
+                                              )
+                                             )
+                                            )
+                                            (seq
+                                             (ap :error: -if-error-)
+                                             (xor
+                                              (match :error:.$.error_code 10001
+                                               (seq
+                                                (seq
+                                                 (seq
+                                                  (new $array-inline-46
+                                                   (seq
+                                                    (seq
+                                                     (seq
+                                                      (seq
+                                                       (ap sp-0.$.name $array-inline-46)
+                                                       (ap "error retrieving config" $array-inline-46)
+                                                      )
+                                                      (ap sp-0.$.config $array-inline-46)
+                                                     )
+                                                     (ap ret-85.$.error $array-inline-46)
+                                                    )
+                                                    (canon %init_peer_id% $array-inline-46  #array-inline-46-0)
+                                                   )
+                                                  )
+                                                  (call %init_peer_id% ("debug" "stringify") [#array-inline-46-0] ret-93)
+                                                 )
+                                                 (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-94)
+                                                )
+                                                (par
+                                                 (call %init_peer_id% (ret-94 "store_log") [ret-93] ret-95)
+                                                 (seq
+                                                  (new $array-inline-47
+                                                   (seq
+                                                    (seq
+                                                     (ap ret-94 $array-inline-47)
+                                                     (ap #array-inline-46-0 $array-inline-47)
+                                                    )
+                                                    (canon %init_peer_id% $array-inline-47  #array-inline-47-0)
+                                                   )
+                                                  )
+                                                  (call %init_peer_id% ("run-console" "print") [#array-inline-47-0])
+                                                 )
+                                                )
+                                               )
+                                              )
+                                              (seq
+                                               (seq
+                                                (ap :error: -else-error-)
+                                                (xor
+                                                 (match :error:.$.error_code 10001
+                                                  (ap -if-error- -if-else-error-)
+                                                 )
+                                                 (ap -else-error- -if-else-error-)
+                                                )
+                                               )
+                                               (fail -if-else-error-)
+                                              )
+                                             )
+                                            )
+                                           )
+                                          )
+                                         )
+                                        )
+                                       )
+                                      )
+                                      (seq
+                                       (ap :error: -if-error-)
+                                       (xor
+                                        (match :error:.$.error_code 10002
+                                         (null)
+                                        )
+                                        (fail -if-error-)
+                                       )
+                                      )
+                                     )
+                                    )
+                                   )
+                                   (call %init_peer_id% ("op" "concat_strings") ["init_args:" sp-0.$.name] ret-96)
+                                  )
+                                  (call %init_peer_id% ("worker-spell" "get_string") [ret-96] ret-97)
+                                 )
+                                 (new -if-error-
+                                  (xor
+                                   (mismatch ret-97.$.str sp-0.$.init_args
+                                    (seq
+                                     (seq
+                                      (seq
+                                       (seq
+                                        (seq
+                                         (seq
+                                          (seq
+                                           (seq
+                                            (seq
+                                             (seq
+                                              (seq
+                                               (new $array-inline-48
+                                                (seq
+                                                 (seq
+                                                  (ap sp-0.$.name $array-inline-48)
+                                                  (ap "init_args changed, updating" $array-inline-48)
+                                                 )
+                                                 (canon %init_peer_id% $array-inline-48  #array-inline-48-0)
+                                                )
+                                               )
+                                               (call %init_peer_id% ("debug" "stringify") [#array-inline-48-0] ret-98)
+                                              )
+                                              (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-99)
+                                             )
+                                             (par
+                                              (call %init_peer_id% (ret-99 "store_log") [ret-98] ret-100)
+                                              (seq
+                                               (new $array-inline-49
+                                                (seq
+                                                 (seq
+                                                  (ap ret-99 $array-inline-49)
+                                                  (ap #array-inline-48-0 $array-inline-49)
+                                                 )
+                                                 (canon %init_peer_id% $array-inline-49  #array-inline-49-0)
+                                                )
+                                               )
+                                               (call %init_peer_id% ("run-console" "print") [#array-inline-49-0])
+                                              )
+                                             )
+                                            )
+                                            (call %init_peer_id% ("aqua-ipfs" "cat_from") [sp-0.$.init_args -ipfs-arg-] ret-101)
+                                           )
+                                           (new -if-else-error-
+                                            (new -else-error-
+                                             (new -if-error-
+                                              (xor
+                                               (match ret-101.$.success true
+                                                (call %init_peer_id% (sp-0.$.name "set_json_fields") [ret-101.$.contents] ret-102)
+                                               )
+                                               (seq
+                                                (ap :error: -if-error-)
+                                                (xor
+                                                 (match :error:.$.error_code 10001
+                                                  (seq
+                                                   (seq
+                                                    (seq
+                                                     (new $array-inline-50
+                                                      (seq
+                                                       (seq
+                                                        (seq
+                                                         (seq
+                                                          (ap sp-0.$.name $array-inline-50)
+                                                          (ap "error retrieving init_args" $array-inline-50)
+                                                         )
+                                                         (ap sp-0.$.init_args $array-inline-50)
+                                                        )
+                                                        (ap ret-101.$.error $array-inline-50)
+                                                       )
+                                                       (canon %init_peer_id% $array-inline-50  #array-inline-50-0)
+                                                      )
+                                                     )
+                                                     (call %init_peer_id% ("debug" "stringify") [#array-inline-50-0] ret-103)
+                                                    )
+                                                    (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-104)
+                                                   )
+                                                   (par
+                                                    (call %init_peer_id% (ret-104 "store_log") [ret-103] ret-105)
+                                                    (seq
+                                                     (new $array-inline-51
+                                                      (seq
+                                                       (seq
+                                                        (ap ret-104 $array-inline-51)
+                                                        (ap #array-inline-50-0 $array-inline-51)
+                                                       )
+                                                       (canon %init_peer_id% $array-inline-51  #array-inline-51-0)
+                                                      )
+                                                     )
+                                                     (call %init_peer_id% ("run-console" "print") [#array-inline-51-0])
+                                                    )
+                                                   )
+                                                  )
+                                                 )
+                                                 (seq
+                                                  (seq
+                                                   (ap :error: -else-error-)
+                                                   (xor
+                                                    (match :error:.$.error_code 10001
+                                                     (ap -if-error- -if-else-error-)
+                                                    )
+                                                    (ap -else-error- -if-else-error-)
+                                                   )
+                                                  )
+                                                  (fail -if-else-error-)
+                                                 )
+                                                )
+                                               )
+                                              )
+                                             )
+                                            )
+                                           )
+                                          )
+                                          (call %init_peer_id% ("op" "concat_strings") ["init_args:" sp-0.$.name] ret-106)
+                                         )
+                                         (call %init_peer_id% ("worker-spell" "set_string") [ret-106 sp-0.$.init_args] ret-107)
+                                        )
+                                        (new $array-inline-52
+                                         (seq
+                                          (seq
+                                           (ap sp-0.$.name $array-inline-52)
+                                           (ap "init_args successfully updated" $array-inline-52)
+                                          )
+                                          (canon %init_peer_id% $array-inline-52  #array-inline-52-0)
+                                         )
+                                        )
+                                       )
+                                       (call %init_peer_id% ("debug" "stringify") [#array-inline-52-0] ret-108)
+                                      )
+                                      (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-109)
+                                     )
+                                     (par
+                                      (call %init_peer_id% (ret-109 "store_log") [ret-108] ret-110)
+                                      (seq
+                                       (new $array-inline-53
+                                        (seq
+                                         (seq
+                                          (ap ret-109 $array-inline-53)
+                                          (ap #array-inline-52-0 $array-inline-53)
+                                         )
+                                         (canon %init_peer_id% $array-inline-53  #array-inline-53-0)
+                                        )
+                                       )
+                                       (call %init_peer_id% ("run-console" "print") [#array-inline-53-0])
+                                      )
+                                     )
+                                    )
+                                   )
+                                   (seq
+                                    (ap :error: -if-error-)
+                                    (xor
+                                     (match :error:.$.error_code 10002
+                                      (null)
+                                     )
+                                     (fail -if-error-)
+                                    )
+                                   )
+                                  )
+                                 )
+                                )
+                               )
+                               (seq
+                                (ap :error: -if-error-)
+                                (xor
+                                 (match :error:.$.error_code 10001
+                                  (seq
+                                   (seq
+                                    (seq
+                                     (seq
+                                      (seq
+                                       (seq
+                                        (seq
+                                         (seq
+                                          (seq
+                                           (call %init_peer_id% ("peer" "timestamp_sec") [] ret-111)
+                                           (new %Status_obj-0_map
+                                            (seq
+                                             (seq
+                                              (seq
+                                               (ap ("message" "") %Status_obj-0_map)
+                                               (ap ("state" "INSTALLATION_IN_PROGRESS") %Status_obj-0_map)
+                                              )
+                                              (ap ("timestamp" ret-111) %Status_obj-0_map)
+                                             )
+                                             (canon %init_peer_id% %Status_obj-0_map  Status_obj-0)
+                                            )
+                                           )
+                                          )
+                                          (call %init_peer_id% ("json" "stringify") [Status_obj-0] ret-112)
+                                         )
+                                         (call %init_peer_id% ("worker-spell" "list_push_string") ["__installation_spell_status__" ret-112] ret-113)
+                                        )
+                                        (call %init_peer_id% ("aqua-ipfs" "cat_from") [sp-0.$.script -ipfs-arg-] ret-114)
+                                       )
+                                       (call %init_peer_id% ("aqua-ipfs" "cat_from") [sp-0.$.config -ipfs-arg-] ret-115)
+                                      )
+                                      (call %init_peer_id% ("aqua-ipfs" "cat_from") [sp-0.$.init_args -ipfs-arg-] ret-116)
+                                     )
+                                     (xor
+                                      (match ret-114.$.success false
+                                       (ap ret-114.$.success and-2)
+                                      )
+                                      (ap ret-115.$.success and-2)
+                                     )
+                                    )
+                                    (xor
+                                     (match and-2 false
+                                      (ap and-2 and-3)
+                                     )
+                                     (ap ret-116.$.success and-3)
+                                    )
+                                   )
+                                   (new -if-else-error-
+                                    (new -else-error-
+                                     (new -if-error-
+                                      (xor
+                                       (match and-3 true
+                                        (seq
+                                         (seq
+                                          (call %init_peer_id% ("json" "parse") [ret-115.$.contents] ret-117)
+                                          (call %init_peer_id% ("json" "parse") [ret-116.$.contents] ret-118)
+                                         )
+                                         (xor
+                                          (seq
+                                           (seq
+                                            (seq
+                                             (seq
+                                              (seq
+                                               (seq
+                                                (seq
+                                                 (seq
+                                                  (seq
+                                                   (call %init_peer_id% ("spell" "install") [ret-114.$.contents ret-118 ret-117 sp-0.$.name] ret-119)
+                                                   (new $array-inline-54
+                                                    (seq
+                                                     (seq
+                                                      (seq
+                                                       (ap "Installed spell" $array-inline-54)
+                                                       (ap sp-0.$.name $array-inline-54)
+                                                      )
+                                                      (ap ret-119 $array-inline-54)
+                                                     )
+                                                     (canon %init_peer_id% $array-inline-54  #array-inline-54-0)
+                                                    )
+                                                   )
+                                                  )
+                                                  (call %init_peer_id% ("debug" "stringify") [#array-inline-54-0] ret-120)
+                                                 )
+                                                 (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-121)
+                                                )
+                                                (par
+                                                 (call %init_peer_id% (ret-121 "store_log") [ret-120] ret-122)
+                                                 (seq
+                                                  (new $array-inline-55
+                                                   (seq
+                                                    (seq
+                                                     (ap ret-121 $array-inline-55)
+                                                     (ap #array-inline-54-0 $array-inline-55)
+                                                    )
+                                                    (canon %init_peer_id% $array-inline-55  #array-inline-55-0)
+                                                   )
+                                                  )
+                                                  (call %init_peer_id% ("run-console" "print") [#array-inline-55-0])
+                                                 )
+                                                )
+                                               )
+                                               (call %init_peer_id% ("worker-spell" "set_string") [sp-0.$.name ret-119] ret-123)
+                                              )
+                                              (call %init_peer_id% ("op" "concat_strings") ["trigger_config:" sp-0.$.name] ret-124)
+                                             )
+                                             (call %init_peer_id% ("worker-spell" "set_string") [ret-124 sp-0.$.config] ret-125)
+                                            )
+                                            (call %init_peer_id% ("op" "concat_strings") ["init_args:" sp-0.$.name] ret-126)
+                                           )
+                                           (call %init_peer_id% ("worker-spell" "set_string") [ret-126 sp-0.$.init_args] ret-127)
+                                          )
+                                          (seq
+                                           (seq
+                                            (seq
+                                             (new $array-inline-56
+                                              (seq
+                                               (seq
+                                                (seq
+                                                 (ap "Error installing the spell" $array-inline-56)
+                                                 (ap sp-0.$.name $array-inline-56)
+                                                )
+                                                (ap :error: $array-inline-56)
+                                               )
+                                               (canon %init_peer_id% $array-inline-56  #array-inline-56-0)
+                                              )
+                                             )
+                                             (call %init_peer_id% ("debug" "stringify") [#array-inline-56-0] ret-128)
+                                            )
+                                            (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-129)
+                                           )
+                                           (par
+                                            (call %init_peer_id% (ret-129 "store_log") [ret-128] ret-130)
+                                            (seq
+                                             (new $array-inline-57
+                                              (seq
+                                               (seq
+                                                (ap ret-129 $array-inline-57)
+                                                (ap #array-inline-56-0 $array-inline-57)
+                                               )
+                                               (canon %init_peer_id% $array-inline-57  #array-inline-57-0)
+                                              )
+                                             )
+                                             (call %init_peer_id% ("run-console" "print") [#array-inline-57-0])
+                                            )
+                                           )
+                                          )
+                                         )
+                                        )
+                                       )
+                                       (seq
+                                        (ap :error: -if-error-)
+                                        (xor
+                                         (match :error:.$.error_code 10001
+                                          (seq
+                                           (seq
+                                            (seq
+                                             (new $array-inline-58
+                                              (seq
+                                               (seq
+                                                (seq
+                                                 (seq
+                                                  (seq
+                                                   (seq
+                                                    (seq
+                                                     (seq
+                                                      (new $array-inline-59
+                                                       (seq
+                                                        (seq
+                                                         (seq
+                                                          (ap "script" $array-inline-59)
+                                                          (ap sp-0.$.script $array-inline-59)
+                                                         )
+                                                         (ap ret-114 $array-inline-59)
+                                                        )
+                                                        (canon %init_peer_id% $array-inline-59  #array-inline-59-0)
+                                                       )
+                                                      )
+                                                      (new $array-inline-60
+                                                       (seq
+                                                        (seq
+                                                         (seq
+                                                          (ap "cfg_json" $array-inline-60)
+                                                          (ap sp-0.$.config $array-inline-60)
+                                                         )
+                                                         (ap ret-115 $array-inline-60)
+                                                        )
+                                                        (canon %init_peer_id% $array-inline-60  #array-inline-60-0)
+                                                       )
+                                                      )
+                                                     )
+                                                     (new $array-inline-61
+                                                      (seq
+                                                       (seq
+                                                        (seq
+                                                         (ap "init_args_str" $array-inline-61)
+                                                         (ap sp-0.$.init_args $array-inline-61)
+                                                        )
+                                                        (ap ret-116 $array-inline-61)
+                                                       )
+                                                       (canon %init_peer_id% $array-inline-61  #array-inline-61-0)
+                                                      )
+                                                     )
+                                                    )
+                                                    (ap sp-0.$.name $array-inline-58)
+                                                   )
+                                                   (ap "error retrieving from IPFS" $array-inline-58)
+                                                  )
+                                                  (ap #array-inline-59-0 $array-inline-58)
+                                                 )
+                                                 (ap #array-inline-60-0 $array-inline-58)
+                                                )
+                                                (ap #array-inline-61-0 $array-inline-58)
+                                               )
+                                               (canon %init_peer_id% $array-inline-58  #array-inline-58-0)
+                                              )
+                                             )
+                                             (call %init_peer_id% ("debug" "stringify") [#array-inline-58-0] ret-131)
+                                            )
+                                            (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-132)
+                                           )
+                                           (par
+                                            (call %init_peer_id% (ret-132 "store_log") [ret-131] ret-133)
+                                            (seq
+                                             (new $array-inline-62
+                                              (seq
+                                               (seq
+                                                (ap ret-132 $array-inline-62)
+                                                (ap #array-inline-58-0 $array-inline-62)
+                                               )
+                                               (canon %init_peer_id% $array-inline-62  #array-inline-62-0)
+                                              )
+                                             )
+                                             (call %init_peer_id% ("run-console" "print") [#array-inline-62-0])
+                                            )
+                                           )
+                                          )
+                                         )
+                                         (seq
+                                          (seq
+                                           (ap :error: -else-error-)
+                                           (xor
+                                            (match :error:.$.error_code 10001
+                                             (ap -if-error- -if-else-error-)
+                                            )
+                                            (ap -else-error- -if-else-error-)
+                                           )
+                                          )
+                                          (fail -if-else-error-)
+                                         )
+                                        )
+                                       )
+                                      )
+                                     )
+                                    )
+                                   )
+                                  )
+                                 )
+                                 (seq
+                                  (seq
+                                   (ap :error: -else-error-)
+                                   (xor
+                                    (match :error:.$.error_code 10001
+                                     (ap -if-error- -if-else-error-)
+                                    )
+                                    (ap -else-error- -if-else-error-)
+                                   )
+                                  )
+                                  (fail -if-else-error-)
+                                 )
+                                )
+                               )
+                              )
+                             )
+                            )
+                           )
+                          )
+                          (seq
+                           (seq
+                            (seq
+                             (new $array-inline-63
+                              (seq
+                               (seq
+                                (seq
+                                 (ap "Error deploy spell" $array-inline-63)
+                                 (ap sp-0.$.name $array-inline-63)
+                                )
+                                (ap :error: $array-inline-63)
+                               )
+                               (canon %init_peer_id% $array-inline-63  #array-inline-63-0)
+                              )
+                             )
+                             (call %init_peer_id% ("debug" "stringify") [#array-inline-63-0] ret-134)
+                            )
+                            (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-135)
+                           )
+                           (par
+                            (call %init_peer_id% (ret-135 "store_log") [ret-134] ret-136)
+                            (seq
+                             (new $array-inline-64
+                              (seq
+                               (seq
+                                (ap ret-135 $array-inline-64)
+                                (ap #array-inline-63-0 $array-inline-64)
+                               )
+                               (canon %init_peer_id% $array-inline-64  #array-inline-64-0)
+                              )
+                             )
+                             (call %init_peer_id% ("run-console" "print") [#array-inline-64-0])
+                            )
+                           )
+                          )
+                         )
+                        )
+                        (seq
+                         (seq
+                          (seq
+                           (new $array-inline-65
+                            (seq
+                             (seq
+                              (seq
+                               (ap "Error deploying spell" $array-inline-65)
+                               (ap sp-0.$.name $array-inline-65)
+                              )
+                              (ap :error: $array-inline-65)
+                             )
+                             (canon %init_peer_id% $array-inline-65  #array-inline-65-0)
+                            )
+                           )
+                           (call %init_peer_id% ("debug" "stringify") [#array-inline-65-0] ret-137)
+                          )
+                          (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-138)
+                         )
+                         (par
+                          (call %init_peer_id% (ret-138 "store_log") [ret-137] ret-139)
+                          (seq
+                           (new $array-inline-66
+                            (seq
+                             (seq
+                              (ap ret-138 $array-inline-66)
+                              (ap #array-inline-65-0 $array-inline-66)
+                             )
+                             (canon %init_peer_id% $array-inline-66  #array-inline-66-0)
+                            )
+                           )
+                           (call %init_peer_id% ("run-console" "print") [#array-inline-66-0])
+                          )
+                         )
+                        )
+                       )
+                       (next sp-0)
+                      )
+                      (null)
+                     )
+                    )
+                    (call %init_peer_id% ("debug" "stringify") ["Installation finished"] ret-140)
+                   )
+                   (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-141)
+                  )
+                  (par
+                   (call %init_peer_id% (ret-141 "store_log") [ret-140] ret-142)
+                   (seq
+                    (new $array-inline-67
+                     (seq
+                      (seq
+                       (ap ret-141 $array-inline-67)
+                       (ap "Installation finished" $array-inline-67)
+                      )
+                      (canon %init_peer_id% $array-inline-67  #array-inline-67-0)
+                     )
+                    )
+                    (call %init_peer_id% ("run-console" "print") [#array-inline-67-0])
+                   )
+                  )
+                 )
+                 (new $status-2
+                  (seq
+                   (seq
+                    (seq
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (call %init_peer_id% ("worker-spell" "list_get_strings") ["__installation_spell_status__"] ret-143)
+                         (new $array-inline-68
+                          (seq
+                           (seq
+                            (ap "SPELL_STATUSES:" $array-inline-68)
+                            (ap ret-143 $array-inline-68)
+                           )
+                           (canon %init_peer_id% $array-inline-68  #array-inline-68-0)
+                          )
+                         )
+                        )
+                        (call %init_peer_id% ("debug" "stringify") [#array-inline-68-0] ret-144)
+                       )
+                       (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-145)
+                      )
+                      (par
+                       (call %init_peer_id% (ret-145 "store_log") [ret-144] ret-146)
+                       (seq
+                        (new $array-inline-69
+                         (seq
+                          (seq
+                           (ap ret-145 $array-inline-69)
+                           (ap #array-inline-68-0 $array-inline-69)
+                          )
+                          (canon %init_peer_id% $array-inline-69  #array-inline-69-0)
+                         )
+                        )
+                        (call %init_peer_id% ("run-console" "print") [#array-inline-69-0])
+                       )
+                      )
+                     )
+                     (xor
+                      (match ret-143.$.success true
+                       (ap false not-0)
+                      )
+                      (ap true not-0)
+                     )
+                    )
+                    (new -if-else-error-
+                     (new -else-error-
+                      (new -if-error-
+                       (xor
+                        (match not-0 true
+                         (seq
+                          (new %Status_obj-1_map
+                           (seq
+                            (seq
+                             (seq
+                              (ap ("message" ret-143.$.error) %Status_obj-1_map)
+                              (ap ("state" "STATUS_LOAD_ERROR") %Status_obj-1_map)
+                             )
+                             (ap ("timestamp" 0) %Status_obj-1_map)
+                            )
+                            (canon %init_peer_id% %Status_obj-1_map  Status_obj-1)
+                           )
+                          )
+                          (ap Status_obj-1 $status-2)
+                         )
+                        )
+                        (seq
+                         (ap :error: -if-error-)
+                         (xor
+                          (match :error:.$.error_code 10001
+                           (seq
+                            (seq
+                             (seq
+                              (ap ret-143.$.strings ret-143_flat)
+                              (ap ret-143_flat ret-143_flat_to_functor)
+                             )
+                             (ap ret-143_flat_to_functor.length ret-143_flat_length)
+                            )
+                            (new -if-else-error-
+                             (new -else-error-
+                              (new -if-error-
+                               (xor
+                                (match ret-143_flat_length 0
+                                 (seq
+                                  (new %Status_obj-2_map
+                                   (seq
+                                    (seq
+                                     (seq
+                                      (ap ("message" "Installation has not started yet") %Status_obj-2_map)
+                                      (ap ("state" "NOT_STARTED") %Status_obj-2_map)
+                                     )
+                                     (ap ("timestamp" 0) %Status_obj-2_map)
+                                    )
+                                    (canon %init_peer_id% %Status_obj-2_map  Status_obj-2)
+                                   )
+                                  )
+                                  (ap Status_obj-2 $status-2)
+                                 )
+                                )
+                                (seq
+                                 (ap :error: -if-error-)
+                                 (xor
+                                  (match :error:.$.error_code 10001
+                                   (seq
+                                    (seq
+                                     (seq
+                                      (seq
+                                       (seq
+                                        (ap ret-143.$.strings ret-143_flat-0)
+                                        (ap ret-143_flat-0 ret-143_flat-0_to_functor)
+                                       )
+                                       (ap ret-143_flat-0_to_functor.length ret-143_flat-0_length)
+                                      )
+                                      (call %init_peer_id% ("math" "sub") [ret-143_flat-0_length 1] sub)
+                                     )
+                                     (call %init_peer_id% ("json" "parse") [ret-143.$.strings.[sub]] ret-147)
+                                    )
+                                    (ap ret-147 $status-2)
+                                   )
+                                  )
+                                  (seq
+                                   (seq
+                                    (ap :error: -else-error-)
+                                    (xor
+                                     (match :error:.$.error_code 10001
+                                      (ap -if-error- -if-else-error-)
+                                     )
+                                     (ap -else-error- -if-else-error-)
+                                    )
+                                   )
+                                   (fail -if-else-error-)
+                                  )
+                                 )
+                                )
+                               )
+                              )
+                             )
+                            )
+                           )
+                          )
+                          (seq
+                           (seq
+                            (ap :error: -else-error-)
+                            (xor
+                             (match :error:.$.error_code 10001
+                              (ap -if-error- -if-else-error-)
+                             )
+                             (ap -else-error- -if-else-error-)
+                            )
+                           )
+                           (fail -if-else-error-)
+                          )
+                         )
+                        )
+                       )
+                      )
+                     )
+                    )
+                   )
+                   (new $status-2_test
+                    (seq
+                     (seq
+                      (fold $status-2 status-2_fold_var
+                       (seq
+                        (seq
+                         (ap status-2_fold_var $status-2_test)
+                         (canon %init_peer_id% $status-2_test  #status-2_iter_canon)
+                        )
+                        (xor
+                         (match #status-2_iter_canon.length 1
+                          (null)
+                         )
+                         (next status-2_fold_var)
+                        )
+                       )
+                       (never)
+                      )
+                      (canon %init_peer_id% $status-2_test  #status-2_result_canon)
+                     )
+                     (ap #status-2_result_canon status-2_gate)
+                    )
+                   )
+                  )
+                 )
+                )
+                (new -if-error-
+                 (xor
+                  (match status-2_gate.$.[0].state "INSTALLATION_IN_PROGRESS"
+                   (seq
+                    (seq
+                     (seq
+                      (call %init_peer_id% ("peer" "timestamp_sec") [] ret-148)
+                      (new %Status_obj-3_map
+                       (seq
+                        (seq
+                         (seq
+                          (ap ("message" "") %Status_obj-3_map)
+                          (ap ("state" "INSTALLATION_SUCCESSFUL") %Status_obj-3_map)
+                         )
+                         (ap ("timestamp" ret-148) %Status_obj-3_map)
+                        )
+                        (canon %init_peer_id% %Status_obj-3_map  Status_obj-3)
+                       )
+                      )
+                     )
+                     (call %init_peer_id% ("json" "stringify") [Status_obj-3] ret-149)
+                    )
+                    (call %init_peer_id% ("worker-spell" "list_push_string") ["__installation_spell_status__" ret-149] ret-150)
+                   )
+                  )
+                  (seq
+                   (ap :error: -if-error-)
+                   (xor
+                    (match :error:.$.error_code 10001
+                     (null)
+                    )
+                    (fail -if-error-)
+                   )
+                  )
+                 )
+                )
+               )
+              )
+              (seq
+               (ap :error: -if-error-)
+               (xor
+                (match :error:.$.error_code 10001
+                 (seq
+                  (seq
+                   (seq
+                    (seq
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (new $array-inline-70
+                          (seq
+                           (seq
+                            (seq
+                             (seq
+                              (ap "Error downloading worker definition from IPFS" $array-inline-70)
+                              (ap -ipfs-arg- $array-inline-70)
+                             )
+                             (ap -worker_def_cid-arg- $array-inline-70)
+                            )
+                            (ap ret-2 $array-inline-70)
+                           )
+                           (canon %init_peer_id% $array-inline-70  #array-inline-70-0)
+                          )
+                         )
+                         (call %init_peer_id% ("debug" "stringify") [#array-inline-70-0] ret-151)
+                        )
+                        (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-152)
+                       )
+                       (par
+                        (call %init_peer_id% (ret-152 "store_log") [ret-151] ret-153)
+                        (seq
+                         (new $array-inline-71
+                          (seq
+                           (seq
+                            (ap ret-152 $array-inline-71)
+                            (ap #array-inline-70-0 $array-inline-71)
+                           )
+                           (canon %init_peer_id% $array-inline-71  #array-inline-71-0)
+                          )
+                         )
+                         (call %init_peer_id% ("run-console" "print") [#array-inline-71-0])
+                        )
+                       )
+                      )
+                      (call %init_peer_id% ("debug" "stringify") [#array-inline-70-0] ret-154)
+                     )
+                     (call %init_peer_id% ("peer" "timestamp_sec") [] ret-155)
+                    )
+                    (new %Status_obj-4_map
+                     (seq
+                      (seq
+                       (seq
+                        (ap ("message" ret-154) %Status_obj-4_map)
+                        (ap ("state" "INSTALLATION_FAILED") %Status_obj-4_map)
+                       )
+                       (ap ("timestamp" ret-155) %Status_obj-4_map)
+                      )
+                      (canon %init_peer_id% %Status_obj-4_map  Status_obj-4)
+                     )
+                    )
+                   )
+                   (call %init_peer_id% ("json" "stringify") [Status_obj-4] ret-156)
+                  )
+                  (call %init_peer_id% ("worker-spell" "list_push_string") ["__installation_spell_status__" ret-156] ret-157)
+                 )
+                )
+                (seq
+                 (seq
+                  (ap :error: -else-error-)
+                  (xor
+                   (match :error:.$.error_code 10001
+                    (ap -if-error- -if-else-error-)
+                   )
+                   (ap -else-error- -if-else-error-)
+                  )
+                 )
+                 (fail -if-else-error-)
+                )
+               )
+              )
+             )
+            )
+           )
+          )
+         )
+         (seq
+          (seq
+           (seq
+            (seq
+             (seq
+              (seq
+               (seq
+                (seq
+                 (new $array-inline-72
+                  (seq
+                   (seq
+                    (ap "Error installing worker" $array-inline-72)
+                    (ap :error: $array-inline-72)
+                   )
+                   (canon %init_peer_id% $array-inline-72  #array-inline-72-0)
+                  )
+                 )
+                 (call %init_peer_id% ("debug" "stringify") [#array-inline-72-0] ret-158)
+                )
+                (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-159)
+               )
+               (par
+                (call %init_peer_id% (ret-159 "store_log") [ret-158] ret-160)
+                (seq
+                 (new $array-inline-73
+                  (seq
+                   (seq
+                    (ap ret-159 $array-inline-73)
+                    (ap #array-inline-72-0 $array-inline-73)
+                   )
+                   (canon %init_peer_id% $array-inline-73  #array-inline-73-0)
+                  )
+                 )
+                 (call %init_peer_id% ("run-console" "print") [#array-inline-73-0])
+                )
+               )
+              )
+              (call %init_peer_id% ("debug" "stringify") [#array-inline-72-0] ret-161)
+             )
+             (call %init_peer_id% ("peer" "timestamp_sec") [] ret-162)
+            )
+            (new %Status_obj-5_map
+             (seq
+              (seq
+               (seq
+                (ap ("message" ret-161) %Status_obj-5_map)
+                (ap ("state" "INSTALLATION_FAILED") %Status_obj-5_map)
+               )
+               (ap ("timestamp" ret-162) %Status_obj-5_map)
+              )
+              (canon %init_peer_id% %Status_obj-5_map  Status_obj-5)
+             )
+            )
+           )
+           (call %init_peer_id% ("json" "stringify") [Status_obj-5] ret-163)
+          )
+          (call %init_peer_id% ("worker-spell" "list_push_string") ["__installation_spell_status__" ret-163] ret-164)
+         )
+        )
+       )
+       (new $status-6
+        (seq
+         (seq
+          (seq
+           (seq
+            (seq
+             (seq
+              (seq
+               (call %init_peer_id% ("worker-spell" "list_get_strings") ["__installation_spell_status__"] ret-165)
+               (new $array-inline-74
+                (seq
+                 (seq
+                  (ap "SPELL_STATUSES:" $array-inline-74)
+                  (ap ret-165 $array-inline-74)
+                 )
+                 (canon %init_peer_id% $array-inline-74  #array-inline-74-0)
+                )
+               )
+              )
+              (call %init_peer_id% ("debug" "stringify") [#array-inline-74-0] ret-166)
+             )
+             (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-167)
+            )
+            (par
+             (call %init_peer_id% (ret-167 "store_log") [ret-166] ret-168)
+             (seq
+              (new $array-inline-75
+               (seq
+                (seq
+                 (ap ret-167 $array-inline-75)
+                 (ap #array-inline-74-0 $array-inline-75)
+                )
+                (canon %init_peer_id% $array-inline-75  #array-inline-75-0)
+               )
+              )
+              (call %init_peer_id% ("run-console" "print") [#array-inline-75-0])
+             )
+            )
+           )
+           (xor
+            (match ret-165.$.success true
+             (ap false not-1)
+            )
+            (ap true not-1)
+           )
+          )
+          (new -if-else-error-
+           (new -else-error-
+            (new -if-error-
+             (xor
+              (match not-1 true
+               (seq
+                (new %Status_obj-6_map
+                 (seq
+                  (seq
+                   (seq
+                    (ap ("message" ret-165.$.error) %Status_obj-6_map)
+                    (ap ("state" "STATUS_LOAD_ERROR") %Status_obj-6_map)
+                   )
+                   (ap ("timestamp" 0) %Status_obj-6_map)
+                  )
+                  (canon %init_peer_id% %Status_obj-6_map  Status_obj-6)
+                 )
+                )
+                (ap Status_obj-6 $status-6)
+               )
+              )
+              (seq
+               (ap :error: -if-error-)
+               (xor
+                (match :error:.$.error_code 10001
+                 (seq
+                  (seq
+                   (seq
+                    (ap ret-165.$.strings ret-165_flat)
+                    (ap ret-165_flat ret-165_flat_to_functor)
+                   )
+                   (ap ret-165_flat_to_functor.length ret-165_flat_length)
+                  )
+                  (new -if-else-error-
+                   (new -else-error-
+                    (new -if-error-
+                     (xor
+                      (match ret-165_flat_length 0
+                       (seq
+                        (new %Status_obj-7_map
+                         (seq
+                          (seq
+                           (seq
+                            (ap ("message" "Installation has not started yet") %Status_obj-7_map)
+                            (ap ("state" "NOT_STARTED") %Status_obj-7_map)
+                           )
+                           (ap ("timestamp" 0) %Status_obj-7_map)
+                          )
+                          (canon %init_peer_id% %Status_obj-7_map  Status_obj-7)
+                         )
+                        )
+                        (ap Status_obj-7 $status-6)
+                       )
+                      )
+                      (seq
+                       (ap :error: -if-error-)
+                       (xor
+                        (match :error:.$.error_code 10001
+                         (seq
+                          (seq
+                           (seq
+                            (seq
+                             (seq
+                              (ap ret-165.$.strings ret-165_flat-0)
+                              (ap ret-165_flat-0 ret-165_flat-0_to_functor)
+                             )
+                             (ap ret-165_flat-0_to_functor.length ret-165_flat-0_length)
+                            )
+                            (call %init_peer_id% ("math" "sub") [ret-165_flat-0_length 1] sub-0)
+                           )
+                           (call %init_peer_id% ("json" "parse") [ret-165.$.strings.[sub-0]] ret-169)
+                          )
+                          (ap ret-169 $status-6)
+                         )
+                        )
+                        (seq
+                         (seq
+                          (ap :error: -else-error-)
+                          (xor
+                           (match :error:.$.error_code 10001
+                            (ap -if-error- -if-else-error-)
+                           )
+                           (ap -else-error- -if-else-error-)
+                          )
+                         )
+                         (fail -if-else-error-)
+                        )
+                       )
+                      )
+                     )
+                    )
+                   )
+                  )
+                 )
+                )
+                (seq
+                 (seq
+                  (ap :error: -else-error-)
+                  (xor
+                   (match :error:.$.error_code 10001
+                    (ap -if-error- -if-else-error-)
+                   )
+                   (ap -else-error- -if-else-error-)
+                  )
+                 )
+                 (fail -if-else-error-)
+                )
+               )
+              )
+             )
+            )
+           )
+          )
+         )
+         (new $status-6_test
+          (seq
+           (seq
+            (fold $status-6 status-6_fold_var
+             (seq
+              (seq
+               (ap status-6_fold_var $status-6_test)
+               (canon %init_peer_id% $status-6_test  #status-6_iter_canon)
+              )
+              (xor
+               (match #status-6_iter_canon.length 1
+                (null)
+               )
+               (next status-6_fold_var)
+              )
+             )
+             (never)
+            )
+            (canon %init_peer_id% $status-6_test  #status-6_result_canon)
+           )
+           (ap #status-6_result_canon status-6_gate)
+          )
+         )
+        )
+       )
+      )
+      (new $array-inline-76
+       (seq
+        (seq
+         (ap "Worker installation finished with status" $array-inline-76)
+         (ap status-6_gate.$.[0] $array-inline-76)
+        )
+        (canon %init_peer_id% $array-inline-76  #array-inline-76-0)
+       )
+      )
+     )
+     (call %init_peer_id% ("debug" "stringify") [#array-inline-76-0] ret-170)
+    )
+    (call %init_peer_id% ("srv" "resolve_alias") ["spell"] ret-171)
+   )
+   (par
+    (call %init_peer_id% (ret-171 "store_log") [ret-170] ret-172)
+    (seq
+     (new $array-inline-77
+      (seq
+       (seq
+        (ap ret-171 $array-inline-77)
+        (ap #array-inline-76-0 $array-inline-77)
+       )
+       (canon %init_peer_id% $array-inline-77  #array-inline-77-0)
+      )
+     )
+     (call %init_peer_id% ("run-console" "print") [#array-inline-77-0])
+    )
+   )
+  )
+  (call %init_peer_id% ("callbackSrv" "response") [])
+ )
+ (call %init_peer_id% ("errorHandlingSrv" "error") [:error: 0])
+)

@@ -128,9 +128,9 @@ mod test {
 
     use ethabi::Token;
 
+    use super::{DealCreated, DealCreatedData};
     use crate::chain::chain_data::ChainData;
     use crate::chain::chain_data::ChainDataError;
-    use crate::chain::deal_created::{DealCreated, DealCreatedData};
     use crate::chain::log::{parse_log, Log};
 
     // Cannot now provide an example of encoded data with effectors

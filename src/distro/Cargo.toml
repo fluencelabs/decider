@@ -12,7 +12,7 @@ include = [ "/src", "built.rs", "Cargo.toml", "decider-spell" ]
 [dependencies]
 maplit = "1.0.2"
 serde_json = "1.0.96"
-fluence-spell-dtos = "0.5.11"
+fluence-spell-dtos = "0.5.31"
 
 [build-dependencies]
 built = "0.7.0"

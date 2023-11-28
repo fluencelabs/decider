@@ -107,8 +107,8 @@ impl ChainEvent<Match> for DealMatched {
 
 #[cfg(test)]
 mod tests {
+    use super::{DealMatched, Match};
     use crate::chain::chain_data::ChainData;
-    use crate::chain::deal_matched::{DealMatched, Match};
     use crate::chain::log::{parse_log, Log};
     use crate::hex::decode_hex;
     use crate::jsonrpc::JsonRpcResp;
