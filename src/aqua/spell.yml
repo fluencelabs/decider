@@ -1,13 +1,17 @@
 # yaml-language-server: $schema=../../.fluence/schemas/spell.json
-yaml-language-server: $schema=../../../.fluence/schemas/spell.yaml.json
+#
 # Defines a spell. You can use `fluence spell new` command to generate a template for new spell
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/spell.md
 version: 0
+
 aquaFilePath: ./decider/poll.aqua
+
 function: main
+
 clock:
   periodSec: 20
   endDelaySec: 1800
+
 initArgs:
   chain:
     api_endpoint: http://127.0.0.1:8545

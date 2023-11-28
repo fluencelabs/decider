@@ -1,23 +1,12 @@
-/target
-
-# recommended by Fluence Labs:
 .idea
 .DS_Store
+/.fluence/secrets
+/.fluence/env.yaml
+/.fluence/schemas
+/.fluence/tmp
 **/node_modules
 **/target/
 .repl_history
-.vscode/settings.json
-src/ts/src/aqua
-src/js/src/aqua
-
-src/air
-src/distro/decider-spell/
-
-# builtin package artifacts
-connector/
-connector.tar.gz
-decider.json
-
-*.wasm
-
-**/target
+/.vscode/settings.json
+/src/ts/src/aqua
+/src/js/src/aqua
