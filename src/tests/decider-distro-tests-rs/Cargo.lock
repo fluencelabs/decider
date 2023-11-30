@@ -2043,8 +2043,6 @@ dependencies = [
 [[package]]
 name = "fluence-spell-distro"
 version = "0.5.31"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4d4709993bd10b529960df2cf5cd974f932f3daa65e3f04eca81d599075d62e"
 dependencies = [
  "built 0.6.1",
  "maplit",
