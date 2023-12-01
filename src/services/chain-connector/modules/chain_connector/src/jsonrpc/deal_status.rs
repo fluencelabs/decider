@@ -1,5 +1,5 @@
 use crate::chain::chain_data::{parse_chain_data, ChainDataError};
-use crate::curl::send_jsonrpc;
+use crate::curl::send_jsonrpc_batch;
 use crate::jsonrpc::deal_status::DealStatusError::UnknownStatus;
 use crate::jsonrpc::request::RequestError;
 use crate::jsonrpc::{JsonRpcError, JsonRpcReq, JsonRpcResp};
@@ -83,22 +83,25 @@ pub fn decode_status(data: &str) -> Result<DealStatus, DealStatusError> {
 #[marine]
 pub struct DealStatusResult {
     pub status: String,
+    pub deal_id: String,
     pub success: bool,
     pub error: Vec<String>,
 }
 
 impl DealStatusResult {
-    pub fn ok(status: DealStatus) -> Self {
+    pub fn ok(deal_id: String, status: DealStatus) -> Self {
         Self {
             status: status.to_string(),
+            deal_id,
             success: true,
             error: vec![],
         }
     }
 
-    pub fn error(error: DealStatusError) -> Self {
+    pub fn error(deal_id: String, error: DealStatusError) -> Self {
         Self {
             status: "".to_string(),
+            deal_id,
             success: false,
             error: vec![error.to_string()],
         }
@@ -106,24 +109,68 @@ impl DealStatusResult {
 }
 
 #[marine]
-pub fn get_status(deal_id: &str, api_endpoint: &str) -> DealStatusResult {
-    let res: Result<DealStatus, DealStatusError> = try {
+pub struct DealStatusBatchResult {
+    pub statuses: Vec<DealStatusResult>,
+    pub success: bool,
+    pub error: Vec<String>,
+}
+
+impl DealStatusBatchResult {
+    pub fn ok(statuses: Vec<DealStatusResult>) -> Self {
+        Self {
+            statuses,
+            success: true,
+            error: vec![],
+        }
+    }
+
+    pub fn error(error: DealStatusError) -> Self {
+        Self {
+            statuses: vec![],
+            success: false,
+            error: vec![error.to_string()],
+        }
+    }
+}
+
+#[marine]
+pub fn get_status_batch(api_endpoint: &str, deal_ids: Vec<String>) -> DealStatusBatchResult {
+    let res: Result<_, DealStatusError> = try {
         let function = function();
         let bytes = function.encode_input(&[]).unwrap();
         let input = format!("0x{}", hex::encode(bytes));
-        let req = JsonRpcReq {
-            jsonrpc: "2.0".to_owned(),
-            id: 0,
-            method: "eth_call".to_owned(),
-            params: vec![json!({"data": input, "to": deal_id})],
-        };
-        let response: JsonRpcResp<String> = send_jsonrpc(api_endpoint, req)?;
+        let batch = deal_ids
+            .iter()
+            .map(|deal_id| JsonRpcReq {
+                jsonrpc: "2.0".to_owned(),
+                id: 0,
+                method: "eth_call".to_owned(),
+                params: vec![json!({"data": input, "to": deal_id})],
+            })
+            .collect::<_>();
+        let response: Vec<JsonRpcResp<String>> = send_jsonrpc_batch(api_endpoint, batch)?;
+        response
+            .into_iter()
+            .zip(deal_ids)
+            .map(|(result, deal_id)| {
+                let result = try {
+                    let result = result.get_result()?;
+                    decode_status(&result)?
+                };
+                match result {
+                    Ok(status) => DealStatusResult::ok(deal_id, status),
+                    Err(e) => DealStatusResult::error(deal_id, e),
+                }
+            })
+            .collect::<_>()
+        /*
         let status = response.get_result()?;
         decode_status(&status)?
+         */
     };
     match res {
-        Ok(status) => DealStatusResult::ok(status),
-        Err(e) => DealStatusResult::error(e),
+        Ok(statuses) => DealStatusBatchResult::ok(statuses),
+        Err(e) => DealStatusBatchResult::error(e),
     }
 }
 
@@ -145,11 +192,19 @@ mod tests {
         let mut server = mockito::Server::new();
         let url = server.url();
         const DEAL_ID: &'static str = "0x6328bb918a01603adc91eae689b848a9ecaef26d";
-        let jsonrpc_inactive = r#"{"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000000"}"#;
-        let jsonrpc_active = r#"{"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000001"}"#;
-        let jsonrpc_ended = r#"{"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000002"}"#;
-        let jsonrpc_unknown = r#"{"jsonrpc":"2.0","id":0,"result":"0x"}"#;
+        const DEAL_ID_2: &'static str = "0x6328bb918a01603adc91eae689b848a9ecaef26f";
+
+        let jsonrpc_inactive = r#"[{"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000000"}]"#;
+        let jsonrpc_active = r#"[{"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000001"}]"#;
+        let jsonrpc_ended = r#"[{"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000002"}]"#;
+        let jsonrpc_unknown = r#"[{"jsonrpc":"2.0","id":0,"result":"0x"}]"#;
+        let jsonrpc_2 = r#"[
+            {"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000000"}, 
+            {"jsonrpc":"2.0","id":0,"result":"0x"} 
+        ]"#;
+
         let jsonrpcs = Arc::new(Mutex::new(vec![
+            jsonrpc_2,
             jsonrpc_unknown,
             jsonrpc_ended,
             jsonrpc_active,
@@ -159,14 +214,18 @@ mod tests {
             .mock("POST", "/")
             .with_body_from_request(move |req| {
                 let body = req.body().expect("mock: get req body");
-                let body: JsonRpcReq<DealStatusRequest> =
+                let body: Vec<JsonRpcReq<DealStatusRequest>> =
                     serde_json::from_slice(body).expect("mock: parse req body as json");
-                assert_eq!(body.params[0].to, DEAL_ID);
+                assert!(!body.is_empty());
+                assert_eq!(body[0].params[0].to, DEAL_ID);
+                if body.len() == 2 {
+                    assert_eq!(body[1].params[0].to, DEAL_ID_2)
+                }
 
                 let jsonrpc = jsonrpcs.lock().unwrap().pop().unwrap();
                 jsonrpc.into()
             })
-            .expect(4)
+            .expect(5)
             .with_status(200)
             .with_header("content-type", "application/json")
             .create();
@@ -178,28 +237,74 @@ mod tests {
             .with_body("invalid mock was hit. Check that request body matches 'match_body' clause'")
             .create();
 
-        let result: marine_test_env::chain_connector::DealStatusResult =
-            connector.get_status(DEAL_ID.to_string(), url.clone());
-        assert!(result.success);
+        let result = connector.get_status_batch(url.clone(), vec![DEAL_ID.to_string()]);
+        assert!(result.success, "error: {}", result.error[0]);
         assert!(result.error.is_empty());
-        assert_eq!(result.status, "INACTIVE");
 
-        let result: marine_test_env::chain_connector::DealStatusResult =
-            connector.get_status(DEAL_ID.to_string(), url.clone());
-        assert!(result.success);
+        assert!(!result.statuses.is_empty());
+        assert!(
+            result.statuses[0].success,
+            "error: {}",
+            result.statuses[0].error[0]
+        );
+        assert!(result.statuses[0].error.is_empty());
+
+        assert_eq!(result.statuses[0].status, "INACTIVE");
+        assert_eq!(result.statuses[0].deal_id, DEAL_ID);
+
+        let result = connector.get_status_batch(url.clone(), vec![DEAL_ID.to_string()]);
+        assert!(result.success, "error: {}", result.error[0]);
         assert!(result.error.is_empty());
-        assert_eq!(result.status, "ACTIVE");
+        assert!(!result.statuses.is_empty());
+        assert!(
+            result.statuses[0].success,
+            "error: {}",
+            result.statuses[0].error[0]
+        );
+        assert!(result.statuses[0].error.is_empty());
+        assert_eq!(result.statuses[0].status, "ACTIVE");
+        assert_eq!(result.statuses[0].deal_id, DEAL_ID);
 
-        let result: marine_test_env::chain_connector::DealStatusResult =
-            connector.get_status(DEAL_ID.to_string(), url.clone());
-        assert!(result.success);
+        let result = connector.get_status_batch(url.clone(), vec![DEAL_ID.to_string()]);
+        assert!(result.success, "error: {}", result.error[0]);
         assert!(result.error.is_empty());
-        assert_eq!(result.status, "ENDED");
+        assert!(!result.statuses.is_empty());
+        assert!(
+            result.statuses[0].success,
+            "error: {}",
+            result.statuses[0].error[0]
+        );
 
-        let result: marine_test_env::chain_connector::DealStatusResult =
-            connector.get_status(DEAL_ID.to_string(), url);
-        assert!(!result.success);
-        assert!(!result.error.is_empty());
+        assert!(result.statuses[0].error.is_empty());
+        assert_eq!(result.statuses[0].status, "ENDED");
+        assert_eq!(result.statuses[0].deal_id, DEAL_ID);
+
+        let result = connector.get_status_batch(url.clone(), vec![DEAL_ID.to_string()]);
+        assert!(result.success, "error: {}", result.error[0]);
+        assert!(result.error.is_empty());
+        assert!(!result.statuses.is_empty());
+        assert!(!result.statuses[0].success);
+        assert!(!result.statuses[0].error.is_empty());
+        assert_eq!(result.statuses[0].deal_id, DEAL_ID);
+
+        let result =
+            connector.get_status_batch(url, vec![DEAL_ID.to_string(), DEAL_ID_2.to_string()]);
+        assert!(result.success, "error: {}", result.error[0]);
+        assert!(result.error.is_empty());
+        assert_eq!(result.statuses.len(), 2);
+        assert!(
+            result.statuses[0].success,
+            "error: {}",
+            result.statuses[0].error[0]
+        );
+
+        assert!(result.statuses[0].error.is_empty());
+        assert_eq!(result.statuses[0].deal_id, DEAL_ID);
+        assert_eq!(result.statuses[0].status, "INACTIVE");
+
+        assert!(!result.statuses[1].success,);
+        assert!(!result.statuses[1].error.is_empty());
+        assert_eq!(result.statuses[1].deal_id, DEAL_ID_2);
 
         invalid_mock.assert();
         mock.assert();
