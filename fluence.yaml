@@ -18,7 +18,6 @@ dependencies:
     marine: 0.14.0
     mrepl: 0.21.3
 
-
 # Path to the aqua file or directory with aqua files that you want to compile by default.
 # Must be relative to the project root dir
 aquaInputPath: src/aqua/decider/poll.aqua
@@ -36,4 +35,3 @@ spells:
   decider:
     # path to directory containing 'spell.yaml'
     get: src/aqua
-
