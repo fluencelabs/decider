@@ -25,4 +25,4 @@ serde = { version = "1.0.192", features = ["derive"] }
 fluence-spell-dtos = "0.5.11"
 mockito = "1.1.0"
 hyper = "0.14.27"
-eyre = "0.6.8"
+eyre = "0.6.9"
