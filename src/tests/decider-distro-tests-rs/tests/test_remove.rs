@@ -6,16 +6,10 @@ pub mod utils;
 
 use utils::test_rpc_server::run_test_server;
 
-use crate::utils::default::DEFAULT_POLL_WINDOW_BLOCK_SIZE;
-use connected_client::ConnectedClient;
-use created_swarm::make_swarms_with_cfg;
 use eyre::WrapErr;
-use fluence_app_service::TomlMarineConfig;
-use fluence_spell_dtos::trigger_config::TriggerConfig;
-use fluence_spell_dtos::value::UnitValue;
 use maplit::hashmap;
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde::Deserialize;
+use serde_json::json;
 use utils::chain::LogsReq;
 use utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};
 use utils::deal::get_joined_deals;
@@ -24,6 +18,7 @@ use utils::distro::*;
 use utils::setup::setup_nox;
 use utils::*;
 
+#[allow(deal_code)]
 #[derive(Deserialize)]
 struct DealStatusReq {
     data: String,
@@ -97,6 +92,7 @@ async fn test_remove_deal() {
     }
     wait_decider_stopped(&mut client).await;
 
+    // 1. Check that the deal related worker doesn't exist
     let workers = execute(
         &mut client,
         r#"
@@ -109,6 +105,17 @@ async fn test_remove_deal() {
     .unwrap();
     let workers = serde_json::from_value::<Vec<String>>(workers[0].clone()).unwrap();
     assert!(!workers.contains(&deal.worker_id), "worker must be removed");
+
+    // 2. Check that the deal is removed from 'joined_deals'
+    let joined_deals = get_joined_deals(&mut client).await;
+    assert!(joined_deals.is_empty(), "deal must be removed");
+
+    // 3. Check that the deal state is cleared
+    let deal_state_str = spell::get_string(&mut client, "decider", &deal.deal_id)
+        .await
+        .wrap_err("getting deal state")
+        .unwrap();
+    assert!(deal_state_str.absent, "deal state must be cleared");
 
     server.shutdown().await
 }
