@@ -115,6 +115,7 @@ pub async fn wait_worker_spell_stopped(
                 state: String,
             }
             let last_status = strings.strings.last().unwrap();
+            println!("last status: {:?}", last_status);
             let state = serde_json::from_str::<State>(last_status).unwrap();
             let in_progress_statuses = ["INSTALLATION_IN_PROGRESS", "NOT_STARTED"];
             if !in_progress_statuses.contains(&state.state.as_str()) {

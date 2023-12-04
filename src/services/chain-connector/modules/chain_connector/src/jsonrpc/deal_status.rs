@@ -141,9 +141,10 @@ pub fn get_status_batch(api_endpoint: &str, deal_ids: Vec<String>) -> DealStatus
         let input = format!("0x{}", hex::encode(bytes));
         let batch = deal_ids
             .iter()
-            .map(|deal_id| JsonRpcReq {
+            .enumerate()
+            .map(|(idx, deal_id)| JsonRpcReq {
                 jsonrpc: "2.0".to_owned(),
-                id: 0,
+                id: idx as u32,
                 method: "eth_call".to_owned(),
                 params: vec![json!({"data": input, "to": deal_id})],
             })
@@ -163,10 +164,6 @@ pub fn get_status_batch(api_endpoint: &str, deal_ids: Vec<String>) -> DealStatus
                 }
             })
             .collect::<_>()
-        /*
-        let status = response.get_result()?;
-        decode_status(&status)?
-         */
     };
     match res {
         Ok(statuses) => DealStatusBatchResult::ok(statuses),

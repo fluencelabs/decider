@@ -70,6 +70,12 @@ data DealMatched:
 
 data DealStatusResult:
   status: string
+  deal_id: string
+  success: bool
+  error: []string
+
+data DealStatusBatchResult:
+  statuses: []DealStatusResult
   success: bool
   error: []string
 
@@ -140,7 +146,7 @@ data TxStatusBatchResult:
 
 service ChainConnector("chain_connector"):
   get_env() -> Env
-  get_status(deal_id: string, api_endpoint: string) -> DealStatusResult
+  get_status_batch(api_endpoint: string, deal_ids: []string) -> DealStatusBatchResult
   get_tx_statuses(api_endpoint: string, txs: []WorkerTxInfo) -> TxStatusBatchResult
   hex_add(hex: string, add: u32) -> HexAdd
   hex_cmp(hex_a: string, hex_b: string) -> HexCmp

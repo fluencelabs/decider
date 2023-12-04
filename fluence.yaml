@@ -12,7 +12,7 @@ dependencies:
   npm:
     "@fluencelabs/aqua-ipfs": 0.5.17
     "@fluencelabs/aqua-lib": 0.8.1
-    "@fluencelabs/spell": 0.5.31
+    "@fluencelabs/spell": 0.5.32
     "@fluencelabs/installation-spell": 0.5.31
   cargo:
     marine: 0.14.0

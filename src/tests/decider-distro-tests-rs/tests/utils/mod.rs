@@ -31,9 +31,11 @@ pub fn enable_decider_logs() {
         "system_services=debug",
         */
         "particle_reap=debug",
+        /*
         "aquamarine::actor=debug",
         "aquamarine::aqua_runtime=off",
         "aquamarine=debug",
+        */
     ];
 
     let namespaces = namespaces
