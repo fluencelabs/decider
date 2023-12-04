@@ -1,21 +1,12 @@
 module DealStatus declares *
 
--- import Worker from "@fluencelabs/aqua-lib/workers.aqua"
+import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 
 import JoinedDeal, remove_deal from "../decider/deal_storage.aqua"
 import DEAL_STATUS_ENDED from "../decider/consts.aqua"
 import spell_log, deal_log from "../fluence/spell.aqua"
 
 import "services.aqua"
-
-service Worker("worker"): -- Returns worker peer id associated with `deal_id`.
-    -- Returns nil if worker doesn't exist.
-    get_worker_id(deal_id: string) -> ?string
-
-    -- Removes worker with all deployed spells and services.
-    -- Throws an error if worker doesn't exist.
-    -- Worker can be removed only by worker creator or worker itself.
-    remove(worker_id: string)
 
 func deal_ended(spell_id: string, deal_id: string):
     worker_id <- Worker.get_worker_id(deal_id)
