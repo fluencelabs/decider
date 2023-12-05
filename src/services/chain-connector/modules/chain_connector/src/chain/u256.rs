@@ -16,7 +16,7 @@ impl U256 {
         ethabi::ethereum_types::U256::from_little_endian(&self.bytes)
     }
 
-    pub fn to_u64_truc(&self) -> u64 {
+    pub fn to_u64_trunc(&self) -> u64 {
         let mut bytes = [0u8; 8];
         bytes.copy_from_slice(&self.bytes[0..8]);
         u64::from_le_bytes(bytes)
