@@ -27,7 +27,7 @@ func process_message(msg: DeciderMessage):
     if msg.remove != nil:
         cmd = msg.remove!
         -- Worker.remove(cmd.host_id, cmd.worker_id)
-        spell_log(spell_id, ["called remove worker via mailbox", cmd.host_id, cmd.worker_id]
+        spell_log(spell_id, ["called remove worker via mailbox", cmd.host_id, cmd.worker_id])
 
 func poll_mailbox(spell_id: SpellId):
     Spell spell_id
