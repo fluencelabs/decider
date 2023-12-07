@@ -68,6 +68,17 @@ data DealMatched:
   block_number: string
   info: Match
 
+data DealStatusResult:
+  status: string
+  deal_id: string
+  success: bool
+  error: []string
+
+data DealStatusBatchResult:
+  statuses: []DealStatusResult
+  success: bool
+  error: []string
+
 data SupportedEvent:
   name: string
   topic: string
@@ -92,6 +103,11 @@ data HexSub:
   diff: []string
   success: bool
 
+data JoinedWorker:
+  cu_id: string
+  host_id: string
+  worker_id: []string
+
 data MatchedResult:
   error: []string
   success: bool
@@ -108,13 +124,8 @@ data RegisterWorkerResult:
   tx_hash: []string
   error: []string
 
-data Worker:
-  pat_id: string
-  host_id: string
-  worker_id: []string
-
 data Subnet:
-  workers: []Worker
+  workers: []JoinedWorker
   error: []string
 
 data WorkerTxInfo:
@@ -135,6 +146,7 @@ data TxStatusBatchResult:
 
 service ChainConnector("chain_connector"):
   get_env() -> Env
+  get_status_batch(api_endpoint: string, deal_ids: []string) -> DealStatusBatchResult
   get_tx_statuses(api_endpoint: string, txs: []WorkerTxInfo) -> TxStatusBatchResult
   hex_add(hex: string, add: u32) -> HexAdd
   hex_cmp(hex_a: string, hex_b: string) -> HexCmp

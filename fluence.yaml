@@ -8,30 +8,19 @@
 # config version
 version: 5
 
-# This is like the "main" Aqua file, but
-# mostly it just points to the vague location of the code
-#
-# Theoretically, only that file and its imports (including transitives) will be compiled.
-# But in practice it seems to be unstable, changing unpredictably.
-aquaInputPath: src/aqua/decider/poll.aqua
-
-# To fight the aforementioned unpredictability, I set these imports explicitly.
-# I consider this a temporary hack to hotfix bug with compilation scopes, until it is fixed.
-aquaImports:
-  - src/aqua
-  - src/aqua/decider
-  - src/aqua/chain
-  - src/aqua/fluence
-
 dependencies:
   npm:
     "@fluencelabs/aqua-ipfs": 0.5.17
     "@fluencelabs/aqua-lib": 0.8.1
-    "@fluencelabs/spell": 0.5.31
+    "@fluencelabs/spell": 0.5.32
     "@fluencelabs/installation-spell": 0.5.31
   cargo:
     marine: 0.14.0
     mrepl: 0.21.3
+
+# Path to the aqua file or directory with aqua files that you want to compile by default.
+# Must be relative to the project root dir
+aquaInputPath: src/aqua/decider/poll.aqua
 
 # Here I define services. Can have as many as I want. Right now it's just 'chain_connector'.
 services:

@@ -26,7 +26,8 @@ service JsonMsg("json"):
 func process_message(msg: DeciderMessage):
     if msg.remove != nil:
         cmd = msg.remove!
-        Worker.remove(cmd.host_id, cmd.worker_id)
+        -- Worker.remove(cmd.host_id, cmd.worker_id)
+        spell_log("decider", ["called remove worker via mailbox", cmd.host_id, cmd.worker_id])
 
 func poll_mailbox(spell_id: SpellId):
     Spell spell_id
@@ -41,7 +42,7 @@ func poll_mailbox(spell_id: SpellId):
                 spell_log(spell_id, "will pop")
                 popped <- Spell.pop_mailbox()
                 if popped.message.length == 0 || popped.message!.message != msg.message:
-                    spell_log(spell_id, ["произошла чудовищная ошибка. expected", msg, "popped", popped])
+                    spell_log(spell_id, ["broken invariant, expected", msg, "popped", popped])
 
 func push_remove_worker(spell_id: SpellId, host_id: PeerId, worker_id: WorkerId):
     Spell spell_id

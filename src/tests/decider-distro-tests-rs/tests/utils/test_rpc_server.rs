@@ -123,7 +123,11 @@ pub fn run_test_server() -> ServerHandle {
                 let mut results = Vec::new();
                 for (idx, req) in reqs.into_iter().enumerate() {
                     assert_eq!(req.jsonrpc, "2.0", "wrong jsonrpc version: {}", req.jsonrpc);
-                    assert_eq!(req.id, idx as u32, "wrong jsonrpc id: {}", req.id);
+                    assert_eq!(
+                        req.id, idx as u32,
+                        "wrong jsonrpc id: {}, req: {:?}",
+                        req.id, req
+                    );
                     let result = process_request(&send_req, &recv_resp, req).await;
                     results.push(result);
                 }
@@ -131,7 +135,7 @@ pub fn run_test_server() -> ServerHandle {
             } else {
                 let req = serde_json::from_value::<JrpcReq>(raw_request).unwrap();
                 assert_eq!(req.jsonrpc, "2.0", "wrong jsonrpc version: {}", req.jsonrpc);
-                assert_eq!(req.id, 0, "wrong jsonrpc id: {}", req.id);
+                assert_eq!(req.id, 0, "wrong jsonrpc id: {}, req: {:?}", req.id, req);
 
                 process_request(&send_req, &recv_resp, req).await
             };

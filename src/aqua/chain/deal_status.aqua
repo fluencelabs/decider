@@ -1,0 +1,43 @@
+module DealStatus declares *
+
+import Worker from "@fluencelabs/aqua-lib/workers.aqua"
+
+import JoinedDeal, remove_deal from "../decider/deal_storage.aqua"
+import DEAL_STATUS_ENDED from "../decider/consts.aqua"
+import spell_log, deal_log from "../fluence/spell.aqua"
+
+import "services.aqua"
+
+func remove_ended_deal(spell_id: string, deal_id: string):
+    worker_id <- Worker.get_worker_id(deal_id)
+    if worker_id != nil:
+        deal_log(spell_id, deal_id, "deal is ended by owner, removing the deal and the worker")
+        try:
+            Worker.remove(worker_id!)
+        catch e:
+            deal_log(spell_id, deal_id, ["couldn't remove a worker", worker_id!, e])
+        remove_deal(spell_id, deal_id, worker_id!)
+    else:
+        deal_log(spell_id, deal_id, "deal doesn't have associated worker O.o")
+
+func poll_deal_statuses_by_ids(spell_id: string, api_endpoint: string, deal_ids: []string):
+    result <- ChainConnector.get_status_batch(api_endpoint, deal_ids)
+    if !result.success:
+        spell_log(spell_id, ["couldn't obtain deal statuses, error: ", result.error!])
+    else:
+        spell_log(spell_id, ["found statuses for", result.statuses.length, "deals"])
+        for deal_status <- result.statuses:
+            if !deal_status.success:
+                spell_log(spell_id, ["couldn't obtain deal status, error:", deal_status.error!])
+            else:
+                if deal_status.status == DEAL_STATUS_ENDED:
+                    remove_ended_deal(spell_id, deal_status.deal_id)
+
+func poll_deal_statuses(spell_id: string, api_endpoint: string, joined_deals: []JoinedDeal):
+    deal_ids: *string 
+
+    for joined_deal <- joined_deals:
+        deal_ids <<- joined_deal.deal_id
+
+    if deal_ids != nil:
+        poll_deal_statuses_by_ids(spell_id, api_endpoint, deal_ids)

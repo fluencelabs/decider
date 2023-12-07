@@ -10,7 +10,9 @@ use serde_json::json;
 use utils::chain::LogsReq;
 use utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};
 use utils::deal::get_joined_deals;
-use utils::default::{default_receipt, DEAL_IDS, DEFAULT_POLL_WINDOW_BLOCK_SIZE};
+use utils::default::{
+    default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE, DEFAULT_POLL_WINDOW_BLOCK_SIZE,
+};
 use utils::distro::make_distro_with_api;
 use utils::setup::setup_nox;
 use utils::test_rpc_server::run_test_server;
@@ -107,6 +109,12 @@ async fn test_update_deal() {
         );
         server.send_response(Ok(json!(response)));
     }
+    // deal status phase
+    {
+        let (method, _params) = server.receive_request().await.unwrap();
+        assert_eq!(method, "eth_call");
+        server.send_response(Ok(json!(DEAL_STATUS_ACTIVE)));
+    }
     wait_decider_stopped(&mut client).await;
 
     let cid = {
@@ -199,7 +207,7 @@ async fn test_update_deal_from_later_blocks() {
             server.send_response(Ok(json!([])));
         }
         // updates for deals
-        {
+        let to_block = {
             let (method, params) = server.receive_request().await.unwrap();
             assert_eq!(method, "eth_getLogs");
             let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
@@ -210,7 +218,14 @@ async fn test_update_deal_from_later_blocks() {
 
             server.send_response(Ok(json!([])));
             log.to_block
+        };
+        // statuses
+        {
+            let (method, _params) = server.receive_request().await.unwrap();
+            assert_eq!(method, "eth_call");
+            server.send_response(Ok(json!(DEAL_STATUS_ACTIVE)));
         }
+        to_block
     };
     wait_decider_stopped(&mut client).await;
 
@@ -239,6 +254,12 @@ async fn test_update_deal_from_later_blocks() {
             );
 
             server.send_response(Ok(json!([])));
+        }
+        // statuses
+        {
+            let (method, _params) = server.receive_request().await.unwrap();
+            assert_eq!(method, "eth_call");
+            server.send_response(Ok(json!(DEAL_STATUS_ACTIVE)));
         }
     }
     wait_decider_stopped(&mut client).await;

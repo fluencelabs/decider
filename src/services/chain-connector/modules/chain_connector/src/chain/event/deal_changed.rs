@@ -70,8 +70,8 @@ pub fn parse_deal_changed(log: Log) -> Option<DealChanged> {
 
 #[cfg(test)]
 mod tests {
+    use super::DealChangedData;
     use crate::chain::chain_data::ChainData;
-    use crate::chain::deal_changed::DealChangedData;
 
     #[test]
     fn topic() {

@@ -507,22 +507,42 @@
             },
             "nullable": true
           },
-          "minWorkers": {
+          "targetWorkers": {
             "type": "number",
-            "description": "Required workers to activate the deal",
+            "description": "Max workers in the deal",
             "default": 1,
             "nullable": true,
             "minimum": 1
           },
-          "targetWorkers": {
+          "minWorkers": {
             "type": "number",
-            "description": "Max workers in the deal",
-            "default": 3,
+            "description": "Required workers to activate the deal. Matches target workers by default",
             "nullable": true,
             "minimum": 1
+          },
+          "maxWorkersPerProvider": {
+            "type": "number",
+            "description": "Max workers per provider. Matches target workers by default",
+            "nullable": true,
+            "minimum": 1
+          },
+          "pricePerWorkerEpoch": {
+            "type": "number",
+            "description": "Price per worker epoch in FL. This number is multiplied by 10^18",
+            "default": 0.1,
+            "nullable": true,
+            "minimum": 1e-18
+          },
+          "collateralPerWorker": {
+            "type": "number",
+            "description": "Collateral per worker in FL. This number is multiplied by 10^18",
+            "default": 1,
+            "nullable": true,
+            "minimum": 1e-18
           }
         },
-        "required": []
+        "required": [],
+        "additionalProperties": false
       },
       "properties": {
         "dealName": {
@@ -545,22 +565,42 @@
               },
               "nullable": true
             },
-            "minWorkers": {
+            "targetWorkers": {
               "type": "number",
-              "description": "Required workers to activate the deal",
+              "description": "Max workers in the deal",
               "default": 1,
               "nullable": true,
               "minimum": 1
             },
-            "targetWorkers": {
+            "minWorkers": {
               "type": "number",
-              "description": "Max workers in the deal",
-              "default": 3,
+              "description": "Required workers to activate the deal. Matches target workers by default",
               "nullable": true,
               "minimum": 1
+            },
+            "maxWorkersPerProvider": {
+              "type": "number",
+              "description": "Max workers per provider. Matches target workers by default",
+              "nullable": true,
+              "minimum": 1
+            },
+            "pricePerWorkerEpoch": {
+              "type": "number",
+              "description": "Price per worker epoch in FL. This number is multiplied by 10^18",
+              "default": 0.1,
+              "nullable": true,
+              "minimum": 1e-18
+            },
+            "collateralPerWorker": {
+              "type": "number",
+              "description": "Collateral per worker in FL. This number is multiplied by 10^18",
+              "default": 1,
+              "nullable": true,
+              "minimum": 1e-18
             }
           },
-          "required": []
+          "required": [],
+          "additionalProperties": false
         }
       },
       "required": []
