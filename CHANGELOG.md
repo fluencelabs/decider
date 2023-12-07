@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.6](https://github.com/fluencelabs/decider/compare/connector-v0.5.5...connector-v0.5.6) (2023-12-07)
+
+
+### Features
+
+* **decider,chain-connector:** support deal removal [fixes NET-515] ([#144](https://github.com/fluencelabs/decider/issues/144)) ([ba849eb](https://github.com/fluencelabs/decider/commit/ba849eb32b2bb3c05fe30cba574293ae1134d318))
+
 ## [0.5.5](https://github.com/fluencelabs/decider/compare/connector-v0.5.4...connector-v0.5.5) (2023-11-16)
 
 
