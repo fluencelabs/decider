@@ -400,7 +400,7 @@ async fn test_deploy_a_deal_in_seq() {
     let distro = make_distro_with_api_and_config(url, empty_config);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir).await;
 
     // Initial run for installing the first deal
     update_config(&mut client, &oneshot_config()).await.unwrap();

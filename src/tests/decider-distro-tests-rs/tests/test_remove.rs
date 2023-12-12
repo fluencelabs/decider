@@ -18,7 +18,7 @@ use utils::distro::*;
 use utils::setup::setup_nox;
 use utils::*;
 
-#[allow(deal_code)]
+#[allow(dead_code)]
 #[derive(Deserialize)]
 struct DealStatusReq {
     data: String,
@@ -38,7 +38,7 @@ async fn test_remove_deal() {
     let distro = make_distro_with_api(url);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Deploy a deal
     {

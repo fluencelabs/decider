@@ -9,7 +9,9 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 use std::fs;
 use std::path::PathBuf;
+use std::sync::Arc;
 use std::time::Duration;
+use tempfile::TempDir;
 
 pub async fn update_config(
     client: &mut ConnectedClient,
@@ -28,11 +30,12 @@ pub async fn update_config(
 
 // God left me here
 pub fn modify_decider_spell_script(
-    tmp_dir: PathBuf,
+    tmp_dir: Arc<TempDir>,
     decider_spell_id: String,
     updated_script: String,
 ) {
-    let script_path: PathBuf = tmp_dir.join(
+    let temp_dir_path  = tmp_dir.path();
+    let script_path: PathBuf = temp_dir_path.join(
         [
             "services",
             "workdir",
@@ -47,7 +50,7 @@ pub fn modify_decider_spell_script(
     fs::write(&script_path, updated_script).unwrap();
 }
 
-pub async fn update_decider_script_for_tests(client: &mut ConnectedClient, test_dir: PathBuf) {
+pub async fn update_decider_script_for_tests(client: &mut ConnectedClient, test_dir: Arc<TempDir>) {
     let result = utils::execute(
         client,
         r#"
