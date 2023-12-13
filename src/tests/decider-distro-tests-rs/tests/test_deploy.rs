@@ -385,8 +385,6 @@ async fn test_deploy_deals_diff_blocks() {
 ///    c. both workers are installed and have correct CIDs
 #[tokio::test]
 async fn test_deploy_a_deal_in_seq() {
-    enable_logs();
-    //enable_decider_logs();
     const LATEST_BLOCK_FIRST_RUN: u32 = 35;
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
     let deal_id_1 = format!("0x{DEAL_ID_1}");
