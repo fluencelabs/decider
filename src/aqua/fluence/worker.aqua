@@ -1,4 +1,4 @@
-module Worker declares WorkerArgs, WorkerSettings, get_worker_settings, is_worker_created, create, remove
+module Worker declares WorkerArgs, WorkerSettings, is_worker_created, create, remove
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
 import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
