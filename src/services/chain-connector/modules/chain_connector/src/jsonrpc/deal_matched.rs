@@ -4,7 +4,7 @@ use std::str::FromStr;
 
 use crate::chain::chain_data::ChainData;
 use crate::chain::chain_info::ChainInfo;
-use crate::chain::deal_matched::{DealMatched, Match};
+use crate::chain::event::deal_matched::{DealMatched, Match};
 use crate::chain::log::parse_logs;
 use crate::jsonrpc::get_logs::get_logs;
 use crate::jsonrpc::request::check_url;

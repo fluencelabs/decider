@@ -9,7 +9,7 @@ use serde_json::json;
 use utils::chain::{filter_logs, LogsReq};
 use utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};
 use utils::deal::{get_failed_deals, get_joined_deals};
-use utils::default::{default_receipt, DEAL_IDS};
+use utils::default::{default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE};
 use utils::distro::make_distro_with_api_and_config;
 use utils::setup::setup_nox;
 use utils::subnet::{get_txs, get_txs_statuses};
@@ -209,13 +209,14 @@ async fn test_transaction_tracking() {
                 "message": "intentional error",
             })), // rpc error
         ];
-        // Reqs: blockNumber, getLogs, 3x getLogs for updates, 3x of eth_getTransactionReceipt
-        for _step in 0..8 {
+        // Reqs: blockNumber, getLogs, 3x getLogs for updates, 3x of eth_getTransactionReceipt, 3x eth_call
+        for _step in 0..11 {
             let (method, _params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => Ok(json!(to_hex(BLOCK_NUMBER_LATER))),
                 "eth_getLogs" => Ok(json!([])),
                 "eth_getTransactionReceipt" => receipts.pop().unwrap(),
+                "eth_call" => Ok(json!(DEAL_STATUS_ACTIVE)),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(response);
@@ -235,13 +236,14 @@ async fn test_transaction_tracking() {
 
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
-        // Reqs: blockNumber, getLogs, 3x getLogs for updates, 1x of eth_getTransactionReceipt
-        for _step in 0..6 {
+        // Reqs: blockNumber, getLogs, 3x getLogs for updates, 1x of eth_getTransactionReceipt, eth_call
+        for _step in 0..9 {
             let (method, _params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => json!(to_hex(BLOCK_NUMBER_LATER)),
                 "eth_getLogs" => json!([]),
                 "eth_getTransactionReceipt" => json!({"status": "0x1", "blockNumber": "0x55"}),
+                "eth_call" => json!(DEAL_STATUS_ACTIVE),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(Ok(response));

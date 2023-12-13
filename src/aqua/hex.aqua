@@ -1,8 +1,8 @@
 module Hex declares inc, dec, min
 
 import ChainConnector from "services.aqua"
-import SpellId from "../types.aqua"
-import spell_log from "../fluence/spell.aqua"
+import SpellId from "./types.aqua"
+import spell_log from "./fluence/spell.aqua"
 
 -- increment `hex` by 1
 func inc(spell_id: SpellId, hex: string) -> ?string:

@@ -16,6 +16,8 @@ pub mod resolve_subnet;
 pub mod right_boundary;
 pub mod transaction;
 
+pub mod deal_status;
+
 const JSON_RPC_VERSION: &str = "2.0";
 
 #[derive(Debug, Error)]

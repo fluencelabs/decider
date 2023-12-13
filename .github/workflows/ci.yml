@@ -1,22 +1,20 @@
-name: "ci"
+name: "test"
 
 on:
   pull_request:
     paths-ignore:
       - "**.md"
       - ".github/**"
-      - "!.github/workflows/ci.yml"
+      - "!.github/workflows/run-tests.yml"
       - "!.github/workflows/tests.yml"
-      - "!.github/workflows/snapshot.yml"
   push:
     branches:
       - "main"
     paths-ignore:
       - "**.md"
       - ".github/**"
-      - "!.github/workflows/ci.yml"
+      - "!.github/workflows/run-tests.yml"
       - "!.github/workflows/tests.yml"
-      - "!.github/workflows/snapshot.yml"
 
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
@@ -24,12 +22,6 @@ concurrency:
 
 jobs:
   distro:
-    uses: ./.github/workflows/snapshot.yml
-    with:
-      ref: ${{ github.ref }}
-
-  tests:
-    name: "distro"
     uses: ./.github/workflows/tests.yml
     with:
       ref: ${{ github.ref }}

@@ -88,7 +88,8 @@
                 }
               },
               "required": [],
-              "nullable": true
+              "nullable": true,
+              "additionalProperties": false
             },
             "properties": {
               "Module_name": {
@@ -161,7 +162,8 @@
                   }
                 },
                 "required": [],
-                "nullable": true
+                "nullable": true,
+                "additionalProperties": false
               }
             },
             "nullable": true,
@@ -170,7 +172,8 @@
         },
         "required": [
           "get"
-        ]
+        ],
+        "additionalProperties": false
       },
       "properties": {
         "Service_name": {
@@ -256,7 +259,8 @@
                   }
                 },
                 "required": [],
-                "nullable": true
+                "nullable": true,
+                "additionalProperties": false
               },
               "properties": {
                 "Module_name": {
@@ -329,7 +333,8 @@
                     }
                   },
                   "required": [],
-                  "nullable": true
+                  "nullable": true,
+                  "additionalProperties": false
                 }
               },
               "nullable": true,
@@ -338,7 +343,8 @@
           },
           "required": [
             "get"
-          ]
+          ],
+          "additionalProperties": false
         }
       },
       "required": [],
@@ -387,7 +393,8 @@
           }
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "aquaInputPath": {
       "type": "string",
@@ -437,7 +444,8 @@
             "minItems": 1
           }
         },
-        "required": []
+        "required": [],
+        "additionalProperties": false
       },
       "properties": {
         "workerName": {
@@ -469,7 +477,8 @@
               "minItems": 1
             }
           },
-          "required": []
+          "required": [],
+          "additionalProperties": false
         }
       },
       "required": []
@@ -498,22 +507,42 @@
             },
             "nullable": true
           },
-          "minWorkers": {
+          "targetWorkers": {
             "type": "number",
-            "description": "Required workers to activate the deal",
+            "description": "Max workers in the deal",
             "default": 1,
             "nullable": true,
             "minimum": 1
           },
-          "targetWorkers": {
+          "minWorkers": {
             "type": "number",
-            "description": "Max workers in the deal",
-            "default": 3,
+            "description": "Required workers to activate the deal. Matches target workers by default",
             "nullable": true,
             "minimum": 1
+          },
+          "maxWorkersPerProvider": {
+            "type": "number",
+            "description": "Max workers per provider. Matches target workers by default",
+            "nullable": true,
+            "minimum": 1
+          },
+          "pricePerWorkerEpoch": {
+            "type": "number",
+            "description": "Price per worker epoch in FL. This number is multiplied by 10^18",
+            "default": 0.1,
+            "nullable": true,
+            "minimum": 1e-18
+          },
+          "collateralPerWorker": {
+            "type": "number",
+            "description": "Collateral per worker in FL. This number is multiplied by 10^18",
+            "default": 1,
+            "nullable": true,
+            "minimum": 1e-18
           }
         },
-        "required": []
+        "required": [],
+        "additionalProperties": false
       },
       "properties": {
         "dealName": {
@@ -536,22 +565,42 @@
               },
               "nullable": true
             },
-            "minWorkers": {
+            "targetWorkers": {
               "type": "number",
-              "description": "Required workers to activate the deal",
+              "description": "Max workers in the deal",
               "default": 1,
               "nullable": true,
               "minimum": 1
             },
-            "targetWorkers": {
+            "minWorkers": {
               "type": "number",
-              "description": "Max workers in the deal",
-              "default": 3,
+              "description": "Required workers to activate the deal. Matches target workers by default",
               "nullable": true,
               "minimum": 1
+            },
+            "maxWorkersPerProvider": {
+              "type": "number",
+              "description": "Max workers per provider. Matches target workers by default",
+              "nullable": true,
+              "minimum": 1
+            },
+            "pricePerWorkerEpoch": {
+              "type": "number",
+              "description": "Price per worker epoch in FL. This number is multiplied by 10^18",
+              "default": 0.1,
+              "nullable": true,
+              "minimum": 1e-18
+            },
+            "collateralPerWorker": {
+              "type": "number",
+              "description": "Collateral per worker in FL. This number is multiplied by 10^18",
+              "default": 1,
+              "nullable": true,
+              "minimum": 1e-18
             }
           },
-          "required": []
+          "required": [],
+          "additionalProperties": false
         }
       },
       "required": []
@@ -589,6 +638,7 @@
           },
           "clock": {
             "type": "object",
+            "additionalProperties": false,
             "nullable": true,
             "description": "Trigger the spell execution periodically. If you want to disable this property by overriding it in fluence.yaml - pass empty config for it like this: `clock: {}`",
             "properties": {
@@ -629,7 +679,8 @@
         },
         "required": [
           "get"
-        ]
+        ],
+        "additionalProperties": false
       },
       "properties": {
         "Spell_name": {
@@ -661,6 +712,7 @@
             },
             "clock": {
               "type": "object",
+              "additionalProperties": false,
               "nullable": true,
               "description": "Trigger the spell execution periodically. If you want to disable this property by overriding it in fluence.yaml - pass empty config for it like this: `clock: {}`",
               "properties": {
@@ -701,7 +753,8 @@
           },
           "required": [
             "get"
-          ]
+          ],
+          "additionalProperties": false
         }
       },
       "required": []
@@ -757,7 +810,8 @@
       "required": [
         "contractsEnv",
         "relays"
-      ]
+      ],
+      "additionalProperties": false
     },
     "defaultSecretKeyName": {
       "description": "Secret key with this name will be used by default by js-client inside CLI to run Aqua code",
@@ -775,5 +829,6 @@
   ],
   "$id": "https://fluence.dev/schemas/fluence.yaml",
   "title": "fluence.yaml",
-  "description": "Defines Fluence Project, most importantly - what exactly you want to deploy and how. You can use `fluence init` command to generate a template for new Fluence project"
+  "description": "Defines Fluence Project, most importantly - what exactly you want to deploy and how. You can use `fluence init` command to generate a template for new Fluence project",
+  "additionalProperties": false
 }

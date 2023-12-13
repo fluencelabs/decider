@@ -36,6 +36,10 @@ func get_deal_state(decider_id: SpellId, deal_id: DealId) -> ?DealState:
 
     <- state
 
+func remove_deal_state(spell_id: SpellId, deal_id: DealId):
+    Spell spell_id
+    Spell.remove_key(deal_id)
+
 data JoinedDeal:
     deal_id: DealId
     worker_id: WorkerId
@@ -48,6 +52,11 @@ func store_joined_deal(decider_id: SpellId, deal_id: DealId, worker_id: WorkerId
     deal = JoinedDeal(deal_id = deal_id, worker_id = worker_id)
     msg <- Json.stringify(deal)
     Spell.list_push_string(JOINED_DEALS, msg)
+
+func remove_joined_deal(spell_id: SpellId, joined_deal: JoinedDeal):
+    Spell spell_id
+    str <- Json.stringify(joined_deal)
+    Spell.list_remove_value(JOINED_DEALS, str)
 
 func get_joined_deals(spell_id: SpellId) -> []JoinedDeal:
     Spell spell_id
@@ -74,6 +83,12 @@ func store_deal(spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, block: 
     catch e:
         deal_log(spell_id, deal_id, ["cannot store deal state, deal join failed", e.message])
 
+func remove_deal(spell_id: string, deal_id: string, worker_id: string):
+    try:
+        remove_joined_deal(spell_id, JoinedDeal(deal_id = deal_id, worker_id = worker_id))
+        remove_deal_state(spell_id, deal_id)
+    catch e:
+        deal_log(spell_id, deal_id, ["couldn't remove the deal", e])
 
 data InstallationFailed:
     log: DealMatched

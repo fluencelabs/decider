@@ -22,4 +22,10 @@ const LAST_SEEN_BLOCK = "last_seen_block"
 -- This name must be in sync with Worker Spell.
 const WORKER_DEF_CID = "worker_def_cid"
 
+-- Info about how synched the decider is with the chain
 const SYNC_INFO = "sync_info"
+
+-- Deal statuses
+const DEAL_STATUS_ENDED = "ENDED"
+const DEAL_STATUS_ACTIVE = "ACTIVE"
+const DEAL_STATUS_INACTIVE = "INACTIVE"

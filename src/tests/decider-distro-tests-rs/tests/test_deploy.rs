@@ -16,7 +16,9 @@ use utils::control::{
     update_config, update_decider_script_for_tests, wait_decider_stopped, wait_worker_spell_stopped,
 };
 use utils::deal::{get_deal_state, get_joined_deals, JoinedDeal};
-use utils::default::{default_receipt, DEAL_IDS, DEFAULT_POLL_WINDOW_BLOCK_SIZE};
+use utils::default::{
+    default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE, DEFAULT_POLL_WINDOW_BLOCK_SIZE,
+};
 use utils::distro::{make_distro_with_api, make_distro_with_api_and_config};
 use utils::setup::setup_nox;
 use utils::test_rpc_server::{run_test_server, run_test_server_predefined};
@@ -434,8 +436,8 @@ async fn test_deploy_a_deal_in_seq() {
 
     // The second run
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction and getLogs for the old deal
-    for step in 0..7 {
+    // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction, getLogs and eth_call for the old deal
+    for step in 0..8 {
         let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
             "eth_blockNumber" => {
@@ -461,6 +463,7 @@ async fn test_deploy_a_deal_in_seq() {
             "eth_getTransactionCount" => json!("0x1"),
             "eth_getTransactionReceipt" => default_receipt(),
             "eth_gasPrice" => json!("0x3b9aca07"),
+            "eth_call" => json!(DEAL_STATUS_ACTIVE),
             _ => panic!("mock http got an unexpected rpc method: {}", method),
         };
         server.send_response(Ok(response));
@@ -595,7 +598,7 @@ async fn test_deploy_deals_in_one_block() {
     {
         // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction, getTransactionReceipt
         // and getLogs for the old deal
-        for step in 0..7 {
+        for step in 0..8 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => {
@@ -626,6 +629,7 @@ async fn test_deploy_deals_in_one_block() {
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
                 "eth_getTransactionReceipt" => default_receipt(),
+                "eth_call" => json!(DEAL_STATUS_ACTIVE),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(Ok(response));

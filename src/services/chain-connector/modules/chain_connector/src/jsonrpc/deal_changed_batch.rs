@@ -2,7 +2,7 @@ use std::iter::zip;
 
 use marine_rs_sdk::marine;
 
-use crate::chain::deal_changed::parse_deal_changed;
+use crate::chain::event::deal_changed::parse_deal_changed;
 use crate::chain::log::Log;
 use crate::curl::send_jsonrpc_batch;
 use crate::jsonrpc::deal_changed::{DealChangedResult, DealChangesReq};

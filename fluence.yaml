@@ -1,35 +1,26 @@
 # yaml-language-server: $schema=.fluence/schemas/fluence.json
 
-# Defines Fluence Project, most importantly - what exactly you want to deploy and how. You can use `fluence init` command to generate a template for new Fluence project
+# Documentation: https://github.com/fluencelabs/cli/tree/main/docs/configs/fluence.md
+# Defines Fluence Project
+# Most importantly - what exactly you want to deploy and how
+# You can use `fluence init` command to generate a template for new Fluence project
 
-# Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/fluence.md
-
+# config version
 version: 5
-
-# This is like the "main" Aqua file, but
-# mostly it just points to the vague location of the code
-#
-# Theoretically, only that file and its imports (including transitives) will be compiled.
-# But in practice it seems to be unstable, changing unpredictably.
-aquaInputPath: src/aqua/decider/poll.aqua
-
-# To fight the aforementioned unpredictability, I set these imports explicitly.
-# I consider this a temporary hack to hotfix bug with compilation scopes, until it is fixed.
-aquaImports:
-  - src/aqua
-  - src/aqua/decider
-  - src/aqua/chain
-  - src/aqua/fluence
 
 dependencies:
   npm:
     "@fluencelabs/aqua-ipfs": 0.5.17
     "@fluencelabs/aqua-lib": 0.8.1
-    "@fluencelabs/spell": 0.5.31
+    "@fluencelabs/spell": 0.5.32
     "@fluencelabs/installation-spell": 0.5.31
   cargo:
     marine: 0.14.0
     mrepl: 0.21.3
+
+# Path to the aqua file or directory with aqua files that you want to compile by default.
+# Must be relative to the project root dir
+aquaInputPath: src/aqua/decider/poll.aqua
 
 # Here I define services. Can have as many as I want. Right now it's just 'chain_connector'.
 services:
@@ -44,21 +35,3 @@ spells:
   decider:
     # path to directory containing 'spell.yaml'
     get: src/aqua
-
-# Here I define where to deploy workers.
-hosts:
-  # this is the _worker_ name
-  decider:
-    peerIds:
-      # that's where to deploy it
-      - 12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ
-    services:
-      - chain_connector
-    spells:
-      - decider
-
-relays:
-  - /ip4/127.0.0.1/tcp/9999/ws/p2p/12D3KooWJDiLFLmWstcFpAofWkYJzuvwuquNTQQkB9xzKjRyqqFJ
-  # - /dns4/stage.fluence.dev/tcp/19001/wss/p2p/12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv
-
-contractsEnv: testnet
