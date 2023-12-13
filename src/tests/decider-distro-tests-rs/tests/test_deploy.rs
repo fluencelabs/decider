@@ -11,6 +11,7 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 use std::collections::HashSet;
 use std::time::Duration;
+use log_utils::enable_logs;
 use utils::chain::LogsReq;
 use utils::control::{
     update_config, update_decider_script_for_tests, wait_decider_stopped, wait_worker_spell_stopped,
@@ -384,6 +385,8 @@ async fn test_deploy_deals_diff_blocks() {
 ///    c. both workers are installed and have correct CIDs
 #[tokio::test]
 async fn test_deploy_a_deal_in_seq() {
+    enable_logs();
+    //enable_decider_logs();
     const LATEST_BLOCK_FIRST_RUN: u32 = 35;
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
     let deal_id_1 = format!("0x{DEAL_ID_1}");
@@ -400,7 +403,7 @@ async fn test_deploy_a_deal_in_seq() {
     let distro = make_distro_with_api_and_config(url, empty_config);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
 
     // Initial run for installing the first deal
     update_config(&mut client, &oneshot_config()).await.unwrap();
