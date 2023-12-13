@@ -7,9 +7,10 @@ use fluence_spell_dtos::value::ScriptValue;
 use maplit::hashmap;
 use serde::Deserialize;
 use serde_json::{json, Value};
-use std::fs;
 use std::path::PathBuf;
+use std::sync::Arc;
 use std::time::Duration;
+use tempfile::TempDir;
 
 pub async fn update_config(
     client: &mut ConnectedClient,
@@ -27,12 +28,13 @@ pub async fn update_config(
 }
 
 // God left me here
-pub fn modify_decider_spell_script(
-    tmp_dir: PathBuf,
+pub async fn modify_decider_spell_script(
+    tmp_dir: Arc<TempDir>,
     decider_spell_id: String,
     updated_script: String,
 ) {
-    let script_path: PathBuf = tmp_dir.join(
+    let temp_dir_path  = tmp_dir.path();
+    let script_path: PathBuf = temp_dir_path.join(
         [
             "services",
             "workdir",
@@ -44,10 +46,10 @@ pub fn modify_decider_spell_script(
         .collect::<PathBuf>(),
     );
 
-    fs::write(&script_path, updated_script).unwrap();
+    tokio::fs::write(&script_path, updated_script).await.unwrap();
 }
 
-pub async fn update_decider_script_for_tests(client: &mut ConnectedClient, test_dir: PathBuf) {
+pub async fn update_decider_script_for_tests(client: &mut ConnectedClient, test_dir: Arc<TempDir>) {
     let result = utils::execute(
         client,
         r#"
@@ -84,7 +86,7 @@ pub async fn update_decider_script_for_tests(client: &mut ConnectedClient, test_
         script = script.source_code,
     );
 
-    modify_decider_spell_script(test_dir, decider_id, updated_script);
+    modify_decider_spell_script(test_dir, decider_id, updated_script).await;
 }
 
 pub async fn wait_worker_spell_stopped(

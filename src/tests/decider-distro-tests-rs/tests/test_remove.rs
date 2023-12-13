@@ -18,7 +18,7 @@ use utils::distro::*;
 use utils::setup::setup_nox;
 use utils::*;
 
-#[allow(deal_code)]
+#[allow(dead_code)]
 #[derive(Deserialize)]
 struct DealStatusReq {
     data: String,
