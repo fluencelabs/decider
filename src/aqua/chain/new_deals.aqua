@@ -6,7 +6,7 @@ import ChainConnector, DealMatched from "services.aqua"
 
 import ChainInfo from "../chain/chain.aqua"
 import deal_log, spell_log, get_string from "../fluence/spell.aqua"
-import is_worker_created from "../fluence/worker.aqua"
+import is_worker_created, WorkerSettings from "../fluence/worker.aqua"
 import Json from "../fluence/peer.aqua"
 import join_deal from "../decider/join_deal.aqua"
 import JoinedDeal, store_deal, store_installation_failed_deal from "../decider/deal_storage.aqua"
@@ -49,13 +49,13 @@ func get_left_boundary(spell_id: SpellId, chain: ChainInfo) -> ?string:
     spell_log(spell_id, ["left boundary will be", left])
     <- left
 
-func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: string):
+func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: string, settings: WorkerSettings):
     Spell spell_id
 
     -- TODO: I assume that `logs` are sorted by `block_number`. Is that a correct assumption?
     for log <- logs:
         deal_id = log.info.deal_id
-        worker_id, error <- join_deal(spell_id, log.block_number, deal_id, log.info.app_cid)
+        worker_id, error <- join_deal(spell_id, log.block_number, deal_id, log.info.app_cid, settings)
         if worker_id == nil:
             store_installation_failed_deal(spell_id, deal_id, log, error!)
         else:
@@ -112,14 +112,14 @@ func poll_logs(spell_id: SpellId, chain: ChainInfo, left: string) -> ?Poll:
 
     <- poll
 
-func poll_new_deals(spell_id: SpellId, chain: ChainInfo, joined_deals: []JoinedDeal, latest_block: string):
+func poll_new_deals(spell_id: SpellId, chain: ChainInfo, joined_deals: []JoinedDeal, latest_block: string, settings: WorkerSettings):
     -- retrieve block number to poll from
     left <- get_left_boundary(spell_id, chain)
     if left != nil:
         poll <- poll_logs(spell_id, chain, left!)
         if poll != nil:
             new_deals <- filter_new(spell_id, poll!.logs, joined_deals)
-            join_deals(chain, spell_id, new_deals, left!)
+            join_deals(chain, spell_id, new_deals, left!, settings)
 
             -- after we have processed all logs from poll, we can conclude
             -- that we have seen all logs until `min(latest_block, right_boundary)`

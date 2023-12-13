@@ -30,12 +30,12 @@ data WorkerSettings:
 service JsonWorkerSettings("json"):
     parse(str: string) -> WorkerSettings
 
--- Parse worker-settings from the decider's KV 
+-- Parse worker-settings from the decider's KV
 func get_worker_settings(spell_id: SpellId) ->  ?WorkerSettings:
     Spell spell_id
 
     settings: *WorkerSettings
-    -- TODO: I want to unite these guys to one structure but it won't be backward-compatible. 
+    -- TODO: I want to unite these guys to one structure but it won't be backward-compatible.
     settings_str <- get_string(spell_id, "worker_settings")
     if settings_str != nil:
         try:
