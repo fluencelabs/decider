@@ -11,7 +11,6 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 use std::collections::HashSet;
 use std::time::Duration;
-use log_utils::enable_logs;
 use utils::chain::LogsReq;
 use utils::control::{
     update_config, update_decider_script_for_tests, wait_decider_stopped, wait_worker_spell_stopped,
