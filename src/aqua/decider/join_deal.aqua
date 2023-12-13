@@ -4,7 +4,7 @@ import PeerSpell from "@fluencelabs/spell/api.aqua"
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 
 import deal_log from "../fluence/spell.aqua"
-import get_worker_settings, WorkerArgs, WorkerSettings from "../fluence/worker.aqua"
+import WorkerArgs, WorkerSettings from "../fluence/worker.aqua"
 import DealState from "../decider/deal_storage.aqua"
 import DealId, SpellId, WorkerId, CID, Block from "../types.aqua"
 import Json from "../fluence/peer.aqua"
