@@ -1,4 +1,4 @@
-module Worker declares WorkerArgs, WorkerSettings, is_worker_created, create, remove
+module Worker declares WorkerArgs, WorkerSettings, get_worker_settings, is_worker_created, create, remove
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
 import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
@@ -26,9 +26,6 @@ data WorkerSettings:
     script: string
     -- IPFS API for the worker to pull info from
     ipfs: string
-
-service JsonWorkerSettings("json"):
-    parse(str: string) -> WorkerSettings
 
 -- Check if a worker for a deal is already created
 func is_worker_created(spell_id: SpellId, deal_id: DealId) -> bool:
