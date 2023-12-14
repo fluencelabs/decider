@@ -19,4 +19,3 @@ pub fn filter_logs<'a, T>(blocks: &'a [(u32, T)], req: &LogsReq) -> Vec<&'a (u32
             *block_number >= req.from_block && *block_number <= req.to_block
         })
         .collect::<_>()
-}

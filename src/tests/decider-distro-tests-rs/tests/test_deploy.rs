@@ -15,14 +15,14 @@ use utils::chain::LogsReq;
 use utils::control::{
     update_config, update_decider_script_for_tests, wait_decider_stopped, wait_worker_spell_stopped,
 };
-use utils::deal::{get_deal_state, get_joined_deals, JoinedDeal};
 use utils::default::{
     default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE, DEFAULT_POLL_WINDOW_BLOCK_SIZE,
 };
 use utils::distro::{make_distro_with_api, make_distro_with_api_and_config};
 use utils::setup::setup_nox;
+use utils::state::deal::{get_deal_state, get_joined_deals, JoinedDeal};
+use utils::state::worker::get_worker_app_cid;
 use utils::test_rpc_server::{run_test_server, run_test_server_predefined};
-use utils::worker::get_worker_app_cid;
 use utils::TestApp;
 use utils::*;
 

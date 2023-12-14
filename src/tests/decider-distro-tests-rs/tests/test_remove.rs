@@ -12,10 +12,10 @@ use serde::Deserialize;
 use serde_json::json;
 use utils::chain::LogsReq;
 use utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};
-use utils::deal::get_joined_deals;
 use utils::default::{default_receipt, DEAL_IDS, DEAL_STATUS_ENDED};
 use utils::distro::*;
 use utils::setup::setup_nox;
+use utils::state::deal::get_joined_deals;
 use utils::*;
 
 #[allow(dead_code)]

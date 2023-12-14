@@ -9,12 +9,12 @@ use maplit::hashmap;
 use serde_json::json;
 use utils::chain::LogsReq;
 use utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};
-use utils::deal::get_joined_deals;
 use utils::default::{
     default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE, DEFAULT_POLL_WINDOW_BLOCK_SIZE,
 };
 use utils::distro::make_distro_with_api;
 use utils::setup::setup_nox;
+use utils::state::deal::get_joined_deals;
 use utils::test_rpc_server::run_test_server;
 use utils::TestApp;
 use utils::*;
