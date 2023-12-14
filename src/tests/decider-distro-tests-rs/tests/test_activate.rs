@@ -3,7 +3,9 @@
 #![feature(async_fn_in_trait)]
 
 use crate::utils::chain::{DealStatusReq, LogsReq};
-use crate::utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};
+use crate::utils::control::{
+    update_config, update_decider_script_for_tests, wait_decider_stopped, wait_worker_spell_stopped,
+};
 use crate::utils::default::{default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE, DEAL_STATUS_INACTIVE};
 use crate::utils::distro::make_distro_with_api;
 use crate::utils::oneshot_config;
@@ -14,6 +16,7 @@ use crate::utils::test_rpc_server::run_test_server;
 use crate::utils::*;
 use eyre::WrapErr;
 use serde_json::json;
+use std::time::Duration;
 
 pub mod utils;
 
@@ -95,6 +98,9 @@ async fn test_activate() {
     // Check that the worker is indeed activated
     let active = worker::is_active(&mut client, &deal_address).await.unwrap();
     assert!(active, "worker must be active");
+
+    // Check that the worker spell is created and is run after the worker is activated
+    wait_worker_spell_stopped(&mut client, worker_id.clone(), Duration::from_millis(200)).await;
 
     // The next run on which the deal is deactivated
     update_config(&mut client, &oneshot_config()).await.unwrap();
