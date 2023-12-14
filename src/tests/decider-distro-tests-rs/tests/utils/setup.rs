@@ -54,7 +54,7 @@ pub async fn setup_nox(distro: PackageDistro) -> (CreatedSwarm, ConnectedClient)
 
 // Deploy the first deal for a peer as a part of the test setup process.
 // The sequence of RPC calls describes **only** the flow when there are no other deals were previously joined.
-pub async fn setup_deploy_deal(
+pub async fn setup_rpc_deploy_deal(
     server: &mut ServerHandle,
     latest_block: u32,
     deal_id: &str,
@@ -67,7 +67,7 @@ pub async fn setup_deploy_deal(
             "eth_blockNumber" => json!(to_hex(latest_block)),
             "eth_getLogs" => {
                 let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-                json!([TestApp::log_test_app2(
+                json!([TestApp::log_test_app1(
                     deal_id,
                     block_number,
                     log.topics[1].as_str()

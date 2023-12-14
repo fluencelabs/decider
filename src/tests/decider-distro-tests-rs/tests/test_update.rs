@@ -4,7 +4,7 @@
 
 pub mod utils;
 
-use crate::utils::setup::setup_deploy_deal;
+use crate::utils::setup::setup_rpc_deploy_deal;
 use fluence_spell_dtos::value::StringValue;
 use maplit::hashmap;
 use serde_json::json;
@@ -33,7 +33,7 @@ async fn test_update_deal() {
 
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    setup_deploy_deal(&mut server, BLOCK_INIT, DEAL_ID, BLOCK_NUMBER).await;
+    setup_rpc_deploy_deal(&mut server, BLOCK_INIT, DEAL_ID, BLOCK_NUMBER).await;
     wait_decider_stopped(&mut client).await;
 
     let mut deals = get_joined_deals(&mut client).await;
@@ -139,7 +139,7 @@ async fn test_update_deal_from_later_blocks() {
 
     // Deploy a deal
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    setup_deploy_deal(&mut server, LATEST_BLOCK_INIT, DEAL_ID, BLOCK_NUMBER_DEAL).await;
+    setup_rpc_deploy_deal(&mut server, LATEST_BLOCK_INIT, DEAL_ID, BLOCK_NUMBER_DEAL).await;
     wait_decider_stopped(&mut client).await;
 
     let deals = get_joined_deals(&mut client).await;
