@@ -77,7 +77,10 @@ func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: 
                 -- This way, if particle has timed out during process of a log, `last seen block` would not be updated
                 -- And we will try all events from that block again
                 LastSeen.gt_set(spell_id, prev_block!, left)
-    -- Check deal statuses 
+
+    -- Check deal statuses to activate new deals immediately
+    -- If this call fails for some reason, the deal statuses will be polled on the next run
+    -- for all joined deals
     if deal_ids != nil:
         spell_log(spell_id, ["polling statuses of ", deal_ids.length, "deals"])
         poll_deal_statuses_by_ids(spell_id, chain.api_endpoint, deal_ids)
