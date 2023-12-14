@@ -11,13 +11,15 @@ import "services.aqua"
 
 func activate_deal(spell_id: SpellId, deal_id: DealId):
     try:
-        Worker.activate(deal_id)
+        if !Worker.is_active(deal_id):
+            Worker.activate(deal_id)
     catch e:
         deal_log(spell_id, deal_id, ["couldn't activate a worker", e])
 
 func deactivate_deal(spell_id: SpellId, deal_id: DealId):
     try:
-        Worker.deactivate(deal_id)
+        if Worker.is_active(deal_id):
+            Worker.deactivate(deal_id)
     catch e:
         deal_log(spell_id, deal_id, ["couldn't deactivate a worker", e])
 

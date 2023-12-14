@@ -1,4 +1,4 @@
-use crate::hex_u32_deserialize;
+use crate::utils::hex_u32_deserialize;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -19,3 +19,10 @@ pub fn filter_logs<'a, T>(blocks: &'a [(u32, T)], req: &LogsReq) -> Vec<&'a (u32
             *block_number >= req.from_block && *block_number <= req.to_block
         })
         .collect::<_>()
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DealStatusReq {
+    pub data: String,
+    pub to: String,
+}

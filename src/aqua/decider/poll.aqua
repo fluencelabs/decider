@@ -11,7 +11,7 @@ import poll_mailbox from "../decider/mailbox.aqua"
 import poll_txs from "./register_worker.aqua"
 import store_sync_info from "./sync_info.aqua"
 import poll_deal_statuses from "../chain/deal_status.aqua"
-import WorkerSettings from "./fluence/worker.aqua"
+import WorkerSettings from "../fluence/worker.aqua"
 
 use "../chain/blocks.aqua" as Blocks
 

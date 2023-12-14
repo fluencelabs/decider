@@ -10,8 +10,9 @@ import is_worker_created, WorkerSettings from "../fluence/worker.aqua"
 import Json from "../fluence/peer.aqua"
 import join_deal from "../decider/join_deal.aqua"
 import JoinedDeal, store_deal, store_installation_failed_deal from "../decider/deal_storage.aqua"
-import SpellId from "../types.aqua"
+import SpellId, DealId from "../types.aqua"
 import register_worker from "../decider/register_worker.aqua"
+import poll_deal_statuses_by_ids from "../chain/deal_status.aqua"
 
 use "last_seen.aqua" as LastSeen
 use "../hex.aqua" as Hex
@@ -52,6 +53,7 @@ func get_left_boundary(spell_id: SpellId, chain: ChainInfo) -> ?string:
 func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: string, settings: WorkerSettings):
     Spell spell_id
 
+    deal_ids: *DealId
     -- TODO: I assume that `logs` are sorted by `block_number`. Is that a correct assumption?
     for log <- logs:
         deal_id = log.info.deal_id
@@ -64,6 +66,7 @@ func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: 
             is_ok <- register_worker(chain, spell_id, deal_id, worker_id!, log.info.pat_id)
             if is_ok:
                 store_deal(spell_id, deal_id, worker_id!, log.block_number)
+                deal_ids <<- deal_id
 
             -- Use `log.block_number - 1` as a `last seen block`
             -- Can not use `log.block_number` because it is unknown if there are more events from that block in `logs`
@@ -74,6 +77,10 @@ func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: 
                 -- This way, if particle has timed out during process of a log, `last seen block` would not be updated
                 -- And we will try all events from that block again
                 LastSeen.gt_set(spell_id, prev_block!, left)
+    -- Check deal statuses 
+    if deal_ids != nil:
+        spell_log(spell_id, ["polling statuses of ", deal_ids.length, "deals"])
+        poll_deal_statuses_by_ids(spell_id, chain.api_endpoint, deal_ids)
 
 -- Returns 'matches' that were not yet joined
 func filter_new(spell_id: SpellId, matches: []DealMatched, joined_deals: []JoinedDeal) -> []DealMatched:

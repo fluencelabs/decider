@@ -2,6 +2,7 @@ module JoinDeal declares join_deal
 
 import PeerSpell from "@fluencelabs/spell/api.aqua"
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
+import "@fluencelabs/spell/spell_service.aqua"
 
 import deal_log from "../fluence/spell.aqua"
 import WorkerArgs, WorkerSettings from "../fluence/worker.aqua"
@@ -15,13 +16,29 @@ import Srv from "@fluencelabs/aqua-lib/builtin.aqua"
 
 use "../fluence/worker.aqua" as Worker
 
+func empty_clock_config() -> ClockConfig:
+    <- ClockConfig(start_sec = 0, end_sec = 0, period_sec = 0)
+
+func empty_blockchain_config() -> BlockChainConfig:
+    <- BlockChainConfig(start_block = 0, end_block = 0)
+
+func empty_connection_config() -> ConnectionPoolConfig:
+    <- ConnectionPoolConfig(connect = false, disconnect = false)
+
+func empty_trigger_config() -> TriggerConfig:
+    <- TriggerConfig(clock = empty_clock_config(), connections = empty_connection_config(), blockchain = empty_blockchain_config())
+
 func install_deal_spell(deal_id: DealId, cid: CID, settings: WorkerSettings) -> string:
     args = WorkerArgs(deal_id = deal_id, worker_def_cid = cid, ipfs = settings.ipfs)
-    worker_spell_id <- PeerSpell.install(settings.script, args, settings.config, "worker-spell")
+    -- Here we install the spell but want the worker-spell not to run since the worker will be deactivated afterwards
+    worker_spell_id <- PeerSpell.install(settings.script, args, empty_trigger_config(), "worker-spell")
     <- worker_spell_id
 
 -- TODO: what should happen if join_deal has failed? We might never receive it again
 --       Probably should store failed deals, and then retry them a few times?
+-- 
+-- When joinin a deal we create a worker. BUT the worker must be deactivated. Later, we will check the deal status
+-- to determine if it's time to activate the deal. For now, it's enough to allocate the worker.
 func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID, settings: WorkerSettings) -> ?WorkerId, ?string:
     log = (msg: ⊤):
         deal_log(spell_id, deal_id, msg)
@@ -52,5 +69,12 @@ func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID, 
             catch e:
                 error <<- Json.stringify(["cannot create deal spell", e.message])
                 log(["cannot create deal spell, deal join failed", e.message])
+
+        try:
+            Worker.deactivate(deal_id)
+        catch e:
+            err = ["error deactivating worker", e]
+            error <<- Json.stringify(err)
+            log(err)
 
     <- worker_id, error

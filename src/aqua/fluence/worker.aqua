@@ -1,4 +1,4 @@
-module Worker declares WorkerArgs, WorkerSettings, is_worker_created, create, remove
+module Worker declares WorkerArgs, WorkerSettings, is_worker_created, create, remove, deactivate
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
 import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
@@ -62,3 +62,6 @@ func remove(host_id: PeerId, worker_id: WorkerId):
     spell_log("spell", ["will remove worker", worker_id, "from host", host_id])
     on host_id:
         Worker.remove(worker_id)
+
+func deactivate(deal_id: DealId):
+    Worker.deactivate(deal_id)

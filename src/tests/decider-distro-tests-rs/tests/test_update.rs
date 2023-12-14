@@ -4,6 +4,7 @@
 
 pub mod utils;
 
+use crate::utils::setup::setup_deploy_deal;
 use fluence_spell_dtos::value::StringValue;
 use maplit::hashmap;
 use serde_json::json;
@@ -32,32 +33,7 @@ async fn test_update_deal() {
 
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    // Deploy a deal
-    {
-        let expected_reqs = 6;
-        for _ in 0..expected_reqs {
-            let (method, params) = server.receive_request().await.unwrap();
-            let response = match method.as_str() {
-                "eth_blockNumber" => json!(to_hex(BLOCK_INIT)),
-                "eth_getLogs" => {
-                    let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-                    json!([TestApp::log_test_app2(
-                        DEAL_ID,
-                        BLOCK_NUMBER,
-                        log.topics[1].as_str()
-                    )])
-                }
-                "eth_sendRawTransaction" => {
-                    json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
-                }
-                "eth_getTransactionCount" => json!("0x1"),
-                "eth_gasPrice" => json!("0x3b9aca07"),
-                "eth_getTransactionReceipt" => default_receipt(),
-                _ => panic!("mock http got an unexpected rpc method: {}", method),
-            };
-            server.send_response(Ok(response));
-        }
-    }
+    setup_deploy_deal(&mut server, BLOCK_INIT, DEAL_ID, BLOCK_NUMBER).await;
     wait_decider_stopped(&mut client).await;
 
     let mut deals = get_joined_deals(&mut client).await;
@@ -160,33 +136,10 @@ async fn test_update_deal_from_later_blocks() {
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
-    update_config(&mut client, &oneshot_config()).await.unwrap();
+
     // Deploy a deal
-    {
-        let expected_reqs = 6;
-        for _ in 0..expected_reqs {
-            let (method, params) = server.receive_request().await.unwrap();
-            let response = match method.as_str() {
-                "eth_blockNumber" => json!(to_hex(LATEST_BLOCK_INIT)),
-                "eth_getLogs" => {
-                    let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-                    json!([TestApp::log_test_app2(
-                        DEAL_ID,
-                        BLOCK_NUMBER_DEAL,
-                        log.topics[1].as_str()
-                    )])
-                }
-                "eth_sendRawTransaction" => {
-                    json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
-                }
-                "eth_getTransactionCount" => json!("0x1"),
-                "eth_gasPrice" => json!("0x3b9aca07"),
-                "eth_getTransactionReceipt" => default_receipt(),
-                _ => panic!("mock http got an unexpected rpc method: {}", method),
-            };
-            server.send_response(Ok(response));
-        }
-    }
+    update_config(&mut client, &oneshot_config()).await.unwrap();
+    setup_deploy_deal(&mut server, LATEST_BLOCK_INIT, DEAL_ID, BLOCK_NUMBER_DEAL).await;
     wait_decider_stopped(&mut client).await;
 
     let deals = get_joined_deals(&mut client).await;

@@ -15,8 +15,8 @@ use tokio::sync::Mutex;
 use tokio::task;
 use tokio::time::timeout;
 
-type RpcMethod = String;
-type RpcParams = Vec<Value>;
+pub type RpcMethod = String;
+pub type RpcParams = Vec<Value>;
 
 type RpcResult = Value;
 type RpcError = Value;
