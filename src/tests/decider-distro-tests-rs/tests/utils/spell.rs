@@ -1,4 +1,4 @@
-use crate::execute;
+use crate::utils::execute;
 use connected_client::ConnectedClient;
 use eyre::WrapErr;
 use fluence_spell_dtos::value::{StringListValue, StringValue};

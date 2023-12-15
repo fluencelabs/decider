@@ -180,7 +180,7 @@ async fn test_sync_info() {
     }
     wait_decider_stopped(&mut client).await;
 
-    let sync_info = decider::get_sync_info(&mut client)
+    let sync_info = state::decider::get_sync_info(&mut client)
         .await
         .wrap_err("get_sync_info")
         .unwrap();
@@ -205,7 +205,7 @@ async fn test_sync_info() {
     }
     wait_decider_stopped(&mut client).await;
 
-    let sync_info = decider::get_sync_info(&mut client)
+    let sync_info = state::decider::get_sync_info(&mut client)
         .await
         .wrap_err("get_sync_info")
         .unwrap();
