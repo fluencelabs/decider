@@ -1,7 +1,7 @@
 use crate::utils;
 use crate::utils::spell;
 use connected_client::ConnectedClient;
-use eyre::WrapErr;
+use eyre::{ContextCompat, WrapErr};
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use fluence_spell_dtos::value::ScriptValue;
 use maplit::hashmap;
@@ -33,7 +33,7 @@ pub async fn modify_decider_spell_script(
     decider_spell_id: String,
     updated_script: String,
 ) {
-    let temp_dir_path  = tmp_dir.path();
+    let temp_dir_path = tmp_dir.path();
     let script_path: PathBuf = temp_dir_path.join(
         [
             "services",
@@ -46,7 +46,9 @@ pub async fn modify_decider_spell_script(
         .collect::<PathBuf>(),
     );
 
-    tokio::fs::write(&script_path, updated_script).await.unwrap();
+    tokio::fs::write(&script_path, updated_script)
+        .await
+        .unwrap();
 }
 
 pub async fn update_decider_script_for_tests(client: &mut ConnectedClient, test_dir: Arc<TempDir>) {
@@ -116,8 +118,19 @@ pub async fn wait_worker_spell_stopped(
             struct State {
                 state: String,
             }
-            let last_status = strings.strings.last().unwrap();
-            let state = serde_json::from_str::<State>(last_status).unwrap();
+            let last_statuses = strings
+                .strings
+                .iter()
+                .filter_map(|s| serde_json::from_str::<State>(s).ok())
+                .collect::<Vec<_>>();
+
+            let state = last_statuses
+                .last()
+                .wrap_err(format!(
+                    "no installation status parsed, got {:?}",
+                    strings.strings
+                ))
+                .unwrap();
             let in_progress_statuses = ["INSTALLATION_IN_PROGRESS", "NOT_STARTED"];
             if !in_progress_statuses.contains(&state.state.as_str()) {
                 assert_eq!(
