@@ -1,7 +1,10 @@
 module DealPeerRemoved declares *
 
 import SpellId, DealId from "../types.aqua"
-import get_deal_state_removed from "../decider/deal_storage.aqua"
+import JoinedDeal, get_deal_state_removed, store_deal_state_removed from "../decider/deal_storage.aqua"
+use "../hex.aqua" as Hex
+import remove_ended_deal from "../decider/deal_removed.aqua"
+import spell_log, deal_log from "../fluence/spell.aqua"
 
 import "services.aqua"
 
@@ -13,14 +16,15 @@ func move_left_boundary(spell_id: SpellId, deal_id: DealId, right_boundary: stri
         if left != nil:
             store_deal_state_removed(spell_id, deal_id, left!)
 
-func poll_deal_peer_removed(spell_id: SpellId, api_endpoint: string, latest_block: string, deals: []DealId):
-    if deals.len != 0:
+func poll_deal_peer_removed(spell_id: SpellId, api_endpoint: string, latest_block: string, deals: []JoinedDeal):
+    if deals.length != 0:
         reqs: *DealPeerRemovedReq
-        for deal_id <- deals:
+        for joined_deal <- deals:
+            deal_id = joined_deal.deal_id
             state <- get_deal_state_removed(spell_id, deal_id)
             if state != nil:
-                reqs <<- DealPeerRemovedReq(deal_id = deal_id, left_boundary = state.left_boundary) 
-        
+                reqs <<- DealPeerRemovedReq(deal_id = deal_id, left_boundary = state!.left_boundary) 
+
         if reqs != nil:
             result <- ChainConnector.poll_deal_peer_removed_batch(api_endpoint, reqs)
             if !result.success:
@@ -28,10 +32,10 @@ func poll_deal_peer_removed(spell_id: SpellId, api_endpoint: string, latest_bloc
             else:
                 for removed <- result.result:
                     if !removed.success:
-                        deal_log(spell_id, removed.deal_id, ["can't find if the deal was removed from provider", deal_removed_result.error])
+                        deal_log(spell_id, removed.deal_id, ["can't find if the deal was removed from provider", removed.error])
                     else:
                         if removed.is_removed:
                             deal_log(spell_id, removed.deal_id, ["the deal is removed from the provider"])
                             remove_ended_deal(spell_id, removed.deal_id)
                         else:
-                            move_left_boundary(spell_id, deal_id, removed.right_boundary, latest_block)
+                            move_left_boundary(spell_id, removed.deal_id, removed.right_boundary, latest_block)
