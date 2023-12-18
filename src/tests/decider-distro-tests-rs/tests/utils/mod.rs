@@ -1,13 +1,10 @@
 pub mod chain;
 pub mod control;
-pub mod deal;
-pub mod decider;
 pub mod default;
 pub mod distro;
 pub mod setup;
 pub mod spell;
-pub mod subnet;
-pub mod worker;
+pub mod state;
 
 mod test_apps;
 pub mod test_rpc_server;

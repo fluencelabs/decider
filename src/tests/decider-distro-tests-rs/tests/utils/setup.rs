@@ -1,7 +1,11 @@
-use crate::utils::default::IPFS_MULTIADDR;
+use crate::utils::chain::{DealStatusReq, LogsReq};
+use crate::utils::default::{default_receipt, default_status, DEAL_STATUS_ACTIVE, IPFS_MULTIADDR};
+use crate::utils::test_rpc_server::ServerHandle;
+use crate::utils::*;
 use connected_client::ConnectedClient;
 use created_swarm::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
 use created_swarm::{make_swarms_with_cfg, CreatedSwarm};
+use serde_json::json;
 use system_services::PackageDistro;
 
 pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
@@ -47,3 +51,103 @@ pub async fn setup_nox(distro: PackageDistro) -> (CreatedSwarm, ConnectedClient)
     .unwrap();
     (swarm, client)
 }
+
+// Deploy the first deal for a peer as a part of the test setup process.
+// The sequence of RPC calls describes **only** the flow when there are no other deals were previously joined.
+pub async fn setup_rpc_deploy_deal(
+    server: &mut ServerHandle,
+    latest_block: u32,
+    deal_id: &str,
+    block_number: u32,
+) -> Option<()> {
+    let expected_reqs = 7;
+    for _ in 0..expected_reqs {
+        let (method, params) = server.receive_request().await?;
+        let response = match method.as_str() {
+            "eth_blockNumber" => json!(to_hex(latest_block)),
+            "eth_getLogs" => {
+                let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
+                json!([TestApp::log_test_app1(
+                    deal_id,
+                    block_number,
+                    log.topics[1].as_str()
+                )])
+            }
+            "eth_sendRawTransaction" => {
+                json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
+            }
+            "eth_getTransactionCount" => json!("0x1"),
+            "eth_gasPrice" => json!("0x3b9aca07"),
+            "eth_getTransactionReceipt" => default_receipt(),
+            "eth_call" => {
+                let req = serde_json::from_value::<DealStatusReq>(params[0].clone()).unwrap();
+                assert_eq!(
+                    req.to,
+                    format!("0x{deal_id}"),
+                    "request the status of the wrong deal"
+                );
+                default_status()
+            }
+            _ => panic!("mock http got an unexpected rpc method: {}", method),
+        };
+        server.send_response(Ok(response));
+    }
+    Some(())
+}
+
+// Expected RPC calls when nothing is happening on-chain, and
+// the joined deal **don't** require transaction status updates.
+pub async fn setup_rpc_empty_run(
+    server: &mut ServerHandle,
+    latest_block: u32,
+    joined: usize,
+) -> Option<()> {
+    setup_rpc_empty_run_with_status(server, latest_block, DEAL_STATUS_ACTIVE, joined).await
+}
+
+pub async fn setup_rpc_empty_run_with_status(
+    server: &mut ServerHandle,
+    latest_block: u32,
+    status: &str,
+    joined: usize,
+) -> Option<()> {
+    let expected_reqs = 2 + 2 * joined;
+    for _ in 0..expected_reqs {
+        let (method, _params) = server.receive_request().await?;
+        let response = match method.as_str() {
+            "eth_blockNumber" => json!(to_hex(latest_block)),
+            "eth_getLogs" => {
+                json!([])
+            }
+            "eth_call" => json!(status),
+            _ => panic!("mock http got an unexpected rpc method: {}", method),
+        };
+        server.send_response(Ok(response));
+    }
+    Some(())
+}
+
+/*
+
+Expected RPC calls:
+
+eth_blockNumber
+eth_getLogs (for new deals) -> new_deals
+    for new_deal in new_deals {
+        eth_gasPrice
+        eth_getTransactionCount
+        eth_sendRawTransaction
+        eth_getTransactionReceipt
+        eth_call (getStatus) <--- This call is batched, done after all logs are processed
+    }
+
+for joined_deal in joined_deals {
+    eth_getLogs (for update) <-- This request is batched
+    eth_call (getStatus)     <-- This request is batched
+    if joined_deal.tx_status == "pending":
+      eth_getTransactionReceipt <-- This request is also batched
+}
+
+Batched requests in this test system are encoded as separate requests.
+
+ */

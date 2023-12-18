@@ -1,5 +1,5 @@
-use crate::spell;
 use crate::utils;
+use crate::utils::spell;
 use connected_client::ConnectedClient;
 use eyre::WrapErr;
 use maplit::hashmap;
@@ -29,4 +29,17 @@ pub async fn get_worker(mut client: &mut ConnectedClient, deal: &str) -> Vec<Str
     .wrap_err("get worker id failed")
     .unwrap();
     serde_json::from_value::<Vec<String>>(worker.remove(0)).unwrap()
+}
+
+pub async fn is_active(mut client: &mut ConnectedClient, deal: &str) -> eyre::Result<bool> {
+    let mut is_active = utils::execute(
+        &mut client,
+        r#"
+            (call relay ("worker" "is_active") [deal] result)"#,
+        "result",
+        hashmap! {"deal" => json!(deal) },
+    )
+    .await
+    .wrap_err("is_active failed")?;
+    serde_json::from_value::<bool>(is_active.remove(0)).wrap_err("parse is_active result")
 }

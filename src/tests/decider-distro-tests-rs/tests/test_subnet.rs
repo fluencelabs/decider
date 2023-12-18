@@ -4,15 +4,16 @@
 
 pub mod utils;
 
+use crate::utils::default::default_status;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use serde_json::json;
 use utils::chain::{filter_logs, LogsReq};
 use utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};
-use utils::deal::{get_failed_deals, get_joined_deals};
 use utils::default::{default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE};
 use utils::distro::make_distro_with_api_and_config;
 use utils::setup::setup_nox;
-use utils::subnet::{get_txs, get_txs_statuses};
+use utils::state::deal::{get_failed_deals, get_joined_deals};
+use utils::state::subnet::{get_txs, get_txs_statuses};
 use utils::test_rpc_server::run_test_server;
 use utils::TestApp;
 use utils::*;
@@ -22,7 +23,7 @@ use utils::*;
 ///
 #[tokio::test]
 async fn test_register_worker_fails() {
-    enable_decider_logs();
+    //enable_decider_logs();
     const LATEST_BLOCK_FIRST_RUN: u32 = 110;
 
     const DEAL_ID: &'static str = DEAL_IDS[0];
@@ -55,7 +56,7 @@ async fn test_register_worker_fails() {
         });
         // Reqs: blockNumber, getLogs and 3x of one of gasPrice, getTransactionCount and sendRawTransaction
         // deal 2 should be ok, but deal 1 and deal 3 should fail in registration
-        for step in 0..12 {
+        for step in 0..13 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => Ok(json!(to_hex(LATEST_BLOCK_FIRST_RUN))), // step 0
@@ -86,6 +87,7 @@ async fn test_register_worker_fails() {
                 // step 2 for deal 1, step 5 for deal 2, step 8 for deal 3
                 "eth_gasPrice" => Ok(json!("0x3b9aca07")),
                 "eth_getTransactionReceipt" => Ok(default_receipt()),
+                "eth_call" => Ok(default_status()),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(response);
@@ -145,7 +147,7 @@ async fn test_transaction_tracking() {
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
         // Reqs: blockNumber, getLogs and 3x of gasPrice, getTransactionCount, sendRawTransaction, getTransactionReceipt
-        for _step in 0..14 {
+        for _step in 0..17 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => json!(to_hex(LATEST_BLOCK)),
@@ -166,6 +168,7 @@ async fn test_transaction_tracking() {
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
                 "eth_getTransactionReceipt" => serde_json::Value::Null,
+                "eth_call" => json!(DEAL_STATUS_ACTIVE),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(Ok(response));
