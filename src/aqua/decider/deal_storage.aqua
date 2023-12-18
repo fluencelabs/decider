@@ -2,7 +2,7 @@ module DealStorage declares *
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 
-import FAILED_DEALS, JOINED_DEALS from "./consts.aqua"
+import FAILED_DEALS, JOINED_DEALS, removed_state_key from "./consts.aqua"
 import Json from "../fluence/peer.aqua"
 import spell_log, get_string, deal_log, list_push from "../fluence/spell.aqua"
 import DealId, SpellId, WorkerId, Block from "../types.aqua"
@@ -40,6 +40,24 @@ func remove_deal_state(spell_id: SpellId, deal_id: DealId):
     Spell spell_id
     Spell.remove_key(deal_id)
 
+-- Deal state for polling removed events
+-- TODO: refactor how to we store deals state (incl. joined_deals)
+func store_deal_state_removed(spell_id: SpellId, deal_id: DealId, left_boundary: string):
+    Spell spell_id
+    state = DealState(left_boundary = left_boundary)
+    json <- Json.stringify(state)
+    Spell.set_string(removed_state_key(deal_id), json)
+
+func get_deal_state_removed(spell_id: SpellId, deal_id: DealId) -> ?DealState:
+    Spell spell_id
+    key <- removed_state_key(deal_id)
+    <- get_deal_state(spell_id, deal_id)
+
+func remove_deal_state_removed(spell_id: SpellId, deal_id: DealId):
+    Spell spell_id
+    Spell.remove_key(removed_state_key(deal_id))
+
+-- Info about joined deals
 data JoinedDeal:
     deal_id: DealId
     worker_id: WorkerId
@@ -87,6 +105,7 @@ func remove_deal(spell_id: string, deal_id: string, worker_id: string):
     try:
         remove_joined_deal(spell_id, JoinedDeal(deal_id = deal_id, worker_id = worker_id))
         remove_deal_state(spell_id, deal_id)
+        remove_deal_state_removed(spell_id, deal_id)
     catch e:
         deal_log(spell_id, deal_id, ["couldn't remove the deal", e])
 

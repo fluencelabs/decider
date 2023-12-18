@@ -6,6 +6,7 @@ use crate::chain::chain_data::ChainData;
 use crate::chain::chain_info::ChainInfo;
 use crate::chain::event::deal_matched::{DealMatched, Match};
 use crate::chain::log::parse_logs;
+use crate::jsonrpc::get_encoded_peer_id;
 use crate::jsonrpc::get_logs::get_logs;
 use crate::jsonrpc::request::check_url;
 use crate::jsonrpc::right_boundary::default_right_boundary;
@@ -51,10 +52,7 @@ impl MatchedResult {
 pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResult {
     use marine_rs_sdk::get_call_parameters;
 
-    let host = get_call_parameters().host_id;
-    let host = PeerId::from_str(&host).expect("parse host_id to peer_id");
-    let host: Vec<_> = host.to_bytes().into_iter().skip(6).collect();
-    let host = format!("0x{:0>64}", hex::encode(host));
+    let host = get_encoded_peer_id().expect("parse host_id to peer_id");
 
     if let Err(err) = check_url(&chain.api_endpoint) {
         return MatchedResult::error(err.to_string());

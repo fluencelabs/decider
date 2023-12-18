@@ -1,0 +1,37 @@
+module DealPeerRemoved declares *
+
+import SpellId, DealId from "../types.aqua"
+import get_deal_state_removed from "../decider/deal_storage.aqua"
+
+import "services.aqua"
+
+-- Move left boundary of the deal's block range to be `min(right boundary, latest_block) + 1`
+func move_left_boundary(spell_id: SpellId, deal_id: DealId, right_boundary: string, latest: string):
+    min <- Hex.min(spell_id, right_boundary, latest)
+    if min != nil:
+        left <- Hex.inc(spell_id, min!)
+        if left != nil:
+            store_deal_state_removed(spell_id, deal_id, left!)
+
+func poll_deal_peer_removed(spell_id: SpellId, api_endpoint: string, latest_block: string, deals: []DealId):
+    if deals.len != 0:
+        reqs: *DealPeerRemovedReq
+        for deal_id <- deals:
+            state <- get_deal_state_removed(spell_id, deal_id)
+            if state != nil:
+                reqs <<- DealPeerRemovedReq(deal_id = deal_id, left_boundary = state.left_boundary) 
+        
+        if reqs != nil:
+            result <- ChainConnector.poll_deal_peer_removed_batch(api_endpoint, reqs)
+            if !result.success:
+                spell_log(spell_id, ["can't find if deals were removed from provider:", result.error])
+            else:
+                for removed <- result.result:
+                    if !removed.success:
+                        deal_log(spell_id, removed.deal_id, ["can't find if the deal was removed from provider", deal_removed_result.error])
+                    else:
+                        if removed.is_removed:
+                            deal_log(spell_id, removed.deal_id, ["the deal is removed from the provider"])
+                            remove_ended_deal(spell_id, removed.deal_id)
+                        else:
+                            move_left_boundary(spell_id, deal_id, removed.right_boundary, latest_block)

@@ -2,8 +2,8 @@ use marine_rs_sdk::marine;
 
 use crate::chain::chain_data::ChainData;
 use crate::chain::event::deal_changed::{DealChanged, DealChangedData};
-use crate::chain::event::deal_created::{DealCreated, DealCreatedData};
 use crate::chain::event::deal_matched::{DealMatched, Match};
+use crate::chain::event::deal_peer_removed::{DealPeerRemoved, DealPeerRemovedData};
 
 #[marine]
 pub struct SupportedEvent {
@@ -24,16 +24,16 @@ pub struct Env {
 pub fn get_env() -> Env {
     let events = vec![
         SupportedEvent {
-            name: DealCreated::EVENT_NAME.to_string(),
-            topic: DealCreatedData::topic(),
-        },
-        SupportedEvent {
             name: DealChanged::EVENT_NAME.to_string(),
             topic: DealChangedData::topic(),
         },
         SupportedEvent {
             name: DealMatched::EVENT_NAME.to_string(),
             topic: Match::topic(),
+        },
+        SupportedEvent {
+            name: DealPeerRemoved::EVENT_NAME.to_string(),
+            topic: DealPeerRemovedData::topic(),
         },
 
     ];

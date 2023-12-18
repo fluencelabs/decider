@@ -1,3 +1,6 @@
+use std::str::FromStr;
+use libp2p_identity::{ParseError, PeerId};
+use marine_rs_sdk::get_call_parameters;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -17,6 +20,7 @@ pub mod right_boundary;
 pub mod transaction;
 
 pub mod deal_status;
+pub mod deal_peer_removed_batched;
 
 const JSON_RPC_VERSION: &str = "2.0";
 
@@ -48,4 +52,16 @@ impl<T> JsonRpcResp<T> {
         }
         Ok(self.result)
     }
+}
+
+pub fn get_encoded_peer_id() -> Result<String, ParseError> {
+    let host = get_call_parameters().host_id;
+    let host = PeerId::from_str(&host)?;
+    Ok(peer_id_to_topic(host))
+}
+
+
+pub fn peer_id_to_topic(host: PeerId) -> String {
+    let host: Vec<_> = host.to_bytes().into_iter().skip(6).collect();
+    format!("0x{:0>64}", hex::encode(host))
 }

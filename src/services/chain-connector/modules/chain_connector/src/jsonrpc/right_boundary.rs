@@ -1,7 +1,7 @@
 use crate::hex::{hex_to_int, int_to_hex};
 
 // TODO: make it configurable
-pub const DEFAULT_BLOCK_RANGE: u64 = 500;
+pub const DEFAULT_BLOCK_RANGE: u64 = 2000;
 
 /// Default value for `right_boundary` in chain polling
 ///

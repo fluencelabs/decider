@@ -2,6 +2,7 @@ use cid::Cid;
 use ethabi::param_type::ParamType;
 use ethabi::Token;
 use marine_rs_sdk::marine;
+use serde::Deserialize;
 
 use crate::chain::chain_data::EventField::{Indexed, NotIndexed};
 use crate::chain::chain_data::{ChainData, ChainDataError, EventField};
@@ -10,10 +11,11 @@ use crate::chain::data_tokens::next_opt;
 use crate::chain::u256::U256;
 use crate::peer_id::parse_peer_id;
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 #[marine]
 pub struct DealPeerRemovedData {
-    compute_peer: String,
+    compute_peer_id: String,
+    compute_unit_id: String,
 }
 
 #[derive(Debug)]
@@ -34,15 +36,21 @@ impl ChainData for DealPeerRemovedData {
 
     fn signature() -> Vec<EventField> {
         vec![
-            // compute_provider
+            // compute peer id
+            Indexed(ParamType::FixedBytes(32)),
+            // compute unit id
             NotIndexed(ParamType::FixedBytes(32)),
         ]
     }
 
     fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, ChainDataError> {
-        let compute_peer = next_opt(data_tokens, "compute_peer", Token::into_fixed_bytes)?;
-        let compute_peer = parse_peer_id(compute_peer)?.to_string();
-        Ok(DealPeerRemovedData { compute_peer })
+        let compute_peer_id =  next_opt(data_tokens, "compute_peer", Token::into_fixed_bytes)?;
+        let compute_peer_id= parse_peer_id(compute_peer_id)?.to_string();
+
+        let compute_unit_id = next_opt(data_tokens, "compute_unit_id", Token::into_fixed_bytes)?;
+        let compute_unit_id = hex::encode(&compute_unit_id);
+
+        Ok(DealPeerRemovedData { compute_peer_id, compute_unit_id })
     }
 }
 
