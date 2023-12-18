@@ -48,7 +48,6 @@ func store_tx_status(spell_id: SpellId, status: WorkerTxStatus):
 -- If TTL happens during registration, last_seen_block won't be incremented,
 --  so we'll load same Chain Events and repeat the whole deployment and registration once again.
 -- Remember to track registration failures though, and retry them
-
 func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, pat_id: []u8) -> bool:
     result <- ChainConnector.register_worker(pat_id, worker_id, chain, deal_id)
     is_ok = result.success
