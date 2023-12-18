@@ -8,6 +8,7 @@ import spell_log, deal_log from "../fluence/spell.aqua"
 import SpellId, DealId from "../types.aqua"
 import remove_ended_deal from "../decider/deal_removed.aqua"
 
+
 import "services.aqua"
 
 func activate_deal(spell_id: SpellId, deal_id: DealId):

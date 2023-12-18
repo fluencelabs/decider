@@ -12,6 +12,7 @@ import poll_txs from "./register_worker.aqua"
 import store_sync_info from "./sync_info.aqua"
 import poll_deal_statuses from "../chain/deal_status.aqua"
 import poll_deal_peer_removed from "../chain/deal_peer_removed.aqua"
+
 import WorkerSettings from "../fluence/worker.aqua"
 
 use "../chain/blocks.aqua" as Blocks
