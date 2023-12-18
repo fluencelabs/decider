@@ -118,6 +118,9 @@ pub async fn wait_worker_spell_stopped(
             struct State {
                 state: String,
             }
+
+            // HACK: sometimes sqlite returns trash in the requested lists.
+            // FOR NOW we filter out the trash to avoid parsing errors and CI failures
             let last_statuses = strings
                 .strings
                 .iter()
