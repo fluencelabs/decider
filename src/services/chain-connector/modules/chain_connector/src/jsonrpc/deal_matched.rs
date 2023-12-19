@@ -1,6 +1,4 @@
-use libp2p_identity::PeerId;
 use marine_rs_sdk::marine;
-use std::str::FromStr;
 
 use crate::chain::chain_data::ChainData;
 use crate::chain::chain_info::ChainInfo;
@@ -50,8 +48,6 @@ impl MatchedResult {
 // `left_boundary`   -- from which block to poll deals
 #[marine]
 pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResult {
-    use marine_rs_sdk::get_call_parameters;
-
     let host = get_encoded_peer_id().expect("parse host_id to peer_id");
 
     if let Err(err) = check_url(&chain.api_endpoint) {

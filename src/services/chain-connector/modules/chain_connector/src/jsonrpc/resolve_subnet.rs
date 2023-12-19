@@ -144,7 +144,6 @@ pub fn resolve_subnet(deal_id: String, api_endpoint: &str) -> Subnet {
 #[cfg(test)]
 mod tests {
     use marine_rs_sdk_test::marine_test;
-    use crate::peer_id::parse_peer_id;
 
     // Set env RUST_LOGGER="mockito=debug" to enable Mockito's logs
     #[marine_test(config_path = "../../../../../../../src/distro/decider-spell/Config.toml")]

@@ -18,7 +18,10 @@ service JsonWorkerTxInfo("json"):
 func store_tx(spell_id: SpellId, tx_info: WorkerTxInfo):
     list_push(spell_id, TXS_KEY, tx_info)
 
-
+func remove_tx(spell_id: SpellId, tx_info: WorkerTxInfo):
+    Spell spell_id
+    str <- Json.stringify(tx_info)
+    Spell.list_remove_value(TXS_KEY, str)
 
 data WorkerTxStatus:
     tx_info: WorkerTxInfo
@@ -29,6 +32,11 @@ service JsonWorkerTxStatus("json"):
 
 func store_tx_status(spell_id: SpellId, status: WorkerTxStatus):
     list_push(spell_id, TXS_STATUS_KEY, status)
+
+func remove_tx_status(spell_id: SpellId, status: WorkerTxStatus):
+    Spell spell_id
+    str <- Json.stringify(status)
+    Spell.list_remove_value(TXS_STATUS_KEY, str)
 
 -- TODO:
 -- Store joined worker in KV, status = unregistered

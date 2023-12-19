@@ -91,6 +91,12 @@ async fn test_update_deal() {
         assert_eq!(method, "eth_call");
         server.send_response(Ok(json!(DEAL_STATUS_ACTIVE)));
     }
+    // deal removed phase
+    {
+        let (method, _params) = server.receive_request().await.unwrap();
+        assert_eq!(method, "eth_getLogs");
+        server.send_response(Ok(json!([])));
+    }
     wait_decider_stopped(&mut client).await;
 
     let cid = {
@@ -178,6 +184,13 @@ async fn test_update_deal_from_later_blocks() {
             assert_eq!(method, "eth_call");
             server.send_response(Ok(json!(DEAL_STATUS_ACTIVE)));
         }
+        // deal removed phase
+        {
+            let (method, _params) = server.receive_request().await.unwrap();
+            assert_eq!(method, "eth_getLogs");
+            server.send_response(Ok(json!([])));
+        }
+
         to_block
     };
     wait_decider_stopped(&mut client).await;
@@ -213,6 +226,12 @@ async fn test_update_deal_from_later_blocks() {
             let (method, _params) = server.receive_request().await.unwrap();
             assert_eq!(method, "eth_call");
             server.send_response(Ok(json!(DEAL_STATUS_ACTIVE)));
+        }
+        // deal removed phase
+        {
+            let (method, _params) = server.receive_request().await.unwrap();
+            assert_eq!(method, "eth_getLogs");
+            server.send_response(Ok(json!([])));
         }
     }
     wait_decider_stopped(&mut client).await;

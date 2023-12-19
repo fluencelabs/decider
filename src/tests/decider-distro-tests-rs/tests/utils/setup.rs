@@ -25,8 +25,8 @@ pub fn setup_system_config() -> SystemServicesConfig {
     config
 }
 
-pub async fn setup_swarm(distro: PackageDistro) -> CreatedSwarm {
-    let mut swarms = make_swarms_with_cfg(1, move |mut cfg| {
+pub async fn setup_swarm(distro: PackageDistro, peers: usize) -> Vec<CreatedSwarm> {
+    let swarms = make_swarms_with_cfg(peers, move |mut cfg| {
         cfg.enabled_system_services = vec!["aqua-ipfs".to_string()];
         cfg.extend_system_services = vec![distro.clone()];
         let config = setup_system_config();
@@ -38,11 +38,12 @@ pub async fn setup_swarm(distro: PackageDistro) -> CreatedSwarm {
         cfg
     })
     .await;
-    swarms.remove(0)
+    swarms
 }
 
 pub async fn setup_nox(distro: PackageDistro) -> (CreatedSwarm, ConnectedClient) {
-    let swarm = setup_swarm(distro).await;
+    let mut swarms = setup_swarm(distro, 1).await;
+    let swarm = swarms.remove(0);
     let client = ConnectedClient::connect_with_keypair(
         swarm.multiaddr.clone(),
         Some(swarm.management_keypair.clone()),
@@ -111,7 +112,7 @@ pub async fn setup_rpc_empty_run_with_status(
     status: &str,
     joined: usize,
 ) -> Option<()> {
-    let expected_reqs = 2 + 2 * joined;
+    let expected_reqs = 2 + 3 * joined;
     for _ in 0..expected_reqs {
         let (method, _params) = server.receive_request().await?;
         let response = match method.as_str() {

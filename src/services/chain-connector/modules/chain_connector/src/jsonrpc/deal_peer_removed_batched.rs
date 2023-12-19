@@ -4,7 +4,6 @@ use crate::chain::chain_data::ChainData;
 use crate::chain::event::deal_peer_removed::DealPeerRemovedData;
 use crate::chain::log::Log;
 use crate::curl::send_jsonrpc_batch;
-use crate::jsonrpc::deal_changed::DealInfo;
 use crate::jsonrpc::get_logs::GetLogsReq;
 use crate::jsonrpc::JsonRpcReq;
 use crate::jsonrpc::request::check_url;

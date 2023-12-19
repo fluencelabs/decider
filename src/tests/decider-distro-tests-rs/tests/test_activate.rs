@@ -14,7 +14,6 @@ use crate::utils::state::deal::get_joined_deals;
 use crate::utils::state::worker;
 use crate::utils::test_rpc_server::run_test_server;
 use crate::utils::*;
-use eyre::WrapErr;
 use serde_json::json;
 use std::time::Duration;
 
