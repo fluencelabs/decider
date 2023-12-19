@@ -8,6 +8,7 @@ use crate::jsonrpc::get_logs::GetLogsReq;
 use crate::jsonrpc::JsonRpcReq;
 use crate::jsonrpc::request::check_url;
 use crate::jsonrpc::right_boundary::default_right_boundary;
+use crate::jsonrpc::get_encoded_peer_id;
 
 #[derive(Debug)]
 #[marine]
@@ -17,11 +18,11 @@ pub struct DealPeerRemovedReq {
 }
 
 impl DealPeerRemovedReq {
-    fn jsonrpc(&self, idx: usize) -> JsonRpcReq<GetLogsReq> {
+    fn jsonrpc(&self, host_topic: String, idx: usize) -> JsonRpcReq<GetLogsReq> {
         let right_boundary = default_right_boundary(&self.left_boundary);
         let req = GetLogsReq {
             address: self.deal_id.clone(),
-            topics: vec![DealPeerRemovedData::topic()],
+            topics: vec![DealPeerRemovedData::topic(), host_topic],
             from_block: self.left_boundary.clone(),
             to_block: right_boundary,
         };
@@ -92,11 +93,11 @@ impl DealPeerRemovedBatchResult {
     }
 }
 
-fn deal_peer_removed_req_batch(deals: &[DealPeerRemovedReq]) -> Vec<JsonRpcReq<GetLogsReq>> {
+fn deal_peer_removed_req_batch(deals: &[DealPeerRemovedReq], host_topic: String) -> Vec<JsonRpcReq<GetLogsReq>> {
     deals
         .iter()
         .enumerate()
-        .map(|(idx, deal)| deal.jsonrpc(idx))
+        .map(|(idx, deal)| deal.jsonrpc(host_topic.clone(), idx))
         .collect::<Vec<_>>()
 }
 
@@ -108,8 +109,13 @@ pub fn poll_deal_peer_removed_batch(api_endpoint: &str, deals: Vec<DealPeerRemov
     if deals.is_empty() {
         return DealPeerRemovedBatchResult::empty();
     }
-
-    let batch = deal_peer_removed_req_batch(&deals);
+    let host_topic = match get_encoded_peer_id() {
+        Ok(host_topic) => host_topic,
+        Err(err) => {
+            return DealPeerRemovedBatchResult::error(err.to_string());
+        }
+    };
+    let batch = deal_peer_removed_req_batch(&deals, host_topic);
     let responses = send_jsonrpc_batch::<GetLogsReq, Vec<Log>>(api_endpoint, batch);
     let mut responses = match responses {
         Err(err) => return DealPeerRemovedBatchResult::error(err.to_string()),

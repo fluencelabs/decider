@@ -7,6 +7,7 @@ pub mod utils;
 use connected_client::ConnectedClient;
 use utils::test_rpc_server::run_test_server;
 
+use crate::utils::chain::LogsReq;
 use crate::utils::setup::{setup_rpc_deploy_deal, setup_rpc_empty_run, setup_swarm};
 use eyre::WrapErr;
 use maplit::hashmap;
@@ -170,23 +171,33 @@ async fn test_remove_deal_from_provider() {
         rpc_get_logs_empty!(server);
         rpc_deal_status!(server, DEAL_STATUS_ACTIVE);
         // ComputeUnitRemoved event
-        let removed_event = json!([{
-            "removed": false,
-            "logIndex": "0x0",
-            "transactionIndex": "0x0",
-            "transactionHash": "0x2716f70beb0f39a94c6edfd057ee4584fd8b3308effd375bb3942523276e3348",
-            "blockHash": "0xa8b883a7e2abee52e7e1c248790b523ee4ce197ae9063e3f09fddb708ef32b4d",
-            "blockNumber": "0x2d53",
-            "address": "0xeb92a1b5c10ad7bfdcaf23cb7dda9ea062cd07e8",
-            "data": "0x53aadfa1d6cd4c8a18f7eb26bd0b83ca10b664845cd72e2dd871f78b2006f5a7",
-            "topics": [
-              "0x5abefe0a1fb3d6df34b14e459422791829e024e367c6df8eaf0bf218cf42fb36",
-                // encoded host_id, we don't check it since we poll by it,
-                // so just put here a placeholder
-              "0xb5ecc6c89e9c2add9a9d3b08e7c8ed2155d980e48870b72cfb9c5c16a088ebfb"
-            ]
-        }]);
-        rpc_get_logs_exact!(server, removed_event);
+        {
+            let removed_event = json!([{
+                "removed": false,
+                "logIndex": "0x0",
+                "transactionIndex": "0x0",
+                "transactionHash": "0x2716f70beb0f39a94c6edfd057ee4584fd8b3308effd375bb3942523276e3348",
+                "blockHash": "0xa8b883a7e2abee52e7e1c248790b523ee4ce197ae9063e3f09fddb708ef32b4d",
+                "blockNumber": "0x2d53",
+                "address": "0xeb92a1b5c10ad7bfdcaf23cb7dda9ea062cd07e8",
+                "data": "0x53aadfa1d6cd4c8a18f7eb26bd0b83ca10b664845cd72e2dd871f78b2006f5a7",
+                "topics": [
+                  "0x5abefe0a1fb3d6df34b14e459422791829e024e367c6df8eaf0bf218cf42fb36",
+                    // encoded host_id, we don't check it since we poll by it,
+                    // so just put here a placeholder
+                  "0xb5ecc6c89e9c2add9a9d3b08e7c8ed2155d980e48870b72cfb9c5c16a088ebfb"
+                ]
+            }]);
+            let (method, params) = server.receive_request().await.unwrap();
+            assert_eq!(method, "eth_getLogs");
+            let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
+            assert_eq!(
+                log.topics.len(),
+                2,
+                "expected two topics: topic and host_id"
+            );
+            server.send_response(Ok(removed_event));
+        }
     }
     wait_decider_stopped(&mut client1).await;
 
