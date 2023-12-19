@@ -54,7 +54,7 @@ func update_worker(spell_id: SpellId, deal_info: DealInfo, log: DealChanged, set
     worker_id = deal_info.worker_id
     app_cid <- Json.stringify(log.info.app_cid)
     deal_log(spell_id, deal_id, ["sending the latest update to the worker", worker_id, app_cid])
-    co on worker_id:
+    on worker_id:
         -- stringify app_cid to be able to use it as an argument of a spell
         Spell "worker-spell"
         Spell.set_string(WORKER_DEF_CID, app_cid)
