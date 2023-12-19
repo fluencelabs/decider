@@ -31,7 +31,7 @@ struct DealStatusReq {
 #[tokio::test]
 async fn test_remove_deal() {
     enable_decider_logs();
-    const BLOCK_INIT: u32 = 33;
+    const LATEST_BLOCK: u32 = 33;
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const BLOCK_NUMBER: u32 = 32;
 
@@ -44,11 +44,11 @@ async fn test_remove_deal() {
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Deploy a deal
-    setup_rpc_deploy_deal(&mut server, BLOCK_INIT, DEAL_ID, BLOCK_NUMBER).await;
+    setup_rpc_deploy_deal(&mut server, LATEST_BLOCK, DEAL_ID, BLOCK_NUMBER).await;
     wait_decider_stopped(&mut client).await;
 
     let mut deals = get_joined_deals(&mut client).await;
-    assert_eq!(deals.len(), 1, "decider should join only one deal");
+    assert_eq!(deals.len(), 1, "decider should join exactly one deal");
     let deal = deals.remove(0);
 
     // run again
@@ -56,7 +56,7 @@ async fn test_remove_deal() {
     for _step in 0..4 {
         let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
-            "eth_blockNumber" => json!(to_hex(BLOCK_INIT)),
+            "eth_blockNumber" => json!(to_hex(LATEST_BLOCK)),
             "eth_getLogs" => {
                 json!([])
             }
@@ -163,47 +163,30 @@ async fn test_remove_deal_from_provider() {
         .await
         .unwrap();
     {
-        {
-            let (method, _params) = server.receive_request().await.unwrap();
-            assert_eq!(method, "eth_blockNumber");
-            server.send_response(Ok(json!(to_hex(LATEST_BLOCK))));
-        }
-        {
-            let (method, _params) = server.receive_request().await.unwrap();
-            assert_eq!(method, "eth_getLogs");
-            server.send_response(Ok(json!([])));
-        }
-        {
-            let (method, _params) = server.receive_request().await.unwrap();
-            assert_eq!(method, "eth_getLogs");
-            server.send_response(Ok(json!([])));
-        }
-        {
-            let (method, _params) = server.receive_request().await.unwrap();
-            assert_eq!(method, "eth_call");
-            server.send_response(Ok(json!(DEAL_STATUS_ACTIVE)));
-        }
-        {
-            let (method, _params) = server.receive_request().await.unwrap();
-            assert_eq!(method, "eth_getLogs");
-            let removed_event = json!([{
-                "removed": false,
-                "logIndex": "0x0",
-                "transactionIndex": "0x0",
-                "transactionHash": "0x2716f70beb0f39a94c6edfd057ee4584fd8b3308effd375bb3942523276e3348",
-                "blockHash": "0xa8b883a7e2abee52e7e1c248790b523ee4ce197ae9063e3f09fddb708ef32b4d",
-                "blockNumber": "0x2d53",
-                "address": "0xeb92a1b5c10ad7bfdcaf23cb7dda9ea062cd07e8",
-                "data": "0x53aadfa1d6cd4c8a18f7eb26bd0b83ca10b664845cd72e2dd871f78b2006f5a7",
-                "topics": [
-                  "0x5abefe0a1fb3d6df34b14e459422791829e024e367c6df8eaf0bf218cf42fb36",
-                    // encoded host_id, we don't check it since we poll by it,
-                    // so just put here a placeholder
-                  "0xb5ecc6c89e9c2add9a9d3b08e7c8ed2155d980e48870b72cfb9c5c16a088ebfb"
-                ]
-            }]);
-            server.send_response(Ok(removed_event));
-        }
+        rpc_block_number!(server, LATEST_BLOCK);
+        // no new deals
+        rpc_get_logs_empty!(server);
+        // no updates
+        rpc_get_logs_empty!(server);
+        rpc_deal_status!(server, DEAL_STATUS_ACTIVE);
+        // ComputeUnitRemoved event
+        let removed_event = json!([{
+            "removed": false,
+            "logIndex": "0x0",
+            "transactionIndex": "0x0",
+            "transactionHash": "0x2716f70beb0f39a94c6edfd057ee4584fd8b3308effd375bb3942523276e3348",
+            "blockHash": "0xa8b883a7e2abee52e7e1c248790b523ee4ce197ae9063e3f09fddb708ef32b4d",
+            "blockNumber": "0x2d53",
+            "address": "0xeb92a1b5c10ad7bfdcaf23cb7dda9ea062cd07e8",
+            "data": "0x53aadfa1d6cd4c8a18f7eb26bd0b83ca10b664845cd72e2dd871f78b2006f5a7",
+            "topics": [
+              "0x5abefe0a1fb3d6df34b14e459422791829e024e367c6df8eaf0bf218cf42fb36",
+                // encoded host_id, we don't check it since we poll by it,
+                // so just put here a placeholder
+              "0xb5ecc6c89e9c2add9a9d3b08e7c8ed2155d980e48870b72cfb9c5c16a088ebfb"
+            ]
+        }]);
+        rpc_get_logs_exact!(server, removed_event);
     }
     wait_decider_stopped(&mut client1).await;
 
@@ -221,4 +204,51 @@ async fn test_remove_deal_from_provider() {
     assert_eq!(joined[0].deal_id, deal_id, "the deal must be still joined");
 
     server.shutdown().await;
+}
+
+#[tokio::test]
+async fn test_deal_ended_and_removed_from_provider() {
+    enable_decider_logs();
+    const LATEST_BLOCK: u32 = 33;
+    const DEAL_ID: &'static str = DEAL_IDS[0];
+    const BLOCK_NUMBER: u32 = 32;
+
+    let mut server = run_test_server();
+    let url = server.url.clone();
+
+    let distro = make_distro_with_api(url);
+    let (swarm, mut client) = setup_nox(distro.clone()).await;
+
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+
+    // Deploy a deal
+    update_config(&mut client, &oneshot_config()).await.unwrap();
+    setup_rpc_deploy_deal(&mut server, LATEST_BLOCK, DEAL_ID, BLOCK_NUMBER).await;
+    wait_decider_stopped(&mut client).await;
+
+    let deals = get_joined_deals(&mut client).await;
+    assert_eq!(deals.len(), 1, "decider should join exactly one deal");
+    assert_eq!(
+        deals[0].deal_id,
+        format!("0x{}", DEAL_ID),
+        "decider should join exactly one deal"
+    );
+
+    println!("run again");
+
+    // run again with both deal status ENDED and remove from provider event
+    update_config(&mut client, &oneshot_config()).await.unwrap();
+    {
+        rpc_block_number!(server, LATEST_BLOCK + 10);
+        // no new deals
+        rpc_get_logs_empty!(server);
+        // no updates for the existing deal
+        rpc_get_logs_empty!(server);
+        // deal status ENDED
+        rpc_deal_status!(server, DEAL_STATUS_ENDED);
+        // there should be NO remove event poll since all deals are already removed
+    }
+    wait_decider_stopped(&mut client).await;
+    let joined = get_joined_deals(&mut client).await;
+    assert!(joined.is_empty(), "decider should remove all deals");
 }
