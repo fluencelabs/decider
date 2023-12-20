@@ -1,4 +1,5 @@
 pub mod chain;
+pub mod chain_rpc_macro;
 pub mod control;
 pub mod default;
 pub mod distro;

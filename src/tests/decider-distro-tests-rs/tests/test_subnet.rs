@@ -144,6 +144,7 @@ async fn test_transaction_tracking() {
 
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     // Initial run for installing the first deal
+    // Return NULL for getTransactionReceipt to simulate pending transaction
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
         // Reqs: blockNumber, getLogs and 3x of gasPrice, getTransactionCount, sendRawTransaction, getTransactionReceipt
@@ -212,8 +213,9 @@ async fn test_transaction_tracking() {
                 "message": "intentional error",
             })), // rpc error
         ];
-        // Reqs: blockNumber, getLogs, 3x getLogs for updates, 3x of eth_getTransactionReceipt, 3x eth_call
-        for _step in 0..11 {
+        // Reqs: blockNumber, getLogs, 6x getLogs for updates and remove reqs,
+        // 3x of eth_getTransactionReceipt, 3x eth_call
+        for _step in 0..14 {
             let (method, _params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => Ok(json!(to_hex(BLOCK_NUMBER_LATER))),
@@ -239,8 +241,9 @@ async fn test_transaction_tracking() {
 
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
-        // Reqs: blockNumber, getLogs, 3x getLogs for updates, 1x of eth_getTransactionReceipt, eth_call
-        for _step in 0..9 {
+        // Reqs: blockNumber, getLogs, 6x getLogs for updates and remove reqs,
+        // 1x of eth_getTransactionReceipt, eth_call
+        for _step in 0..12 {
             let (method, _params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => json!(to_hex(BLOCK_NUMBER_LATER)),
