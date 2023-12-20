@@ -101,7 +101,7 @@ func store_deal(spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, block: 
     catch e:
         deal_log(spell_id, deal_id, ["cannot store deal state, deal join failed", e.message])
 
-func remove_deal(spell_id: string, deal_id: string, worker_id: string):
+func remove_deal_storage(spell_id: string, deal_id: string, worker_id: string):
     try:
         remove_joined_deal(spell_id, JoinedDeal(deal_id = deal_id, worker_id = worker_id))
         remove_deal_state(spell_id, deal_id)

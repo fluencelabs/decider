@@ -4,7 +4,7 @@ import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 
 import SpellId, DealId from "../types.aqua"
 import spell_log, deal_log from "../fluence/spell.aqua"
-import remove_deal from "../decider/deal_storage.aqua"
+import remove_deal_storage from "../decider/deal_storage.aqua"
 
 func remove_ended_deal(spell_id: SpellId, deal_id: DealId):
     worker_id <- Worker.get_worker_id(deal_id)
@@ -14,6 +14,6 @@ func remove_ended_deal(spell_id: SpellId, deal_id: DealId):
             Worker.remove(worker_id!)
         catch e:
             deal_log(spell_id, deal_id, ["couldn't remove a worker", worker_id!, e])
-        remove_deal(spell_id, deal_id, worker_id!)
+        remove_deal_storage(spell_id, deal_id, worker_id!)
     else:
         deal_log(spell_id, deal_id, "deal doesn't have associated worker O.o")

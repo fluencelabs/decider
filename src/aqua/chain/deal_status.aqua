@@ -2,7 +2,7 @@ module DealStatus declares *
 
 import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 
-import JoinedDeal, remove_deal from "../decider/deal_storage.aqua"
+import JoinedDeal from "../decider/deal_storage.aqua"
 import DEAL_STATUS_ENDED, DEAL_STATUS_ACTIVE, DEAL_STATUS_INACTIVE from "../decider/consts.aqua"
 import spell_log, deal_log from "../fluence/spell.aqua"
 import SpellId, DealId from "../types.aqua"
@@ -14,6 +14,7 @@ import "services.aqua"
 func activate_deal(spell_id: SpellId, deal_id: DealId):
     try:
         if !Worker.is_active(deal_id):
+            deal_log(spell_id, deal_id, "activating worker")
             Worker.activate(deal_id)
     catch e:
         deal_log(spell_id, deal_id, ["couldn't activate a worker", e])
@@ -21,6 +22,7 @@ func activate_deal(spell_id: SpellId, deal_id: DealId):
 func deactivate_deal(spell_id: SpellId, deal_id: DealId):
     try:
         if Worker.is_active(deal_id):
+            deal_log(spell_id, deal_id, "deactivating worker")
             Worker.deactivate(deal_id)
     catch e:
         deal_log(spell_id, deal_id, ["couldn't deactivate a worker", e])
@@ -36,15 +38,15 @@ func poll_deal_statuses_by_ids(spell_id: SpellId, api_endpoint: string, deal_ids
                 spell_log(spell_id, ["couldn't obtain deal status, error:", deal_status.error!])
             else:
                 -- What if Aqua had else-if statement? What if Aqua has match statement? Dreams.
-                if deal_status.status == DEAL_STATUS_ENDED:
-                    remove_ended_deal(spell_id, deal_status.deal_id)
+                if deal_status.status == DEAL_STATUS_ACTIVE:
+                    activate_deal(spell_id, deal_status.deal_id)
                 else:
                     if deal_status.status == DEAL_STATUS_INACTIVE:
                         deactivate_deal(spell_id, deal_status.deal_id)
-                    else:
-                        if deal_status.status == DEAL_STATUS_ACTIVE:
-                            activate_deal(spell_id, deal_status.deal_id)
-                        else: 
+                    else: 
+                        if deal_status.status == DEAL_STATUS_ENDED:
+                            remove_ended_deal(spell_id, deal_status.deal_id)
+                        else:
                             spell_log(spell_id, ["unsupported deal status: ", deal_status])
 
 
