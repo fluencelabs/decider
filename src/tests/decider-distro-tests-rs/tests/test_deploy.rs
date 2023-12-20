@@ -123,7 +123,7 @@ async fn test_deploy_a_deal_single() {
         !counter.absent,
         "decider hasn't started yet (no counter in kv)"
     );
-    assert_eq!(counter.num, 1, "decider wasn't run");
+    assert_eq!(counter.value, 1, "decider wasn't run");
 
     // Analyse joined deals
     let deal = {
@@ -331,9 +331,9 @@ async fn test_deploy_deals_diff_blocks() {
         let last_seen = serde_json::from_value::<StringValue>(result.remove(0)).unwrap();
 
         let deals = serde_json::from_value::<StringListValue>(result.remove(0)).unwrap();
-        assert_eq!(deals.strings.len(), 2);
+        assert_eq!(deals.value.len(), 2);
         let deals = deals
-            .strings
+            .value
             .iter()
             .map(|deal| serde_json::from_str::<JoinedDeal>(deal).unwrap())
             .collect::<Vec<_>>();
@@ -346,7 +346,7 @@ async fn test_deploy_deals_diff_blocks() {
         (last_seen, deals, workers)
     };
 
-    assert_eq!(last_seen.str, to_hex(LATEST_BLOCK), "wrong last_seen block");
+    assert_eq!(last_seen.value, to_hex(LATEST_BLOCK), "wrong last_seen block");
 
     let mut expected = hashmap! {
         deal_id_1 => (TestApp::test_app1(), BLOCK_NUMBER_1),
@@ -472,9 +472,9 @@ async fn test_deploy_a_deal_in_seq() {
         let last_seen = serde_json::from_value::<StringValue>(result.remove(0)).unwrap();
 
         let deals = serde_json::from_value::<StringListValue>(result.remove(0)).unwrap();
-        assert_eq!(deals.strings.len(), 2);
+        assert_eq!(deals.value.len(), 2);
         let deals = deals
-            .strings
+            .value
             .iter()
             .map(|deal| serde_json::from_str::<JoinedDeal>(deal).unwrap())
             .collect::<Vec<_>>();
@@ -487,7 +487,7 @@ async fn test_deploy_a_deal_in_seq() {
         (last_seen, deals, workers)
     };
     assert_eq!(
-        last_seen.str,
+        last_seen.value,
         to_hex(LATEST_BLOCK_SECOND_RUN),
         "saved wrong last_seen_block"
     );
@@ -614,9 +614,9 @@ async fn test_deploy_deals_in_one_block() {
         let last_seen = serde_json::from_value::<StringValue>(result.remove(0)).unwrap();
 
         let deals = serde_json::from_value::<StringListValue>(result.remove(0)).unwrap();
-        assert_eq!(deals.strings.len(), 2);
+        assert_eq!(deals.value.len(), 2);
         let deals = deals
-            .strings
+            .value
             .iter()
             .map(|deal| serde_json::from_str::<JoinedDeal>(deal).unwrap())
             .collect::<Vec<_>>();
@@ -630,7 +630,7 @@ async fn test_deploy_deals_in_one_block() {
     };
     // TODO: difficult logic with last_seen_block, not sure on what circumstances it should be
     // incremented and when not
-    assert_eq!(last_seen.str, to_hex(LATEST_BLOCK), "wrong last seen");
+    assert_eq!(last_seen.value, to_hex(LATEST_BLOCK), "wrong last seen");
 
     let mut expected = hashmap! {
         // It was installed on the first run, so on the second run the window is updated

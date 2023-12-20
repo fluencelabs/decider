@@ -17,5 +17,5 @@ pub async fn get_sync_info(client: &mut ConnectedClient) -> eyre::Result<SyncInf
         return Err(eyre::eyre!("get sync_info failed: {}", result.error));
     }
 
-    serde_json::from_str::<SyncInfo>(&result.str).wrap_err("parse sync_info")
+    serde_json::from_str::<SyncInfo>(&result.value).wrap_err("parse sync_info")
 }
