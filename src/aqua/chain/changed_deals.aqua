@@ -2,6 +2,7 @@ module ChangedDeals declares poll_deal_changes_batch
 
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 import PeerSpell from "@fluencelabs/spell/api.aqua"
+import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 
 import deal_log, spell_log, get_string from "../fluence/spell.aqua"
 import Json from "../fluence/peer.aqua"
@@ -58,7 +59,8 @@ func update_worker(spell_id: SpellId, deal_info: DealInfo, log: DealChanged, set
         -- stringify app_cid to be able to use it as an argument of a spell
         Spell "worker-spell"
         Spell.set_string(WORKER_DEF_CID, app_cid)
-        PeerSpell.update_trigger_config(spell_id, settings.config)
+        if Worker.is_active(deal_id):
+            PeerSpell.update_trigger_config(spell_id, settings.config)
 
 -- Move left boundary of the deal's block range to be `min(right boundary, latest_block) + 1`
 func move_left_boundary(spell_id: SpellId, deal_id: DealId, right_boundary: string, latest: string):

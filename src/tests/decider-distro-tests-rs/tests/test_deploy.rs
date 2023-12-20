@@ -4,6 +4,7 @@
 
 pub mod utils;
 
+use crate::utils::setup::setup_rpc_deploy_deal;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use fluence_spell_dtos::value::{StringListValue, StringValue, U32Value};
 use maplit::hashmap;
@@ -15,14 +16,14 @@ use utils::chain::LogsReq;
 use utils::control::{
     update_config, update_decider_script_for_tests, wait_decider_stopped, wait_worker_spell_stopped,
 };
-use utils::deal::{get_deal_state, get_joined_deals, JoinedDeal};
 use utils::default::{
     default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE, DEFAULT_POLL_WINDOW_BLOCK_SIZE,
 };
 use utils::distro::{make_distro_with_api, make_distro_with_api_and_config};
 use utils::setup::setup_nox;
+use utils::state::deal::{get_deal_state, get_joined_deals, JoinedDeal};
+use utils::state::worker::get_worker_app_cid;
 use utils::test_rpc_server::{run_test_server, run_test_server_predefined};
-use utils::worker::get_worker_app_cid;
 use utils::TestApp;
 use utils::*;
 
@@ -70,7 +71,6 @@ async fn test_deploy_a_deal_single() {
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const BLOCK: u32 = 32;
     const LATEST_BLOCK: u32 = 35;
-
     let server = run_test_server_predefined(async move |method, params| {
         match method.as_str() {
             "eth_blockNumber" => {
@@ -91,6 +91,7 @@ async fn test_deploy_a_deal_single() {
             "eth_getTransactionCount" => json!("0x1"),
             "eth_getTransactionReceipt" => default_receipt(),
             "eth_gasPrice" => json!("0x3b9aca07"),
+            "eth_call" => json!(DEAL_STATUS_ACTIVE),
             _ => panic!("mock http got unexpected rpc method: {}", method),
         }
     });
@@ -272,8 +273,8 @@ async fn test_deploy_deals_diff_blocks() {
 
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    // Reqs: blockNumber, getLogs, 2x of gasPrice, getTransactionCount and sendRawTransaction, getTransactionReceipt
-    let expected_reqs_count = 10;
+    // Reqs: blockNumber, getLogs, 2x of gasPrice, getTransactionCount and sendRawTransaction, getTransactionReceipt, eth_call
+    let expected_reqs_count = 12;
     {
         let mut register_worker_counter = 0;
         for _ in 0..expected_reqs_count {
@@ -297,6 +298,7 @@ async fn test_deploy_deals_diff_blocks() {
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
                 "eth_getTransactionReceipt" => json!({"status" : "0x1"}),
+                "eth_call" => json!(DEAL_STATUS_ACTIVE),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
             server.send_response(Ok(response));
@@ -404,31 +406,13 @@ async fn test_deploy_a_deal_in_seq() {
 
     // Initial run for installing the first deal
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction
-    for _step in 0..6 {
-        let (method, params) = server.receive_request().await.unwrap();
-        let response = match method.as_str() {
-            "eth_blockNumber" => {
-                json!(to_hex(LATEST_BLOCK_FIRST_RUN))
-            }
-            "eth_getLogs" => {
-                let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-                Value::Array(vec![TestApp::log_test_app1(
-                    DEAL_ID_1,
-                    BLOCK_NUMBER_1,
-                    log.topics[1].as_str(),
-                )])
-            }
-            "eth_sendRawTransaction" => {
-                json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
-            }
-            "eth_getTransactionCount" => json!("0x1"),
-            "eth_getTransactionReceipt" => default_receipt(),
-            "eth_gasPrice" => json!("0x3b9aca07"),
-            _ => panic!("mock http got an unexpected rpc method: {}", method),
-        };
-        server.send_response(Ok(response));
-    }
+    setup_rpc_deploy_deal(
+        &mut server,
+        BLOCK_NUMBER_1,
+        DEAL_ID_1,
+        LATEST_BLOCK_FIRST_RUN,
+    )
+    .await;
     wait_decider_stopped(&mut client).await;
 
     let deals = get_joined_deals(&mut client).await;
@@ -437,7 +421,7 @@ async fn test_deploy_a_deal_in_seq() {
     // The second run
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction, getLogs and eth_call for the old deal
-    for step in 0..8 {
+    for step in 0..10 {
         let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
             "eth_blockNumber" => {
@@ -451,10 +435,8 @@ async fn test_deploy_a_deal_in_seq() {
                         LATEST_BLOCK_SECOND_RUN,
                         log.topics[1].as_str(),
                     )])
-                } else if step == 5 {
-                    json!([])
                 } else {
-                    panic!("call eth_getLogs on the wrong step {step}");
+                    json!([])
                 }
             }
             "eth_sendRawTransaction" => {
@@ -566,39 +548,14 @@ async fn test_deploy_deals_in_one_block() {
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     // Initial run for installing the first deal
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    {
-        // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction
-        for _ in 0..6 {
-            let (method, params) = server.receive_request().await.unwrap();
-            let response = match method.as_str() {
-                "eth_blockNumber" => {
-                    json!(to_hex(LATEST_BLOCK))
-                }
-                "eth_getLogs" => {
-                    let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-                    json!([TestApp::log_test_app1(
-                        DEAL_ID_1,
-                        DEAL_BLOCK_NUMBER,
-                        log.topics[1].as_str(),
-                    )])
-                }
-                "eth_sendRawTransaction" => {
-                    json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
-                }
-                "eth_getTransactionCount" => json!("0x1"),
-                "eth_gasPrice" => json!("0x3b9aca07"),
-                "eth_getTransactionReceipt" => default_receipt(),
-                _ => panic!("mock http got an unexpected rpc method: {}", method),
-            };
-            server.send_response(Ok(response));
-        }
-    }
+    setup_rpc_deploy_deal(&mut server, LATEST_BLOCK, DEAL_ID_1, DEAL_BLOCK_NUMBER).await;
     wait_decider_stopped(&mut client).await;
+
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
         // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction, getTransactionReceipt
         // and getLogs for the old deal
-        for step in 0..8 {
+        for step in 0..10 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => {

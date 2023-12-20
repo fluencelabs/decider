@@ -1,5 +1,7 @@
 module Consts declares *
 
+import "@fluencelabs/aqua-lib/builtin.aqua"
+
 -- List of transactions for workers registrations in a subnet
 const TXS_KEY = "worker_registration_txs"
 
@@ -29,3 +31,7 @@ const SYNC_INFO = "sync_info"
 const DEAL_STATUS_ENDED = "ENDED"
 const DEAL_STATUS_ACTIVE = "ACTIVE"
 const DEAL_STATUS_INACTIVE = "INACTIVE"
+
+-- Keys prefixes
+func removed_state_key(deal_id: string) -> string:
+    <- Op.concat_strings("removed_state:", deal_id)

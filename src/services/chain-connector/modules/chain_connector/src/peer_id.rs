@@ -23,6 +23,7 @@ mod tests {
     #[test]
     fn parse_peerid() {
         let hex = "0x7cd8a742d826c3183e817d44d6c54140bddaf9c0545d144165cab1ad9fbe167d";
+
         let bytes = decode_hex(hex).expect("parse hex");
         let peer_id = parse_peer_id(bytes).expect("parse peerid");
         assert_eq!(

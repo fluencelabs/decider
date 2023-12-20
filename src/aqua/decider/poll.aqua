@@ -11,7 +11,9 @@ import poll_mailbox from "../decider/mailbox.aqua"
 import poll_txs from "./register_worker.aqua"
 import store_sync_info from "./sync_info.aqua"
 import poll_deal_statuses from "../chain/deal_status.aqua"
-import WorkerSettings from "./fluence/worker.aqua"
+import poll_deal_peer_removed from "../chain/deal_peer_removed.aqua"
+
+import WorkerSettings from "../fluence/worker.aqua"
 
 use "../chain/blocks.aqua" as Blocks
 
@@ -35,6 +37,9 @@ func main(spell_id: SpellId, chain: ChainInfo, worker_settings: WorkerSettings):
 
         try:
             poll_deal_statuses(spell_id, chain.api_endpoint, joined_deals)
+        
+        try:
+            poll_deal_peer_removed(spell_id, chain.api_endpoint, latest_block!, joined_deals)
 
         try:
             poll_txs(spell_id, chain.api_endpoint)
