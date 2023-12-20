@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.8](https://github.com/fluencelabs/decider/compare/connector-v0.5.7...connector-v0.5.8) (2023-12-20)
+
+
+### Features
+
+* update marine sdk's and configs ([#154](https://github.com/fluencelabs/decider/issues/154)) ([c006b42](https://github.com/fluencelabs/decider/commit/c006b42b7e94c4f50868dbf4f6257b2310ee58ec))
+
 ## [0.5.7](https://github.com/fluencelabs/decider/compare/connector-v0.5.6...connector-v0.5.7) (2023-12-20)
 
 
