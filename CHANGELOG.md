@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.7](https://github.com/fluencelabs/decider/compare/connector-v0.5.6...connector-v0.5.7) (2023-12-20)
+
+
+### Features
+
+* **decider,chain_connector:** activate/deactivate deals ([#153](https://github.com/fluencelabs/decider/issues/153)) ([963ef5a](https://github.com/fluencelabs/decider/commit/963ef5aeb52069fb35bd04d0f8a07d900587acae))
+* **decider,chain_connector:** add deal removal by compute unit [fixes NET-659, fixes NET-696] ([#155](https://github.com/fluencelabs/decider/issues/155)) ([ef231ac](https://github.com/fluencelabs/decider/commit/ef231aca9d8eabf6d08c793f4b4e661ca169f786))
+* **decider:** retrigger worker-spell on deal update [NET-649] ([#148](https://github.com/fluencelabs/decider/issues/148)) ([ff9f826](https://github.com/fluencelabs/decider/commit/ff9f826f7cbc48aa627c8ba721e3e59452e328fd))
+
 ## [0.5.6](https://github.com/fluencelabs/decider/compare/connector-v0.5.5...connector-v0.5.6) (2023-12-07)
 
 
