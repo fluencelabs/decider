@@ -8,10 +8,10 @@ edition = "2021"
 [dev-dependencies]
 decider-distro = { path = "../../distro" }
 
-created-swarm = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.6" }
-connected-client = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.6" }
-log-utils = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.6" }
-system-services = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.6" }
+created-swarm = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.9" }
+connected-client = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.9" }
+log-utils = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.9" }
+system-services = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.9" }
 tempfile = "3.8.1"
 
 fluence-app-service = "0.29.0"

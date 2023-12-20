@@ -11,6 +11,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
 use tempfile::TempDir;
+use eyre::ContextCompat;
 
 pub async fn update_config(
     client: &mut ConnectedClient,
