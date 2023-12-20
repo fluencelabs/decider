@@ -1619,7 +1619,7 @@ name = "decider-distro"
 version = "0.5.6"
 dependencies = [
  "built 0.7.1",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.6.0",
  "maplit",
  "serde_json",
 ]
@@ -1631,7 +1631,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2222e93a91a282fb033c64f39b0e8a118f15afbc63bed1f0acb76f2b76bd80ef"
 dependencies = [
  "built 0.7.1",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.5.32",
  "maplit",
  "serde_json",
 ]
@@ -1646,7 +1646,7 @@ dependencies = [
  "eyre",
  "fluence-app-service",
  "fluence-keypair",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.6.0",
  "hyper 0.14.27",
  "log-utils",
  "maplit",
@@ -2166,6 +2166,19 @@ name = "fluence-spell-dtos"
 version = "0.5.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ac50ce0a57f54422f4fe79d8f228ea15efc1536b46dabbb10fc0137e56d16a85"
+dependencies = [
+ "eyre",
+ "marine-rs-sdk",
+ "marine-sqlite-connector",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
+name = "fluence-spell-dtos"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6bf9c61ee22595ff957be32faa0444758e9b61009eab25cd9596503ba78a1ec0"
 dependencies = [
  "eyre",
  "marine-rs-sdk",
@@ -4375,9 +4388,9 @@ dependencies = [
 
 [[package]]
 name = "marine-sqlite-connector"
-version = "0.9.1"
+version = "0.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92552a0cc893d708ac324f45e687dae9ac9e1333b06ecc7e2c3d81abaf6b2d7d"
+checksum = "41e6a51c5a4480dfee082aff7253656ee10aa669631fa9922967f41a70049550"
 dependencies = [
  "bytesize",
  "marine-rs-sdk",
@@ -6642,7 +6655,7 @@ dependencies = [
  "eyre",
  "fluence-keypair",
  "fluence-libp2p",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.5.32",
  "fstrings",
  "futures",
  "kademlia",
@@ -6680,7 +6693,7 @@ dependencies = [
  "derivative",
  "eyre",
  "fluence-libp2p",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.5.32",
  "fstrings",
  "futures",
  "log",
@@ -6705,7 +6718,7 @@ version = "0.1.0"
 source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.6#21515a5bf9a324e91fca672bb66510aa4f6659d5"
 dependencies = [
  "fluence-libp2p",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.5.32",
  "key-manager",
  "particle-execution",
  "particle-services",
@@ -6887,7 +6900,7 @@ dependencies = [
  "decider-distro 0.5.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "eyre",
  "fluence-app-service",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.5.32",
  "libp2p",
  "log",
  "maplit",

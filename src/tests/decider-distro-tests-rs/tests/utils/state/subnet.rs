@@ -19,7 +19,7 @@ pub async fn get_txs(mut client: &mut ConnectedClient) -> Vec<WorkerTxInfo> {
         "can't receive `worker_registration_txs`: {}",
         txs.error
     );
-    txs.strings
+    txs.value
         .iter()
         .map(|tx| serde_json::from_str::<WorkerTxInfo>(tx).unwrap())
         .collect::<Vec<_>>()
@@ -41,7 +41,7 @@ pub async fn get_txs_statuses(mut client: &mut ConnectedClient) -> Vec<WorkerTxS
         "can't receive `worker_registration_txs_statuses`: {}",
         txs.error
     );
-    txs.strings
+    txs.value
         .iter()
         .map(|tx| serde_json::from_str::<WorkerTxStatus>(tx).unwrap())
         .collect::<Vec<_>>()
