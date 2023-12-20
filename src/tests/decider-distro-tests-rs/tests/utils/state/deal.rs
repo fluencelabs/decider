@@ -20,7 +20,7 @@ pub async fn get_deal_state(client: &mut ConnectedClient, deal_id: &String) -> D
         "can't get state for deal {}: {}",
         deal_id, result.error
     );
-    serde_json::from_str::<DealState>(&result.str)
+    serde_json::from_str::<DealState>(&result.value)
         .wrap_err("parse deal_state")
         .unwrap()
 }
@@ -37,7 +37,7 @@ pub async fn get_joined_deals(client: &mut ConnectedClient) -> Vec<JoinedDeal> {
         .unwrap();
     assert!(deals.success, "empty list of joined_deals: {}", deals.error);
     deals
-        .strings
+        .value
         .iter()
         .map(|deal| serde_json::from_str::<JoinedDeal>(deal).unwrap())
         .collect()
@@ -64,7 +64,7 @@ pub async fn get_failed_deals(client: &mut ConnectedClient) -> Vec<FailedDeal> {
         .unwrap();
     assert!(deals.success, "can't receive failed_deals: {}", deals.error);
     deals
-        .strings
+        .value
         .iter()
         .map(|s| serde_json::from_str::<FailedDeal>(s))
         .collect::<Result<Vec<_>, _>>()

@@ -1,7 +1,7 @@
 use crate::utils;
 use crate::utils::spell;
 use connected_client::ConnectedClient;
-use eyre::{ContextCompat, WrapErr};
+use eyre::WrapErr;
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use fluence_spell_dtos::value::ScriptValue;
 use maplit::hashmap;
@@ -11,6 +11,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
 use tempfile::TempDir;
+use eyre::ContextCompat;
 
 pub async fn update_config(
     client: &mut ConnectedClient,
@@ -85,7 +86,7 @@ pub async fn update_decider_script_for_tests(client: &mut ConnectedClient, test_
         )
     "#,
         client = client.peer_id,
-        script = script.source_code,
+        script = script.value,
     );
 
     modify_decider_spell_script(test_dir, decider_id, updated_script).await;
@@ -113,7 +114,7 @@ pub async fn wait_worker_spell_stopped(
             strings.error
         );
 
-        if !strings.strings.is_empty() {
+        if !strings.value.is_empty() {
             #[derive(Deserialize, Debug)]
             struct State {
                 state: String,
@@ -122,7 +123,7 @@ pub async fn wait_worker_spell_stopped(
             // HACK: sometimes sqlite returns trash in the requested lists.
             // FOR NOW we filter out the trash to avoid parsing errors and CI failures
             let last_statuses = strings
-                .strings
+                .value
                 .iter()
                 .filter_map(|s| serde_json::from_str::<State>(s).ok())
                 .collect::<Vec<_>>();
@@ -131,7 +132,7 @@ pub async fn wait_worker_spell_stopped(
                 .last()
                 .wrap_err(format!(
                     "no installation status parsed, got {:?}",
-                    strings.strings
+                    strings.value
                 ))
                 .unwrap();
             let in_progress_statuses = ["INSTALLATION_IN_PROGRESS", "NOT_STARTED"];

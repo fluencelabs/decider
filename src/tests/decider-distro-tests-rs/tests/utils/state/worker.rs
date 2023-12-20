@@ -11,7 +11,7 @@ pub async fn get_worker_app_cid(client: &mut ConnectedClient, worker_id: &String
         .wrap_err("get_worker_app_cid failed")
         .unwrap();
     assert!(!result.absent, "worker-spell doesn't have worker_def_cid");
-    serde_json::from_str::<String>(&result.str).unwrap()
+    serde_json::from_str::<String>(&result.value).unwrap()
 }
 
 pub async fn get_worker(mut client: &mut ConnectedClient, deal: &str) -> Vec<String> {
