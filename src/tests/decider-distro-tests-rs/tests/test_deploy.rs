@@ -123,7 +123,7 @@ async fn test_deploy_a_deal_single() {
         !counter.absent,
         "decider hasn't started yet (no counter in kv)"
     );
-    assert_eq!(counter.num, 1, "decider wasn't run");
+    assert_eq!(counter.value, 1, "decider wasn't run");
 
     // Analyse joined deals
     let deal = {

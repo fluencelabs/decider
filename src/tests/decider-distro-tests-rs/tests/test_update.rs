@@ -113,7 +113,7 @@ async fn test_update_deal() {
         .unwrap();
         let result = serde_json::from_value::<StringValue>(result[0].clone()).unwrap();
         assert!(!result.absent, "no `worker_def_cid` on worker-spell");
-        serde_json::from_str::<String>(&result.str).unwrap()
+        serde_json::from_str::<String>(&result.value).unwrap()
     };
     let original_app = TestApp::test_app2();
     let new_app = TestApp::test_app1();
