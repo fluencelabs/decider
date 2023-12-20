@@ -20,7 +20,7 @@ pub async fn get_deal_state(client: &mut ConnectedClient, deal_id: &String) -> D
         "can't get state for deal {}: {}",
         deal_id, result.error
     );
-    serde_json::from_str::<DealState>(&result.str)
+    serde_json::from_str::<DealState>(&result.value)
         .wrap_err("parse deal_state")
         .unwrap()
 }
