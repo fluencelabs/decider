@@ -1,4 +1,4 @@
-module DealRemoved declares *
+aqua DealRemoved declares *
 
 import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 

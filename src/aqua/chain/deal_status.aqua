@@ -1,4 +1,4 @@
-module DealStatus declares *
+aqua DealStatus declares *
 
 import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 

@@ -1,4 +1,4 @@
-module Info declares *
+aqua Info declares *
 
 export get_all_failed_deals
 

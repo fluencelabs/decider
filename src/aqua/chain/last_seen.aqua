@@ -1,6 +1,6 @@
 -- LastSeen is a block number
 -- If all logs from a block are processed, such a block is called LastSeen
-module LastSeen declares get, save, init, gt_set, increase
+aqua LastSeen declares get, save, init, gt_set, increase
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 

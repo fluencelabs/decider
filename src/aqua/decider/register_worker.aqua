@@ -1,4 +1,4 @@
-module RegisterWorker declares register_worker, poll_txs
+aqua RegisterWorker declares register_worker, poll_txs
 
 import DealId, SpellId, WorkerId, PAT from "../types.aqua"
 import spell_log, deal_log, list_push from "../fluence/spell.aqua"

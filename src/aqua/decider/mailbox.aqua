@@ -1,4 +1,4 @@
-module Mailbox declares poll_mailbox, push_remove_worker
+aqua Mailbox declares poll_mailbox, push_remove_worker
 
 export poll_mailbox, push_remove_worker
 

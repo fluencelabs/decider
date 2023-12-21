@@ -1,4 +1,4 @@
-module Hex declares inc, dec, min
+aqua Hex declares inc, dec, min
 
 import ChainConnector from "services.aqua"
 import SpellId from "./types.aqua"

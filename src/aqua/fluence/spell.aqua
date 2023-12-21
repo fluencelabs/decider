@@ -1,4 +1,4 @@
-module Spell declares get_string, spell_log, get_counter, deal_log, list_push
+aqua Spell declares get_string, spell_log, get_counter, deal_log, list_push
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 import Op from "@fluencelabs/aqua-lib/builtin.aqua"

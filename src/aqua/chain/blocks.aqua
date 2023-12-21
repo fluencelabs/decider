@@ -1,4 +1,4 @@
-module Blocks declares get_latest, lte, gt
+aqua Blocks declares get_latest, lte, gt
 
 import get_string, spell_log from "../fluence/spell.aqua"
 import ChainInfo from "../chain/chain.aqua"

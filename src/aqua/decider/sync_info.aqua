@@ -1,4 +1,4 @@
-module SyncInfo declares store_sync_info
+aqua SyncInfo declares store_sync_info
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 import Json from "../fluence/peer.aqua"

@@ -1,4 +1,4 @@
-module DealStorage declares *
+aqua DealStorage declares *
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 
