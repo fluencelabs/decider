@@ -147,7 +147,7 @@ async fn test_left_boundary_idle() {
         let last_seen = spell::get_string(&mut client, "decider", "last_seen_block")
             .await
             .unwrap();
-        assert_eq!(last_seen.str, expected_last_seen[step]);
+        assert_eq!(last_seen.value, expected_last_seen[step]);
     }
 
     server.shutdown().await;
