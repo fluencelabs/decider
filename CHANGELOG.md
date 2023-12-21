@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.5.8](https://github.com/fluencelabs/decider/compare/connector-v0.5.7...connector-v0.5.8) (2023-12-20)
+## [0.5.8](https://github.com/fluencelabs/decider/compare/connector-v0.5.7...connector-v0.5.8) (2023-12-21)
 
 
 ### Features
