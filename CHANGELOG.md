@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.9](https://github.com/fluencelabs/decider/compare/connector-v0.5.8...connector-v0.5.9) (2023-12-21)
+
+
+### Bug Fixes
+
+* update spell api ([#161](https://github.com/fluencelabs/decider/issues/161)) ([0025dc8](https://github.com/fluencelabs/decider/commit/0025dc899381c5211f3c1098f5a23cc08d129a6a))
+
 ## [0.5.8](https://github.com/fluencelabs/decider/compare/connector-v0.5.7...connector-v0.5.8) (2023-12-21)
 
 
