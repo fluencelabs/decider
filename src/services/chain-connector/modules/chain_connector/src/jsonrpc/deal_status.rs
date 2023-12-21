@@ -149,8 +149,10 @@ pub fn get_status_batch(api_endpoint: &str, deal_ids: Vec<String>) -> DealStatus
                 params: vec![json!({"data": input, "to": deal_id})],
             })
             .collect::<_>();
-        let response: Vec<JsonRpcResp<String>> = send_jsonrpc_batch(api_endpoint, batch)?;
-        response
+        let mut responses: Vec<JsonRpcResp<String>> = send_jsonrpc_batch(api_endpoint, batch)?;
+        // Sort by id to match the order of the original requests
+        responses.sort_by(|a, b| a.id.cmp(&b.id));
+        responses
             .into_iter()
             .zip(deal_ids)
             .map(|(result, deal_id)| {

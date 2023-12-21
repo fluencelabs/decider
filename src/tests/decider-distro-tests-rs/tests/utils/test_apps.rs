@@ -36,6 +36,25 @@ impl TestApp {
         )
     }
 
+    pub fn log_test_app1_update(deal_id: &str) -> Value {
+        json!(
+              {
+                "address": deal_id,
+                "topics": [
+                  "0x0e85c04920a2349be7d0f03a765fa172e5dabc0a4a9fc47acb81c07ce8d260d0",
+                ],
+                "data": "0x0155122000000000000000000000000000000000000000000000000000000000ae5c519332925f31f747a4edd958fb5b0791b10383ec6d5e77e2264f211e09e3",
+
+                "blockNumber": "0x300",
+                "transactionHash": "0xb825edf7da59840ce838a9ed70aa0aa6c54c322ca5d6f0be4f070766e46ebbd8",
+                "transactionIndex": "0xb",
+                "blockHash": "0x34ba65babca6f1ef44da5f75c7bb4335c7b7484178a74003de5df139ac6551ed",
+                "logIndex": "0x26",
+                "removed": false
+              }
+        )
+    }
+
     pub fn test_app2() -> Self {
         Self {
             cid: "bafkreicdwo6xrumiqc5a7oghbkay4tmmejlmokpweyut5uhe2tehsycvmu".to_string(),
@@ -61,6 +80,24 @@ impl TestApp {
                   host_topic
                 ]
             }
+        )
+    }
+
+    pub fn log_test_app2_update(deal_id: &str) -> Value {
+        json!(
+              {
+                "address": deal_id,
+                "topics": [
+                  "0x0e85c04920a2349be7d0f03a765fa172e5dabc0a4a9fc47acb81c07ce8d260d0",
+                ],
+                "data": "0x015512200000000000000000000000000000000000000000000000000000000043b3bd78d18880ba0fb8c70a818e4d8c2256c729f626293ed0e4d4c879605565",
+                "blockNumber": "0x300",
+                "transactionHash": "0xb825edf7da59840ce838a9ed70aa0aa6c54c322ca5d6f0be4f070766e46ebbd8",
+                "transactionIndex": "0xb",
+                "blockHash": "0x34ba65babca6f1ef44da5f75c7bb4335c7b7484178a74003de5df139ac6551ed",
+                "logIndex": "0x26",
+                "removed": false
+              }
         )
     }
 }

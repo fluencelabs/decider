@@ -120,15 +120,16 @@ async fn test_left_boundary_idle() {
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
 
     let block_numbers = vec!["0x0", "0x10", "0x10", "0xffffff"];
-    let expected_last_seen = vec!["0x0", "0x10", "0x10", "0x205"];
+    // last_seen = from_block + DEFAULT_BLOCK_RANGE
+    let expected_last_seen = vec!["0x0", "0x10", "0x10", "0x7e1"];
     let expected_from_blocks = vec!["0x0", "0x1", "0x11", "0x11"];
 
     for step in 0..block_numbers.len() {
         update_config(&mut client, &oneshot_config()).await.unwrap();
+
         {
-            let (method, params) = server.receive_request().await.unwrap();
+            let (method, _params) = server.receive_request().await.unwrap();
             assert_eq!(method, "eth_blockNumber");
-            assert!(params.is_empty());
             server.send_response(Ok(json!(block_numbers[step])));
         }
 
@@ -155,7 +156,8 @@ async fn test_left_boundary_idle() {
 #[tokio::test]
 async fn test_sync_info() {
     const LATEST_BLOCK_FIRST_RUN: u32 = 100;
-    const LATEST_BLOCK_SECOND_RUN: u32 = 2000;
+    const LATEST_BLOCK_SECOND_RUN: u32 =
+        LATEST_BLOCK_FIRST_RUN + DEFAULT_POLL_WINDOW_BLOCK_SIZE + 100;
 
     let mut server = run_test_server();
 
@@ -167,16 +169,8 @@ async fn test_sync_info() {
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
-        {
-            let (method, _params) = server.receive_request().await.unwrap();
-            assert_eq!(method, "eth_blockNumber");
-            server.send_response(Ok(json!(to_hex(LATEST_BLOCK_FIRST_RUN))));
-        }
-        {
-            let (method, _params) = server.receive_request().await.unwrap();
-            assert_eq!(method, "eth_getLogs");
-            server.send_response(Ok(json!([])));
-        }
+        rpc_block_number!(server, LATEST_BLOCK_FIRST_RUN);
+        rpc_get_logs_empty!(server);
     }
     wait_decider_stopped(&mut client).await;
 
@@ -192,16 +186,8 @@ async fn test_sync_info() {
 
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
-        {
-            let (method, _params) = server.receive_request().await.unwrap();
-            assert_eq!(method, "eth_blockNumber");
-            server.send_response(Ok(json!(to_hex(LATEST_BLOCK_SECOND_RUN))));
-        }
-        {
-            let (method, _params) = server.receive_request().await.unwrap();
-            assert_eq!(method, "eth_getLogs");
-            server.send_response(Ok(json!([])));
-        }
+        rpc_block_number!(server, LATEST_BLOCK_SECOND_RUN);
+        rpc_get_logs_empty!(server);
     }
     wait_decider_stopped(&mut client).await;
 

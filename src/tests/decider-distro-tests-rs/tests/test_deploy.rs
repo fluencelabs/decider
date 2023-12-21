@@ -4,7 +4,7 @@
 
 pub mod utils;
 
-use crate::utils::setup::setup_rpc_deploy_deal;
+use crate::utils::setup::{setup_nox, setup_rpc_deploy_deal};
 use fluence_spell_dtos::trigger_config::TriggerConfig;
 use fluence_spell_dtos::value::{StringListValue, StringValue, U32Value};
 use maplit::hashmap;
@@ -20,7 +20,6 @@ use utils::default::{
     default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE, DEFAULT_POLL_WINDOW_BLOCK_SIZE,
 };
 use utils::distro::{make_distro_with_api, make_distro_with_api_and_config};
-use utils::setup::setup_nox;
 use utils::state::deal::{get_deal_state, get_joined_deals, JoinedDeal};
 use utils::state::worker::get_worker_app_cid;
 use utils::test_rpc_server::{run_test_server, run_test_server_predefined};
@@ -170,12 +169,7 @@ async fn test_deploy_a_deal_single() {
 
     // Here we also test that the Installation Spell worked correctly to ensure that the distro is fine,
     // but deep Installation Spell testing is out of scope of this test suits
-    wait_worker_spell_stopped(
-        &mut client,
-        deal.worker_id.clone(),
-        Duration::from_millis(200),
-    )
-    .await;
+    wait_worker_spell_stopped(&mut client, &deal.worker_id, Duration::from_millis(200)).await;
 
     let worker_service_list = {
         let result = execute(

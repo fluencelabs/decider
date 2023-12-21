@@ -121,8 +121,8 @@ pub fn poll_deal_peer_removed_batch(api_endpoint: &str, deals: Vec<DealPeerRemov
         Err(err) => return DealPeerRemovedBatchResult::error(err.to_string()),
         Ok(r) => r,
     };
-    // The JSON-RPC specification DOES NOT guarantee that the reponses are in the same order as the
-    // requests, so to correctly match the reponses with the deal ids we need to sort the responses
+    // The JSON-RPC specification DOES NOT guarantee that the responses are in the same order as the
+    // requests, so to correctly match the responses with the deal ids we need to sort the responses
     // in the asc order.
     responses.sort_by(|a, b| a.id.cmp(&b.id));
 

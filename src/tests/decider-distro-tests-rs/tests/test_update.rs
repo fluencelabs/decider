@@ -4,15 +4,16 @@
 
 pub mod utils;
 
-use crate::utils::setup::setup_rpc_deploy_deal;
-use fluence_spell_dtos::value::StringValue;
+use crate::utils::control::wait_worker_spell_stopped;
+use crate::utils::setup::{setup_rpc_deploy_deal, setup_rpc_deploy_deals};
+use crate::utils::state::worker::{get_worker_app_cid, is_active};
+use fluence_spell_dtos::value::{StringValue, U32Value};
 use maplit::hashmap;
 use serde_json::json;
+use std::time::Duration;
 use utils::chain::LogsReq;
 use utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};
-use utils::default::{
-    default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE, DEFAULT_POLL_WINDOW_BLOCK_SIZE,
-};
+use utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE, DEFAULT_POLL_WINDOW_BLOCK_SIZE};
 use utils::distro::make_distro_with_api;
 use utils::setup::setup_nox;
 use utils::state::deal::get_joined_deals;
@@ -20,9 +21,19 @@ use utils::test_rpc_server::run_test_server;
 use utils::TestApp;
 use utils::*;
 
+/// Test deal updates
+/// 1. Deploy a deal
+/// 2. On the second run, return an update
+/// 3. After the run, check:
+///    - Worker APP CID is updated
+///    - Worker was triggered after the update
+///      We can check it by checking counter. Worker spell settings is oneshot for the tests, so the counter must be 2:
+///      The first run after the activation after installation, the second run after the update.
 #[tokio::test]
 async fn test_update_deal() {
-    const BLOCK_INIT: u32 = 35;
+    enable_decider_logs();
+    const LATEST_BLOCK: u32 = 35;
+    const LATEST_BLOCK2: u32 = 1000;
     const DEAL_ID: &'static str = DEAL_IDS[0];
     const BLOCK_NUMBER: u32 = 32;
 
@@ -33,7 +44,8 @@ async fn test_update_deal() {
 
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    setup_rpc_deploy_deal(&mut server, BLOCK_INIT, DEAL_ID, BLOCK_NUMBER).await;
+    // Deploy test_app_1
+    setup_rpc_deploy_deal(&mut server, LATEST_BLOCK, DEAL_ID, BLOCK_NUMBER).await;
     wait_decider_stopped(&mut client).await;
 
     let mut deals = get_joined_deals(&mut client).await;
@@ -43,17 +55,9 @@ async fn test_update_deal() {
     // run again
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
-        {
-            let (method, _params) = server.receive_request().await.unwrap();
-            assert_eq!(method, "eth_blockNumber");
-            server.send_response(Ok(json!("0x200")));
-        }
+        rpc_block_number!(server, LATEST_BLOCK2);
         // no new deals
-        {
-            let (method, _params) = server.receive_request().await.unwrap();
-            assert_eq!(method, "eth_getLogs");
-            server.send_response(Ok(json!([])));
-        }
+        rpc_get_logs_empty!(server);
     }
     // deal update phase
     {
@@ -64,39 +68,13 @@ async fn test_update_deal() {
             log.address, deal.deal_id,
             "wrong deal_id in the update-deal request"
         );
-
-        let response = json!( [
-              {
-                "address": deal.deal_id,
-                "topics": [
-                  "0x0e85c04920a2349be7d0f03a765fa172e5dabc0a4a9fc47acb81c07ce8d260d0",
-                ],
-                  // CID of the app from test_app_1
-                "data": "0x0155122000000000000000000000000000000000000000000000000000000000ae5c519332925f31f747a4edd958fb5b0791b10383ec6d5e77e2264f211e09e3",
-
-                "blockNumber": "0x300",
-                "transactionHash": "0xb825edf7da59840ce838a9ed70aa0aa6c54c322ca5d6f0be4f070766e46ebbd8",
-                "transactionIndex": "0xb",
-                "blockHash": "0x34ba65babca6f1ef44da5f75c7bb4335c7b7484178a74003de5df139ac6551ed",
-                "logIndex": "0x26",
-                "removed": false
-              }
-            ]
-        );
-        server.send_response(Ok(json!(response)));
+        let response = TestApp::log_test_app2_update(&deal.deal_id);
+        server.send_response(Ok(json!([response])));
     }
     // deal status phase
-    {
-        let (method, _params) = server.receive_request().await.unwrap();
-        assert_eq!(method, "eth_call");
-        server.send_response(Ok(json!(DEAL_STATUS_ACTIVE)));
-    }
+    rpc_deal_status!(server, DEAL_STATUS_ACTIVE);
     // deal removed phase
-    {
-        let (method, _params) = server.receive_request().await.unwrap();
-        assert_eq!(method, "eth_getLogs");
-        server.send_response(Ok(json!([])));
-    }
+    rpc_get_logs_empty!(server);
     wait_decider_stopped(&mut client).await;
 
     let cid = {
@@ -115,17 +93,35 @@ async fn test_update_deal() {
         assert!(!result.absent, "no `worker_def_cid` on worker-spell");
         serde_json::from_str::<String>(&result.str).unwrap()
     };
-    let original_app = TestApp::test_app2();
-    let new_app = TestApp::test_app1();
+    let original_app = TestApp::test_app1();
+    let new_app = TestApp::test_app2();
     assert_ne!(cid, original_app.cid, "CID must be changed");
     assert_eq!(cid, new_app.cid, "CID must be set to the new app");
+
+    wait_worker_spell_stopped(&mut client, &deal.worker_id, Duration::from_millis(200)).await;
+    let counter = execute(
+        &mut client,
+        r#"(seq
+            (call relay ("op" "noop") [])
+            (call worker_id ("worker-spell" "get_u32") ["counter"] counter)
+        )"#,
+        "counter",
+        hashmap! { "worker_id" => json!(deal.worker_id )},
+    )
+    .await
+    .unwrap();
+    let counter = serde_json::from_value::<U32Value>(counter[0].clone()).unwrap();
+    assert!(counter.success);
+    assert_eq!(
+        counter.num, 2,
+        "worker must be triggered twice (by installation and by update)"
+    );
 
     server.shutdown().await
 }
 
 #[tokio::test]
-async fn test_update_deal_from_later_blocks() {
-    enable_decider_logs();
+async fn test_update_from_later_blocks() {
     const LATEST_BLOCK_INIT: u32 = 50;
     // should be less than LATEST
     const BLOCK_NUMBER_DEAL: u32 = 40;
@@ -237,4 +233,105 @@ async fn test_update_deal_from_later_blocks() {
     wait_decider_stopped(&mut client).await;
 
     server.shutdown().await
+}
+
+/// Test that deal are still updated when some RPC responses are errors
+///
+/// Plan:
+/// 1. Deploy 3 deals.
+/// 2. On updating, getStatus and a remove event return an error for the second deal,
+/// 3. Check that the first and the third deals are updated.
+#[tokio::test]
+async fn test_update_with_errors() {
+    enable_decider_logs();
+    const LATEST_BLOCK_1: u32 = 30;
+    const LATEST_BLOCK_2: u32 = 40;
+
+    let error = json!({
+        "code": -32603,
+        "message": "The deal must fail",
+    });
+
+    let deals = vec![(DEAL_IDS[0], 10), (DEAL_IDS[1], 20), (DEAL_IDS[2], 25)];
+    let deal1 = format!("0x{}", DEAL_IDS[0]);
+    let deal2 = format!("0x{}", DEAL_IDS[1]);
+    let deal3 = format!("0x{}", DEAL_IDS[2]);
+
+    let expected_cid = hashmap! {
+        deal1 => TestApp::test_app2().cid,
+        deal2 => TestApp::test_app1().cid, // meaning that the deal was not updated and preserved the old cid
+        deal3 => TestApp::test_app2().cid,
+    };
+
+    let mut server = run_test_server();
+    let url = server.url.clone();
+    let distro = make_distro_with_api(url);
+    let (swarm, mut client) = setup_nox(distro.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+
+    // Deploy the 3 deals
+    update_config(&mut client, &oneshot_config()).await.unwrap();
+    setup_rpc_deploy_deals(&mut server, LATEST_BLOCK_1, deals).await;
+    wait_decider_stopped(&mut client).await;
+
+    // Update the deals, return errors for the second deal
+    update_config(&mut client, &oneshot_config()).await.unwrap();
+    {
+        rpc_block_number!(server, LATEST_BLOCK_2);
+        // for new deals
+        rpc_get_logs_empty!(server);
+        // update phase
+        // first deal, ok
+        rpc_get_logs_exact!(
+            server,
+            Ok(json!([TestApp::log_test_app2_update(DEAL_IDS[0])]))
+        );
+        // second deal, error
+        rpc_get_logs_exact!(server, Err(error.clone()));
+        // third deal, ok
+        rpc_get_logs_exact!(
+            server,
+            Ok(json!([TestApp::log_test_app2_update(DEAL_IDS[2])]))
+        );
+        // at this point all deals that were really updated are updated
+
+        // Now return statuses
+        // first deal, ok
+        rpc_deal_status!(server, DEAL_STATUS_ACTIVE);
+        // second deal, error
+        rpc_deal_status_exact!(server, Err(error.clone()));
+        // third deal, ok
+        rpc_deal_status!(server, DEAL_STATUS_ACTIVE);
+
+        // Poll remove
+        // first deal, ok
+        rpc_get_logs_empty!(server);
+        // second deal, error
+        rpc_get_logs_exact!(server, Err(error.clone()));
+        // third deal, ok
+        rpc_get_logs_empty!(server);
+    }
+    wait_decider_stopped(&mut client).await;
+
+    // At this point
+    // - all three deals must be joined.
+    // - first and third deals must be updated
+    // - all deals must remain active
+    let joined_deals = get_joined_deals(&mut client).await;
+    assert_eq!(
+        joined_deals.len(),
+        3,
+        "decider should join all three deals, actually joined {:?}",
+        joined_deals
+    );
+    for deal in joined_deals {
+        let cid = get_worker_app_cid(&mut client, &deal.worker_id).await;
+        assert_eq!(
+            cid, expected_cid[&deal.deal_id],
+            "wrong cid for deal {}",
+            deal.deal_id
+        );
+        let deal_active = is_active(&mut client, &deal.deal_id).await.unwrap();
+        assert!(deal_active, "deal {} must be active", deal.deal_id);
+    }
 }

@@ -99,7 +99,7 @@ async fn test_activate() {
     assert!(active, "worker must be active");
 
     // Check that the worker spell is created and is run after the worker is activated
-    wait_worker_spell_stopped(&mut client, worker_id.clone(), Duration::from_millis(200)).await;
+    wait_worker_spell_stopped(&mut client, &worker_id, Duration::from_millis(200)).await;
 
     // The next run on which the deal is deactivated
     update_config(&mut client, &oneshot_config()).await.unwrap();

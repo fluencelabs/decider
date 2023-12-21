@@ -32,8 +32,8 @@ pub fn enable_decider_logs() {
         /*
         "aquamarine::actor=debug",
         "aquamarine::aqua_runtime=off",
-        "aquamarine=debug",
-        */
+         */
+        "aquamarine=warn",
     ];
 
     let namespaces = namespaces

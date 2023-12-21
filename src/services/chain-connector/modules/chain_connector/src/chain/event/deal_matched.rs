@@ -187,7 +187,8 @@ mod tests {
         "#;
 
         let logs: JsonRpcResp<Vec<Log>> = serde_json::from_str(jsonrpc).expect("invalid jsonrpc");
-        let log = logs.result[0].clone();
+        let logs = logs.get_result().expect("error parsing jsonrpc result");
+        let log = logs[0].clone();
         let m = parse_log::<Match, DealMatched>(log).expect("error parsing Match from log");
         assert_eq!(m.block_number, "0x51");
         let m = m.info;
@@ -206,7 +207,7 @@ mod tests {
             "bafkreifolrizgmusl4y7or5e5xmvr623a6i3ca4d5rwv457cezhschqj4m"
         );
 
-        let log = logs.result[1].clone();
+        let log = logs[1].clone();
         let m = parse_log::<Match, DealMatched>(log).expect("error parsing Match from log");
         assert_eq!(m.block_number, "0x57");
         let m = m.info;
