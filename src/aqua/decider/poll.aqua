@@ -37,7 +37,7 @@ func main(spell_id: SpellId, chain: ChainInfo, worker_settings: WorkerSettings):
 
         try:
             poll_deal_statuses(spell_id, chain.api_endpoint, joined_deals)
-        
+
         try:
             poll_deal_peer_removed(spell_id, chain.api_endpoint, latest_block!, joined_deals)
 
@@ -49,4 +49,3 @@ func main(spell_id: SpellId, chain: ChainInfo, worker_settings: WorkerSettings):
 
         try:
             poll_mailbox(spell_id)
-

@@ -58,7 +58,7 @@ pub async fn update_decider_script_for_tests(client: &mut ConnectedClient, test_
         r#"
             (seq
                 (call relay ("srv" "resolve_alias_opt") ["decider"] id)
-                (call relay ("decider" "get_script_source_from_file") [] script)
+                (call relay ("decider" "get_script") [] script)
             )
     "#,
         "id script",
