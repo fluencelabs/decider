@@ -86,7 +86,6 @@
       "const": 0
     }
   },
-  "additionalProperties": false,
   "required": [
     "version",
     "name"

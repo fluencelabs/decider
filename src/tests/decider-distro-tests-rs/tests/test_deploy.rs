@@ -340,7 +340,11 @@ async fn test_deploy_deals_diff_blocks() {
         (last_seen, deals, workers)
     };
 
-    assert_eq!(last_seen.value, to_hex(LATEST_BLOCK), "wrong last_seen block");
+    assert_eq!(
+        last_seen.value,
+        to_hex(LATEST_BLOCK),
+        "wrong last_seen block"
+    );
 
     let mut expected = hashmap! {
         deal_id_1 => (TestApp::test_app1(), BLOCK_NUMBER_1),
@@ -525,6 +529,8 @@ async fn test_deploy_a_deal_in_seq() {
 ///    We can simulate it by returning not all deals on the first run, and on the second add deals to the block
 #[tokio::test]
 async fn test_deploy_deals_in_one_block() {
+    enable_decider_logs();
+
     const LATEST_BLOCK: u32 = 35;
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
     let deal_id_1 = format!("0x{DEAL_ID_1}");
