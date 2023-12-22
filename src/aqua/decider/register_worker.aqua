@@ -21,7 +21,7 @@ func store_tx(spell_id: SpellId, tx_info: WorkerTxInfo):
 func remove_tx(spell_id: SpellId, tx_info: WorkerTxInfo):
     Spell spell_id
     str <- Json.stringify(tx_info)
-    Spell.list_remove_value(TXS_KEY, str)
+    Spell.list_remove_string(TXS_KEY, str)
 
 data WorkerTxStatus:
     tx_info: WorkerTxInfo
@@ -36,7 +36,7 @@ func store_tx_status(spell_id: SpellId, status: WorkerTxStatus):
 func remove_tx_status(spell_id: SpellId, status: WorkerTxStatus):
     Spell spell_id
     str <- Json.stringify(status)
-    Spell.list_remove_value(TXS_STATUS_KEY, str)
+    Spell.list_remove_string(TXS_STATUS_KEY, str)
 
 -- TODO:
 -- Store joined worker in KV, status = unregistered
@@ -74,7 +74,7 @@ func txs_unknown(spell_id: SpellId) -> []WorkerTxInfo:
 
     known_txs_statuses  <- Spell.list_get_strings(TXS_STATUS_KEY)
     known_txs: *string
-    for status_str <- known_txs_statuses.strings:
+    for status_str <- known_txs_statuses.value:
         try:
             status <- JsonWorkerTxStatus.parse(status_str)
             known_txs <<- Json.stringify(status.tx_info)
@@ -82,7 +82,7 @@ func txs_unknown(spell_id: SpellId) -> []WorkerTxInfo:
             spell_log(spell_id, ["can't parse worker tx status:", status_str, "error:", e])
 
 
-    unknown_txs_str <- Array.diff(all_txs.strings, known_txs)
+    unknown_txs_str <- Array.diff(all_txs.value, known_txs)
 
     unknown_txs: *WorkerTxInfo
     for tx <- unknown_txs_str:

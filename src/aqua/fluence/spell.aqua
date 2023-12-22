@@ -31,7 +31,7 @@ func get_string(spell_id: SpellId, key: string) -> ?string:
         spell_log(spell_id, ["get_string failed", key, value.error])
     else:
         if !value.absent:
-            result <<- value.str
+            result <<- value.value
 
     <- result
 
@@ -41,7 +41,7 @@ func get_counter(spell_id: SpellId) -> u32:
     result: *u32
     counter <- Spell.get_u32("counter")
     if counter.success:
-        result <<- counter.num
+        result <<- counter.value
     else:
         result <<- 0
     <- result!
