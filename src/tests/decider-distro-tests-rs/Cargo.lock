@@ -96,7 +96,7 @@ dependencies = [
 [[package]]
 name = "air-interpreter-fs"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "air-interpreter-wasm",
  "blake3",
@@ -236,7 +236,7 @@ dependencies = [
 [[package]]
 name = "aquamarine"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -541,7 +541,7 @@ dependencies = [
  "futures-util",
  "http 0.2.11",
  "http-body 0.4.6",
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "itoa",
  "matchit",
  "memchr",
@@ -1018,7 +1018,7 @@ dependencies = [
 [[package]]
 name = "cid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "base64 0.21.5",
  "bytes",
@@ -1142,7 +1142,7 @@ dependencies = [
 [[package]]
 name = "config-utils"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "libp2p-identity",
 ]
@@ -1150,7 +1150,7 @@ dependencies = [
 [[package]]
 name = "connected-client"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "derivative",
  "either",
@@ -1176,7 +1176,7 @@ dependencies = [
 [[package]]
 name = "connection-pool"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "fluence-libp2p",
  "futures",
@@ -1245,7 +1245,7 @@ checksum = "f7144d30dcf0fafbce74250a3963025d8d52177934239851c917d29f1df280c2"
 [[package]]
 name = "control-macro"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 
 [[package]]
 name = "core-foundation"
@@ -1401,7 +1401,7 @@ dependencies = [
 [[package]]
 name = "created-swarm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "air-interpreter-fs",
  "aquamarine",
@@ -1617,6 +1617,8 @@ dependencies = [
 [[package]]
 name = "decider-distro"
 version = "0.5.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d747530b3c3c4cc47c0095626c0c74242c1754985f0f3705a6ec243927f6836b"
 dependencies = [
  "built 0.7.1",
  "fluence-spell-dtos",
@@ -1626,9 +1628,7 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.5.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d747530b3c3c4cc47c0095626c0c74242c1754985f0f3705a6ec243927f6836b"
+version = "0.5.10"
 dependencies = [
  "built 0.7.1",
  "fluence-spell-dtos",
@@ -1642,12 +1642,12 @@ version = "0.1.0"
 dependencies = [
  "connected-client",
  "created-swarm",
- "decider-distro 0.5.9",
+ "decider-distro 0.5.10",
  "eyre",
  "fluence-app-service",
  "fluence-keypair",
  "fluence-spell-dtos",
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "log-utils",
  "maplit",
  "mockito",
@@ -2133,7 +2133,7 @@ dependencies = [
 [[package]]
 name = "fluence-libp2p"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "base64 0.21.5",
  "bs58",
@@ -2153,9 +2153,9 @@ dependencies = [
 
 [[package]]
 name = "fluence-spell-distro"
-version = "0.6.2"
+version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5a8b6daf82ba775e588f3fcfe2baca1d3e94368dd100c80254149db790878e6c"
+checksum = "57f34514fab80ebdd0c68bc18a9827c299b8a316d12790a1f0525936b363ad9d"
 dependencies = [
  "built 0.7.1",
  "maplit",
@@ -2163,9 +2163,9 @@ dependencies = [
 
 [[package]]
 name = "fluence-spell-dtos"
-version = "0.6.2"
+version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0a6cf44de9c82149d5a3a8a633b3a0742840a22a541d827ecfd567ce98f10775"
+checksum = "42b154670a65be0deaf5d461ec94b76009024694ee7752d80dd54d3189901279"
 dependencies = [
  "eyre",
  "marine-rs-sdk",
@@ -2229,7 +2229,7 @@ dependencies = [
 [[package]]
 name = "fs-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "eyre",
  "rand 0.8.5",
@@ -2536,7 +2536,7 @@ dependencies = [
 [[package]]
 name = "health"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "eyre",
 ]
@@ -2594,7 +2594,7 @@ dependencies = [
  "ipnet",
  "once_cell",
  "rand 0.8.5",
- "socket2 0.5.5",
+ "socket2",
  "thiserror",
  "tinyvec",
  "tokio",
@@ -2768,9 +2768,9 @@ dependencies = [
 
 [[package]]
 name = "hyper"
-version = "0.14.27"
+version = "0.14.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ffb1cfd654a8219eaef89881fdb3bb3b1cdc5fa75ded05d6933b2b382e395468"
+checksum = "bf96e135eb83a2a8ddf766e426a841d8ddd7449d5f00d34ea02b41d2f19eef80"
 dependencies = [
  "bytes",
  "futures-channel",
@@ -2783,7 +2783,7 @@ dependencies = [
  "httpdate",
  "itoa",
  "pin-project-lite",
- "socket2 0.4.10",
+ "socket2",
  "tokio",
  "tower-service",
  "tracing",
@@ -2817,7 +2817,7 @@ checksum = "ec3efd23720e2049821a693cbc7e65ea87c72f1c58ff2f9522ff332b1491e590"
 dependencies = [
  "futures-util",
  "http 0.2.11",
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "log",
  "rustls",
  "rustls-native-certs",
@@ -2831,7 +2831,7 @@ version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbb958482e8c7be4bc3cf272a766a2b0bf1a6755e7a6ae777f017a31d11b13b1"
 dependencies = [
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "pin-project-lite",
  "tokio",
  "tokio-io-timeout",
@@ -2844,7 +2844,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6183ddfa99b85da61a140bea0efc93fdf56ceaa041b37d553518030827f9905"
 dependencies = [
  "bytes",
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "native-tls",
  "tokio",
  "tokio-native-tls",
@@ -2863,7 +2863,7 @@ dependencies = [
  "http-body 1.0.0",
  "hyper 1.0.1",
  "pin-project-lite",
- "socket2 0.5.5",
+ "socket2",
  "tokio",
  "tower",
  "tower-service",
@@ -2965,7 +2965,7 @@ dependencies = [
  "bytes",
  "futures",
  "http 0.2.11",
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "log",
  "rand 0.8.5",
  "tokio",
@@ -3090,7 +3090,7 @@ version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b58db92f96b720de98181bbbe63c831e87005ab460c1bf306eb2622b4707997f"
 dependencies = [
- "socket2 0.5.5",
+ "socket2",
  "widestring",
  "windows-sys 0.48.0",
  "winreg",
@@ -3224,7 +3224,7 @@ dependencies = [
 [[package]]
 name = "ivalue-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "fluence-it-types",
  "serde_json",
@@ -3251,7 +3251,7 @@ dependencies = [
 [[package]]
 name = "json-utils"
 version = "0.0.2"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "base64 0.21.5",
  "itertools 0.12.0",
@@ -3293,7 +3293,7 @@ dependencies = [
  "async-trait",
  "beef",
  "futures-util",
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "jsonrpsee-types",
  "serde",
  "serde_json",
@@ -3309,7 +3309,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5f80c17f62c7653ce767e3d7288b793dfec920f97067ceb189ebdd3570f2bc20"
 dependencies = [
  "async-trait",
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "hyper-rustls",
  "jsonrpsee-core",
  "jsonrpsee-types",
@@ -3352,7 +3352,7 @@ dependencies = [
 [[package]]
 name = "kademlia"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "bs58",
  "control-macro",
@@ -3390,7 +3390,7 @@ dependencies = [
 [[package]]
 name = "key-manager"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "eyre",
  "fluence-keypair",
@@ -3704,7 +3704,7 @@ dependencies = [
  "libp2p-swarm",
  "rand 0.8.5",
  "smallvec",
- "socket2 0.5.5",
+ "socket2",
  "tokio",
  "tracing",
  "void",
@@ -3809,7 +3809,7 @@ dependencies = [
  "rand 0.8.5",
  "ring 0.16.20",
  "rustls",
- "socket2 0.5.5",
+ "socket2",
  "thiserror",
  "tokio",
  "tracing",
@@ -3862,7 +3862,7 @@ dependencies = [
  "libc",
  "libp2p-core",
  "libp2p-identity",
- "socket2 0.5.5",
+ "socket2",
  "tokio",
  "tracing",
 ]
@@ -4023,7 +4023,7 @@ checksum = "c4cd1a83af159aa67994778be9070f0ae1bd732942279cabb14f86f986a21456"
 [[package]]
 name = "local-vm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -4067,7 +4067,7 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 [[package]]
 name = "log-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "console-subscriber",
  "log",
@@ -4547,7 +4547,7 @@ dependencies = [
  "assert-json-diff",
  "colored",
  "futures",
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "log",
  "rand 0.8.5",
  "regex",
@@ -4766,12 +4766,12 @@ dependencies = [
 [[package]]
 name = "now-millis"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 
 [[package]]
 name = "nox"
-version = "0.16.10"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+version = "0.16.11"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -5137,7 +5137,7 @@ dependencies = [
 [[package]]
 name = "particle-args"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "avm-server",
  "bs58",
@@ -5153,7 +5153,7 @@ dependencies = [
 [[package]]
 name = "particle-builtins"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "async-trait",
  "avm-server",
@@ -5199,7 +5199,7 @@ dependencies = [
 [[package]]
 name = "particle-execution"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "async-trait",
  "fluence-app-service",
@@ -5218,7 +5218,7 @@ dependencies = [
 [[package]]
 name = "particle-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "base64 0.21.5",
  "bytesize",
@@ -5246,7 +5246,7 @@ dependencies = [
 [[package]]
 name = "particle-protocol"
 version = "0.3.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "asynchronous-codec 0.7.0",
  "base64 0.21.5",
@@ -5273,7 +5273,7 @@ dependencies = [
 [[package]]
 name = "particle-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "derivative",
  "eyre",
@@ -5329,7 +5329,7 @@ dependencies = [
 [[package]]
 name = "peer-metrics"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "bytesize",
  "fluence-app-service",
@@ -5748,7 +5748,7 @@ checksum = "055b4e778e8feb9f93c4e439f71dc2156ef13360b432b799e179a8c4cdf0b1d7"
 dependencies = [
  "bytes",
  "libc",
- "socket2 0.5.5",
+ "socket2",
  "tracing",
  "windows-sys 0.48.0",
 ]
@@ -5972,7 +5972,7 @@ dependencies = [
  "h2 0.3.22",
  "http 0.2.11",
  "http-body 0.4.6",
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "hyper-tls",
  "ipnet",
  "js-sys",
@@ -6421,7 +6421,7 @@ dependencies = [
 [[package]]
 name = "server-config"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "air-interpreter-fs",
  "base64 0.21.5",
@@ -6453,7 +6453,7 @@ dependencies = [
 [[package]]
 name = "service-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "cid-utils",
  "eyre",
@@ -6601,16 +6601,6 @@ dependencies = [
 
 [[package]]
 name = "socket2"
-version = "0.4.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f7916fc008ca5542385b89a3d3ce689953c143e9304a9bf8beec1de48994c0d"
-dependencies = [
- "libc",
- "winapi",
-]
-
-[[package]]
-name = "socket2"
 version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b5fac59a5cb5dd637972e5fca70daf0523c9067fcdc4842f053dae04a18f8e9"
@@ -6637,7 +6627,7 @@ dependencies = [
 [[package]]
 name = "sorcerer"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "aquamarine",
  "connection-pool",
@@ -6676,7 +6666,7 @@ dependencies = [
 [[package]]
 name = "spell-event-bus"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "connection-pool",
  "derivative",
@@ -6704,7 +6694,7 @@ dependencies = [
 [[package]]
 name = "spell-service-api"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "fluence-libp2p",
  "fluence-spell-dtos",
@@ -6719,7 +6709,7 @@ dependencies = [
 [[package]]
 name = "spell-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "derivative",
  "eyre",
@@ -6784,7 +6774,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 [[package]]
 name = "subnet-resolver"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "ethabi",
  "eyre",
@@ -6883,10 +6873,10 @@ dependencies = [
 [[package]]
 name = "system-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "aqua-ipfs-distro",
- "decider-distro 0.5.9 (registry+https://github.com/rust-lang/crates.io-index)",
+ "decider-distro 0.5.9",
  "eyre",
  "fluence-app-service",
  "fluence-spell-dtos",
@@ -6950,7 +6940,7 @@ dependencies = [
 [[package]]
 name = "test-constants"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 
 [[package]]
 name = "textwrap"
@@ -7058,7 +7048,7 @@ dependencies = [
  "parking_lot",
  "pin-project-lite",
  "signal-hook-registry",
- "socket2 0.5.5",
+ "socket2",
  "tokio-macros",
  "tracing",
  "windows-sys 0.48.0",
@@ -7154,7 +7144,7 @@ dependencies = [
 [[package]]
 name = "toml-utils"
 version = "0.0.1"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "toml 0.5.11",
 ]
@@ -7207,7 +7197,7 @@ dependencies = [
  "h2 0.3.22",
  "http 0.2.11",
  "http-body 0.4.6",
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "hyper-timeout",
  "percent-encoding",
  "pin-project",
@@ -7234,7 +7224,7 @@ dependencies = [
  "h2 0.3.22",
  "http 0.2.11",
  "http-body 0.4.6",
- "hyper 0.14.27",
+ "hyper 0.14.28",
  "hyper-timeout",
  "percent-encoding",
  "pin-project",
@@ -7282,7 +7272,7 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "toy-vms"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "aquamarine",
  "avm-server",
@@ -7547,7 +7537,7 @@ dependencies = [
 [[package]]
 name = "uuid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.10#7e1150d7fa1eb110e1857e21704ae2a6744e9dfa"
+source = "git+https://github.com/fluencelabs/nox.git?tag=nox-v0.16.11#967824bfd6d3ea9e5582b4263a72ca7112244e6f"
 dependencies = [
  "uuid",
 ]
