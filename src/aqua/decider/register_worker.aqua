@@ -72,6 +72,8 @@ func txs_unknown(spell_id: SpellId) -> []WorkerTxInfo:
 
     all_txs <- Spell.list_get_strings(TXS_KEY)
 
+    spell_log(spell_id, ["all txs", all_txs])
+
     known_txs_statuses  <- Spell.list_get_strings(TXS_STATUS_KEY)
     known_txs: *string
     for status_str <- known_txs_statuses.value:
