@@ -1,4 +1,4 @@
-module Consts declares *
+aqua Consts declares *
 
 import "@fluencelabs/aqua-lib/builtin.aqua"
 

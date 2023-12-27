@@ -1,4 +1,4 @@
-module Chain declares ChainInfo
+aqua Chain declares ChainInfo
 
 alias Address: string
 alias URL: string

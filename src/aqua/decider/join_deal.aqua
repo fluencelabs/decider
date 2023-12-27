@@ -1,4 +1,4 @@
-module JoinDeal declares join_deal
+aqua JoinDeal declares join_deal
 
 import PeerSpell from "@fluencelabs/spell/api.aqua"
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"

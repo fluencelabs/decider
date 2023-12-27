@@ -1,4 +1,4 @@
-module Debug declares Console, RunConsoleAny, RunConsoleMany, RunConsoleManyAny, log_back
+aqua Debug declares Console, RunConsoleAny, RunConsoleMany, RunConsoleManyAny, log_back
 
 -- Debug outputs
 service RunConsoleMany("run-console"):
