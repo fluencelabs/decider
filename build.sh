@@ -16,8 +16,8 @@ cp target/wasm32-wasi/release/curl_adapter.wasm src/distro/decider-spell/
 cp example/Config.toml src/distro/decider-spell/
 
 # compile aqua file
-fluence aqua --import src/aqua --import src/aqua/decider --import src/aqua/chain --import src/aqua/fluence -i src/aqua/decider/deal_spell.aqua -o "$DISTRO_DIR/deal_spell" --air
-fluence aqua --import src/aqua --import src/aqua/decider --import src/aqua/chain --import src/aqua/fluence -i src/aqua/decider/poll.aqua -o "$DISTRO_DIR/poll" --air
+fluence aqua -i src/aqua/decider/deal_spell.aqua -o "$DISTRO_DIR/deal_spell" --air
+fluence aqua -i src/aqua/decider/poll.aqua -o "$DISTRO_DIR/poll" --air
 
 # compile distro
 cd src/distro
