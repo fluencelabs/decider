@@ -19,7 +19,7 @@ fluence-app-service = "0.29.0"
 fluence-keypair = "0.10.3"
 
 tracing = { version = "0.1.37", default-features = false, features = ["log"] }
-tracing-subscriber = "0.3.17"
+tracing-subscriber = "0.3.18"
 tokio = { version = "1.29.1", features = ["full", "tracing"] }
 toml = "0.5.10"
 maplit = "1.0.2"
