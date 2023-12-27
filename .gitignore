@@ -4,6 +4,7 @@
 /.fluence/env.yaml
 /.fluence/schemas
 /.fluence/tmp
+/.fluence/aqua
 **/node_modules
 **/target/
 .repl_history
@@ -11,3 +12,4 @@
 /src/ts/src/aqua
 /src/js/src/aqua
 /src/air
+/src/distro/decider-spell
