@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.12](https://github.com/fluencelabs/decider/compare/connector-v0.5.11...connector-v0.5.12) (2023-12-28)
+
+
+### Bug Fixes
+
+* **chain-connector:** parse chain errors, and also other stuff [fixes NET-646, NET-698, NET-690] ([#162](https://github.com/fluencelabs/decider/issues/162)) ([677574c](https://github.com/fluencelabs/decider/commit/677574cd67a1e96de487f16bfd6c7e2356d7f699))
+* **deps:** update rust crate fluence-keypair to 0.10.4 ([#172](https://github.com/fluencelabs/decider/issues/172)) ([56f9ab9](https://github.com/fluencelabs/decider/commit/56f9ab91200053befdaa6bfad898752947b92327))
+* **deps:** update rust crate fluence-spell-dtos to 0.6.4 ([#164](https://github.com/fluencelabs/decider/issues/164)) ([61d53a8](https://github.com/fluencelabs/decider/commit/61d53a8ec7536ac56801b1142fd2a5c0bae5af3d))
+* **deps:** update rust crate marine-rs-sdk to 0.10.3 ([#176](https://github.com/fluencelabs/decider/issues/176)) ([41672c6](https://github.com/fluencelabs/decider/commit/41672c6f24f1c34062e4ffa3c126395fb2b61aa7))
+
 ## [0.5.11](https://github.com/fluencelabs/decider/compare/connector-v0.5.10...connector-v0.5.11) (2023-12-28)
 
 
