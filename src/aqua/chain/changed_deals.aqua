@@ -1,4 +1,4 @@
-module ChangedDeals declares poll_deal_changes_batch
+aqua ChangedDeals declares poll_deal_changes_batch
 
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 import PeerSpell from "@fluencelabs/spell/api.aqua"

@@ -1,4 +1,4 @@
-module Peer declares Json, OpExt, JsonTriggerConfig
+aqua Peer declares Json, OpExt, JsonTriggerConfig
 
 import TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 import DealId, SpellId from "../types.aqua"

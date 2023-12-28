@@ -1,4 +1,4 @@
-module Types declares DealId, SpellId, WorkerId, CID, Block, PAT
+aqua Types declares *
 
 alias DealId: string
 alias SpellId: string

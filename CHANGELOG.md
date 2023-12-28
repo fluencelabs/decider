@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.5.11](https://github.com/fluencelabs/decider/compare/connector-v0.5.10...connector-v0.5.11) (2023-12-28)
+
+
+### Features
+
+* **decider:** Use `aqua` instead of `module` ([#158](https://github.com/fluencelabs/decider/issues/158)) ([3817893](https://github.com/fluencelabs/decider/commit/38178930adc1a7d0f568b2bdc3c01ae28fdc1f5a))
+
+
+### Bug Fixes
+
+* **deps:** aqua-lib 0.9.0 ([#177](https://github.com/fluencelabs/decider/issues/177)) ([7e4602a](https://github.com/fluencelabs/decider/commit/7e4602aa4a3f888fd7cd2f2bc8e21ce64dea303a))
+
+## [0.5.10](https://github.com/fluencelabs/decider/compare/connector-v0.5.9...connector-v0.5.10) (2023-12-27)
+
+
+### Bug Fixes
+
+* **deps:** spell-dtos 0.6.3; nox 0.16.11 ([#173](https://github.com/fluencelabs/decider/issues/173)) ([60b70b6](https://github.com/fluencelabs/decider/commit/60b70b6916f4cf1d03bb25d5a5ef7bbd3b3e2cbc))
+
 ## [0.5.9](https://github.com/fluencelabs/decider/compare/connector-v0.5.8...connector-v0.5.9) (2023-12-21)
 
 

@@ -1,4 +1,4 @@
-module FromBlock declares evaluate_from_block
+aqua FromBlock declares evaluate_from_block
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 

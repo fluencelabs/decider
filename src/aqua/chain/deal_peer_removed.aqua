@@ -1,4 +1,4 @@
-module DealPeerRemoved declares *
+aqua DealPeerRemoved declares *
 
 import SpellId, DealId from "../types.aqua"
 import JoinedDeal, get_deal_state_removed, store_deal_state_removed from "../decider/deal_storage.aqua"

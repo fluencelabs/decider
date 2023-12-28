@@ -1,4 +1,4 @@
-module Intsall declares install_worker_spell 
+aqua Intsall declares install_worker_spell 
 
 import PeerSpell from "@fluencelabs/spell/api.aqua"
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"

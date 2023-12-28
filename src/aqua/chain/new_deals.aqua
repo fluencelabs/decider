@@ -1,4 +1,4 @@
-module NewDeals declares poll_new_deals
+aqua NewDeals declares poll_new_deals
 
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 
