@@ -1,6 +1,6 @@
 use serde_json::{json, Value};
 
-pub const DEFAULT_POLL_WINDOW_BLOCK_SIZE: u32 = 500;
+pub const DEFAULT_POLL_WINDOW_BLOCK_SIZE: u32 = 2000;
 
 pub const DEAL_IDS: &[&'static str] = &[
     "ffa0611a099ab68ad7c3c67b4ca5bbbee7a58b99",

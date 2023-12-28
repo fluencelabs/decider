@@ -104,9 +104,10 @@ mod tests {
             ]
         });
         let logs = serde_json::from_value::<JsonRpcResp<Vec<Log>>>(jsonrpc).expect("invalid jsonrpc");
-        let log = logs.result[0].clone();
+        let logs = logs.get_result().expect("error parsing jsonrpc result");
+        let log = logs[0].clone();
         let result = parse_log::<DealPeerRemovedData, DealPeerRemoved>(log);
-        assert!(result.is_ok(), "can't parse log: {:?}, error: {:?}", logs.result[0], result);
+        assert!(result.is_ok(), "can't parse log: {:?}, error: {:?}", logs[0], result);
         let result = result.unwrap();
         assert_eq!(result.block_number, EXPECTED_BLOCK_NUMBER);
         assert_eq!(result.info.compute_peer_id, PEER_ID);

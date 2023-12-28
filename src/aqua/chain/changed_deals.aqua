@@ -60,7 +60,7 @@ func update_worker(spell_id: SpellId, deal_info: DealInfo, log: DealChanged, set
         Spell "worker-spell"
         Spell.set_string(WORKER_DEF_CID, app_cid)
         if Worker.is_active(deal_id):
-            PeerSpell.update_trigger_config(spell_id, settings.config)
+            PeerSpell.update_trigger_config("worker-spell", settings.config)
 
 -- Move left boundary of the deal's block range to be `min(right boundary, latest_block) + 1`
 func move_left_boundary(spell_id: SpellId, deal_id: DealId, right_boundary: string, latest: string):
@@ -82,7 +82,10 @@ func poll_deal_changes_batch(spell_id: SpellId, chain: ChainInfo, deals: []Joine
                 if change.log != nil:
                     deal_log(spell_id, deal_id, ["found a deal changed log on block", change.log!.block_number])
                     -- Update app_cid of the deal on the corresponding worker spell
-                    update_worker(spell_id, change.deal_info, change.log!, settings)
+                    try:
+                        update_worker(spell_id, change.deal_info, change.log!, settings)
+                    catch e:
+                        deal_log(spell_id, deal_id, ["can't update worker:", e])
 
                     -- Move block range so that log's block becomes new left boundary
                     log_block = change.log!.block_number
@@ -95,5 +98,7 @@ func poll_deal_changes_batch(spell_id: SpellId, chain: ChainInfo, deals: []Joine
         -- so we move `left_boundary` for each deal to the next block after `min`
         -- so that on the next iteration, poll will request logs from `min(change.right, latest_block) + 1`
         for change <- changes! par:
-            deal_id = change.deal_info.deal_id
-            move_left_boundary(spell_id, deal_id, change.right_boundary, latest_block)
+            -- Don't move request boundary if the RPC returns an error (we can't do anything smart here, right?)
+            if change.success:
+                deal_id = change.deal_info.deal_id
+                move_left_boundary(spell_id, deal_id, change.right_boundary, latest_block)

@@ -59,12 +59,14 @@ pub fn poll_deal_changes(api_endpoint: &str, deals: Vec<DealChangesReq>) -> Mult
 
     let batch = deal_changed_req_batch(&deals);
     let responses = send_jsonrpc_batch::<GetLogsReq, Vec<Log>>(api_endpoint, batch);
-    let responses = match responses {
+    let mut responses = match responses {
         Err(err) => return MultipleDealsChanged::error(err.to_string()),
         Ok(r) => r,
     };
 
     let mut updated_deals = Vec::new();
+    // Sort by id to match the order of the original requests
+    responses.sort_by(|a, b| a.id.cmp(&b.id));
 
     for (deal, result) in zip(deals, responses) {
         let to_block = default_right_boundary(&deal.left_boundary);

@@ -94,7 +94,7 @@ pub async fn update_decider_script_for_tests(client: &mut ConnectedClient, test_
 
 pub async fn wait_worker_spell_stopped(
     client: &mut ConnectedClient,
-    worker_id: String,
+    worker_id: &String,
     timeout_per_try: Duration,
 ) {
     let mut finished = false;
@@ -102,7 +102,7 @@ pub async fn wait_worker_spell_stopped(
         // if only we can import these keys from Aqua files
         let strings = spell::list_get_strings_on(
             client,
-            &worker_id,
+            worker_id,
             "worker-spell",
             "__installation_spell_status__",
         )

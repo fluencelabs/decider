@@ -157,7 +157,7 @@ mod tests {
             .is_test(true)
             .try_init();
 
-        let expected_request = r#"{"jsonrpc":"2.0","id":0,"method":"eth_call","params":[{"data":"0xf3b6a45d","to":"0x6dD1aFfe90415C61AeDf5c0ACcA9Cf5fD5031517"},"latest"]}"#;
+        let expected_request = r#"{"jsonrpc":"2.0","id":0,"method":"eth_call","params":[{"data":"0x4b66a309","to":"0x6dD1aFfe90415C61AeDf5c0ACcA9Cf5fD5031517"},"latest"]}"#;
         let expected_request: serde_json::Value =
             serde_json::from_str(expected_request).expect("parse expected_request as json");
 
