@@ -113,7 +113,7 @@ async fn test_update_deal() {
     let counter = serde_json::from_value::<U32Value>(counter[0].clone()).unwrap();
     assert!(counter.success);
     assert_eq!(
-        counter.num, 2,
+        counter.value, 2,
         "worker must be triggered twice (by installation and by update)"
     );
 
