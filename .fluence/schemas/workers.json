@@ -1,203 +1,1135 @@
 {
   "$id": "https://fluence.dev/schemas/workers.yaml",
   "title": "workers.yaml",
-  "type": "object",
   "description": "A result of app deployment. This file is created automatically after successful deployment using `fluence workers deploy` command",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version"
+  ],
   "properties": {
     "version": {
       "type": "number",
-      "const": 0
+      "const": 1,
+      "description": "Config version"
     },
     "deals": {
       "type": "object",
-      "description": "A map of created deals",
-      "additionalProperties": {
-        "type": "object",
-        "properties": {
-          "definition": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string",
-            "description": "ISO timestamp of the time when the worker was deployed"
-          },
-          "dealId": {
-            "type": "string"
-          },
-          "dealIdOriginal": {
-            "type": "string"
-          },
-          "chainNetwork": {
-            "type": "string",
-            "enum": [
-              "kras",
-              "testnet",
-              "stage",
-              "local"
-            ]
-          },
-          "chainNetworkId": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "timestamp",
-          "definition",
-          "dealId",
-          "dealIdOriginal",
-          "chainNetwork",
-          "chainNetworkId"
-        ]
-      },
-      "properties": {
-        "Worker_deployed_using_deals": {
-          "type": "object",
-          "properties": {
-            "definition": {
-              "type": "string"
-            },
-            "timestamp": {
-              "type": "string",
-              "description": "ISO timestamp of the time when the worker was deployed"
-            },
-            "dealId": {
-              "type": "string"
-            },
-            "dealIdOriginal": {
-              "type": "string"
-            },
-            "chainNetwork": {
-              "type": "string",
-              "enum": [
-                "kras",
-                "testnet",
-                "stage",
-                "local"
-              ]
-            },
-            "chainNetworkId": {
-              "type": "number"
-            }
-          },
-          "required": [
-            "timestamp",
-            "definition",
-            "dealId",
-            "dealIdOriginal",
-            "chainNetwork",
-            "chainNetworkId"
-          ]
-        }
-      },
+      "description": "Info about deals created when deploying workers that is stored by environment that you deployed to",
+      "additionalProperties": false,
+      "nullable": true,
       "required": [],
-      "nullable": true
-    },
-    "hosts": {
-      "type": "object",
-      "description": "A map of deployed workers",
-      "additionalProperties": {
-        "type": "object",
-        "properties": {
-          "definition": {
-            "type": "string"
+      "properties": {
+        "custom": {
+          "type": "object",
+          "description": "A map of created deals",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "definition": {
+                "type": "string",
+                "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "ISO timestamp of the time when the worker was deployed"
+              },
+              "dealId": {
+                "type": "string",
+                "description": "Lowercased version of dealIdOriginal without 0x prefix. Currently unused. Was previously used to resolve workers in aqua"
+              },
+              "dealIdOriginal": {
+                "type": "string",
+                "description": "Blockchain transaction id that you get when deploy workers. Can be used in aqua to get worker and host ids. Check out example in the aqua generated in the default template"
+              },
+              "chainNetwork": {
+                "type": "string",
+                "enum": [
+                  "kras",
+                  "testnet",
+                  "stage",
+                  "local"
+                ],
+                "description": "Blockchain network name that was used when deploying workers"
+              },
+              "chainNetworkId": {
+                "type": "number",
+                "description": "Blockchain network id that was used when deploying workers"
+              }
+            },
+            "required": [
+              "timestamp",
+              "definition",
+              "dealId",
+              "dealIdOriginal",
+              "chainNetwork",
+              "chainNetworkId"
+            ],
+            "additionalProperties": false,
+            "description": "Contains data related to your deployment, including, most importantly, deal id, that can be used to resolve workers in aqua"
           },
-          "timestamp": {
-            "type": "string",
-            "description": "ISO timestamp of the time when the worker was deployed"
-          },
-          "dummyDealId": {
-            "type": "string"
-          },
-          "installation_spells": {
-            "type": "array",
-            "description": "A list of installation spells",
-            "items": {
+          "properties": {
+            "Worker_deployed_using_deals": {
               "type": "object",
               "properties": {
-                "host_id": {
-                  "type": "string"
+                "definition": {
+                  "type": "string",
+                  "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
                 },
-                "spell_id": {
-                  "type": "string"
+                "timestamp": {
+                  "type": "string",
+                  "description": "ISO timestamp of the time when the worker was deployed"
                 },
-                "worker_id": {
-                  "type": "string"
+                "dealId": {
+                  "type": "string",
+                  "description": "Lowercased version of dealIdOriginal without 0x prefix. Currently unused. Was previously used to resolve workers in aqua"
+                },
+                "dealIdOriginal": {
+                  "type": "string",
+                  "description": "Blockchain transaction id that you get when deploy workers. Can be used in aqua to get worker and host ids. Check out example in the aqua generated in the default template"
+                },
+                "chainNetwork": {
+                  "type": "string",
+                  "enum": [
+                    "kras",
+                    "testnet",
+                    "stage",
+                    "local"
+                  ],
+                  "description": "Blockchain network name that was used when deploying workers"
+                },
+                "chainNetworkId": {
+                  "type": "number",
+                  "description": "Blockchain network id that was used when deploying workers"
                 }
               },
               "required": [
-                "host_id",
-                "spell_id",
-                "worker_id"
-              ]
+                "timestamp",
+                "definition",
+                "dealId",
+                "dealIdOriginal",
+                "chainNetwork",
+                "chainNetworkId"
+              ],
+              "additionalProperties": false,
+              "description": "Contains data related to your deployment, including, most importantly, deal id, that can be used to resolve workers in aqua"
             }
           },
-          "relayId": {
-            "type": "string"
-          }
+          "required": [],
+          "nullable": true
         },
-        "required": [
-          "timestamp",
-          "definition",
-          "installation_spells",
-          "relayId",
-          "dummyDealId"
-        ]
-      },
-      "properties": {
-        "Worker_deployed_using_direct_hosting": {
+        "testnet": {
           "type": "object",
-          "properties": {
-            "definition": {
-              "type": "string"
-            },
-            "timestamp": {
-              "type": "string",
-              "description": "ISO timestamp of the time when the worker was deployed"
-            },
-            "dummyDealId": {
-              "type": "string"
-            },
-            "installation_spells": {
-              "type": "array",
-              "description": "A list of installation spells",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "host_id": {
-                    "type": "string"
-                  },
-                  "spell_id": {
-                    "type": "string"
-                  },
-                  "worker_id": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "host_id",
-                  "spell_id",
-                  "worker_id"
-                ]
+          "description": "A map of created deals",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "definition": {
+                "type": "string",
+                "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "ISO timestamp of the time when the worker was deployed"
+              },
+              "dealId": {
+                "type": "string",
+                "description": "Lowercased version of dealIdOriginal without 0x prefix. Currently unused. Was previously used to resolve workers in aqua"
+              },
+              "dealIdOriginal": {
+                "type": "string",
+                "description": "Blockchain transaction id that you get when deploy workers. Can be used in aqua to get worker and host ids. Check out example in the aqua generated in the default template"
+              },
+              "chainNetwork": {
+                "type": "string",
+                "enum": [
+                  "kras",
+                  "testnet",
+                  "stage",
+                  "local"
+                ],
+                "description": "Blockchain network name that was used when deploying workers"
+              },
+              "chainNetworkId": {
+                "type": "number",
+                "description": "Blockchain network id that was used when deploying workers"
               }
             },
-            "relayId": {
-              "type": "string"
+            "required": [
+              "timestamp",
+              "definition",
+              "dealId",
+              "dealIdOriginal",
+              "chainNetwork",
+              "chainNetworkId"
+            ],
+            "additionalProperties": false,
+            "description": "Contains data related to your deployment, including, most importantly, deal id, that can be used to resolve workers in aqua"
+          },
+          "properties": {
+            "Worker_deployed_using_deals": {
+              "type": "object",
+              "properties": {
+                "definition": {
+                  "type": "string",
+                  "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "description": "ISO timestamp of the time when the worker was deployed"
+                },
+                "dealId": {
+                  "type": "string",
+                  "description": "Lowercased version of dealIdOriginal without 0x prefix. Currently unused. Was previously used to resolve workers in aqua"
+                },
+                "dealIdOriginal": {
+                  "type": "string",
+                  "description": "Blockchain transaction id that you get when deploy workers. Can be used in aqua to get worker and host ids. Check out example in the aqua generated in the default template"
+                },
+                "chainNetwork": {
+                  "type": "string",
+                  "enum": [
+                    "kras",
+                    "testnet",
+                    "stage",
+                    "local"
+                  ],
+                  "description": "Blockchain network name that was used when deploying workers"
+                },
+                "chainNetworkId": {
+                  "type": "number",
+                  "description": "Blockchain network id that was used when deploying workers"
+                }
+              },
+              "required": [
+                "timestamp",
+                "definition",
+                "dealId",
+                "dealIdOriginal",
+                "chainNetwork",
+                "chainNetworkId"
+              ],
+              "additionalProperties": false,
+              "description": "Contains data related to your deployment, including, most importantly, deal id, that can be used to resolve workers in aqua"
             }
           },
-          "required": [
-            "timestamp",
-            "definition",
-            "installation_spells",
-            "relayId",
-            "dummyDealId"
-          ]
+          "required": [],
+          "nullable": true
+        },
+        "kras": {
+          "type": "object",
+          "description": "A map of created deals",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "definition": {
+                "type": "string",
+                "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "ISO timestamp of the time when the worker was deployed"
+              },
+              "dealId": {
+                "type": "string",
+                "description": "Lowercased version of dealIdOriginal without 0x prefix. Currently unused. Was previously used to resolve workers in aqua"
+              },
+              "dealIdOriginal": {
+                "type": "string",
+                "description": "Blockchain transaction id that you get when deploy workers. Can be used in aqua to get worker and host ids. Check out example in the aqua generated in the default template"
+              },
+              "chainNetwork": {
+                "type": "string",
+                "enum": [
+                  "kras",
+                  "testnet",
+                  "stage",
+                  "local"
+                ],
+                "description": "Blockchain network name that was used when deploying workers"
+              },
+              "chainNetworkId": {
+                "type": "number",
+                "description": "Blockchain network id that was used when deploying workers"
+              }
+            },
+            "required": [
+              "timestamp",
+              "definition",
+              "dealId",
+              "dealIdOriginal",
+              "chainNetwork",
+              "chainNetworkId"
+            ],
+            "additionalProperties": false,
+            "description": "Contains data related to your deployment, including, most importantly, deal id, that can be used to resolve workers in aqua"
+          },
+          "properties": {
+            "Worker_deployed_using_deals": {
+              "type": "object",
+              "properties": {
+                "definition": {
+                  "type": "string",
+                  "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "description": "ISO timestamp of the time when the worker was deployed"
+                },
+                "dealId": {
+                  "type": "string",
+                  "description": "Lowercased version of dealIdOriginal without 0x prefix. Currently unused. Was previously used to resolve workers in aqua"
+                },
+                "dealIdOriginal": {
+                  "type": "string",
+                  "description": "Blockchain transaction id that you get when deploy workers. Can be used in aqua to get worker and host ids. Check out example in the aqua generated in the default template"
+                },
+                "chainNetwork": {
+                  "type": "string",
+                  "enum": [
+                    "kras",
+                    "testnet",
+                    "stage",
+                    "local"
+                  ],
+                  "description": "Blockchain network name that was used when deploying workers"
+                },
+                "chainNetworkId": {
+                  "type": "number",
+                  "description": "Blockchain network id that was used when deploying workers"
+                }
+              },
+              "required": [
+                "timestamp",
+                "definition",
+                "dealId",
+                "dealIdOriginal",
+                "chainNetwork",
+                "chainNetworkId"
+              ],
+              "additionalProperties": false,
+              "description": "Contains data related to your deployment, including, most importantly, deal id, that can be used to resolve workers in aqua"
+            }
+          },
+          "required": [],
+          "nullable": true
+        },
+        "local": {
+          "type": "object",
+          "description": "A map of created deals",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "definition": {
+                "type": "string",
+                "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "ISO timestamp of the time when the worker was deployed"
+              },
+              "dealId": {
+                "type": "string",
+                "description": "Lowercased version of dealIdOriginal without 0x prefix. Currently unused. Was previously used to resolve workers in aqua"
+              },
+              "dealIdOriginal": {
+                "type": "string",
+                "description": "Blockchain transaction id that you get when deploy workers. Can be used in aqua to get worker and host ids. Check out example in the aqua generated in the default template"
+              },
+              "chainNetwork": {
+                "type": "string",
+                "enum": [
+                  "kras",
+                  "testnet",
+                  "stage",
+                  "local"
+                ],
+                "description": "Blockchain network name that was used when deploying workers"
+              },
+              "chainNetworkId": {
+                "type": "number",
+                "description": "Blockchain network id that was used when deploying workers"
+              }
+            },
+            "required": [
+              "timestamp",
+              "definition",
+              "dealId",
+              "dealIdOriginal",
+              "chainNetwork",
+              "chainNetworkId"
+            ],
+            "additionalProperties": false,
+            "description": "Contains data related to your deployment, including, most importantly, deal id, that can be used to resolve workers in aqua"
+          },
+          "properties": {
+            "Worker_deployed_using_deals": {
+              "type": "object",
+              "properties": {
+                "definition": {
+                  "type": "string",
+                  "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "description": "ISO timestamp of the time when the worker was deployed"
+                },
+                "dealId": {
+                  "type": "string",
+                  "description": "Lowercased version of dealIdOriginal without 0x prefix. Currently unused. Was previously used to resolve workers in aqua"
+                },
+                "dealIdOriginal": {
+                  "type": "string",
+                  "description": "Blockchain transaction id that you get when deploy workers. Can be used in aqua to get worker and host ids. Check out example in the aqua generated in the default template"
+                },
+                "chainNetwork": {
+                  "type": "string",
+                  "enum": [
+                    "kras",
+                    "testnet",
+                    "stage",
+                    "local"
+                  ],
+                  "description": "Blockchain network name that was used when deploying workers"
+                },
+                "chainNetworkId": {
+                  "type": "number",
+                  "description": "Blockchain network id that was used when deploying workers"
+                }
+              },
+              "required": [
+                "timestamp",
+                "definition",
+                "dealId",
+                "dealIdOriginal",
+                "chainNetwork",
+                "chainNetworkId"
+              ],
+              "additionalProperties": false,
+              "description": "Contains data related to your deployment, including, most importantly, deal id, that can be used to resolve workers in aqua"
+            }
+          },
+          "required": [],
+          "nullable": true
+        },
+        "stage": {
+          "type": "object",
+          "description": "A map of created deals",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "definition": {
+                "type": "string",
+                "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "ISO timestamp of the time when the worker was deployed"
+              },
+              "dealId": {
+                "type": "string",
+                "description": "Lowercased version of dealIdOriginal without 0x prefix. Currently unused. Was previously used to resolve workers in aqua"
+              },
+              "dealIdOriginal": {
+                "type": "string",
+                "description": "Blockchain transaction id that you get when deploy workers. Can be used in aqua to get worker and host ids. Check out example in the aqua generated in the default template"
+              },
+              "chainNetwork": {
+                "type": "string",
+                "enum": [
+                  "kras",
+                  "testnet",
+                  "stage",
+                  "local"
+                ],
+                "description": "Blockchain network name that was used when deploying workers"
+              },
+              "chainNetworkId": {
+                "type": "number",
+                "description": "Blockchain network id that was used when deploying workers"
+              }
+            },
+            "required": [
+              "timestamp",
+              "definition",
+              "dealId",
+              "dealIdOriginal",
+              "chainNetwork",
+              "chainNetworkId"
+            ],
+            "additionalProperties": false,
+            "description": "Contains data related to your deployment, including, most importantly, deal id, that can be used to resolve workers in aqua"
+          },
+          "properties": {
+            "Worker_deployed_using_deals": {
+              "type": "object",
+              "properties": {
+                "definition": {
+                  "type": "string",
+                  "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "description": "ISO timestamp of the time when the worker was deployed"
+                },
+                "dealId": {
+                  "type": "string",
+                  "description": "Lowercased version of dealIdOriginal without 0x prefix. Currently unused. Was previously used to resolve workers in aqua"
+                },
+                "dealIdOriginal": {
+                  "type": "string",
+                  "description": "Blockchain transaction id that you get when deploy workers. Can be used in aqua to get worker and host ids. Check out example in the aqua generated in the default template"
+                },
+                "chainNetwork": {
+                  "type": "string",
+                  "enum": [
+                    "kras",
+                    "testnet",
+                    "stage",
+                    "local"
+                  ],
+                  "description": "Blockchain network name that was used when deploying workers"
+                },
+                "chainNetworkId": {
+                  "type": "number",
+                  "description": "Blockchain network id that was used when deploying workers"
+                }
+              },
+              "required": [
+                "timestamp",
+                "definition",
+                "dealId",
+                "dealIdOriginal",
+                "chainNetwork",
+                "chainNetworkId"
+              ],
+              "additionalProperties": false,
+              "description": "Contains data related to your deployment, including, most importantly, deal id, that can be used to resolve workers in aqua"
+            }
+          },
+          "required": [],
+          "nullable": true
         }
-      },
+      }
+    },
+    "hosts": {
+      "description": "Info about directly deployed workers that is stored by environment that you deployed to",
+      "type": "object",
+      "additionalProperties": false,
+      "nullable": true,
       "required": [],
-      "nullable": true
+      "properties": {
+        "custom": {
+          "type": "object",
+          "description": "A map of directly deployed workers",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "definition": {
+                "type": "string",
+                "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "ISO timestamp of the time when the worker was deployed"
+              },
+              "dummyDealId": {
+                "type": "string",
+                "description": "random string generated by CLI, used in Nox. You can get worker id from it"
+              },
+              "installation_spells": {
+                "type": "array",
+                "description": "A list of installation spells",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "host_id": {
+                      "type": "string",
+                      "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                    },
+                    "spell_id": {
+                      "type": "string",
+                      "description": "id of the installation spell, can be used to e.g. print spell logs"
+                    },
+                    "worker_id": {
+                      "type": "string",
+                      "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                    }
+                  },
+                  "required": [
+                    "host_id",
+                    "spell_id",
+                    "worker_id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "relayId": {
+                "type": "string",
+                "description": "relay peer id that was used when deploying"
+              }
+            },
+            "required": [
+              "timestamp",
+              "definition",
+              "installation_spells",
+              "relayId",
+              "dummyDealId"
+            ],
+            "additionalProperties": false,
+            "description": "Contains data related to your direct deployment. Most importantly, it contains ids in installation_spells property that can be used to resolve workers in aqua"
+          },
+          "properties": {
+            "Worker_deployed_using_direct_hosting": {
+              "type": "object",
+              "properties": {
+                "definition": {
+                  "type": "string",
+                  "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "description": "ISO timestamp of the time when the worker was deployed"
+                },
+                "dummyDealId": {
+                  "type": "string",
+                  "description": "random string generated by CLI, used in Nox. You can get worker id from it"
+                },
+                "installation_spells": {
+                  "type": "array",
+                  "description": "A list of installation spells",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "host_id": {
+                        "type": "string",
+                        "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                      },
+                      "spell_id": {
+                        "type": "string",
+                        "description": "id of the installation spell, can be used to e.g. print spell logs"
+                      },
+                      "worker_id": {
+                        "type": "string",
+                        "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                      }
+                    },
+                    "required": [
+                      "host_id",
+                      "spell_id",
+                      "worker_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "relayId": {
+                  "type": "string",
+                  "description": "relay peer id that was used when deploying"
+                }
+              },
+              "required": [
+                "timestamp",
+                "definition",
+                "installation_spells",
+                "relayId",
+                "dummyDealId"
+              ],
+              "additionalProperties": false,
+              "description": "Contains data related to your direct deployment. Most importantly, it contains ids in installation_spells property that can be used to resolve workers in aqua"
+            }
+          },
+          "required": [],
+          "nullable": true
+        },
+        "testnet": {
+          "type": "object",
+          "description": "A map of directly deployed workers",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "definition": {
+                "type": "string",
+                "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "ISO timestamp of the time when the worker was deployed"
+              },
+              "dummyDealId": {
+                "type": "string",
+                "description": "random string generated by CLI, used in Nox. You can get worker id from it"
+              },
+              "installation_spells": {
+                "type": "array",
+                "description": "A list of installation spells",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "host_id": {
+                      "type": "string",
+                      "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                    },
+                    "spell_id": {
+                      "type": "string",
+                      "description": "id of the installation spell, can be used to e.g. print spell logs"
+                    },
+                    "worker_id": {
+                      "type": "string",
+                      "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                    }
+                  },
+                  "required": [
+                    "host_id",
+                    "spell_id",
+                    "worker_id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "relayId": {
+                "type": "string",
+                "description": "relay peer id that was used when deploying"
+              }
+            },
+            "required": [
+              "timestamp",
+              "definition",
+              "installation_spells",
+              "relayId",
+              "dummyDealId"
+            ],
+            "additionalProperties": false,
+            "description": "Contains data related to your direct deployment. Most importantly, it contains ids in installation_spells property that can be used to resolve workers in aqua"
+          },
+          "properties": {
+            "Worker_deployed_using_direct_hosting": {
+              "type": "object",
+              "properties": {
+                "definition": {
+                  "type": "string",
+                  "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "description": "ISO timestamp of the time when the worker was deployed"
+                },
+                "dummyDealId": {
+                  "type": "string",
+                  "description": "random string generated by CLI, used in Nox. You can get worker id from it"
+                },
+                "installation_spells": {
+                  "type": "array",
+                  "description": "A list of installation spells",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "host_id": {
+                        "type": "string",
+                        "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                      },
+                      "spell_id": {
+                        "type": "string",
+                        "description": "id of the installation spell, can be used to e.g. print spell logs"
+                      },
+                      "worker_id": {
+                        "type": "string",
+                        "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                      }
+                    },
+                    "required": [
+                      "host_id",
+                      "spell_id",
+                      "worker_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "relayId": {
+                  "type": "string",
+                  "description": "relay peer id that was used when deploying"
+                }
+              },
+              "required": [
+                "timestamp",
+                "definition",
+                "installation_spells",
+                "relayId",
+                "dummyDealId"
+              ],
+              "additionalProperties": false,
+              "description": "Contains data related to your direct deployment. Most importantly, it contains ids in installation_spells property that can be used to resolve workers in aqua"
+            }
+          },
+          "required": [],
+          "nullable": true
+        },
+        "kras": {
+          "type": "object",
+          "description": "A map of directly deployed workers",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "definition": {
+                "type": "string",
+                "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "ISO timestamp of the time when the worker was deployed"
+              },
+              "dummyDealId": {
+                "type": "string",
+                "description": "random string generated by CLI, used in Nox. You can get worker id from it"
+              },
+              "installation_spells": {
+                "type": "array",
+                "description": "A list of installation spells",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "host_id": {
+                      "type": "string",
+                      "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                    },
+                    "spell_id": {
+                      "type": "string",
+                      "description": "id of the installation spell, can be used to e.g. print spell logs"
+                    },
+                    "worker_id": {
+                      "type": "string",
+                      "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                    }
+                  },
+                  "required": [
+                    "host_id",
+                    "spell_id",
+                    "worker_id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "relayId": {
+                "type": "string",
+                "description": "relay peer id that was used when deploying"
+              }
+            },
+            "required": [
+              "timestamp",
+              "definition",
+              "installation_spells",
+              "relayId",
+              "dummyDealId"
+            ],
+            "additionalProperties": false,
+            "description": "Contains data related to your direct deployment. Most importantly, it contains ids in installation_spells property that can be used to resolve workers in aqua"
+          },
+          "properties": {
+            "Worker_deployed_using_direct_hosting": {
+              "type": "object",
+              "properties": {
+                "definition": {
+                  "type": "string",
+                  "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "description": "ISO timestamp of the time when the worker was deployed"
+                },
+                "dummyDealId": {
+                  "type": "string",
+                  "description": "random string generated by CLI, used in Nox. You can get worker id from it"
+                },
+                "installation_spells": {
+                  "type": "array",
+                  "description": "A list of installation spells",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "host_id": {
+                        "type": "string",
+                        "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                      },
+                      "spell_id": {
+                        "type": "string",
+                        "description": "id of the installation spell, can be used to e.g. print spell logs"
+                      },
+                      "worker_id": {
+                        "type": "string",
+                        "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                      }
+                    },
+                    "required": [
+                      "host_id",
+                      "spell_id",
+                      "worker_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "relayId": {
+                  "type": "string",
+                  "description": "relay peer id that was used when deploying"
+                }
+              },
+              "required": [
+                "timestamp",
+                "definition",
+                "installation_spells",
+                "relayId",
+                "dummyDealId"
+              ],
+              "additionalProperties": false,
+              "description": "Contains data related to your direct deployment. Most importantly, it contains ids in installation_spells property that can be used to resolve workers in aqua"
+            }
+          },
+          "required": [],
+          "nullable": true
+        },
+        "local": {
+          "type": "object",
+          "description": "A map of directly deployed workers",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "definition": {
+                "type": "string",
+                "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "ISO timestamp of the time when the worker was deployed"
+              },
+              "dummyDealId": {
+                "type": "string",
+                "description": "random string generated by CLI, used in Nox. You can get worker id from it"
+              },
+              "installation_spells": {
+                "type": "array",
+                "description": "A list of installation spells",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "host_id": {
+                      "type": "string",
+                      "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                    },
+                    "spell_id": {
+                      "type": "string",
+                      "description": "id of the installation spell, can be used to e.g. print spell logs"
+                    },
+                    "worker_id": {
+                      "type": "string",
+                      "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                    }
+                  },
+                  "required": [
+                    "host_id",
+                    "spell_id",
+                    "worker_id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "relayId": {
+                "type": "string",
+                "description": "relay peer id that was used when deploying"
+              }
+            },
+            "required": [
+              "timestamp",
+              "definition",
+              "installation_spells",
+              "relayId",
+              "dummyDealId"
+            ],
+            "additionalProperties": false,
+            "description": "Contains data related to your direct deployment. Most importantly, it contains ids in installation_spells property that can be used to resolve workers in aqua"
+          },
+          "properties": {
+            "Worker_deployed_using_direct_hosting": {
+              "type": "object",
+              "properties": {
+                "definition": {
+                  "type": "string",
+                  "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "description": "ISO timestamp of the time when the worker was deployed"
+                },
+                "dummyDealId": {
+                  "type": "string",
+                  "description": "random string generated by CLI, used in Nox. You can get worker id from it"
+                },
+                "installation_spells": {
+                  "type": "array",
+                  "description": "A list of installation spells",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "host_id": {
+                        "type": "string",
+                        "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                      },
+                      "spell_id": {
+                        "type": "string",
+                        "description": "id of the installation spell, can be used to e.g. print spell logs"
+                      },
+                      "worker_id": {
+                        "type": "string",
+                        "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                      }
+                    },
+                    "required": [
+                      "host_id",
+                      "spell_id",
+                      "worker_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "relayId": {
+                  "type": "string",
+                  "description": "relay peer id that was used when deploying"
+                }
+              },
+              "required": [
+                "timestamp",
+                "definition",
+                "installation_spells",
+                "relayId",
+                "dummyDealId"
+              ],
+              "additionalProperties": false,
+              "description": "Contains data related to your direct deployment. Most importantly, it contains ids in installation_spells property that can be used to resolve workers in aqua"
+            }
+          },
+          "required": [],
+          "nullable": true
+        },
+        "stage": {
+          "type": "object",
+          "description": "A map of directly deployed workers",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "definition": {
+                "type": "string",
+                "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "ISO timestamp of the time when the worker was deployed"
+              },
+              "dummyDealId": {
+                "type": "string",
+                "description": "random string generated by CLI, used in Nox. You can get worker id from it"
+              },
+              "installation_spells": {
+                "type": "array",
+                "description": "A list of installation spells",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "host_id": {
+                      "type": "string",
+                      "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                    },
+                    "spell_id": {
+                      "type": "string",
+                      "description": "id of the installation spell, can be used to e.g. print spell logs"
+                    },
+                    "worker_id": {
+                      "type": "string",
+                      "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                    }
+                  },
+                  "required": [
+                    "host_id",
+                    "spell_id",
+                    "worker_id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "relayId": {
+                "type": "string",
+                "description": "relay peer id that was used when deploying"
+              }
+            },
+            "required": [
+              "timestamp",
+              "definition",
+              "installation_spells",
+              "relayId",
+              "dummyDealId"
+            ],
+            "additionalProperties": false,
+            "description": "Contains data related to your direct deployment. Most importantly, it contains ids in installation_spells property that can be used to resolve workers in aqua"
+          },
+          "properties": {
+            "Worker_deployed_using_direct_hosting": {
+              "type": "object",
+              "properties": {
+                "definition": {
+                  "type": "string",
+                  "description": "CID of uploaded to IPFS App Definition, which contains the data about everything that you are trying to deploy, including spells, service and module configs and CIDs for service wasms"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "description": "ISO timestamp of the time when the worker was deployed"
+                },
+                "dummyDealId": {
+                  "type": "string",
+                  "description": "random string generated by CLI, used in Nox. You can get worker id from it"
+                },
+                "installation_spells": {
+                  "type": "array",
+                  "description": "A list of installation spells",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "host_id": {
+                        "type": "string",
+                        "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                      },
+                      "spell_id": {
+                        "type": "string",
+                        "description": "id of the installation spell, can be used to e.g. print spell logs"
+                      },
+                      "worker_id": {
+                        "type": "string",
+                        "description": "Can be used to access worker in aqua: `on s.workerId via s.hostId`"
+                      }
+                    },
+                    "required": [
+                      "host_id",
+                      "spell_id",
+                      "worker_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "relayId": {
+                  "type": "string",
+                  "description": "relay peer id that was used when deploying"
+                }
+              },
+              "required": [
+                "timestamp",
+                "definition",
+                "installation_spells",
+                "relayId",
+                "dummyDealId"
+              ],
+              "additionalProperties": false,
+              "description": "Contains data related to your direct deployment. Most importantly, it contains ids in installation_spells property that can be used to resolve workers in aqua"
+            }
+          },
+          "required": [],
+          "nullable": true
+        }
+      }
     }
-  },
-  "required": [
-    "version"
-  ]
+  }
 }

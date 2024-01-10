@@ -196,6 +196,7 @@ async fn test_remove_deal_from_provider() {
                 2,
                 "expected two topics: topic and host_id"
             );
+            assert!(log.from_block <= LATEST_BLOCK);
             server.send_response(Ok(removed_event));
         }
     }
@@ -244,8 +245,6 @@ async fn test_deal_ended_and_removed_from_provider() {
         format!("0x{}", DEAL_ID),
         "decider should join exactly one deal"
     );
-
-    println!("run again");
 
     // run again with both deal status ENDED and remove from provider event
     update_config(&mut client, &oneshot_config()).await.unwrap();

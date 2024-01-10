@@ -21,18 +21,18 @@ func store_deal_state(decider_id: SpellId, deal_id: DealId, state: DealState):
     json <- Json.stringify(state)
     Spell.set_string(deal_id, json)
 
-func get_deal_state(decider_id: SpellId, deal_id: DealId) -> ?DealState:
+func get_deal_state(decider_id: SpellId, deal_id: string, key: string) -> ?DealState:
     Spell decider_id
     state: *DealState
 
-    json <- Spell.get_string(deal_id)
+    json <- Spell.get_string(key)
     if json.success && !json.absent:
         try:
             state <- JsonDealState.parse(json.value)
         catch e:
-            deal_log(decider_id, deal_id, ["failed to parse deal state from json", e])
+            deal_log(decider_id, deal_id, ["failed to parse deal state (key = ", key, ") from json", e])
     else:
-        deal_log(decider_id, deal_id, ["deal state not found:", json.error])
+        deal_log(decider_id, deal_id, ["deal state (key = ", key, ") not found:", json.error])
 
     <- state
 
@@ -49,9 +49,7 @@ func store_deal_state_removed(spell_id: SpellId, deal_id: DealId, left_boundary:
     Spell.set_string(removed_state_key(deal_id), json)
 
 func get_deal_state_removed(spell_id: SpellId, deal_id: DealId) -> ?DealState:
-    Spell spell_id
-    key <- removed_state_key(deal_id)
-    <- get_deal_state(spell_id, deal_id)
+    <- get_deal_state(spell_id, deal_id, removed_state_key(deal_id))
 
 func remove_deal_state_removed(spell_id: SpellId, deal_id: DealId):
     Spell spell_id
@@ -97,6 +95,7 @@ func store_deal(spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, block: 
     try:
         store_joined_deal(spell_id, deal_id, worker_id)
         store_deal_state(spell_id, deal_id, DealState(left_boundary = block))
+        store_deal_state_removed(spell_id, deal_id, block)
         deal_log(spell_id, deal_id, "deal state saved to kv")
     catch e:
         deal_log(spell_id, deal_id, ["cannot store deal state, deal join failed", e.message])

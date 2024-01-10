@@ -9,8 +9,26 @@ pub struct DealState {
     pub left_boundary: String,
 }
 
-pub async fn get_deal_state(client: &mut ConnectedClient, deal_id: &String) -> DealState {
+pub async fn get_deal_state(client: &mut ConnectedClient, deal_id: &str) -> DealState {
     let result = spell::get_string(client, "decider", deal_id)
+        .await
+        .wrap_err("getting deal state")
+        .unwrap();
+    assert!(!result.absent, "no state for deal {}", deal_id);
+    assert!(
+        result.success,
+        "can't get state for deal {}: {}",
+        deal_id, result.error
+    );
+    serde_json::from_str::<DealState>(&result.value)
+        .wrap_err("parse deal_state")
+        .unwrap()
+}
+
+pub async fn get_deal_removed_state(client: &mut ConnectedClient, deal_id: &str) -> DealState {
+    let key = format!("removed_state:0x{deal_id}");
+    println!("key: {key}");
+    let result = spell::get_string(client, "decider", &key)
         .await
         .wrap_err("getting deal state")
         .unwrap();
