@@ -26,9 +26,10 @@ func poll_deal_peer_removed(spell_id: SpellId, api_endpoint: string, latest_bloc
                 reqs <<- DealPeerRemovedReq(deal_id = deal_id, left_boundary = state!.left_boundary) 
 
         if reqs != nil:
+            spell_log(spell_id, ["find if deals are removed from the provider for", reqs.length, "deals"])
             result <- ChainConnector.poll_deal_peer_removed_batch(api_endpoint, reqs)
             if !result.success:
-                spell_log(spell_id, ["can't find if deals were removed from provider:", result.error])
+                spell_log(spell_id, ["can't find if deals are removed from provider:", result.error])
             else:
                 for removed <- result.result:
                     if !removed.success:

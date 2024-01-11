@@ -4,7 +4,7 @@
 # This file is updated automatically after successful deployment using `fluence workers deploy` command
 
 # config version
-version: 0
+version: 1
 
 # # A map of created deals
 # deals:
