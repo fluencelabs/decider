@@ -1,6 +1,6 @@
 aqua DealStorage declares *
 
-import Spell from "@fluencelabs/spell/spell_service.aqua"
+import Spell, StringValue from "@fluencelabs/spell/spell_service.aqua"
 
 import FAILED_DEALS, JOINED_DEALS, removed_state_key from "./consts.aqua"
 import Json from "../fluence/peer.aqua"
@@ -15,26 +15,34 @@ data DealState:
 service JsonDealState("json"):
     parse(str: string) -> DealState
 
+func parse_deal_state(spell_id: SpellId, deal_id: string, json: StringValue) -> ?DealState:
+    state: *DealState
+
+    try:
+        state <- JsonDealState.parse(json.value)
+    catch e:
+        deal_log(spell_id, deal_id, ["failed to parse deal state from json", e])
+
+    <- state
+
 func store_deal_state(decider_id: SpellId, deal_id: DealId, state: DealState):
     Spell decider_id
 
     json <- Json.stringify(state)
     Spell.set_string(deal_id, json)
 
-func get_deal_state(decider_id: SpellId, deal_id: string, key: string) -> ?DealState:
-    Spell decider_id
-    state: *DealState
+func get_deal_state(spell_id: SpellId, deal_id: DealId) -> ?DealState:
+    Spell spell_id 
+    state: *?DealState
 
-    json <- Spell.get_string(key)
+    json <- Spell.get_string(deal_id)
     if json.success && !json.absent:
-        try:
-            state <- JsonDealState.parse(json.value)
-        catch e:
-            deal_log(decider_id, deal_id, ["failed to parse deal state (key = ", key, ") from json", e])
+        state <<- parse_deal_state(spell_id, deal_id, json)
     else:
-        deal_log(decider_id, deal_id, ["deal state (key = ", key, ") not found:", json.error])
+        deal_log(spell_id, deal_id, ["deal state not found:", json.error])
+        state <<- nil
 
-    <- state
+    <- state!
 
 func remove_deal_state(spell_id: SpellId, deal_id: DealId):
     Spell spell_id
@@ -49,7 +57,18 @@ func store_deal_state_removed(spell_id: SpellId, deal_id: DealId, left_boundary:
     Spell.set_string(removed_state_key(deal_id), json)
 
 func get_deal_state_removed(spell_id: SpellId, deal_id: DealId) -> ?DealState:
-    <- get_deal_state(spell_id, deal_id, removed_state_key(deal_id))
+    Spell spell_id 
+    state: *?DealState
+
+    key <- removed_state_key(deal_id)
+    json <- Spell.get_string(key)
+    if json.success && !json.absent:
+        state <<- parse_deal_state(spell_id, deal_id, json)
+    else:
+        deal_log(spell_id, deal_id, ["deal removed state not found:", json.error])
+        state <<- nil
+
+    <- state!
 
 func remove_deal_state_removed(spell_id: SpellId, deal_id: DealId):
     Spell spell_id

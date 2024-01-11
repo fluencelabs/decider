@@ -27,7 +27,6 @@ pub async fn get_deal_state(client: &mut ConnectedClient, deal_id: &str) -> Deal
 
 pub async fn get_deal_removed_state(client: &mut ConnectedClient, deal_id: &str) -> DealState {
     let key = format!("removed_state:0x{deal_id}");
-    println!("key: {key}");
     let result = spell::get_string(client, "decider", &key)
         .await
         .wrap_err("getting deal state")

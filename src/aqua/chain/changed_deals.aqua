@@ -25,7 +25,7 @@ func make_change_reqs(spell_id: SpellId, deals: []JoinedDeal) -> []DealChangesRe
         deal_updates: *DealChangesReq
         for joined_deal <- deals:
             deal_id = joined_deal.deal_id
-            deal_state <- get_deal_state(spell_id, deal_id, deal_id)
+            deal_state <- get_deal_state(spell_id, deal_id)
             if deal_state != nil:
                 deal_info = DealInfo(deal_id = deal_id, worker_id = joined_deal.worker_id)
                 requests <<- DealChangesReq(deal_info = deal_info, left_boundary = deal_state!.left_boundary)
