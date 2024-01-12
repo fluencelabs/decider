@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.13](https://github.com/fluencelabs/decider/compare/connector-v0.5.12...connector-v0.5.13) (2024-01-11)
+
+
+### Bug Fixes
+
+* **decider:** use deal-removed state for polling the removed-from-provider event ([#189](https://github.com/fluencelabs/decider/issues/189)) ([328bd71](https://github.com/fluencelabs/decider/commit/328bd71860f79aab882497982dbba8b403802b92))
+
 ## [0.5.12](https://github.com/fluencelabs/decider/compare/connector-v0.5.11...connector-v0.5.12) (2023-12-28)
 
 
