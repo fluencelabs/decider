@@ -1594,7 +1594,7 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.5.12"
+version = "0.5.13"
 dependencies = [
  "built 0.7.1",
  "fluence-spell-dtos",
@@ -1608,7 +1608,7 @@ version = "0.1.0"
 dependencies = [
  "connected-client",
  "created-swarm",
- "decider-distro 0.5.12",
+ "decider-distro 0.5.13",
  "eyre",
  "fluence-app-service",
  "fluence-keypair",
@@ -4146,7 +4146,7 @@ dependencies = [
  "itertools 0.10.5",
  "marine-it-interfaces 0.9.0",
  "marine-module-interface 0.8.0",
- "marine-wasm-backend-traits 0.5.0",
+ "marine-wasm-backend-traits 0.5.1",
  "nom",
  "semver",
  "serde",
@@ -4347,9 +4347,9 @@ dependencies = [
 
 [[package]]
 name = "marine-wasm-backend-traits"
-version = "0.5.0"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "470aaec9c93cec6a4cfd6ce78e338c92e688da14d3203863c517a96027aec417"
+checksum = "220bc47cfabb8b4ab97bf2bd7bbab9738857b69beeda0a1ac5776c600b64bb46"
 dependencies = [
  "anyhow",
  "it-memory-traits",
