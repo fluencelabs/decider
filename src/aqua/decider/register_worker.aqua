@@ -41,7 +41,7 @@ func remove_tx_status(spell_id: SpellId, status: WorkerTxStatus):
 -- TODO:
 -- Store joined worker in KV, status = unregistered
 -- Immediately go and register
--- Update worker status in KV with status = registered and pat_id = xxx
+-- Update worker status in KV with status = registered and unit_id = xxx
 -- On start, first go through unregistered workers
 
 -- How to store workers?
@@ -56,8 +56,8 @@ func remove_tx_status(spell_id: SpellId, status: WorkerTxStatus):
 -- If TTL happens during registration, last_seen_block won't be incremented,
 --  so we'll load same Chain Events and repeat the whole deployment and registration once again.
 -- Remember to track registration failures though, and retry them
-func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, pat_id: []u8) -> bool:
-    result <- ChainConnector.register_worker(pat_id, worker_id, chain, deal_id)
+func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, unit_id: []u8) -> bool:
+    result <- ChainConnector.register_worker(unit_id, worker_id, chain, deal_id)
     is_ok = result.success
     if result.success:
         deal_log(spell_id, deal_id, ["registered worker tx_hash", result.tx_hash])

@@ -60,7 +60,7 @@ data DealCreatedResult:
 data Match:
   compute_peer: string
   deal_id: string
-  pat_id: []u8
+  unit_id: []u8
   deal_creation_block: U256
   app_cid: string
 
@@ -174,5 +174,5 @@ service ChainConnector("chain_connector"):
   poll_deal_created(api_endpoint: string, address: string, left_boundary: string) -> DealCreatedResult
   poll_deal_matches(chain: ChainInfo, left_boundary: string) -> MatchedResult
   poll_deal_peer_removed_batch(api_endpoint: string, deals: []DealPeerRemovedReq) -> DealPeerRemovedBatchResult
-  register_worker(pat_id: []u8, worker_id: string, chain: ChainInfo, deal_addr: string) -> RegisterWorkerResult
+  register_worker(unit_id: []u8, worker_id: string, chain: ChainInfo, deal_addr: string) -> RegisterWorkerResult
   resolve_subnet(deal_id: string, api_endpoint: string) -> Subnet
