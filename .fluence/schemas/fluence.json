@@ -14,6 +14,12 @@
             "type": "string",
             "description": "Path to service directory or URL to the tar.gz archive with the service"
           },
+          "totalMemoryLimit": {
+            "type": "string",
+            "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
+            "nullable": true,
+            "description": "Memory limit for all service modules. If you specify this property please make sure it's at least `2 MiB * numberOfModulesInTheService`. In repl default is: Infinity. When deploying service as part of the worker default is: computeUnits * 2GB / (amount of services in the worker). Format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
+          },
           "overrideModules": {
             "type": "object",
             "title": "Overrides",
@@ -26,7 +32,8 @@
                 "maxHeapSize": {
                   "type": "string",
                   "nullable": true,
-                  "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+                  "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
+                  "description": "DEPRECATED. Use `totalMemoryLimit` service property instead. Max size of the heap that a module can allocate in format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
                 },
                 "loggerEnabled": {
                   "type": "boolean",
@@ -100,7 +107,8 @@
                   "maxHeapSize": {
                     "type": "string",
                     "nullable": true,
-                    "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+                    "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
+                    "description": "DEPRECATED. Use `totalMemoryLimit` service property instead. Max size of the heap that a module can allocate in format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
                   },
                   "loggerEnabled": {
                     "type": "boolean",
@@ -185,6 +193,12 @@
               "type": "string",
               "description": "Path to service directory or URL to the tar.gz archive with the service"
             },
+            "totalMemoryLimit": {
+              "type": "string",
+              "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
+              "nullable": true,
+              "description": "Memory limit for all service modules. If you specify this property please make sure it's at least `2 MiB * numberOfModulesInTheService`. In repl default is: Infinity. When deploying service as part of the worker default is: computeUnits * 2GB / (amount of services in the worker). Format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
+            },
             "overrideModules": {
               "type": "object",
               "title": "Overrides",
@@ -197,7 +211,8 @@
                   "maxHeapSize": {
                     "type": "string",
                     "nullable": true,
-                    "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+                    "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
+                    "description": "DEPRECATED. Use `totalMemoryLimit` service property instead. Max size of the heap that a module can allocate in format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
                   },
                   "loggerEnabled": {
                     "type": "boolean",
@@ -271,7 +286,8 @@
                     "maxHeapSize": {
                       "type": "string",
                       "nullable": true,
-                      "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+                      "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
+                      "description": "DEPRECATED. Use `totalMemoryLimit` service property instead. Max size of the heap that a module can allocate in format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
                     },
                     "loggerEnabled": {
                       "type": "boolean",
@@ -352,49 +368,7 @@
     },
     "version": {
       "type": "number",
-      "const": 5
-    },
-    "dependencies": {
-      "type": "object",
-      "title": "Dependencies",
-      "nullable": true,
-      "description": "(For advanced users) Overrides for the project dependencies",
-      "properties": {
-        "npm": {
-          "type": "object",
-          "title": "npm dependencies",
-          "nullable": true,
-          "description": "A map of npm aqua dependency versions. Fluence CLI ensures dependencies are installed each time you run aqua",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "properties": {
-            "npm_dependency_name": {
-              "type": "string",
-              "description": "npm dependency version"
-            }
-          },
-          "required": []
-        },
-        "cargo": {
-          "type": "object",
-          "title": "Cargo dependencies",
-          "nullable": true,
-          "description": "A map of cargo dependency versions. Fluence CLI ensures dependencies are installed each time you run commands that depend on Marine or Marine REPL",
-          "required": [],
-          "additionalProperties": {
-            "type": "string"
-          },
-          "properties": {
-            "Cargo_dependency_name": {
-              "type": "string",
-              "description": "cargo dependency version"
-            }
-          }
-        }
-      },
-      "required": [],
-      "additionalProperties": false
+      "const": 6
     },
     "aquaInputPath": {
       "type": "string",
@@ -507,6 +481,14 @@
             },
             "nullable": true
           },
+          "computeUnits": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 1,
+            "default": 1,
+            "description": "Number of compute units you require. 1 compute unit = 2GB. Currently the only allowed value is 1. This will change in the future. Default: 1",
+            "nullable": true
+          },
           "targetWorkers": {
             "type": "number",
             "description": "Max workers in the deal",
@@ -563,6 +545,14 @@
               "items": {
                 "type": "string"
               },
+              "nullable": true
+            },
+            "computeUnits": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 1,
+              "default": 1,
+              "description": "Number of compute units you require. 1 compute unit = 2GB. Currently the only allowed value is 1. This will change in the future. Default: 1",
               "nullable": true
             },
             "targetWorkers": {
@@ -822,13 +812,38 @@
       "description": "Path to the directory where you want relays.json file to be generated. Must be relative to the project root dir. This file contains a list of relays to use when connecting to Fluence network and depends on the default environment that you use in your project",
       "type": "string",
       "nullable": true
+    },
+    "aquaDependencies": {
+      "description": "A map of npm aqua dependency versions",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "properties": {
+        "npm-aqua-dependency-name": {
+          "type": "string",
+          "description": "Valid npm dependency version specification (check out https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies)"
+        }
+      },
+      "required": []
+    },
+    "marineVersion": {
+      "type": "string",
+      "description": "Marine version",
+      "nullable": true
+    },
+    "mreplVersion": {
+      "type": "string",
+      "description": "Mrepl version",
+      "nullable": true
     }
   },
   "required": [
-    "version"
+    "version",
+    "aquaDependencies"
   ],
+  "additionalProperties": false,
   "$id": "https://fluence.dev/schemas/fluence.yaml",
   "title": "fluence.yaml",
-  "description": "Defines Fluence Project, most importantly - what exactly you want to deploy and how. You can use `fluence init` command to generate a template for new Fluence project",
-  "additionalProperties": false
+  "description": "Defines Fluence Project, most importantly - what exactly you want to deploy and how. You can use `fluence init` command to generate a template for new Fluence project"
 }
