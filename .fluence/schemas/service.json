@@ -23,7 +23,8 @@
           "maxHeapSize": {
             "type": "string",
             "nullable": true,
-            "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+            "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
+            "description": "DEPRECATED. Use `totalMemoryLimit` service property instead. Max size of the heap that a module can allocate in format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
           },
           "loggerEnabled": {
             "type": "boolean",
@@ -101,7 +102,8 @@
             "maxHeapSize": {
               "type": "string",
               "nullable": true,
-              "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+              "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
+              "description": "DEPRECATED. Use `totalMemoryLimit` service property instead. Max size of the heap that a module can allocate in format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
             },
             "loggerEnabled": {
               "type": "boolean",
@@ -178,7 +180,8 @@
             "maxHeapSize": {
               "type": "string",
               "nullable": true,
-              "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+              "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
+              "description": "DEPRECATED. Use `totalMemoryLimit` service property instead. Max size of the heap that a module can allocate in format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
             },
             "loggerEnabled": {
               "type": "boolean",
@@ -248,6 +251,12 @@
       "required": [
         "facade"
       ]
+    },
+    "totalMemoryLimit": {
+      "type": "string",
+      "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
+      "nullable": true,
+      "description": "Memory limit for all service modules. If you specify this property please make sure it's at least `2 MiB * numberOfModulesInTheService`. In repl default is: Infinity. When deploying service as part of the worker default is: computeUnits * 2GB / (amount of services in the worker). Format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
     },
     "version": {
       "type": "number",
