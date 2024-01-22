@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.14](https://github.com/fluencelabs/decider/compare/connector-v0.5.13...connector-v0.5.14) (2024-01-22)
+
+
+### Bug Fixes
+
+* **config:** update fcli 0.13.5 ([#193](https://github.com/fluencelabs/decider/issues/193)) ([91a9b5a](https://github.com/fluencelabs/decider/commit/91a9b5a81dbcde6419ab78b6a9c2bf8cf11299c8))
+
 ## [0.5.13](https://github.com/fluencelabs/decider/compare/connector-v0.5.12...connector-v0.5.13) (2024-01-11)
 
 
