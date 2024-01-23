@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.15](https://github.com/fluencelabs/decider/compare/connector-v0.5.14...connector-v0.5.15) (2024-01-23)
+
+
+### Bug Fixes
+
+* **ci,test:** update nox test framework to 0.16.15, spell-dtos to 0.6.9 [#191](https://github.com/fluencelabs/decider/issues/191) ([#198](https://github.com/fluencelabs/decider/issues/198)) ([dbd3d7f](https://github.com/fluencelabs/decider/commit/dbd3d7f98fa3bee60d4b647341ee7e84673d4b23))
+
 ## [0.5.14](https://github.com/fluencelabs/decider/compare/connector-v0.5.13...connector-v0.5.14) (2024-01-22)
 
 
