@@ -78,7 +78,7 @@ checksum = "e496a50fda8aacccc86d7529e2c1e0892dbd0f898a6b5645b5561b89c3210efa"
 
 [[package]]
 name = "decider-distro"
-version = "0.5.13"
+version = "0.5.14"
 dependencies = [
  "built",
  "fluence-spell-dtos",
@@ -98,9 +98,9 @@ dependencies = [
 
 [[package]]
 name = "fluence-spell-dtos"
-version = "0.6.4"
+version = "0.6.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81571565f980f0b8103ec0e231f3cadb5019032a24cb1123b8c11eae0cd6bdcf"
+checksum = "51d9c4266040ccc21521b759d29923bdd9a0a32f31e44a79ddf7bf3cdc1c287e"
 dependencies = [
  "eyre",
  "marine-rs-sdk",
