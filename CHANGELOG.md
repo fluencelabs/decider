@@ -1,5 +1,81 @@
 # Changelog
 
+## [0.6.0](https://github.com/fluencelabs/decider/compare/connector-v0.5.14...connector-v0.6.0) (2024-01-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **match:** Create workers on Match, register, resolve subnet ([#68](https://github.com/fluencelabs/decider/issues/68))
+* **decider, connector:** Get latest block on start; update from_block on over limit #12
+
+### Features
+
+* add basic aurora-connector [fixes NET-351, NET-363] ([#1](https://github.com/fluencelabs/decider/issues/1)) ([5058286](https://github.com/fluencelabs/decider/commit/5058286e5ba6f15442f56ad35c0ab11f80db672d))
+* add distro crate [fixes NET-464]  ([#51](https://github.com/fluencelabs/decider/issues/51)) ([f240ca4](https://github.com/fluencelabs/decider/commit/f240ca4fc1f63e36e7a85b72ced098dc1fe28ed4))
+* **builtin-package:** use new blueprint ([#36](https://github.com/fluencelabs/decider/issues/36)) ([224978d](https://github.com/fluencelabs/decider/commit/224978d3e22137447d751ce416f465dd41172182))
+* **builtin:** remove builtin package ([#63](https://github.com/fluencelabs/decider/issues/63)) ([0be2b0d](https://github.com/fluencelabs/decider/commit/0be2b0db38e45463922f8a08a394fc570b883212))
+* **builtin:** set net and contract address via env variables [NET-460] ([#33](https://github.com/fluencelabs/decider/issues/33)) ([9164529](https://github.com/fluencelabs/decider/commit/9164529d6ff9d5b7d30db11110cf8e4295e33a8c))
+* bump aqua-lib to 0.8.0 + [NET-623] ([#109](https://github.com/fluencelabs/decider/issues/109)) ([de473e5](https://github.com/fluencelabs/decider/commit/de473e58c6423d5993c8ed17cc579aa2f015a81b))
+* bump spell to 0.5.30 ([#111](https://github.com/fluencelabs/decider/issues/111)) ([089be2c](https://github.com/fluencelabs/decider/commit/089be2cd2e11bd2fa270abe5a60d60dee552c10d))
+* **connector:** update to new aurora contract ([#3](https://github.com/fluencelabs/decider/issues/3)) ([0d84b47](https://github.com/fluencelabs/decider/commit/0d84b47ff4c30d051a946e8308cb51fbed1f4f23))
+* **decider, connector:** Get latest block on start; update from_block on over limit [#12](https://github.com/fluencelabs/decider/issues/12) ([cec584a](https://github.com/fluencelabs/decider/commit/cec584acd97b118a8dced9d802d556a264a56117))
+* **decider, connector:** poll new-app-cid events [fixes NET-384] ([#8](https://github.com/fluencelabs/decider/issues/8)) ([bc0d221](https://github.com/fluencelabs/decider/commit/bc0d22117750af0fe9eb1d9c23d247de48d6c85f))
+* **decider,chain_connector,tests:** Worker registration tx tracking [NET-575, NET-538] ([#90](https://github.com/fluencelabs/decider/issues/90)) ([22c1065](https://github.com/fluencelabs/decider/commit/22c1065ab3508374635076175078683988904a5e))
+* **decider,chain_connector:** activate/deactivate deals ([#153](https://github.com/fluencelabs/decider/issues/153)) ([963ef5a](https://github.com/fluencelabs/decider/commit/963ef5aeb52069fb35bd04d0f8a07d900587acae))
+* **decider,chain_connector:** add deal removal by compute unit [fixes NET-659, fixes NET-696] ([#155](https://github.com/fluencelabs/decider/issues/155)) ([ef231ac](https://github.com/fluencelabs/decider/commit/ef231aca9d8eabf6d08c793f4b4e661ca169f786))
+* **decider,chain-connector:** support deal removal [fixes NET-515] ([#144](https://github.com/fluencelabs/decider/issues/144)) ([ba849eb](https://github.com/fluencelabs/decider/commit/ba849eb32b2bb3c05fe30cba574293ae1134d318))
+* **decider:** add env variable to include/exclude decider [NET-426] ([#22](https://github.com/fluencelabs/decider/issues/22)) ([9cf1309](https://github.com/fluencelabs/decider/commit/9cf13091978a53c387e44b018e1cdaa983020175))
+* **decider:** add FLUENCE_ENV_CONNECTOR_FROM_BLOCK env variable ([#46](https://github.com/fluencelabs/decider/issues/46)) ([cd79d62](https://github.com/fluencelabs/decider/commit/cd79d62f461609cbd3a92afcc6ffd02e0225c5c7))
+* **decider:** Introduce basic decider [fixes NET-336] ([#2](https://github.com/fluencelabs/decider/issues/2)) ([5bfb68b](https://github.com/fluencelabs/decider/commit/5bfb68b1220ddb980f3463db3bc9ed5759e0887d))
+* **decider:** retrigger worker-spell on deal update [NET-649] ([#148](https://github.com/fluencelabs/decider/issues/148)) ([ff9f826](https://github.com/fluencelabs/decider/commit/ff9f826f7cbc48aa627c8ba721e3e59452e328fd))
+* **decider:** update installation spell to 0.5.6 ([#21](https://github.com/fluencelabs/decider/issues/21)) ([4fbf58f](https://github.com/fluencelabs/decider/commit/4fbf58ff59e2915ca0fb6b47fa8b60578190a290))
+* **decider:** Use `aqua` instead of `module` ([#158](https://github.com/fluencelabs/decider/issues/158)) ([3817893](https://github.com/fluencelabs/decider/commit/38178930adc1a7d0f568b2bdc3c01ae28fdc1f5a))
+* **decider:** Use streams instead of options [LNG-277] ([#106](https://github.com/fluencelabs/decider/issues/106)) ([9e92d8f](https://github.com/fluencelabs/decider/commit/9e92d8f78eedee4c93b23ac07c7b5b39c30712f4))
+* **distribution:** add builtin-package ([#6](https://github.com/fluencelabs/decider/issues/6)) ([6b225df](https://github.com/fluencelabs/decider/commit/6b225df206f7d524c70ff64f859e1e7b0c1ddeb1))
+* **installation-spell:** ACTUALLY UPDATE IT ([#43](https://github.com/fluencelabs/decider/issues/43)) ([bbb3809](https://github.com/fluencelabs/decider/commit/bbb3809eb414363fd9a93727c05a69c2c98b7fd0))
+* **match:** Create workers on Match, register, resolve subnet ([#68](https://github.com/fluencelabs/decider/issues/68)) ([b40d042](https://github.com/fluencelabs/decider/commit/b40d0421fe7558f531bdfb0090df26d01d09d89b))
+* pass api endpoint via env [NET-479] ([#39](https://github.com/fluencelabs/decider/issues/39)) ([75aea7e](https://github.com/fluencelabs/decider/commit/75aea7e8dc6e4d098ff1efe48d700006677a19bb))
+* remove decider.json ([a161b97](https://github.com/fluencelabs/decider/commit/a161b970e5907c948c3e096336de0c07713fa33c))
+* trigger connector update ([#41](https://github.com/fluencelabs/decider/issues/41)) ([d17d0aa](https://github.com/fluencelabs/decider/commit/d17d0aa1d6c6fd7e0787f4d3b074a66b6fe2f00b))
+* update deps ([#112](https://github.com/fluencelabs/decider/issues/112)) ([308bafd](https://github.com/fluencelabs/decider/commit/308bafdd699cd51be5de28acac230fd72e16e9f5))
+* update marine sdk's and configs ([#154](https://github.com/fluencelabs/decider/issues/154)) ([c006b42](https://github.com/fluencelabs/decider/commit/c006b42b7e94c4f50868dbf4f6257b2310ee58ec))
+* update network to aurora testnet ([#26](https://github.com/fluencelabs/decider/issues/26)) ([efefa71](https://github.com/fluencelabs/decider/commit/efefa710c39c7cda111b4344b98782d279dede73))
+
+
+### Bug Fixes
+
+* **builtin-package:** install new decider after removing ([#14](https://github.com/fluencelabs/decider/issues/14)) ([76db95c](https://github.com/fluencelabs/decider/commit/76db95cb90ca5af7691314bfdbc18b5dbc878b19))
+* **builtin:** build builtin package with a single level directory structure ([#16](https://github.com/fluencelabs/decider/issues/16)) ([6beb2f7](https://github.com/fluencelabs/decider/commit/6beb2f7e6d1304e04ad21fac8cc55a520c7ab1e2))
+* **chain-connector:** parse chain errors, and also other stuff [fixes NET-646, NET-698, NET-690] ([#162](https://github.com/fluencelabs/decider/issues/162)) ([677574c](https://github.com/fluencelabs/decider/commit/677574cd67a1e96de487f16bfd6c7e2356d7f699))
+* **ci,test:** update nox test framework to 0.16.15, spell-dtos to 0.6.9 ([#191](https://github.com/fluencelabs/decider/issues/191)) ([aa4b71a](https://github.com/fluencelabs/decider/commit/aa4b71a36d64610dc3d63fc85c596d7856bbc7f9))
+* **config:** update fcli 0.13.5 ([#193](https://github.com/fluencelabs/decider/issues/193)) ([91a9b5a](https://github.com/fluencelabs/decider/commit/91a9b5a81dbcde6419ab78b6a9c2bf8cf11299c8))
+* **connector, decider:** Update connector to new testnet; use workers in decider ([#5](https://github.com/fluencelabs/decider/issues/5)) ([ca59550](https://github.com/fluencelabs/decider/commit/ca59550cf20acde2e7a532d687709a9739a09ce2))
+* **connector:** Rename connector to ChainConnector [NET-537] ([#73](https://github.com/fluencelabs/decider/issues/73)) ([26cde44](https://github.com/fluencelabs/decider/commit/26cde44acdd9d5e678141d1c482a88b7ee9037b8))
+* **deal_install:** update installation spell to 0.5.1 ([#9](https://github.com/fluencelabs/decider/issues/9)) ([8fe3676](https://github.com/fluencelabs/decider/commit/8fe36760ea88151c3d4fda56a95f47bcd8ce53d1))
+* **decider, connector:** Updated decider to not recreate workers ([#4](https://github.com/fluencelabs/decider/issues/4)) ([64d7869](https://github.com/fluencelabs/decider/commit/64d786906dea5c5727e026d5f51b1644617e5dcf))
+* **decider:** add alias for worker spell ([#71](https://github.com/fluencelabs/decider/issues/71)) ([860ba6c](https://github.com/fluencelabs/decider/commit/860ba6c31d0a0dba9c29a4c34fe05afda256ce7a))
+* **decider:** fix args naming ([#48](https://github.com/fluencelabs/decider/issues/48)) ([a8dea61](https://github.com/fluencelabs/decider/commit/a8dea61d5b2f706c71e04371990dd4e0f4562655))
+* **decider:** Fix decider monitoring deals ([#18](https://github.com/fluencelabs/decider/issues/18)) ([57793fe](https://github.com/fluencelabs/decider/commit/57793fe6e2b9b7c2b3248114282716a6b266a991))
+* **decider:** Move poll window of deal updates when there are no updates [NET-625] ([#108](https://github.com/fluencelabs/decider/issues/108)) ([16ae574](https://github.com/fluencelabs/decider/commit/16ae5747c63fc14a44415834761daf183be4ac79))
+* **decider:** update AppCIDChanged topic [NET-573] ([#94](https://github.com/fluencelabs/decider/issues/94)) ([2261def](https://github.com/fluencelabs/decider/commit/2261defa3ac7fc0b14f3f41199512e348f097a0a))
+* **decider:** use deal-removed state for polling the removed-from-provider event ([#189](https://github.com/fluencelabs/decider/issues/189)) ([328bd71](https://github.com/fluencelabs/decider/commit/328bd71860f79aab882497982dbba8b403802b92))
+* **decider:** use new logs api [NET-543] ([#79](https://github.com/fluencelabs/decider/issues/79)) ([3dabea9](https://github.com/fluencelabs/decider/commit/3dabea9903ca450b6d93fa111949bdd18395929f))
+* **deps:** aqua-lib 0.9.0 ([#177](https://github.com/fluencelabs/decider/issues/177)) ([7e4602a](https://github.com/fluencelabs/decider/commit/7e4602aa4a3f888fd7cd2f2bc8e21ce64dea303a))
+* **deps:** spell-dtos 0.6.3; nox 0.16.11 ([#173](https://github.com/fluencelabs/decider/issues/173)) ([60b70b6](https://github.com/fluencelabs/decider/commit/60b70b6916f4cf1d03bb25d5a5ef7bbd3b3e2cbc))
+* **deps:** update config ([#31](https://github.com/fluencelabs/decider/issues/31)) ([8de8f7b](https://github.com/fluencelabs/decider/commit/8de8f7b4232a03f1d86046ed1445219540a5b731))
+* **deps:** update installation-spell to 0.5.14 ([#50](https://github.com/fluencelabs/decider/issues/50)) ([5501c4d](https://github.com/fluencelabs/decider/commit/5501c4def4d75ba374e24254b1b0050f99717b4e))
+* **deps:** update rust crate fluence-keypair to 0.10.4 ([#172](https://github.com/fluencelabs/decider/issues/172)) ([56f9ab9](https://github.com/fluencelabs/decider/commit/56f9ab91200053befdaa6bfad898752947b92327))
+* **deps:** update rust crate fluence-spell-dtos to 0.6.4 ([#164](https://github.com/fluencelabs/decider/issues/164)) ([61d53a8](https://github.com/fluencelabs/decider/commit/61d53a8ec7536ac56801b1142fd2a5c0bae5af3d))
+* **deps:** update rust crate marine-rs-sdk to 0.10.3 ([#176](https://github.com/fluencelabs/decider/issues/176)) ([41672c6](https://github.com/fluencelabs/decider/commit/41672c6f24f1c34062e4ffa3c126395fb2b61aa7))
+* **deps:** update rust crate marine-rs-sdk-test to 0.10.0 ([#38](https://github.com/fluencelabs/decider/issues/38)) ([bb8712b](https://github.com/fluencelabs/decider/commit/bb8712b7504235bae00d76a22eba5970d86a8dbd))
+* **deps:** update rust crate marine-rs-sdk-test to 0.11.0 ([#91](https://github.com/fluencelabs/decider/issues/91)) ([68cab1d](https://github.com/fluencelabs/decider/commit/68cab1d2b498d1706e0c6f9a8a4c51ff8f6088f5))
+* **deps:** update rust crate marine-rs-sdk-test to 0.9.0 ([#24](https://github.com/fluencelabs/decider/issues/24)) ([8a06acf](https://github.com/fluencelabs/decider/commit/8a06acf6f90ea966cfe9bed00fd7d63146cda55e))
+* **example:** fix deal args json example ([65b6a4b](https://github.com/fluencelabs/decider/commit/65b6a4b1ee7cf91f37f747b153567590009cf83b))
+* find latest block when from_block is latest ([#57](https://github.com/fluencelabs/decider/issues/57)) ([0bded86](https://github.com/fluencelabs/decider/commit/0bded86f808aa0d2b71ba2a1967b0021f40cecfb))
+* **listener:** Updated default address and from_block ([#10](https://github.com/fluencelabs/decider/issues/10)) ([5452e5e](https://github.com/fluencelabs/decider/commit/5452e5e264c7fab0f7b9d8edcd259a8b67961a54))
+* sort imports to trigger release ([#61](https://github.com/fluencelabs/decider/issues/61)) ([3a74db6](https://github.com/fluencelabs/decider/commit/3a74db6e211475ffb803573e1d45b71d511ec715))
+* update spell api ([#161](https://github.com/fluencelabs/decider/issues/161)) ([0025dc8](https://github.com/fluencelabs/decider/commit/0025dc899381c5211f3c1098f5a23cc08d129a6a))
+
 ## [0.5.14](https://github.com/fluencelabs/decider/compare/connector-v0.5.13...connector-v0.5.14) (2024-01-22)
 
 
