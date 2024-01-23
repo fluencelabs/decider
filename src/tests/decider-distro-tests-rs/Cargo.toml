@@ -8,16 +8,16 @@ edition = "2021"
 [dev-dependencies]
 decider-distro = { path = "../../distro" }
 
-created-swarm = { git = "https://github.com/fluencelabs/nox.git", branch = "feat/update-marine-and-avm-server" }
-connected-client = { git = "https://github.com/fluencelabs/nox.git", branch = "feat/update-marine-and-avm-server" }
-log-utils = { git = "https://github.com/fluencelabs/nox.git", branch = "feat/update-marine-and-avm-server" }
-system-services = { git = "https://github.com/fluencelabs/nox.git", branch = "feat/update-marine-and-avm-server" }
-tempfile = "3.8.1"
+created-swarm = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.15" }
+connected-client = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.15" }
+log-utils = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.15" }
+system-services = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v0.16.15" }
 
 fluence-app-service = "0.31.0"
-
 fluence-keypair = "0.10.4"
+fluence-spell-dtos = "0.6.4"
 
+tempfile = "3.8.1"
 tracing = { version = "0.1.37", default-features = false, features = ["log"] }
 tracing-subscriber = "0.3.17"
 tokio = { version = "1.29.1", features = ["full", "tracing"] }
@@ -25,7 +25,6 @@ toml = "0.5.10"
 maplit = "1.0.2"
 serde_json = "1.0.96"
 serde = { version = "1.0.192", features = ["derive"] }
-fluence-spell-dtos = "0.6.4"
 mockito = "1.1.0"
 hyper = "0.14.27"
 eyre = "0.6.10"
