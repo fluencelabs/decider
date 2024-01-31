@@ -14,7 +14,7 @@ use crate::utils::state::worker;
 use crate::utils::test_rpc_server::run_test_server;
 use crate::utils::*;
 use serde_json::json;
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 pub mod utils;
 
