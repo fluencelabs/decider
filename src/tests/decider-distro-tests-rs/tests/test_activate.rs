@@ -1,6 +1,5 @@
 #![feature(async_closure)]
 #![feature(try_blocks)]
-#![feature(async_fn_in_trait)]
 
 use crate::utils::chain::{DealStatusReq, LogsReq};
 use crate::utils::control::{
@@ -23,8 +22,9 @@ pub mod utils;
 /// - Use standard nox setup.
 /// - On the first run, deploy a deal to create a worker. The deal is INACTIVE.
 /// - On the second run, the deal is ACTIVE, so decider should activate the worker.
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_activate() {
+    enable_decider_logs();
     const LATEST_BLOCK: u32 = 33;
     const DEAL_ID: &'static str = DEAL_IDS[0];
     let deal_address = format!("0x{}", DEAL_ID);
@@ -38,6 +38,7 @@ async fn test_activate() {
 
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
+
     let expected_reqs = 7;
     for _ in 0..expected_reqs {
         let (method, params) = server.receive_request().await.unwrap();
