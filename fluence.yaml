@@ -32,10 +32,10 @@ deals:
     services: [ chain_connector ]
 
 aquaDependencies:
-  "@fluencelabs/aqua-ipfs": 0.5.28
-  "@fluencelabs/installation-spell": 0.6.4
-  "@fluencelabs/spell": 0.6.5
-  "@fluencelabs/aqua-lib": 0.9.0
+  "@fluencelabs/aqua-ipfs": 0.5.30
+  "@fluencelabs/installation-spell": 0.6.9
+  "@fluencelabs/spell": 0.6.9
+  "@fluencelabs/aqua-lib": 0.9.1
   "@fluencelabs/registry": 0.9.4
 
 marineVersion: 0.14.0

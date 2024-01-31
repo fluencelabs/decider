@@ -1,6 +1,5 @@
 #![feature(async_closure)]
 #![feature(try_blocks)]
-#![feature(async_fn_in_trait)]
 
 pub mod utils;
 
@@ -29,7 +28,7 @@ struct DealStatusReq {
 
 /// Test that decider removes a deal ended by the owner.
 /// A deal is ended when it's status is 'ended' (0x2 status code from the chain and `getStatus` call)
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_remove_deal() {
     enable_decider_logs();
     const LATEST_BLOCK: u32 = 33;
@@ -108,7 +107,7 @@ async fn test_remove_deal() {
 /// - deploy a deal on both of them, check that the deal is marked as joined by both of them
 /// - send ComputeUnitRemoved event for one provider
 /// - check that the deal is removed from the chosen provider, and remains on the other one
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_remove_deal_from_provider() {
     enable_decider_logs();
 
@@ -218,7 +217,7 @@ async fn test_remove_deal_from_provider() {
     server.shutdown().await;
 }
 
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_deal_ended_and_removed_from_provider() {
     enable_decider_logs();
     const LATEST_BLOCK: u32 = 33;

@@ -1,6 +1,4 @@
 #![feature(async_closure)]
-#![feature(async_fn_in_trait)]
-#![feature(return_position_impl_trait_in_trait)]
 
 pub mod utils;
 
@@ -29,7 +27,7 @@ use utils::*;
 ///    - Worker was triggered after the update
 ///      We can check it by checking counter. Worker spell settings is oneshot for the tests, so the counter must be 2:
 ///      The first run after the activation after installation, the second run after the update.
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_update_deal() {
     enable_decider_logs();
     const LATEST_BLOCK: u32 = 35;
@@ -120,7 +118,7 @@ async fn test_update_deal() {
     server.shutdown().await
 }
 
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_update_from_later_blocks() {
     const LATEST_BLOCK_INIT: u32 = 50;
     // should be less than LATEST
@@ -241,7 +239,7 @@ async fn test_update_from_later_blocks() {
 /// 1. Deploy 3 deals.
 /// 2. On updating, getStatus and a remove event return an error for the second deal,
 /// 3. Check that the first and the third deals are updated.
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_update_with_errors() {
     enable_decider_logs();
     const LATEST_BLOCK_1: u32 = 30;

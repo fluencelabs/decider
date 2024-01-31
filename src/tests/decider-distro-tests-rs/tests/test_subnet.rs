@@ -1,6 +1,4 @@
 #![feature(async_closure)]
-#![feature(async_fn_in_trait)]
-#![feature(return_position_impl_trait_in_trait)]
 
 pub mod utils;
 
@@ -21,7 +19,7 @@ use utils::*;
 /// Test worker registering scenarios
 ///
 ///
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_register_worker_fails() {
     //enable_decider_logs();
     const LATEST_BLOCK_FIRST_RUN: u32 = 110;
@@ -118,7 +116,7 @@ async fn test_register_worker_fails() {
 ///                   on ok, we print the ok message and forget about the transaction
 ///                   on rpc error, we retry the transaction
 /// 3. On the third run, we send ok status to the `retry` transaction and expect that the deal is removed from the queue
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_transaction_tracking() {
     const LATEST_BLOCK: u32 = 110;
     const DEAL_ID: &'static str = DEAL_IDS[0];

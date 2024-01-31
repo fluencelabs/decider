@@ -1,6 +1,4 @@
 #![feature(async_closure)]
-#![feature(async_fn_in_trait)]
-#![feature(return_position_impl_trait_in_trait)]
 
 pub mod utils;
 
@@ -64,7 +62,7 @@ use utils::*;
 /// TODO: provide the app in the tests resources
 /// TODO: checks that `errors` are empty
 ///
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_deploy_a_deal_single() {
     enable_decider_logs();
     const DEAL_ID: &'static str = DEAL_IDS[0];
@@ -187,6 +185,7 @@ async fn test_deploy_a_deal_single() {
         )
         .await
         .unwrap();
+
         serde_json::from_value::<Vec<ServiceInfo>>(result[0].clone()).unwrap()
     };
 
@@ -248,7 +247,7 @@ async fn test_deploy_a_deal_single() {
 ///     Check that
 ///     a. *Decider* try to register each worker
 ///  4. *Decider* updated the `lest_seen_block` to the latest seen block from the logs - 1
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_deploy_deals_diff_blocks() {
     const LATEST_BLOCK: u32 = 35;
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
@@ -382,7 +381,7 @@ async fn test_deploy_deals_diff_blocks() {
 ///    a. `joined_deals` list contains both deals (check that the list is not overwritten)
 ///    b. state of the deal (stored by `deal_id`)
 ///    c. both workers are installed and have correct CIDs
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_deploy_a_deal_in_seq() {
     const LATEST_BLOCK_FIRST_RUN: u32 = 35;
     const DEAL_ID_1: &'static str = DEAL_IDS[0];
@@ -527,7 +526,7 @@ async fn test_deploy_a_deal_in_seq() {
 ///
 /// 1. *Decider* deploys several deals from a block but don't have time to deploy _all_ of them
 ///    We can simulate it by returning not all deals on the first run, and on the second add deals to the block
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_deploy_deals_in_one_block() {
     enable_decider_logs();
 
