@@ -15,7 +15,7 @@ system-services = { git = "https://github.com/fluencelabs/nox.git", tag = "nox-v
 
 fluence-app-service = "0.31.1"
 fluence-keypair = "0.10.4"
-fluence-spell-dtos = "0.6.9"
+fluence-spell-dtos = "0.6.10"
 
 tempfile = "3.9.0"
 tracing = { version = "0.1.37", default-features = false, features = ["log"] }
