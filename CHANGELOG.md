@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.5.16](https://github.com/fluencelabs/decider/compare/connector-v0.5.15...connector-v0.5.16) (2024-02-01)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate fluence-spell-dtos to 0.6.10 ([#202](https://github.com/fluencelabs/decider/issues/202)) ([78896d5](https://github.com/fluencelabs/decider/commit/78896d56c0c89cc9d6c5ec4794fd1dfb3a7f7119))
+
+## [0.5.15](https://github.com/fluencelabs/decider/compare/connector-v0.5.14...connector-v0.5.15) (2024-01-23)
+
+
+### Bug Fixes
+
+* **ci,test:** update nox test framework to 0.16.15, spell-dtos to 0.6.9 [#191](https://github.com/fluencelabs/decider/issues/191) ([#198](https://github.com/fluencelabs/decider/issues/198)) ([dbd3d7f](https://github.com/fluencelabs/decider/commit/dbd3d7f98fa3bee60d4b647341ee7e84673d4b23))
+
+## [0.5.14](https://github.com/fluencelabs/decider/compare/connector-v0.5.13...connector-v0.5.14) (2024-01-22)
+
+
+### Bug Fixes
+
+* **config:** update fcli 0.13.5 ([#193](https://github.com/fluencelabs/decider/issues/193)) ([91a9b5a](https://github.com/fluencelabs/decider/commit/91a9b5a81dbcde6419ab78b6a9c2bf8cf11299c8))
+
 ## [0.5.13](https://github.com/fluencelabs/decider/compare/connector-v0.5.12...connector-v0.5.13) (2024-01-11)
 
 

@@ -1,6 +1,5 @@
 #![feature(async_closure)]
 #![feature(try_blocks)]
-#![feature(async_fn_in_trait)]
 
 pub mod utils;
 
@@ -30,7 +29,7 @@ fn test_connector_config_check() {
     );
 }
 
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_decider_installed() {
     let distro = make_distro_default();
     let names = package_items_names(&distro);
@@ -107,7 +106,7 @@ async fn test_decider_installed() {
 ///            Note: the test depend on the knowledge that the range is 500 blocks,
 ///                  we don't evaluate the number automatically
 ///
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_left_boundary_idle() {
     let mut server = run_test_server();
     let url = server.url.clone();
@@ -153,7 +152,7 @@ async fn test_left_boundary_idle() {
     server.shutdown().await;
 }
 
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_sync_info() {
     const LATEST_BLOCK_FIRST_RUN: u32 = 100;
     const LATEST_BLOCK_SECOND_RUN: u32 =
