@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.17](https://github.com/fluencelabs/decider/compare/connector-v0.5.16...connector-v0.5.17) (2024-02-15)
+
+
+### Bug Fixes
+
+* **tests:** update decider tests deps ([#209](https://github.com/fluencelabs/decider/issues/209)) ([16809c0](https://github.com/fluencelabs/decider/commit/16809c0dbde7ab92275c121d939bc88b8980477c))
+* update spell version ([#211](https://github.com/fluencelabs/decider/issues/211)) ([b43ce02](https://github.com/fluencelabs/decider/commit/b43ce020900cc001127f2ad557fba3b5fb84b20b))
+
 ## [0.5.16](https://github.com/fluencelabs/decider/compare/connector-v0.5.15...connector-v0.5.16) (2024-02-01)
 
 
