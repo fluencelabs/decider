@@ -3,7 +3,7 @@
 pub mod utils;
 
 use crate::utils::default::default_status;
-use fluence_spell_dtos::trigger_config::TriggerConfig;
+use created_swarm::fluence_spell_dtos::trigger_config::TriggerConfig;
 use serde_json::json;
 use utils::chain::{filter_logs, LogsReq};
 use utils::control::{update_config, update_decider_script_for_tests, wait_decider_stopped};

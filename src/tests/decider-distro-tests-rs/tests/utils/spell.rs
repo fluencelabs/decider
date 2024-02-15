@@ -1,7 +1,7 @@
 use crate::utils::execute;
 use connected_client::ConnectedClient;
 use eyre::WrapErr;
-use fluence_spell_dtos::value::{StringListValue, StringValue};
+use created_swarm::fluence_spell_dtos::value::{StringListValue, StringValue};
 use maplit::hashmap;
 use serde_json::json;
 

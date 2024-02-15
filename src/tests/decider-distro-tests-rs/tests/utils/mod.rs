@@ -13,7 +13,7 @@ pub mod test_rpc_server;
 pub use test_apps::TestApp;
 
 use connected_client::ConnectedClient;
-use fluence_spell_dtos::trigger_config::TriggerConfig;
+use created_swarm::fluence_spell_dtos::trigger_config::TriggerConfig;
 use serde_json::{json, Value};
 use std::collections::HashMap;
 
