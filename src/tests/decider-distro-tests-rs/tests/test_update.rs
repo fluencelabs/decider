@@ -5,7 +5,7 @@ pub mod utils;
 use crate::utils::control::wait_worker_spell_stopped;
 use crate::utils::setup::{setup_rpc_deploy_deal, setup_rpc_deploy_deals};
 use crate::utils::state::worker::{get_worker_app_cid, is_active};
-use fluence_spell_dtos::value::{StringValue, U32Value};
+use created_swarm::fluence_spell_dtos::value::{StringValue, U32Value};
 use maplit::hashmap;
 use serde_json::json;
 use std::time::Duration;

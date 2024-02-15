@@ -1,8 +1,8 @@
 use crate::utils::default::IPFS_MULTIADDR;
 use decider_distro::DeciderConfig;
-use fluence_app_service::TomlMarineConfig;
-use fluence_spell_dtos::trigger_config::TriggerConfig;
-use system_services::{PackageDistro, ServiceDistro, SpellDistro};
+use created_swarm::fluence_app_service::TomlMarineConfig;
+use created_swarm::fluence_spell_dtos::trigger_config::TriggerConfig;
+use created_swarm::system_services::{PackageDistro, ServiceDistro, SpellDistro};
 
 pub fn package_items_names(distro: &PackageDistro) -> Vec<String> {
     distro

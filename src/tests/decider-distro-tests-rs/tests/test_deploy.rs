@@ -3,8 +3,8 @@
 pub mod utils;
 
 use crate::utils::setup::{setup_nox, setup_rpc_deploy_deal};
-use fluence_spell_dtos::trigger_config::TriggerConfig;
-use fluence_spell_dtos::value::{StringListValue, StringValue, U32Value};
+use created_swarm::fluence_spell_dtos::trigger_config::TriggerConfig;
+use created_swarm::fluence_spell_dtos::value::{StringListValue, StringValue, U32Value};
 use maplit::hashmap;
 use serde::Deserialize;
 use serde_json::{json, Value};
