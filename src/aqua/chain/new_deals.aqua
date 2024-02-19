@@ -57,7 +57,7 @@ func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: 
     -- TODO: I assume that `logs` are sorted by `block_number`. Is that a correct assumption?
     for log <- logs:
         deal_id = log.info.deal_id
-        unit_ids = [log.info.pat_id] -- TODO: change it to unit_ids
+        unit_ids = [log.info.unit_id] -- TODO: change it to array
         worker_id, error <- join_deal(spell_id, log.block_number, deal_id, log.info.app_cid, settings, unit_ids)
         if worker_id == nil:
             store_installation_failed_deal(spell_id, deal_id, log, error!)
