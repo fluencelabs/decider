@@ -17,7 +17,7 @@ thiserror = "1.0.38"
 ethabi = "18.0.0"
 hex = "0.4.3"
 url = "2.4.0"
-cid = "0.10.1"
+cid = "0.11.0"
 libp2p-identity = { version = "0.2.8", features = ["peerid"], default-features = false }
 clarity = { version = "1.2.3", features = [] }
 
