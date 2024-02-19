@@ -368,22 +368,7 @@
     },
     "version": {
       "type": "number",
-      "const": 6
-    },
-    "aquaInputPath": {
-      "type": "string",
-      "nullable": true,
-      "description": "Path to the aqua file or directory with aqua files that you want to compile by default. Must be relative to the project root dir"
-    },
-    "aquaOutputTSPath": {
-      "type": "string",
-      "nullable": true,
-      "description": "Path to the default compilation target dir from aqua to ts. Must be relative to the project root dir"
-    },
-    "aquaOutputJSPath": {
-      "type": "string",
-      "nullable": true,
-      "description": "Path to the default compilation target dir from aqua to js. Must be relative to the project root dir. Overrides 'aquaOutputTSPath' property"
+      "const": 7
     },
     "hosts": {
       "description": "A map of objects with worker names as keys, each object defines a list of peer IDs to host the worker on. Intended to be used by providers to deploy directly without using the blockchain",
@@ -511,7 +496,7 @@
           "pricePerWorkerEpoch": {
             "type": "number",
             "description": "Price per worker epoch in FL. This number is multiplied by 10^18",
-            "default": 0.1,
+            "default": 0.00001,
             "nullable": true,
             "minimum": 1e-18
           },
@@ -577,7 +562,7 @@
             "pricePerWorkerEpoch": {
               "type": "number",
               "description": "Price per worker epoch in FL. This number is multiplied by 10^18",
-              "default": 0.1,
+              "default": 0.00001,
               "nullable": true,
               "minimum": 1e-18
             },
@@ -809,8 +794,24 @@
       "nullable": true
     },
     "relaysPath": {
-      "description": "Path to the directory where you want relays.json file to be generated. Must be relative to the project root dir. This file contains a list of relays to use when connecting to Fluence network and depends on the default environment that you use in your project",
-      "type": "string",
+      "type": [
+        "string",
+        "array",
+        "null"
+      ],
+      "description": "Single or multiple paths to the directories where you want relays.json file to be generated. Must be relative to the project root dir. This file contains a list of relays to use when connecting to Fluence network and depends on the default environment that you use in your project",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      ],
       "nullable": true
     },
     "aquaDependencies": {
@@ -835,6 +836,190 @@
     "mreplVersion": {
       "type": "string",
       "description": "Mrepl version",
+      "nullable": true
+    },
+    "compileAqua": {
+      "type": "object",
+      "description": "A map of aqua files to compile",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "Relative path to the aqua file or directory with aqua files"
+          },
+          "output": {
+            "type": "string",
+            "description": "Relative path to the output directory"
+          },
+          "target": {
+            "type": "string",
+            "description": "Compilation target",
+            "enum": [
+              "ts",
+              "js",
+              "air"
+            ]
+          },
+          "constants": {
+            "type": "object",
+            "description": "A list of constants to pass to the compiler. Constant name must be uppercase",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ]
+            },
+            "properties": {
+              "SOME_CONSTANT": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean"
+                ]
+              }
+            },
+            "nullable": true,
+            "required": []
+          },
+          "logLevel": {
+            "type": "string",
+            "description": "Log level for the compiler. Default: info",
+            "nullable": true,
+            "enum": [
+              "all",
+              "trace",
+              "debug",
+              "info",
+              "warn",
+              "error",
+              "off"
+            ]
+          },
+          "noRelay": {
+            "type": "boolean",
+            "description": "Do not generate a pass through the relay node. Default: false",
+            "nullable": true,
+            "default": false
+          },
+          "noXor": {
+            "type": "boolean",
+            "description": "Do not generate a wrapper that catches and displays errors. Default: false",
+            "nullable": true,
+            "default": false
+          },
+          "tracing": {
+            "type": "boolean",
+            "description": "Compile aqua in tracing mode (for debugging purposes). Default: false",
+            "nullable": true,
+            "default": false
+          },
+          "noEmptyResponse": {
+            "type": "boolean",
+            "description": "Do not generate response call if there are no returned values. Default: false",
+            "nullable": true,
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "input",
+          "output",
+          "target"
+        ]
+      },
+      "properties": {
+        "aqua-config-name": {
+          "type": "object",
+          "properties": {
+            "input": {
+              "type": "string",
+              "description": "Relative path to the aqua file or directory with aqua files"
+            },
+            "output": {
+              "type": "string",
+              "description": "Relative path to the output directory"
+            },
+            "target": {
+              "type": "string",
+              "description": "Compilation target",
+              "enum": [
+                "ts",
+                "js",
+                "air"
+              ]
+            },
+            "constants": {
+              "type": "object",
+              "description": "A list of constants to pass to the compiler. Constant name must be uppercase",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean"
+                ]
+              },
+              "properties": {
+                "SOME_CONSTANT": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean"
+                  ]
+                }
+              },
+              "nullable": true,
+              "required": []
+            },
+            "logLevel": {
+              "type": "string",
+              "description": "Log level for the compiler. Default: info",
+              "nullable": true,
+              "enum": [
+                "all",
+                "trace",
+                "debug",
+                "info",
+                "warn",
+                "error",
+                "off"
+              ]
+            },
+            "noRelay": {
+              "type": "boolean",
+              "description": "Do not generate a pass through the relay node. Default: false",
+              "nullable": true,
+              "default": false
+            },
+            "noXor": {
+              "type": "boolean",
+              "description": "Do not generate a wrapper that catches and displays errors. Default: false",
+              "nullable": true,
+              "default": false
+            },
+            "tracing": {
+              "type": "boolean",
+              "description": "Compile aqua in tracing mode (for debugging purposes). Default: false",
+              "nullable": true,
+              "default": false
+            },
+            "noEmptyResponse": {
+              "type": "boolean",
+              "description": "Do not generate response call if there are no returned values. Default: false",
+              "nullable": true,
+              "default": false
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "input",
+            "output",
+            "target"
+          ]
+        }
+      },
+      "required": [],
       "nullable": true
     }
   },
