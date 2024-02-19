@@ -86,8 +86,8 @@ fn decode_compute_units(data: String) -> Result<Vec<JoinedWorker>, ResolveSubnet
         let tuple = token.into_tuple().ok_or(InvalidParsedToken("tuple"))?;
         let mut tuple = tuple.into_iter();
 
-        let pat_id = next_opt(&mut tuple, "pat_id", Token::into_fixed_bytes)?;
-        let pat_id = hex::encode(pat_id);
+        let unit_id = next_opt(&mut tuple, "unit_id", Token::into_fixed_bytes)?;
+        let unit_id = hex::encode(unit_id);
 
         let peer_id = next_opt(&mut tuple, "compute_peer_id", Token::into_fixed_bytes)?;
         let peer_id = parse_peer_id(peer_id).map_err(|e| InvalidPeerId(e, "compute_peer_id"))?;
@@ -102,7 +102,7 @@ fn decode_compute_units(data: String) -> Result<Vec<JoinedWorker>, ResolveSubnet
         };
 
         let pat = JoinedWorker {
-            cu_id: format!("0x{}", pat_id),
+            cu_id: format!("0x{}", unit_id),
             host_id: peer_id.to_string(),
             worker_id,
         };

@@ -64,7 +64,7 @@ func join_deals(chain: ChainInfo, spell_id: SpellId, logs: []DealMatched, left: 
         else:
             -- At this point, if worker registration return is_ok=false, it did all it could do
             -- so here we move forward anyway
-            is_ok <- register_worker(chain, spell_id, deal_id, worker_id!, log.info.pat_id)
+            is_ok <- register_worker(chain, spell_id, deal_id, worker_id!, log.info.unit_id)
             if is_ok:
                 store_deal(spell_id, deal_id, worker_id!, log.block_number)
                 deal_ids <<- deal_id
