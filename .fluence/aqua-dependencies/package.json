@@ -3,7 +3,7 @@
     "@fluencelabs/aqua-ipfs": "0.5.30",
     "@fluencelabs/installation-spell": "0.6.10",
     "@fluencelabs/spell": "0.6.10",
-    "@fluencelabs/aqua-lib": "0.10.1",
+    "@fluencelabs/aqua-lib": "0.9.1",
     "@fluencelabs/registry": "0.9.4"
   }
 }
