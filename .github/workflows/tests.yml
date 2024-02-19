@@ -87,7 +87,10 @@ jobs:
       - name: Setup nextest
         uses: taiki-e/install-action@nextest
 
-      - name: Run cargo nextest
+      - name: Run cargo Decider Unit Tests
+        run: cargo nextest run --release --all-features --profile ci
+
+      - name: Run cargo Decider Distro Tests
         working-directory: src/tests/decider-distro-tests-rs
         run: cargo nextest run --release --all-features --profile ci
 

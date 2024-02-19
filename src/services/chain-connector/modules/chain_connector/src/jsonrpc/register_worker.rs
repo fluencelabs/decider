@@ -65,7 +65,7 @@ impl RegisterWorkerResult {
 
 #[marine]
 pub fn register_worker(
-    pat_id: Vec<u8>,
+    unit_id: Vec<u8>,
     worker_id: &str,
     chain: ChainInfo,
     deal_addr: &str,
@@ -76,7 +76,7 @@ pub fn register_worker(
 
     let r: Result<_, RegisterWorkerError> = try {
         let key = parse_wallet_key(&chain.wallet_key)?;
-        let input = encode_call(pat_id, worker_id)?;
+        let input = encode_call(unit_id, worker_id)?;
         let nonce = load_nonce(key.to_address(), endpoint)?;
         let gas_price = get_gas_price(endpoint)?;
         let tx = make_tx(input, key, gas, nonce, gas_price, deal_addr, network_id)?;
@@ -143,15 +143,15 @@ fn function() -> Function {
 }
 
 /// Encode `setWorker` call to bytes
-fn encode_call(pat_id: Vec<u8>, worker_id: &str) -> Result<Vec<u8>, RegisterWorkerError> {
-    // let pat_id = decode_hex(pat_id).map_err(|e| EncodeArgument(e, "pat_id"))?;
-    let pat_id = Token::FixedBytes(pat_id);
+fn encode_call(unit_id: Vec<u8>, worker_id: &str) -> Result<Vec<u8>, RegisterWorkerError> {
+    // let unit_id = decode_hex(unit_id).map_err(|e| EncodeArgument(e, "unit_id"))?;
+    let unit_id = Token::FixedBytes(unit_id);
 
     let worker_id = PeerId::from_str(worker_id).map_err(|e| InvalidWorkerId(e, "worker_id"))?;
     let worker_id = serialize_peer_id(worker_id);
     let worker_id = Token::FixedBytes(worker_id);
 
-    let input = function().encode_input(&[pat_id, worker_id])?;
+    let input = function().encode_input(&[unit_id, worker_id])?;
     Ok(input)
 }
 
@@ -230,7 +230,7 @@ mod tests {
     use crate::hex::decode_hex;
     use crate::jsonrpc::register_worker::{encode_call, function};
 
-    fn pat_id() -> Vec<u8> {
+    fn unit_id() -> Vec<u8> {
         decode_hex("0xe532c726aa9c2f223fb21b5a488f874583e809257685ac3c40c9e0f7c89c082e")
             .expect("decode pat id from hex")
     }
@@ -246,7 +246,7 @@ mod tests {
         let signature_hex = hex::encode(f.short_signature());
         assert_eq!(signature_hex, "d5053ab0");
 
-        let input = encode_call(pat_id(), WORKER_ID).expect("encode call");
+        let input = encode_call(unit_id(), WORKER_ID).expect("encode call");
         let input = hex::encode(input);
 
         assert_eq!(input, "d5053ab0e532c726aa9c2f223fb21b5a488f874583e809257685ac3c40c9e0f7c89c082e529d4dabfa72abfd83c48adca7a2d49a921fa7351689d12e2a6c68375052f0b5");
@@ -322,7 +322,7 @@ mod tests {
             tetraplets: vec![],
         };
         let result = connector.register_worker_cp(
-            pat_id().into(),
+            unit_id().into(),
             WORKER_ID.into(),
             chain,
             "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
