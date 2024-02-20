@@ -2,7 +2,7 @@ aqua Worker declares WorkerArgs, WorkerSettings, is_worker_created, create, remo
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
 import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
-import Worker from "@fluencelabs/aqua-lib/workers.aqua"
+import Worker, CUID from "@fluencelabs/aqua-lib/workers.aqua"
 
 import spell_log, deal_log, get_string from "../fluence/spell.aqua"
 import Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
@@ -39,7 +39,7 @@ func is_worker_created(spell_id: SpellId, deal_id: DealId) -> bool:
 
     <- created!
 
-func create(spell_id: SpellId, deal_id: DealId) -> ?WorkerId:
+func create(spell_id: SpellId, deal_id: DealId, cu_ids: []CUID) -> ?WorkerId:
     worker_id: *WorkerId
 
     existing_worker <- Worker.get_worker_id(deal_id)
@@ -47,7 +47,7 @@ func create(spell_id: SpellId, deal_id: DealId) -> ?WorkerId:
     if existing_worker == nil:
         -- if worker was not created yet, create it
         try:
-            worker_id <- Worker.create(deal_id)
+            worker_id <- Worker.create(deal_id, cu_ids)
             deal_log(spell_id, deal_id, ["created worker for deal", worker_id!])
         catch e:
             deal_log(spell_id, deal_id, ["error creating worker", e.message])

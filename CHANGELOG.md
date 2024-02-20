@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/fluencelabs/decider/compare/connector-v0.5.17...connector-v0.6.0) (2024-02-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **chain:** Rename ComputePeerMatched to ComputeUnitMatched ([#192](https://github.com/fluencelabs/decider/issues/192))
+
+### Features
+
+* **chain:** Rename ComputePeerMatched to ComputeUnitMatched ([#192](https://github.com/fluencelabs/decider/issues/192)) ([980348f](https://github.com/fluencelabs/decider/commit/980348fe90c76e903a23dbea047046d11b8c2c99))
+* **worker:** add unitID to Worker.create ([#212](https://github.com/fluencelabs/decider/issues/212)) ([3a43db3](https://github.com/fluencelabs/decider/commit/3a43db30e997699c7cc4ede72001376871581515))
+
 ## [0.5.17](https://github.com/fluencelabs/decider/compare/connector-v0.5.16...connector-v0.5.17) (2024-02-15)
 
 

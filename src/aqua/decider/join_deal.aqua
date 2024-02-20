@@ -1,6 +1,7 @@
 aqua JoinDeal declares join_deal
 
 import PeerSpell from "@fluencelabs/spell/api.aqua"
+import CUID from "@fluencelabs/aqua-lib/workers.aqua"
 import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 import "@fluencelabs/spell/spell_service.aqua"
 
@@ -40,7 +41,7 @@ func install_deal_spell(deal_id: DealId, cid: CID, settings: WorkerSettings) -> 
 -- 
 -- When joinin a deal we create a worker. BUT the worker must be deactivated. Later, we will check the deal status
 -- to determine if it's time to activate the deal. For now, it's enough to allocate the worker.
-func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID, settings: WorkerSettings) -> ?WorkerId, ?string:
+func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID, settings: WorkerSettings, cu_ids: []CUID) -> ?WorkerId, ?string:
     log = (msg: ⊤):
         deal_log(spell_id, deal_id, msg)
 
@@ -48,7 +49,7 @@ func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID, 
     worker_id: *WorkerId
     error: *string
     try:
-        id <- WorkerHelper.create(spell_id, deal_id)
+        id <- WorkerHelper.create(spell_id, deal_id, cu_ids)
         if id != nil:
             worker_id <<- id!
     catch e:
