@@ -40,7 +40,6 @@ jobs:
 
     uses: fluencelabs/nox/.github/workflows/build.yml@master
     with:
-      ref: update-spell-kv-restrictions
       cargo-dependencies: |
         [
           {
