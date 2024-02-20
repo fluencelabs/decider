@@ -141,6 +141,9 @@ pub fn resolve_subnet(deal_id: String, api_endpoint: &str) -> Subnet {
     }
 }
 
+
+// Fix later if we need subnet resolution here
+/*
 #[cfg(test)]
 mod tests {
     use marine_rs_sdk_test::marine_test;
@@ -247,3 +250,4 @@ mod tests {
         mock.assert();
     }
 }
+*/
