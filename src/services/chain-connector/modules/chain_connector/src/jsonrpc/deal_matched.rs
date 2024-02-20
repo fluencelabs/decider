@@ -145,7 +145,7 @@ mod tests {
         let mock = server
             .mock("POST", "/")
             // expect to receive this exact body in POST
-            .match_body(r#"{"jsonrpc":"2.0","id":0,"method":"eth_getLogs","params":[{"fromBlock":"0x52","toBlock":"0x822","address":"0x6328bb918a01603adc91eae689b848a9ecaef26d","topics":["0x1c13422d2375fe8a96ddbe3f6e2efc794f2befbfe247217479ef4b68030d42c3","0x7a82a5feefcaad4a89c689412031e5f87c02b29e3fced583be5f05c7077354b7"]}]}"#)
+            .match_body(r#"{"jsonrpc":"2.0","id":0,"method":"eth_getLogs","params":[{"fromBlock":"0x52","toBlock":"0x822","address":"0x6328bb918a01603adc91eae689b848a9ecaef26d","topics":["0xb1c5a9179c3104a43de668491f14c45778f00ec34d5deee023af204820483bdb","0x7a82a5feefcaad4a89c689412031e5f87c02b29e3fced583be5f05c7077354b7"]}]}"#)
             // expect exactly 1 POST request
             .expect(1)
             .with_status(200)
