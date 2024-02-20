@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/fluencelabs/decider/compare/connector-v0.6.0...connector-v0.6.1) (2024-02-20)
+
+
+### Features
+
+* update to new spell kv restrictions ([#213](https://github.com/fluencelabs/decider/issues/213)) ([ae7aeb0](https://github.com/fluencelabs/decider/commit/ae7aeb0da3570e8cb8eec713b313a3a4f38f1f9b))
+
 ## [0.6.0](https://github.com/fluencelabs/decider/compare/connector-v0.5.17...connector-v0.6.0) (2024-02-19)
 
 
