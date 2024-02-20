@@ -6,11 +6,7 @@
 # You can use `fluence init` command to generate a template for new Fluence project
 
 # config version
-version: 6
-
-# Path to the aqua file or directory with aqua files that you want to compile by default.
-# Must be relative to the project root dir
-aquaInputPath: src/aqua/decider/poll.aqua
+version: 7
 
 # Here I define services. Can have as many as I want. Right now it's just 'chain_connector'.
 services:
@@ -33,11 +29,17 @@ deals:
 
 aquaDependencies:
   "@fluencelabs/aqua-ipfs": 0.5.30
-  "@fluencelabs/installation-spell": 0.6.10
-  "@fluencelabs/spell": 0.6.10
+  "@fluencelabs/installation-spell": 0.7.1
+  "@fluencelabs/spell": 0.7.1
   "@fluencelabs/aqua-lib": 0.9.1
   "@fluencelabs/registry": 0.9.4
 
-marineVersion: 0.14.0
+marineVersion: 0.19.0
 
-mreplVersion: 0.21.3
+mreplVersion: 0.26.0
+
+compileAqua:
+  default:
+    input: src/aqua/decider/poll.aqua
+    output: src/compiled-aqua
+    target: air
