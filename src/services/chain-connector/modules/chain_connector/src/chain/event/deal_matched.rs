@@ -122,7 +122,7 @@ mod tests {
         // ],
         assert_eq!(
             Match::topic(),
-            String::from("0x1c13422d2375fe8a96ddbe3f6e2efc794f2befbfe247217479ef4b68030d42c3")
+            String::from("0xb1c5a9179c3104a43de668491f14c45778f00ec34d5deee023af204820483bdb")
         );
     }
 

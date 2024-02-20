@@ -6,7 +6,7 @@
 # You can use `fluence init` command to generate a template for new Fluence project
 
 # config version
-version: 7
+version: 8
 
 # Here I define services. Can have as many as I want. Right now it's just 'chain_connector'.
 services:
@@ -22,24 +22,24 @@ spells:
     # path to directory containing 'spell.yaml'
     get: src/aqua
 
-deals:
+deployments:
   decider:
     spells: [ decider ]
     services: [ chain_connector ]
 
 aquaDependencies:
   "@fluencelabs/aqua-ipfs": 0.5.30
-  "@fluencelabs/installation-spell": 0.6.10
-  "@fluencelabs/spell": 0.6.10
+  "@fluencelabs/installation-spell": 0.7.0
+  "@fluencelabs/spell": 0.7.0
   "@fluencelabs/aqua-lib": 0.10.1
   "@fluencelabs/registry": 0.9.4
 
-marineVersion: 0.14.0
+marineVersion: 0.19.0
 
-mreplVersion: 0.21.3
+mreplVersion: 0.26.0
 
 compileAqua:
   default:
     input: src/aqua/decider/poll.aqua
     output: src/compiled-aqua
-    target: ts
+    target: air

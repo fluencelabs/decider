@@ -42,13 +42,16 @@ impl ChainData for DealPeerRemovedData {
     }
 
     fn parse(data_tokens: &mut impl Iterator<Item = Token>) -> Result<Self, ChainDataError> {
-        let compute_peer_id =  next_opt(data_tokens, "compute_peer", Token::into_fixed_bytes)?;
-        let compute_peer_id= parse_peer_id(compute_peer_id)?.to_string();
+        let compute_peer_id = next_opt(data_tokens, "compute_peer", Token::into_fixed_bytes)?;
+        let compute_peer_id = parse_peer_id(compute_peer_id)?.to_string();
 
         let compute_unit_id = next_opt(data_tokens, "compute_unit_id", Token::into_fixed_bytes)?;
         let compute_unit_id = hex::encode(&compute_unit_id);
 
-        Ok(DealPeerRemovedData { compute_peer_id, compute_unit_id })
+        Ok(DealPeerRemovedData {
+            compute_peer_id,
+            compute_unit_id,
+        })
     }
 }
 
@@ -77,7 +80,8 @@ mod tests {
     #[test]
     fn parse_peer_removed() {
         const EXPECTED_BLOCK_NUMBER: &str = "0x16c";
-        const COMPUTE_UNIT: &str = "9d0cd1f4517ced82e8e5ac8b9cb1bfffffc8dda1af6092b505d3be53f20550a0";
+        const COMPUTE_UNIT: &str =
+            "9d0cd1f4517ced82e8e5ac8b9cb1bfffffc8dda1af6092b505d3be53f20550a0";
         const PEER_ID: &str = "12D3KooWDcpWuyrMTDinqNgmXAuRdfd2mTdY9VoXZSAet2pDzh6r";
 
         let jsonrpc = json!(
@@ -103,11 +107,17 @@ mod tests {
               }
             ]
         });
-        let logs = serde_json::from_value::<JsonRpcResp<Vec<Log>>>(jsonrpc).expect("invalid jsonrpc");
+        let logs =
+            serde_json::from_value::<JsonRpcResp<Vec<Log>>>(jsonrpc).expect("invalid jsonrpc");
         let logs = logs.get_result().expect("error parsing jsonrpc result");
         let log = logs[0].clone();
         let result = parse_log::<DealPeerRemovedData, DealPeerRemoved>(log);
-        assert!(result.is_ok(), "can't parse log: {:?}, error: {:?}", logs[0], result);
+        assert!(
+            result.is_ok(),
+            "can't parse log: {:?}, error: {:?}",
+            logs[0],
+            result
+        );
         let result = result.unwrap();
         assert_eq!(result.block_number, EXPECTED_BLOCK_NUMBER);
         assert_eq!(result.info.compute_peer_id, PEER_ID);

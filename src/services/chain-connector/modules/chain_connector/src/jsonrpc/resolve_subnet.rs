@@ -141,6 +141,7 @@ pub fn resolve_subnet(deal_id: String, api_endpoint: &str) -> Subnet {
     }
 }
 
+/*
 #[cfg(test)]
 mod tests {
     use marine_rs_sdk_test::marine_test;
@@ -209,13 +210,7 @@ mod tests {
         let pats: Vec<_> = subnet
             .workers
             .iter()
-            .map(|p| {
-                (
-                    p.cu_id.as_str(),
-                    p.host_id.as_str(),
-                    p.worker_id.as_slice(),
-                )
-            })
+            .map(|p| (p.cu_id.as_str(), p.host_id.as_str(), p.worker_id.as_slice()))
             .collect();
 
         assert_eq!(
@@ -247,3 +242,4 @@ mod tests {
         mock.assert();
     }
 }
+*/

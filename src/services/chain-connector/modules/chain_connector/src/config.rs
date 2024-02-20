@@ -35,7 +35,6 @@ pub fn get_env() -> Env {
             name: DealPeerRemoved::EVENT_NAME.to_string(),
             topic: DealPeerRemovedData::topic(),
         },
-
     ];
     Env { events }
 }

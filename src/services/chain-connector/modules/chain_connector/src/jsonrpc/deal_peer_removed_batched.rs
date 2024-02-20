@@ -1,14 +1,14 @@
-use std::iter::zip;
-use marine_rs_sdk::marine;
 use crate::chain::chain_data::ChainData;
 use crate::chain::event::deal_peer_removed::DealPeerRemovedData;
 use crate::chain::log::Log;
 use crate::curl::send_jsonrpc_batch;
+use crate::jsonrpc::get_encoded_peer_id;
 use crate::jsonrpc::get_logs::GetLogsReq;
-use crate::jsonrpc::JsonRpcReq;
 use crate::jsonrpc::request::check_url;
 use crate::jsonrpc::right_boundary::default_right_boundary;
-use crate::jsonrpc::get_encoded_peer_id;
+use crate::jsonrpc::JsonRpcReq;
+use marine_rs_sdk::marine;
+use std::iter::zip;
 
 #[derive(Debug)]
 #[marine]
@@ -93,7 +93,10 @@ impl DealPeerRemovedBatchResult {
     }
 }
 
-fn deal_peer_removed_req_batch(deals: &[DealPeerRemovedReq], host_topic: String) -> Vec<JsonRpcReq<GetLogsReq>> {
+fn deal_peer_removed_req_batch(
+    deals: &[DealPeerRemovedReq],
+    host_topic: String,
+) -> Vec<JsonRpcReq<GetLogsReq>> {
     deals
         .iter()
         .enumerate()
@@ -102,7 +105,10 @@ fn deal_peer_removed_req_batch(deals: &[DealPeerRemovedReq], host_topic: String)
 }
 
 #[marine]
-pub fn poll_deal_peer_removed_batch(api_endpoint: &str, deals: Vec<DealPeerRemovedReq>) -> DealPeerRemovedBatchResult {
+pub fn poll_deal_peer_removed_batch(
+    api_endpoint: &str,
+    deals: Vec<DealPeerRemovedReq>,
+) -> DealPeerRemovedBatchResult {
     if let Err(err) = check_url(api_endpoint) {
         return DealPeerRemovedBatchResult::error(err.to_string());
     }
@@ -133,12 +139,12 @@ pub fn poll_deal_peer_removed_batch(api_endpoint: &str, deals: Vec<DealPeerRemov
             Err(err) => {
                 let result = DealPeerRemovedResult::error(to_block, deal.deal_id, err.to_string());
                 results.push(result);
-            },
+            }
             Ok(logs) => {
                 let is_removed = !logs.is_empty();
                 let result = DealPeerRemovedResult::ok(to_block, deal.deal_id, is_removed);
                 results.push(result);
-            },
+            }
         }
     }
     DealPeerRemovedBatchResult::ok(results)
