@@ -73,7 +73,7 @@ mod tests {
     fn topic() {
         assert_eq!(
             DealPeerRemovedData::topic(),
-            "0xb1c5a9179c3104a43de668491f14c45778f00ec34d5deee023af204820483bdb".to_string()
+            "0x5abefe0a1fb3d6df34b14e459422791829e024e367c6df8eaf0bf218cf42fb36".to_string()
         );
     }
 
