@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/fluencelabs/decider/compare/connector-v0.6.0...connector-v0.6.1) (2024-02-20)
+
+
+### Bug Fixes
+
+* **tests:** make it pass all tests ([#223](https://github.com/fluencelabs/decider/issues/223)) ([a5f6766](https://github.com/fluencelabs/decider/commit/a5f6766cd5cba94f3d323e1dad2d589a7d8b812d))
+
 ## [0.6.0](https://github.com/fluencelabs/decider/compare/connector-v0.5.17...connector-v0.6.0) (2024-02-19)
 
 
