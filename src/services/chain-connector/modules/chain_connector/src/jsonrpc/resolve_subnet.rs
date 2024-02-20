@@ -209,13 +209,7 @@ mod tests {
         let pats: Vec<_> = subnet
             .workers
             .iter()
-            .map(|p| {
-                (
-                    p.cu_id.as_str(),
-                    p.host_id.as_str(),
-                    p.worker_id.as_slice(),
-                )
-            })
+            .map(|p| (p.cu_id.as_str(), p.host_id.as_str(), p.worker_id.as_slice()))
             .collect();
 
         assert_eq!(

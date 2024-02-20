@@ -46,7 +46,7 @@ pub struct RegisterWorkerResult {
 }
 
 impl RegisterWorkerResult {
-    fn ok(tx_hash: String) ->  Self {
+    fn ok(tx_hash: String) -> Self {
         Self {
             success: true,
             tx_hash: vec![tx_hash],
@@ -58,7 +58,7 @@ impl RegisterWorkerResult {
         Self {
             success: false,
             tx_hash: vec![],
-            error: vec![err.to_string()]
+            error: vec![err.to_string()],
         }
     }
 }
@@ -224,8 +224,8 @@ fn make_tx(
 
 #[cfg(test)]
 mod tests {
-    use marine_rs_sdk_test::CallParameters;
     use marine_rs_sdk_test::marine_test;
+    use marine_rs_sdk_test::CallParameters;
 
     use crate::hex::decode_hex;
     use crate::jsonrpc::register_worker::{encode_call, function};
