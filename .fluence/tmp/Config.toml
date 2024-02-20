@@ -1,3 +1,5 @@
+total_memory_limit = "Infinity"
+
 [[module]]
 name = "curl_adapter"
 load_from = "/home/maar/Fluence/decider/target/wasm32-wasi/release/curl_adapter.wasm"
