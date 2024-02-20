@@ -40,7 +40,7 @@ jobs:
 
     uses: fluencelabs/nox/.github/workflows/build.yml@master
     with:
-#      ref: release-please--branches--master--components--nox
+      ref: nox-v0.20.0
       cargo-dependencies: |
         [
           {
