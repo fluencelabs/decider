@@ -128,7 +128,7 @@ async fn test_remove_deal_from_provider() {
     )
     .await
     .unwrap();
-    update_decider_script_for_tests(&mut client1, swarms[0].tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client1, swarms[0].config.dir_config.persistent_base_dir).await;
 
     let mut client2 = ConnectedClient::connect_with_keypair(
         swarms[1].multiaddr.clone(),
@@ -136,7 +136,7 @@ async fn test_remove_deal_from_provider() {
     )
     .await
     .unwrap();
-    update_decider_script_for_tests(&mut client2, swarms[1].tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client2, swarms[1].config.dir_config.persistent_base_dir).await;
 
     // Deploy a deal on the first provider
     update_config(&mut client1, &oneshot_config())
