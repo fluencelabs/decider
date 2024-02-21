@@ -15,7 +15,7 @@ cp target/wasm32-wasi/release/chain_connector.wasm src/distro/decider-spell/
 cp target/wasm32-wasi/release/curl_adapter.wasm src/distro/decider-spell/
 cp example/Config.toml src/distro/decider-spell/
 
-cp -r .fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-ipfs .fluence/aqua-dependencies/node_modules/@fluencelabs/installation-spell/node_modules/@fluencelabs
+cp -r .fluence/aqua-dependencies/node_modules/@fluencelabs .fluence/aqua-dependencies/node_modules/@fluencelabs/installation-spell/node_modules/@fluencelabs
 
 # compile aqua file
 fluence aqua -i src/aqua/decider/deal_spell.aqua -o "$DISTRO_DIR/deal_spell" --air
