@@ -10,5 +10,5 @@ service Console("run-console"):
    print(msg: []string)
 
 func main(spell_id: SpellId, ipfs: string, deal_id: DealId, h_worker_def_cid: CID):
-    Console.print(["worker", spell_id, deal_id, worker_def_cid, ipfs])
-    deal_install(ipfs, worker_def_cid, deal_id)
+    Console.print(["worker", spell_id, deal_id, h_worker_def_cid, ipfs])
+    deal_install(ipfs, h_worker_def_cid, deal_id)
