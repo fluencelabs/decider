@@ -37,6 +37,7 @@ pub async fn modify_decider_spell_script(
     let temp_dir_path = tmp_dir.path();
     let script_path: PathBuf = temp_dir_path.join(
         [
+            "persistent",
             "services",
             "workdir",
             &decider_spell_id,
