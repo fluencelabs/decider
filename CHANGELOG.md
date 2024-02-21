@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.3](https://github.com/fluencelabs/decider/compare/connector-v0.6.2...connector-v0.6.3) (2024-02-21)
+
+
+### Bug Fixes
+
+* decider 0.6.3 ([#227](https://github.com/fluencelabs/decider/issues/227)) ([7bf1154](https://github.com/fluencelabs/decider/commit/7bf11540bbe20a7ae718101d85d2ecdc0e2f42b6))
+
+## [0.6.2](https://github.com/fluencelabs/decider/compare/connector-v0.6.1...connector-v0.6.2) (2024-02-21)
+
+
+### Bug Fixes
+
+* this is a fake release because 0.6.2 is already published ([#225](https://github.com/fluencelabs/decider/issues/225)) ([8331886](https://github.com/fluencelabs/decider/commit/8331886930c03e545e09653b54796960055f647e))
+
 ## [0.6.1](https://github.com/fluencelabs/decider/compare/connector-v0.6.0...connector-v0.6.1) (2024-02-20)
 
 
