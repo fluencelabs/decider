@@ -98,6 +98,11 @@ data DealStatusBatchResult:
   success: bool
   error: []string
 
+data EncodeRegisterWorkerResult:
+  success: bool
+  data: []u8
+  error: []string
+
 data SupportedEvent:
   name: string
   topic: string
@@ -138,11 +143,6 @@ data MultipleDealsChanged:
   success: bool
   error: []string
 
-data RegisterWorkerResult:
-  success: bool
-  tx_hash: []string
-  error: []string
-
 data Subnet:
   workers: []JoinedWorker
   error: []string
@@ -164,6 +164,7 @@ data TxStatusBatchResult:
   results: []TxStatusResult
 
 service ChainConnector("chain_connector"):
+  encode_register_worker(unit_id: []u8, worker_id: string) -> EncodeRegisterWorkerResult
   get_env() -> Env
   get_status_batch(api_endpoint: string, deal_ids: []string) -> DealStatusBatchResult
   get_tx_statuses(api_endpoint: string, txs: []WorkerTxInfo) -> TxStatusBatchResult
@@ -177,5 +178,4 @@ service ChainConnector("chain_connector"):
   poll_deal_created(api_endpoint: string, address: string, left_boundary: string) -> DealCreatedResult
   poll_deal_matches(chain: ChainInfo, left_boundary: string) -> MatchedResult
   poll_deal_peer_removed_batch(api_endpoint: string, deals: []DealPeerRemovedReq) -> DealPeerRemovedBatchResult
-  register_worker(unit_id: []u8, worker_id: string, chain: ChainInfo, deal_addr: string) -> RegisterWorkerResult
   resolve_subnet(deal_id: string, api_endpoint: string) -> Subnet
