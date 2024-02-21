@@ -98,7 +98,7 @@ async fn test_deploy_a_deal_single() {
     let distro = make_distro_with_api(url);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
 
     wait_decider_stopped(&mut client).await;
@@ -264,7 +264,7 @@ async fn test_deploy_deals_diff_blocks() {
     let distro = make_distro_with_api_and_config(url, empty_config);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Reqs: blockNumber, getLogs, 2x of gasPrice, getTransactionCount and sendRawTransaction, getTransactionReceipt, eth_call
     let expected_reqs_count = 12;
@@ -399,7 +399,7 @@ async fn test_deploy_a_deal_in_seq() {
     let distro = make_distro_with_api_and_config(url, empty_config);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
 
     // Initial run for installing the first deal
     update_config(&mut client, &oneshot_config()).await.unwrap();
@@ -544,7 +544,7 @@ async fn test_deploy_deals_in_one_block() {
     let distro = make_distro_with_api_and_config(url, empty_config);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
     // Initial run for installing the first deal
     update_config(&mut client, &oneshot_config()).await.unwrap();
     setup_rpc_deploy_deal(&mut server, LATEST_BLOCK, DEAL_ID_1, DEAL_BLOCK_NUMBER).await;

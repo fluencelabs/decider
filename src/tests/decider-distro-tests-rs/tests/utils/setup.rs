@@ -3,10 +3,10 @@ use crate::utils::default::{default_receipt, default_status, DEAL_STATUS_ACTIVE,
 use crate::utils::test_rpc_server::ServerHandle;
 use crate::utils::*;
 use connected_client::ConnectedClient;
+use created_swarm::system_services::PackageDistro;
 use created_swarm::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
 use created_swarm::{make_swarms_with_cfg, CreatedSwarm};
 use serde_json::json;
-use created_swarm::system_services::PackageDistro;
 
 pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
     let mut config = AquaIpfsConfig::default();

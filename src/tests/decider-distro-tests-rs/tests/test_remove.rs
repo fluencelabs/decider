@@ -41,7 +41,7 @@ async fn test_remove_deal() {
     let distro = make_distro_with_api(url);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Deploy a deal
     setup_rpc_deploy_deal(&mut server, LATEST_BLOCK, DEAL_ID, BLOCK_NUMBER).await;
@@ -230,7 +230,7 @@ async fn test_deal_ended_and_removed_from_provider() {
     let distro = make_distro_with_api(url);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
 
     // Deploy a deal
     update_config(&mut client, &oneshot_config()).await.unwrap();

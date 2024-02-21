@@ -40,6 +40,7 @@ jobs:
 
     uses: fluencelabs/nox/.github/workflows/build.yml@master
     with:
+      ref: feature/net-759
       cargo-dependencies: |
         [
           {

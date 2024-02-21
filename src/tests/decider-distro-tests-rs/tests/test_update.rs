@@ -40,7 +40,7 @@ async fn test_update_deal() {
     let distro = make_distro_with_api(url);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Deploy test_app_1
     setup_rpc_deploy_deal(&mut server, LATEST_BLOCK, DEAL_ID, BLOCK_NUMBER).await;
@@ -135,7 +135,7 @@ async fn test_update_from_later_blocks() {
     let distro = make_distro_with_api(url);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
 
     // Deploy a deal
     update_config(&mut client, &oneshot_config()).await.unwrap();
@@ -265,7 +265,7 @@ async fn test_update_with_errors() {
     let url = server.url.clone();
     let distro = make_distro_with_api(url);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
 
     // Deploy the 3 deals
     update_config(&mut client, &oneshot_config()).await.unwrap();
