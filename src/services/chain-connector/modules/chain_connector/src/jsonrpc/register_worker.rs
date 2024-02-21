@@ -76,10 +76,15 @@ pub fn register_worker(
 
     let r: Result<_, RegisterWorkerError> = try {
         let key = parse_wallet_key(&chain.wallet_key)?;
-        let input = encode_call(unit_id, worker_id)?;
+        let input = encode_call(unit_id.clone(), worker_id)?;
         let nonce = load_nonce(key.to_address(), endpoint)?;
         let gas_price = get_gas_price(endpoint)?;
         let tx = make_tx(input, key, gas, nonce, gas_price, deal_addr, network_id)?;
+        log::debug!(
+            "wallet {}; wallet address {}; unit_id {}; worker_id {worker_id}; nonce {nonce}; gas_price {gas_price}", 
+            chain.wallet_key, key.to_address(), hex::encode(unit_id)
+        );
+        log::debug!("tx {tx}");
         send_tx(tx, endpoint)?
     };
 
@@ -151,6 +156,7 @@ fn encode_call(unit_id: Vec<u8>, worker_id: &str) -> Result<Vec<u8>, RegisterWor
     let worker_id = serialize_peer_id(worker_id);
     let worker_id = Token::FixedBytes(worker_id);
 
+    log::debug!("unit_id {unit_id}; worker_id {worker_id}");
     let input = function().encode_input(&[unit_id, worker_id])?;
     Ok(input)
 }
