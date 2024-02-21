@@ -1,10 +1,12 @@
+use std::str::FromStr;
+use clarity::PrivateKey;
 use crate::utils::chain::LogsReq;
 use crate::utils::default::{default_receipt, default_status, DEAL_STATUS_ACTIVE, IPFS_MULTIADDR};
 use crate::utils::test_rpc_server::ServerHandle;
 use crate::utils::*;
 use connected_client::ConnectedClient;
 use created_swarm::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
-use created_swarm::{make_swarms_with_cfg, CreatedSwarm};
+use created_swarm::{make_swarms_with_cfg, CreatedSwarm, ChainConfig};
 use serde_json::json;
 use created_swarm::system_services::PackageDistro;
 
@@ -37,6 +39,16 @@ pub async fn setup_swarm(distro: PackageDistro, peers: usize) -> Vec<CreatedSwar
         // to make worker spell oneshot
         config.decider.worker_period_sec = 0;
         cfg.override_system_services_config = Some(config);
+
+        let chain_info = distro.spells.first().unwrap().kv.get("chain_info").unwrap().as_object().unwrap();
+        cfg.chain_config = Some(ChainConfig {
+            http_endpoint: chain_info.get("api_endpoint").unwrap().as_str().unwrap().to_string(),
+            core_contract_address: "".to_string(),
+            cc_contract_address: "".to_string(),
+            market_contract_address: "".to_string(),
+            network_id: chain_info.get("network_id").unwrap().as_u64().unwrap(),
+            wallet_key:  PrivateKey::from_str(chain_info.get("wallet_key").unwrap().as_str().unwrap()).unwrap(),
+        } );
         cfg
     })
     .await;
@@ -91,6 +103,7 @@ pub async fn setup_rpc_deploy_deals(
             }
             "eth_getTransactionCount" => json!("0x1"),
             "eth_gasPrice" => json!("0x3b9aca07"),
+            "eth_estimateGas" => json!("0x3b9aca07"),
             "eth_getTransactionReceipt" => default_receipt(),
             "eth_call" => default_status(),
             _ => panic!("mock http got an unexpected rpc method: {}", method),

@@ -57,6 +57,7 @@ async fn test_activate() {
             }
             "eth_getTransactionCount" => json!("0x1"),
             "eth_gasPrice" => json!("0x3b9aca07"),
+            "eth_estimateGas" => json!("0x3b9aca07"),
             "eth_getTransactionReceipt" => default_receipt(),
             "eth_call" => {
                 let req = serde_json::from_value::<DealStatusReq>(params[0].clone()).unwrap();

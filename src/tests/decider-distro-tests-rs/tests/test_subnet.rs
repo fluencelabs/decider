@@ -84,6 +84,7 @@ async fn test_register_worker_fails() {
                 "eth_getTransactionCount" => Ok(json!("0x1")),
                 // step 2 for deal 1, step 5 for deal 2, step 8 for deal 3
                 "eth_gasPrice" => Ok(json!("0x3b9aca07")),
+                "eth_estimateGas" => Ok(json!("0x3b9aca07")),
                 "eth_getTransactionReceipt" => Ok(default_receipt()),
                 "eth_call" => Ok(default_status()),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
