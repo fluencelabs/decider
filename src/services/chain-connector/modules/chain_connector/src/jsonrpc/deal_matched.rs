@@ -75,8 +75,8 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
 #[cfg(test)]
 mod tests {
     use libp2p_identity::PeerId;
-    use marine_rs_sdk_test::CallParameters;
     use marine_rs_sdk_test::marine_test;
+    use marine_rs_sdk_test::CallParameters;
     use std::str::FromStr;
 
     #[test]

@@ -141,7 +141,6 @@ pub fn resolve_subnet(deal_id: String, api_endpoint: &str) -> Subnet {
     }
 }
 
-
 // Fix later if we need subnet resolution here
 /*
 #[cfg(test)]
