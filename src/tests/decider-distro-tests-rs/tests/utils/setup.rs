@@ -40,7 +40,7 @@ pub async fn setup_swarm(distro: PackageDistro, peers: usize) -> Vec<CreatedSwar
         config.decider.worker_period_sec = 0;
         cfg.override_system_services_config = Some(config);
 
-        let chain_info = distro.spells.first().unwrap().kv.get("chain_info").unwrap().as_object().unwrap();
+        let chain_info = distro.spells.first().unwrap().kv.get("chain").unwrap().as_object().unwrap();
         cfg.chain_config = Some(ChainConfig {
             http_endpoint: chain_info.get("api_endpoint").unwrap().as_str().unwrap().to_string(),
             core_contract_address: "".to_string(),
