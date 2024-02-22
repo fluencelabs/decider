@@ -71,8 +71,8 @@ async fn test_register_worker_fails() {
                     Ok(json!(reply))
                 }
                 "eth_sendRawTransaction" => {
-                    // step 4 for deal 1, step 7 for deal 2, step 9 for deal 3
-                    if step == 7 {
+                    // step 5 for deal 1, step 9 for deal 2, step 12 for deal 3
+                    if step == 9 {
                         Ok(json!(
                             "0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05"
                         ))
