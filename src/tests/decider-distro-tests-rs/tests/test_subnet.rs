@@ -167,6 +167,7 @@ async fn test_transaction_tracking() {
                 }
                 "eth_getTransactionCount" => json!("0x1"),
                 "eth_gasPrice" => json!("0x3b9aca07"),
+                "eth_estimateGas" => json!("0x3b9aca07"),
                 "eth_getTransactionReceipt" => serde_json::Value::Null,
                 "eth_call" => json!(DEAL_STATUS_ACTIVE),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
