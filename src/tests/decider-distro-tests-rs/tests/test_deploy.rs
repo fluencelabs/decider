@@ -266,8 +266,8 @@ async fn test_deploy_deals_diff_blocks() {
 
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    // Reqs: blockNumber, getLogs, 2x of gasPrice, getTransactionCount and sendRawTransaction, getTransactionReceipt, eth_call
-    let expected_reqs_count = 12;
+    // Reqs: blockNumber, getLogs, 2x of gasPrice, estimateGas, getTransactionCount and sendRawTransaction, getTransactionReceipt, eth_call
+    let expected_reqs_count = 14;
     {
         let mut register_worker_counter = 0;
         for _ in 0..expected_reqs_count {
@@ -417,8 +417,8 @@ async fn test_deploy_a_deal_in_seq() {
 
     // The second run
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction, getLogs and eth_call for the old deal
-    for step in 0..10 {
+    // Reqs: blockNumber, getLogs, gasPrice, estimateGas, getTransactionCount and sendRawTransaction, getLogs and eth_call for the old deal
+    for step in 0..12 {
         let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
             "eth_blockNumber" => {
@@ -552,9 +552,9 @@ async fn test_deploy_deals_in_one_block() {
 
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
-        // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction, getTransactionReceipt
+        // Reqs: blockNumber, getLogs, gasPrice, estimateGas, getTransactionCount and sendRawTransaction, getTransactionReceipt
         // and getLogs for the old deal
-        for step in 0..10 {
+        for step in 0..12 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => {

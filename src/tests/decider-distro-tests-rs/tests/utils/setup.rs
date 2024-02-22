@@ -83,7 +83,7 @@ pub async fn setup_rpc_deploy_deals(
     latest_block: u32,
     deals: Vec<(&str, u32)>,
 ) -> Option<()> {
-    let expected_reqs = 2 + 5 * deals.len();
+    let expected_reqs = 2 + 6 * deals.len();
     for _ in 0..expected_reqs {
         let (method, params) = server.receive_request().await?;
         let response = match method.as_str() {

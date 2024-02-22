@@ -52,9 +52,9 @@ async fn test_register_worker_fails() {
             "code": -32000,
             "message": "intentional error",
         });
-        // Reqs: blockNumber, getLogs and 3x of one of gasPrice, getTransactionCount and sendRawTransaction
+        // Reqs: blockNumber, getLogs and 3x of one of gasPrice, estimateGas, getTransactionCount and sendRawTransaction
         // deal 2 should be ok, but deal 1 and deal 3 should fail in registration
-        for step in 0..13 {
+        for step in 0..16 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => Ok(json!(to_hex(LATEST_BLOCK_FIRST_RUN))), // step 0
@@ -146,8 +146,8 @@ async fn test_transaction_tracking() {
     // Return NULL for getTransactionReceipt to simulate pending transaction
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
-        // Reqs: blockNumber, getLogs and 3x of gasPrice, getTransactionCount, sendRawTransaction, getTransactionReceipt
-        for _step in 0..17 {
+        // Reqs: blockNumber, getLogs and 3x of gasPrice, estimateGas, getTransactionCount, sendRawTransaction, getTransactionReceipt, eth_call
+        for _step in 0..20 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => json!(to_hex(LATEST_BLOCK)),

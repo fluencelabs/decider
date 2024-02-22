@@ -39,7 +39,7 @@ async fn test_activate() {
     update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
 
-    let expected_reqs = 7;
+    let expected_reqs = 8;
     for _ in 0..expected_reqs {
         let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
