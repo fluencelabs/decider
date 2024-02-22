@@ -8,10 +8,7 @@ data BlockNumberResult:
 
 data ChainInfo:
   api_endpoint: string
-  matcher: string
-  workers_gas: u64
-  wallet_key: string
-  network_id: u64
+  market: string
 
 data DealChangedData:
   app_cid: string
