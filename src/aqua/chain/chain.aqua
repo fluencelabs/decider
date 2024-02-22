@@ -8,11 +8,5 @@ alias PrivateKey: string
 data ChainInfo:
   -- Refers to which api endpoint to poll
   api_endpoint: URL
-  -- Address of the matcher contract
-  matcher: Address
-  -- How much gas is needed to register a worker
-  workers_gas: u64
-  -- Private key of the wallet
-  wallet_key: PrivateKey
-  -- ID of the chain behind RPC. EIP-155: protection from replay on other chains.
-  network_id: u64
+  -- Address of the market contract
+  market: Address

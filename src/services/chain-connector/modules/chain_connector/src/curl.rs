@@ -37,12 +37,10 @@ pub fn curl(url: &str, data: &str) -> Result<String, RequestError> {
     let result = curl_request(params);
 
     match result.into_std() {
-        None => {
-            return Err(OtherError(
-                "curl output is not a valid UTF-8 string".to_string(),
-            ))
-        }
-        Some(Err(err)) => return Err(CurlError(err)),
+        None => Err(OtherError(
+            "curl output is not a valid UTF-8 string".to_string(),
+        )),
+        Some(Err(err)) => Err(CurlError(err)),
         Some(Ok(result)) => Ok(result),
     }
 }
@@ -55,11 +53,11 @@ pub fn send_jsonrpc<Req: Serialize, Resp: DeserializeOwned>(
     log::debug!("json rpc request: {}", req);
     let result = curl(url, &req)?;
     log::debug!("json rpc response: {}", result);
-    let result = match serde_json::from_str(&result) {
+
+    match serde_json::from_str(&result) {
         Err(err) => Err(ParseError(err, result)),
         Ok(result) => Ok(result),
-    };
-    result
+    }
 }
 
 pub fn send_jsonrpc_batch<Req: Serialize, Resp: DeserializeOwned>(

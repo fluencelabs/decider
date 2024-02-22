@@ -6,11 +6,8 @@ use marine_rs_sdk::marine;
 use thiserror::Error;
 
 use crate::jsonrpc::register_worker::EncodeRegisterWorkerError::InvalidWorkerId;
-use crate::jsonrpc::request::RequestError;
 use crate::jsonrpc::JsonRpcError;
 use crate::peer_id::serialize_peer_id;
-
-const GAS_MULTIPLIER: f64 = 0.20;
 
 #[derive(Debug, Error)]
 pub enum EncodeRegisterWorkerError {
@@ -20,10 +17,6 @@ pub enum EncodeRegisterWorkerError {
     EncodeInput(#[from] ethabi::Error),
     #[error("invalid deal contract addr: {0:?}")]
     ParseDealAddr(#[source] clarity::Error),
-    #[error("invalid private key")]
-    InvalidPrivateKey(#[source] Box<dyn std::error::Error>),
-    #[error("error sending transaction to rpc: {0:?}")]
-    SendTransaction(#[from] RequestError),
     #[error("error sending json rpc: {0}")]
     JsonRpcError(#[from] JsonRpcError),
 }
@@ -54,10 +47,7 @@ impl EncodeRegisterWorkerResult {
 }
 
 #[marine]
-pub fn encode_register_worker(
-    unit_id: Vec<u8>,
-    worker_id: &str,
-) -> EncodeRegisterWorkerResult {
+pub fn encode_register_worker(unit_id: Vec<u8>, worker_id: &str) -> EncodeRegisterWorkerResult {
     let r: Result<_, EncodeRegisterWorkerError> = try {
         let data = encode_call(unit_id.clone(), worker_id)?;
 
@@ -140,7 +130,6 @@ mod tests {
     // Set env RUST_LOGGER="mockito=debug" to enable Mockito's logs
     #[marine_test(config_path = "../../../../../../../src/distro/decider-spell/Config.toml")]
     fn register(connector: marine_test_env::chain_connector::ModuleInterface) {
-
         let cp = CallParameters {
             init_peer_id: "".to_string(),
             service_id: "".to_string(),
@@ -149,11 +138,7 @@ mod tests {
             particle_id: "".to_string(),
             tetraplets: vec![],
         };
-        let result = connector.encode_register_worker_cp(
-            unit_id().into(),
-            WORKER_ID.into(),
-            cp,
-        );
+        let result = connector.encode_register_worker_cp(unit_id().into(), WORKER_ID.into(), cp);
         assert!(
             result.success,
             "error in encode_register_worker: {}",

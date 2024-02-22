@@ -46,7 +46,7 @@ impl ChainData for DealPeerRemovedData {
         let compute_peer_id = parse_peer_id(compute_peer_id)?.to_string();
 
         let compute_unit_id = next_opt(data_tokens, "compute_unit_id", Token::into_fixed_bytes)?;
-        let compute_unit_id = hex::encode(&compute_unit_id);
+        let compute_unit_id = hex::encode(compute_unit_id);
 
         Ok(DealPeerRemovedData {
             compute_peer_id,

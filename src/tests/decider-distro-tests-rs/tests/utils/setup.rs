@@ -1,14 +1,16 @@
-use std::str::FromStr;
-use clarity::PrivateKey;
 use crate::utils::chain::LogsReq;
-use crate::utils::default::{default_receipt, default_status, DEAL_STATUS_ACTIVE, IPFS_MULTIADDR};
+use crate::utils::default::{
+    default_receipt, default_status, DEAL_STATUS_ACTIVE, IPFS_MULTIADDR, NETWORK_ID, WALLET_KEY,
+};
 use crate::utils::test_rpc_server::ServerHandle;
 use crate::utils::*;
+use clarity::PrivateKey;
 use connected_client::ConnectedClient;
-use created_swarm::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
-use created_swarm::{make_swarms_with_cfg, CreatedSwarm, ChainConfig};
-use serde_json::json;
 use created_swarm::system_services::PackageDistro;
+use created_swarm::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
+use created_swarm::{make_swarms_with_cfg, ChainConfig, CreatedSwarm};
+use serde_json::json;
+use std::str::FromStr;
 
 pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
     let mut config = AquaIpfsConfig::default();
@@ -40,15 +42,16 @@ pub async fn setup_swarm(distro: PackageDistro, peers: usize) -> Vec<CreatedSwar
         config.decider.worker_period_sec = 0;
         cfg.override_system_services_config = Some(config);
 
-        let chain_info = distro.spells.first().unwrap().kv.get("chain").unwrap().as_object().unwrap();
+        let chain_info = distro.spells[0].kv["chain"].as_object().unwrap();
+        println!("chain_info: {:?}", chain_info);
         cfg.chain_config = Some(ChainConfig {
-            http_endpoint: chain_info.get("api_endpoint").unwrap().as_str().unwrap().to_string(),
+            http_endpoint: chain_info["api_endpoint"].as_str().unwrap().to_string(),
             core_contract_address: "".to_string(),
             cc_contract_address: "".to_string(),
-            market_contract_address: "".to_string(),
-            network_id: chain_info.get("network_id").unwrap().as_u64().unwrap(),
-            wallet_key:  PrivateKey::from_str(chain_info.get("wallet_key").unwrap().as_str().unwrap()).unwrap(),
-        } );
+            market_contract_address: chain_info["market"].as_str().unwrap().to_string(),
+            network_id: NETWORK_ID,
+            wallet_key: PrivateKey::from_str(WALLET_KEY).unwrap(),
+        });
         cfg
     })
     .await;

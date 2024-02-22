@@ -16,7 +16,7 @@ pub struct GetLogsReq {
 }
 
 impl GetLogsReq {
-    pub fn to_jsonrpc(self, id: u32) -> JsonRpcReq<Self> {
+    pub fn into_jsonrpc(self, id: u32) -> JsonRpcReq<Self> {
         JsonRpcReq {
             jsonrpc: JSON_RPC_VERSION.to_string(),
             id,
@@ -39,7 +39,7 @@ pub fn get_logs(
         from_block,
         to_block,
     };
-    let response = send_jsonrpc(api_endpoint, req.to_jsonrpc(0))?;
+    let response = send_jsonrpc(api_endpoint, req.into_jsonrpc(0))?;
     let logs = response.get_result()?;
     Ok(logs)
 }

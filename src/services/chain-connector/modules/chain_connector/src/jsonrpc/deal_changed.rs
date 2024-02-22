@@ -23,7 +23,7 @@ impl DealChangesReq {
             to_block: right_boundary,
         };
 
-        req.to_jsonrpc(idx as u32)
+        req.into_jsonrpc(idx as u32)
     }
 }
 

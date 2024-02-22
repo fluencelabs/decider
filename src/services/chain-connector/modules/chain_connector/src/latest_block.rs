@@ -7,7 +7,7 @@ use crate::jsonrpc::request::check_url;
 
 #[marine]
 pub fn latest_block_number(api_endpoint: &str) -> BlockNumberResult {
-    if let Err(err) = check_url(&api_endpoint) {
+    if let Err(err) = check_url(api_endpoint) {
         return BlockNumberResult::error(err.to_string());
     }
 

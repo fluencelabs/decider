@@ -57,14 +57,14 @@ pub fn poll_deal_matches(chain: ChainInfo, left_boundary: String) -> MatchedResu
     let right_boundary = default_right_boundary(&left_boundary);
     let logs = get_logs(
         &chain.api_endpoint,
-        chain.matcher,
+        chain.market,
         left_boundary,
         right_boundary.clone(),
         vec![Match::topic(), host],
     );
 
     match logs {
-        Err(err) => return MatchedResult::error(err.to_string()),
+        Err(err) => MatchedResult::error(err.to_string()),
         Ok(logs) => {
             let matches = parse_logs::<Match, DealMatched>(logs);
             MatchedResult::ok(matches, right_boundary)
@@ -163,10 +163,7 @@ mod tests {
         let compute_peer = "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE";
         let chain = marine_test_env::chain_connector::ChainInfo {
             api_endpoint: url,
-            matcher: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
-            workers_gas: <_>::default(),
-            wallet_key: <_>::default(),
-            network_id: 80001,
+            market: "0x6328bb918a01603adc91eae689b848a9ecaef26d".into(),
         };
         let cp = CallParameters {
             init_peer_id: "".to_string(),

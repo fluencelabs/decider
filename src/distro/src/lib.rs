@@ -52,16 +52,10 @@ pub struct DeciderConfig {
     pub worker_period_sec: u32,
     /// URI of the RPC for decider to communicate with the chain (poll, send tx)
     pub chain_api_endpoint: String,
-    // ID of the chain behind RPC. EIP-155: protection from replay on other chains.
-    pub chain_network_id: u64,
     /// The block number from which to poll new deals in hex format
     pub chain_contract_block_hex: String,
-    /// Address of the Matcher contract
-    pub chain_matcher_addr: String,
-    /// How much gas is needed to register a worker
-    pub chain_workers_gas: u64,
-    /// Private key to send `setWorker` tx to chain to register a worker
-    pub chain_wallet_key: String,
+    /// Address of the Market contract
+    pub chain_market_addr: String,
 }
 
 pub fn decider_spell(config: DeciderConfig) -> DistrSpell {
@@ -80,10 +74,7 @@ pub fn decider_spell(config: DeciderConfig) -> DistrSpell {
             "from_block" => json!(config.chain_contract_block_hex),
             "chain" => json!( {
                 "api_endpoint": config.chain_api_endpoint,
-                "matcher": config.chain_matcher_addr,
-                "workers_gas": config.chain_workers_gas,
-                "wallet_key": config.chain_wallet_key,
-                "network_id": config.chain_network_id
+                "market": config.chain_market_addr,
             }),
         },
     }
