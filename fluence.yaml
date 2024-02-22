@@ -39,7 +39,11 @@ marineVersion: 0.19.0
 mreplVersion: 0.26.0
 
 compileAqua:
-  default:
+  decider-spell:
     input: src/aqua/decider/poll.aqua
+    output: src/compiled-aqua
+    target: air
+  worker-spell:
+    input: src/aqua/decider/deal_spell.aqua
     output: src/compiled-aqua
     target: air

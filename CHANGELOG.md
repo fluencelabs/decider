@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.5](https://github.com/fluencelabs/decider/compare/connector-v0.6.4...connector-v0.6.5) (2024-02-22)
+
+
+### Features
+
+* update to new spell kv restrictions ([#221](https://github.com/fluencelabs/decider/issues/221)) ([e61a45c](https://github.com/fluencelabs/decider/commit/e61a45c368da2a2f4c2ff75433c184379a52a8c4))
+
+
+### Bug Fixes
+
+* **deps:** aqua-ipfs 0.5.31, spell 0.7.2 ([#234](https://github.com/fluencelabs/decider/issues/234)) ([958d138](https://github.com/fluencelabs/decider/commit/958d1384759aad8bf2ae2de544a03fcb5b8391b3))
+
 ## [0.6.4](https://github.com/fluencelabs/decider/compare/connector-v0.6.3...connector-v0.6.4) (2024-02-21)
 
 

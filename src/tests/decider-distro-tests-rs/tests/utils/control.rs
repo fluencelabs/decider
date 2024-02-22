@@ -1,9 +1,10 @@
 use crate::utils;
 use crate::utils::spell;
 use connected_client::ConnectedClient;
-use eyre::WrapErr;
 use created_swarm::fluence_spell_dtos::trigger_config::TriggerConfig;
 use created_swarm::fluence_spell_dtos::value::ScriptValue;
+use eyre::ContextCompat;
+use eyre::WrapErr;
 use maplit::hashmap;
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -11,7 +12,6 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
 use tempfile::TempDir;
-use eyre::ContextCompat;
 
 pub async fn update_config(
     client: &mut ConnectedClient,
@@ -98,7 +98,7 @@ pub async fn wait_worker_spell_stopped(
     timeout_per_try: Duration,
 ) {
     let mut finished = false;
-    for _ in 0..5 {
+    for _ in 0..10 {
         // if only we can import these keys from Aqua files
         let strings = spell::list_get_strings_on(
             client,

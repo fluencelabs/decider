@@ -14,7 +14,7 @@ data WorkerArgs:
     -- Address of the deal is also an ID of the deal
     deal_id: DealId
     -- CID of the worker's definition.
-    worker_def_cid: string
+    h_worker_def_cid: string
     -- IPFS API where the related CID resides
     ipfs: string
 

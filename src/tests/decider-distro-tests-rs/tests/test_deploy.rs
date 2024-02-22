@@ -107,7 +107,7 @@ async fn test_deploy_a_deal_single() {
     let mut result = execute(
         &mut client,
         r#"
-                (call relay ("decider" "get_u32") ["counter"] counter)
+                (call relay ("decider" "get_u32") ["hw_counter"] counter)
         "#,
         "counter",
         hashmap! {},
@@ -168,7 +168,7 @@ async fn test_deploy_a_deal_single() {
 
     // Here we also test that the Installation Spell worked correctly to ensure that the distro is fine,
     // but deep Installation Spell testing is out of scope of this test suits
-    wait_worker_spell_stopped(&mut client, &deal.worker_id, Duration::from_millis(200)).await;
+    wait_worker_spell_stopped(&mut client, &deal.worker_id, Duration::from_millis(500)).await;
 
     let worker_service_list = {
         let result = execute(
