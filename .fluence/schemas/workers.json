@@ -45,9 +45,9 @@
               "chainNetwork": {
                 "type": "string",
                 "enum": [
-                  "kras",
-                  "testnet",
+                  "dar",
                   "stage",
+                  "kras",
                   "local"
                 ],
                 "description": "Blockchain network name that was used when deploying workers"
@@ -91,9 +91,9 @@
                 "chainNetwork": {
                   "type": "string",
                   "enum": [
-                    "kras",
-                    "testnet",
+                    "dar",
                     "stage",
+                    "kras",
                     "local"
                   ],
                   "description": "Blockchain network name that was used when deploying workers"
@@ -118,7 +118,7 @@
           "required": [],
           "nullable": true
         },
-        "testnet": {
+        "dar": {
           "type": "object",
           "description": "A map of created deals",
           "additionalProperties": {
@@ -143,9 +143,9 @@
               "chainNetwork": {
                 "type": "string",
                 "enum": [
-                  "kras",
-                  "testnet",
+                  "dar",
                   "stage",
+                  "kras",
                   "local"
                 ],
                 "description": "Blockchain network name that was used when deploying workers"
@@ -189,9 +189,9 @@
                 "chainNetwork": {
                   "type": "string",
                   "enum": [
-                    "kras",
-                    "testnet",
+                    "dar",
                     "stage",
+                    "kras",
                     "local"
                   ],
                   "description": "Blockchain network name that was used when deploying workers"
@@ -241,9 +241,9 @@
               "chainNetwork": {
                 "type": "string",
                 "enum": [
-                  "kras",
-                  "testnet",
+                  "dar",
                   "stage",
+                  "kras",
                   "local"
                 ],
                 "description": "Blockchain network name that was used when deploying workers"
@@ -287,9 +287,9 @@
                 "chainNetwork": {
                   "type": "string",
                   "enum": [
-                    "kras",
-                    "testnet",
+                    "dar",
                     "stage",
+                    "kras",
                     "local"
                   ],
                   "description": "Blockchain network name that was used when deploying workers"
@@ -339,9 +339,9 @@
               "chainNetwork": {
                 "type": "string",
                 "enum": [
-                  "kras",
-                  "testnet",
+                  "dar",
                   "stage",
+                  "kras",
                   "local"
                 ],
                 "description": "Blockchain network name that was used when deploying workers"
@@ -385,9 +385,9 @@
                 "chainNetwork": {
                   "type": "string",
                   "enum": [
-                    "kras",
-                    "testnet",
+                    "dar",
                     "stage",
+                    "kras",
                     "local"
                   ],
                   "description": "Blockchain network name that was used when deploying workers"
@@ -437,9 +437,9 @@
               "chainNetwork": {
                 "type": "string",
                 "enum": [
-                  "kras",
-                  "testnet",
+                  "dar",
                   "stage",
+                  "kras",
                   "local"
                 ],
                 "description": "Blockchain network name that was used when deploying workers"
@@ -483,9 +483,9 @@
                 "chainNetwork": {
                   "type": "string",
                   "enum": [
-                    "kras",
-                    "testnet",
+                    "dar",
                     "stage",
+                    "kras",
                     "local"
                   ],
                   "description": "Blockchain network name that was used when deploying workers"
@@ -641,7 +641,7 @@
           "required": [],
           "nullable": true
         },
-        "testnet": {
+        "dar": {
           "type": "object",
           "description": "A map of directly deployed workers",
           "additionalProperties": {

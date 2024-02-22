@@ -1764,7 +1764,7 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.6.3"
+version = "0.6.4"
 dependencies = [
  "built 0.7.1",
  "fluence-spell-dtos",
@@ -1778,7 +1778,7 @@ version = "0.1.0"
 dependencies = [
  "connected-client",
  "created-swarm",
- "decider-distro 0.6.3",
+ "decider-distro 0.6.4",
  "eyre",
  "hyper 0.14.27",
  "log-utils",
