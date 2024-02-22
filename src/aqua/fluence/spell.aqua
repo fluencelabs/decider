@@ -39,7 +39,7 @@ func get_string(spell_id: SpellId, key: string) -> ?string:
 func get_counter(spell_id: SpellId) -> u32:
     Spell spell_id
     result: *u32
-    counter <- Spell.get_u32("counter")
+    counter <- Spell.get_u32("hw_counter")
     if counter.success:
         result <<- counter.value
     else:
