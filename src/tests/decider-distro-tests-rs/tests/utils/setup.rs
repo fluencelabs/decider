@@ -83,6 +83,10 @@ pub async fn setup_rpc_deploy_deals(
     latest_block: u32,
     deals: Vec<(&str, u32)>,
 ) -> Option<()> {
+    // Expected calls:
+    // - 1 eth_blockNumber
+    // - 1 eth_getLogs
+    // - (1 eth_gasPrice, 1 estimateGas, 1 eth_getTransactionCount, 1 eth_sendRawTransaction, 1 eth_getTransactionReceipt, 1 eth_call) * deals number
     let expected_reqs = 2 + 6 * deals.len();
     for _ in 0..expected_reqs {
         let (method, params) = server.receive_request().await?;
@@ -154,6 +158,7 @@ eth_getLogs (for new deals) -> new_deals
     for new_deal in new_deals {
         eth_gasPrice
         eth_getTransactionCount
+        eth_estimateGas
         eth_sendRawTransaction
         eth_getTransactionReceipt
         eth_call (getStatus) <--- This call is batched, done after all logs are processed
