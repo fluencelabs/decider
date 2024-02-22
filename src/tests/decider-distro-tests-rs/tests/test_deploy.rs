@@ -420,7 +420,7 @@ async fn test_deploy_a_deal_in_seq() {
     // The second run
     update_config(&mut client, &oneshot_config()).await.unwrap();
     // Reqs: blockNumber, getLogs, gasPrice, estimateGas, getTransactionCount and sendRawTransaction, getLogs and eth_call for the old deal
-    for step in 0..12 {
+    for step in 0..11 {
         let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
             "eth_blockNumber" => {
