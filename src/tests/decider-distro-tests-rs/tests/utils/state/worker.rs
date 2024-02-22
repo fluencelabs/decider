@@ -6,7 +6,7 @@ use maplit::hashmap;
 use serde_json::json;
 
 pub async fn get_worker_app_cid(client: &mut ConnectedClient, worker_id: &String) -> String {
-    let result = spell::get_string_on(client, worker_id, "worker-spell", "worker_def_cid")
+    let result = spell::get_string_on(client, worker_id, "worker-spell", "h_worker_def_cid")
         .await
         .wrap_err("get_worker_app_cid failed")
         .unwrap();
