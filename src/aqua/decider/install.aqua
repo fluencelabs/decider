@@ -16,7 +16,7 @@ import Srv from "@fluencelabs/aqua-lib/builtin.aqua"
 use "../fluence/worker.aqua" as Worker
 
 func install(deal_id: DealId, cid: CID, settings: WorkerSettings) -> string:
-    args = WorkerArgs(deal_id = deal_id, worker_def_cid = cid, ipfs = settings.ipfs)
+    args = WorkerArgs(deal_id = deal_id, h_worker_def_cid = cid, ipfs = settings.ipfs)
     worker_spell_id <- PeerSpell.install(settings.script, args, settings.config, "worker-spell")
     <- worker_spell_id
 

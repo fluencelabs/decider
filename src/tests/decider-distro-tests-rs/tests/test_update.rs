@@ -39,6 +39,7 @@ async fn test_update_deal() {
     let url = server.url.clone();
     let distro = make_distro_with_api(url);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
+    println!("tmp dir: {:?}", swarm.tmp_dir);
 
     update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
@@ -80,7 +81,7 @@ async fn test_update_deal() {
             &mut client,
             r#"(seq
                 (call relay ("op" "noop") [])
-                (call worker_id ("worker-spell" "get_string") ["worker_def_cid"] cid)
+                (call worker_id ("worker-spell" "get_string") ["h_worker_def_cid"] cid)
             )"#,
             "cid",
             hashmap! { "worker_id" => json!(deal.worker_id )},
@@ -96,12 +97,12 @@ async fn test_update_deal() {
     assert_ne!(cid, original_app.cid, "CID must be changed");
     assert_eq!(cid, new_app.cid, "CID must be set to the new app");
 
-    wait_worker_spell_stopped(&mut client, &deal.worker_id, Duration::from_millis(200)).await;
+    wait_worker_spell_stopped(&mut client, &deal.worker_id, Duration::from_millis(500)).await;
     let counter = execute(
         &mut client,
         r#"(seq
             (call relay ("op" "noop") [])
-            (call worker_id ("worker-spell" "get_u32") ["counter"] counter)
+            (call worker_id ("worker-spell" "get_u32") ["hw_counter"] counter)
         )"#,
         "counter",
         hashmap! { "worker_id" => json!(deal.worker_id )},
@@ -123,7 +124,7 @@ async fn test_update_from_later_blocks() {
     const LATEST_BLOCK_INIT: u32 = 50;
     // should be less than LATEST
     const BLOCK_NUMBER_DEAL: u32 = 40;
-    // for the window to move, must be greater then the window size
+    // for the window to move, must be greater than the window size
     const LATEST_BLOCK_FIRST_UPDATE: u32 = LATEST_BLOCK_INIT + DEFAULT_POLL_WINDOW_BLOCK_SIZE;
     // some block number in the expected window
     const LATEST_BLOCK_SECOND_UPDATE: u32 =

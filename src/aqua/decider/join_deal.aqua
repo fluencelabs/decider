@@ -31,7 +31,7 @@ func empty_trigger_config() -> TriggerConfig:
     <- TriggerConfig(clock = empty_clock_config(), connections = empty_connection_config(), blockchain = empty_blockchain_config())
 
 func install_deal_spell(deal_id: DealId, cid: CID, settings: WorkerSettings) -> string:
-    args = WorkerArgs(deal_id = deal_id, worker_def_cid = cid, ipfs = settings.ipfs)
+    args = WorkerArgs(deal_id = deal_id, h_worker_def_cid = cid, ipfs = settings.ipfs)
     -- Here we install the spell but want the worker-spell not to run since the worker will be deactivated afterwards
     worker_spell_id <- PeerSpell.install(settings.script, args, empty_trigger_config(), "worker-spell")
     <- worker_spell_id

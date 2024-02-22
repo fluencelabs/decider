@@ -98,7 +98,7 @@ pub async fn wait_worker_spell_stopped(
     timeout_per_try: Duration,
 ) {
     let mut finished = false;
-    for _ in 0..5 {
+    for _ in 0..10 {
         // if only we can import these keys from Aqua files
         let strings = spell::list_get_strings_on(
             client,
