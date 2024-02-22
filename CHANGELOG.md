@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.4](https://github.com/fluencelabs/decider/compare/connector-v0.6.3...connector-v0.6.4) (2024-02-21)
+
+
+### Bug Fixes
+
+* add debug logs to debug setWorker tx ([#229](https://github.com/fluencelabs/decider/issues/229)) ([8fc0b18](https://github.com/fluencelabs/decider/commit/8fc0b180f50b591a68cd7828c208791689a1350f))
+
 ## [0.6.3](https://github.com/fluencelabs/decider/compare/connector-v0.6.2...connector-v0.6.3) (2024-02-21)
 
 
