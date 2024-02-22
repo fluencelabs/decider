@@ -83,7 +83,7 @@ pub fn make_distro_with_api_and_config(api: String, config: TriggerConfig) -> Pa
         chain_api_endpoint: api,
         chain_network_id: 11,
         chain_contract_block_hex: "0x0".to_string(),
-        chain_matcher_addr: "0x0".to_string(),
+        chain_matcher_addr: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed".to_string(),
         chain_workers_gas: 210_00,
         chain_wallet_key: "0xfdc4ba94809c7930fe4676b7d845cbf8fa5c1beae8744d959530e5073004cf3f"
             .to_string(),

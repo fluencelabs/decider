@@ -5,7 +5,7 @@ To run tests:
 - Upload tests resources to IPFS `./resources/upload.sh`.
 - Set the path to your IPFS CLI binary `export IPFS_CLI_PATH=<path_to_ipfs_binary>`.
 - To run tests, you may call `cargo nextest run --release`.
-- To see logs, you need to use `--no-capture` flag.
+- To see logs, you need to call `cargo nextest run --release --nocapture`.
 
 
 If you want to debug a specific test, you may enable logs using `enable_decider_logs()` function at the start of the test.

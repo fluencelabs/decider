@@ -51,6 +51,7 @@ async fn test_register_worker_fails() {
         let error_value = json!({
             "code": -32000,
             "message": "intentional error",
+            "data": "0x212312",
         });
         // Reqs: blockNumber, getLogs and 3x of one of gasPrice, estimateGas, getTransactionCount and sendRawTransaction
         // deal 2 should be ok, but deal 1 and deal 3 should fail in sendRawTransaction
@@ -60,7 +61,7 @@ async fn test_register_worker_fails() {
         // - Deal 2: 1 * (gasPrice + getTransactionCount + estimateGas + sendRawTransaction + getTransactionReceipt)
         // - Deal 3: 1 * (gasPrice + getTransactionCount + estimateGas + sendRawTransaction)
         // - 1 + eth_call
-        for step in 0..15 {
+        for step in 0..16 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 // step 0

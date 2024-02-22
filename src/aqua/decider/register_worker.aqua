@@ -70,7 +70,7 @@ func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worke
             is_ok <<- true
         catch e:
             deal_log(spell_id, deal_id, ["couldn't send register_worker tx:", e])
-            store_tx_failed_deal(spell_id, deal_id, result.error!, nil, nil)
+            store_tx_failed_deal(spell_id, deal_id, e.message, nil, nil)
             is_ok <<- false
     else:
         deal_log(spell_id, deal_id, ["error encoding register_worker call", result.error!])
