@@ -15,6 +15,7 @@ use crate::utils::test_rpc_server::run_test_server;
 use crate::utils::*;
 use serde_json::json;
 use std::time::Duration;
+use log_utils::enable_logs;
 
 pub mod utils;
 
@@ -24,7 +25,8 @@ pub mod utils;
 /// - On the second run, the deal is ACTIVE, so decider should activate the worker.
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_activate() {
-    enable_decider_logs();
+    enable_logs();
+    //enable_decider_logs();
     const LATEST_BLOCK: u32 = 33;
     const DEAL_ID: &'static str = DEAL_IDS[0];
     let deal_address = format!("0x{}", DEAL_ID);

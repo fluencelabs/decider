@@ -87,7 +87,7 @@ dependencies = [
 [[package]]
 name = "air-interpreter-fs"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "air-interpreter-wasm",
  "eyre",
@@ -241,7 +241,7 @@ dependencies = [
 [[package]]
 name = "aquamarine"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -966,7 +966,7 @@ dependencies = [
 [[package]]
 name = "ccp-shared"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/capacity-commitment-prover/?branch=main#b0b775d1491f164b1785fd1b6f25ae607d990189"
+source = "git+https://github.com/fluencelabs/capacity-commitment-prover/?branch=main#80f79ea9aa6e99058c3c0e5e9a6cb1d4b621b7bc"
 dependencies = [
  "cpu-utils",
  "hex",
@@ -1008,7 +1008,7 @@ dependencies = [
 [[package]]
 name = "chain-data"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "ethabi",
  "hex",
@@ -1022,7 +1022,7 @@ dependencies = [
 [[package]]
 name = "chain-listener"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "chain-data",
  "ethabi",
@@ -1088,7 +1088,7 @@ dependencies = [
 [[package]]
 name = "cid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "base64 0.21.7",
  "bytes",
@@ -1221,7 +1221,7 @@ dependencies = [
 [[package]]
 name = "config-utils"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "libp2p-identity",
 ]
@@ -1229,7 +1229,7 @@ dependencies = [
 [[package]]
 name = "connected-client"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "derivative",
  "either",
@@ -1255,7 +1255,7 @@ dependencies = [
 [[package]]
 name = "connection-pool"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "fluence-libp2p",
  "futures",
@@ -1324,7 +1324,7 @@ checksum = "f7144d30dcf0fafbce74250a3963025d8d52177934239851c917d29f1df280c2"
 [[package]]
 name = "control-macro"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 
 [[package]]
 name = "core-foundation"
@@ -1345,13 +1345,14 @@ checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 [[package]]
 name = "core-manager"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "async-trait",
  "bimap",
  "ccp-shared",
  "cpu-utils",
  "enum_dispatch",
+ "futures",
  "fxhash",
  "multimap 0.10.0",
  "newtype_derive",
@@ -1362,6 +1363,7 @@ dependencies = [
  "serde_with 3.6.1",
  "thiserror",
  "tokio",
+ "tokio-stream",
  "toml 0.5.11",
  "tracing",
  "types",
@@ -1398,7 +1400,7 @@ dependencies = [
 [[package]]
 name = "cpu-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/capacity-commitment-prover/?branch=main#b0b775d1491f164b1785fd1b6f25ae607d990189"
+source = "git+https://github.com/fluencelabs/capacity-commitment-prover/?branch=main#80f79ea9aa6e99058c3c0e5e9a6cb1d4b621b7bc"
 dependencies = [
  "core_affinity",
  "hwlocality",
@@ -1538,7 +1540,7 @@ dependencies = [
 [[package]]
 name = "created-swarm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "air-interpreter-fs",
  "aquamarine",
@@ -1550,7 +1552,7 @@ dependencies = [
  "fluence-app-service",
  "fluence-keypair",
  "fluence-libp2p",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.7.3-feature-net-759-e429943-1048-1.0",
  "fs-utils",
  "futures",
  "libp2p",
@@ -1752,22 +1754,22 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2cc74c34304829c613c548010ce85ecdd9d998e0b3fe4b2ba92c4c6ec388c992"
+version = "0.6.4"
 dependencies = [
  "built 0.7.1",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.7.0",
  "maplit",
  "serde_json",
 ]
 
 [[package]]
 name = "decider-distro"
-version = "0.6.3"
+version = "0.6.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "27b17b587c64314544e04260610e0962591d3642dfb0372f4a86195339b10a30"
 dependencies = [
  "built 0.7.1",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.7.0",
  "maplit",
  "serde_json",
 ]
@@ -1778,7 +1780,7 @@ version = "0.1.0"
 dependencies = [
  "connected-client",
  "created-swarm",
- "decider-distro 0.6.3",
+ "decider-distro 0.6.4",
  "eyre",
  "hyper 0.14.27",
  "log-utils",
@@ -2183,16 +2185,15 @@ dependencies = [
 
 [[package]]
 name = "fluence-app-service"
-version = "0.32.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a778e8164aa18de47e53c65f04f56b8dee7d3a7decef0d76313f41d855d990d2"
+version = "0.34.0"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
 dependencies = [
  "log",
  "maplit",
- "marine-min-it-version",
- "marine-runtime 0.33.0",
- "marine-wasm-backend-traits",
- "marine-wasmtime-backend",
+ "marine-min-it-version 0.3.2 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-runtime 0.35.0",
+ "marine-wasm-backend-traits 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-wasmtime-backend 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
  "serde",
  "serde_derive",
  "serde_json",
@@ -2238,7 +2239,7 @@ dependencies = [
 [[package]]
 name = "fluence-libp2p"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "base64 0.21.7",
  "bs58",
@@ -2258,9 +2259,9 @@ dependencies = [
 
 [[package]]
 name = "fluence-spell-distro"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0829919446ff9aa9e06d1b8283800fcf04019d80e5f70fd0b921a0a1c73bee1"
+version = "0.7.3-feature-net-759-e429943-1048-1.0"
+source = "registry+git://crates.fluence.dev/index"
+checksum = "29caa396b041039443e174bbd6ffa8520a8f56a80225df91c8977b944698e034"
 dependencies = [
  "built 0.7.1",
  "maplit",
@@ -2274,7 +2275,20 @@ checksum = "15642737d812a9000e3229018a901f8a5448c2e85de84aa6eb5c7ac133f72293"
 dependencies = [
  "eyre",
  "marine-rs-sdk 0.12.0",
- "marine-sqlite-connector",
+ "marine-sqlite-connector 0.10.0",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
+name = "fluence-spell-dtos"
+version = "0.7.3-feature-net-759-e429943-1048-1.0"
+source = "registry+git://crates.fluence.dev/index"
+checksum = "11e8973abc8e27d9a80c2dea1823ecba27baae9274099e70e8877a59a66a906c"
+dependencies = [
+ "eyre",
+ "marine-rs-sdk 0.14.0",
+ "marine-sqlite-connector 0.11.0",
  "serde",
  "thiserror",
 ]
@@ -2323,7 +2337,7 @@ dependencies = [
 [[package]]
 name = "fs-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "eyre",
  "futures-util",
@@ -2657,7 +2671,7 @@ dependencies = [
 [[package]]
 name = "health"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "eyre",
 ]
@@ -2701,7 +2715,7 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 [[package]]
 name = "hex-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "hex",
 ]
@@ -3270,6 +3284,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "it-json-serde"
+version = "0.5.1"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
+dependencies = [
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "thiserror",
+ "wasmer-interface-types-fl",
+]
+
+[[package]]
 name = "it-lilo"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3354,7 +3380,7 @@ dependencies = [
 [[package]]
 name = "ivalue-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "fluence-it-types",
  "serde_json",
@@ -3381,7 +3407,7 @@ dependencies = [
 [[package]]
 name = "json-utils"
 version = "0.0.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "base64 0.21.7",
  "itertools 0.12.1",
@@ -3549,7 +3575,7 @@ dependencies = [
 [[package]]
 name = "kademlia"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "bs58",
  "control-macro",
@@ -4189,7 +4215,7 @@ checksum = "c4cd1a83af159aa67994778be9070f0ae1bd732942279cabb14f86f986a21456"
 [[package]]
 name = "local-vm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -4233,7 +4259,7 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 [[package]]
 name = "log-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "console-subscriber",
  "log",
@@ -4298,6 +4324,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "marine-call-parameters"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8d16852b36a3cfc8fa044955380901e78109db0035dc93eea4f666d8f3979072"
+dependencies = [
+ "marine-macro 0.13.0",
+ "marine-rs-sdk-main 0.13.0",
+ "serde",
+]
+
+[[package]]
+name = "marine-call-parameters"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "05495180730abae04abe209386ce367309a82110edb65fcdb1f3080f819bc1a0"
+dependencies = [
+ "marine-macro 0.14.0",
+ "marine-rs-sdk-main 0.14.0",
+ "serde",
+]
+
+[[package]]
 name = "marine-core"
 version = "0.26.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4309,14 +4357,14 @@ dependencies = [
  "it-memory-traits",
  "log",
  "marine-it-generator 0.13.1",
- "marine-it-interfaces",
- "marine-it-parser",
- "marine-min-it-version",
+ "marine-it-interfaces 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "marine-it-parser 0.15.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "marine-min-it-version 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "marine-module-info-parser 0.11.1",
- "marine-module-interface",
- "marine-utils",
- "marine-wasm-backend-traits",
- "marine-wasmtime-backend",
+ "marine-module-interface 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "marine-utils 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "marine-wasm-backend-traits 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "marine-wasmtime-backend 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "multimap 0.8.3",
  "once_cell",
  "paste",
@@ -4328,24 +4376,23 @@ dependencies = [
 
 [[package]]
 name = "marine-core"
-version = "0.27.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ff7a647c1c71708d7888f4ffb345c941707834bbd6d045902f87b9d9cb6221f"
+version = "0.29.0"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
 dependencies = [
  "anyhow",
  "bytesize",
  "it-lilo",
  "it-memory-traits",
  "log",
- "marine-it-generator 0.14.0",
- "marine-it-interfaces",
- "marine-it-parser",
- "marine-min-it-version",
- "marine-module-info-parser 0.12.0",
- "marine-module-interface",
- "marine-utils",
- "marine-wasm-backend-traits",
- "marine-wasmtime-backend",
+ "marine-it-generator 0.16.0",
+ "marine-it-interfaces 0.9.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-it-parser 0.15.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-min-it-version 0.3.2 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-module-info-parser 0.14.0",
+ "marine-module-interface 0.8.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-utils 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-wasm-backend-traits 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-wasmtime-backend 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
  "multimap 0.8.3",
  "once_cell",
  "paste",
@@ -4362,7 +4409,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7d03328e174951faf739e7e12be3d9ffb044cfc308508dc89260d63a1a43a0df"
 dependencies = [
  "it-lilo",
- "marine-it-parser",
+ "marine-it-parser 0.15.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "marine-macro-impl 0.7.1",
  "once_cell",
  "serde",
@@ -4374,13 +4421,12 @@ dependencies = [
 
 [[package]]
 name = "marine-it-generator"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "93d2788f00beff11b53596c9bd4b4f0e0e9722e4a3562f87245c0cda9acfb6f2"
+version = "0.16.0"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
 dependencies = [
  "it-lilo",
- "marine-it-parser",
- "marine-macro-impl 0.12.0",
+ "marine-it-parser 0.15.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-macro-impl 0.14.0",
  "once_cell",
  "serde",
  "serde_json",
@@ -4400,6 +4446,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "marine-it-interfaces"
+version = "0.9.1"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
+dependencies = [
+ "multimap 0.8.3",
+ "wasmer-interface-types-fl",
+]
+
+[[package]]
 name = "marine-it-parser"
 version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4407,9 +4462,27 @@ checksum = "921afa7f139791b24c4cb91c918d1ef7411ef40c3b801309ec43f6b2c89b107b"
 dependencies = [
  "anyhow",
  "itertools 0.10.5",
- "marine-it-interfaces",
- "marine-module-interface",
- "marine-wasm-backend-traits",
+ "marine-it-interfaces 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "marine-module-interface 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "marine-wasm-backend-traits 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nom",
+ "semver 1.0.20",
+ "serde",
+ "thiserror",
+ "walrus",
+ "wasmer-interface-types-fl",
+]
+
+[[package]]
+name = "marine-it-parser"
+version = "0.15.1"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
+dependencies = [
+ "anyhow",
+ "itertools 0.10.5",
+ "marine-it-interfaces 0.9.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-module-interface 0.8.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-wasm-backend-traits 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
  "nom",
  "semver 1.0.20",
  "serde",
@@ -4436,6 +4509,26 @@ checksum = "727b1a5449eb1676837c5fc22a8c31dc9980dcef4de938f26f2eaf7c2c54331b"
 dependencies = [
  "marine-macro-impl 0.12.0",
  "marine-rs-sdk-main 0.12.0",
+]
+
+[[package]]
+name = "marine-macro"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cec2cd19fedf559833d0f1e6a33cbcc5cf0efa338bb0975346ff12538a3cdde4"
+dependencies = [
+ "marine-macro-impl 0.13.0",
+ "marine-rs-sdk-main 0.13.0",
+]
+
+[[package]]
+name = "marine-macro"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f502185316f584a9373cceb6ff24a11d260dfd39505c817056bc127cd1a96a08"
+dependencies = [
+ "marine-macro-impl 0.14.0",
+ "marine-rs-sdk-main 0.14.0",
 ]
 
 [[package]]
@@ -4478,10 +4571,45 @@ dependencies = [
 ]
 
 [[package]]
+name = "marine-macro-impl"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e09acb3ada67e69a301b6d7b52a915a36176c5eedb312647de7d5b6cf17f51e4"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_json",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "marine-macro-impl"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e50fbc0e70ee4cde7802f0748acfb197d7770c7feffb980ce8c29bddd007519e"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_json",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "marine-min-it-version"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "147e6e4c9d3dc9afbb06b2e3bc069b63c749733f698d0c364c320a72b133f1d5"
+dependencies = [
+ "once_cell",
+ "semver 1.0.20",
+]
+
+[[package]]
+name = "marine-min-it-version"
+version = "0.3.2"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
 dependencies = [
  "once_cell",
  "semver 1.0.20",
@@ -4497,7 +4625,7 @@ dependencies = [
  "chrono",
  "derivative",
  "marine-rs-sdk-main 0.10.3",
- "marine-wasm-backend-traits",
+ "marine-wasm-backend-traits 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "semver 1.0.20",
  "serde",
  "thiserror",
@@ -4506,15 +4634,14 @@ dependencies = [
 
 [[package]]
 name = "marine-module-info-parser"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "756f037bef1271185452eb8297435751af31d8c62f7b04841bacf1b24d562c83"
+version = "0.14.0"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
 dependencies = [
  "anyhow",
  "chrono",
  "derivative",
- "marine-rs-sdk-main 0.12.0",
- "marine-wasm-backend-traits",
+ "marine-rs-sdk-main 0.14.0",
+ "marine-wasm-backend-traits 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
  "semver 1.0.20",
  "serde",
  "thiserror",
@@ -4529,7 +4656,23 @@ checksum = "d92d2243bf0d3aea6401d9e57a1ee17677b624337981322e0153cc2d54744080"
 dependencies = [
  "anyhow",
  "itertools 0.10.5",
- "marine-it-interfaces",
+ "marine-it-interfaces 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nom",
+ "semver 1.0.20",
+ "serde",
+ "thiserror",
+ "walrus",
+ "wasmer-interface-types-fl",
+]
+
+[[package]]
+name = "marine-module-interface"
+version = "0.8.1"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
+dependencies = [
+ "anyhow",
+ "itertools 0.10.5",
+ "marine-it-interfaces 0.9.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
  "nom",
  "semver 1.0.20",
  "serde",
@@ -4565,6 +4708,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "marine-rs-sdk"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f93d2bd852fea1fea8097c195044430347eda98fd6a3752119b549192d5ac4ba"
+dependencies = [
+ "marine-call-parameters 0.14.0",
+ "marine-macro 0.14.0",
+ "marine-rs-sdk-main 0.14.0",
+ "marine-timestamp-macro 0.14.0",
+ "serde",
+]
+
+[[package]]
 name = "marine-rs-sdk-main"
 version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4585,23 +4741,43 @@ dependencies = [
 ]
 
 [[package]]
+name = "marine-rs-sdk-main"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58b487a1a1b288ba06c832942eadb43384cd99c9754c1454e1e061dd9866be92"
+dependencies = [
+ "log",
+ "serde",
+]
+
+[[package]]
+name = "marine-rs-sdk-main"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b79c165fc21438b069babeec5ae36ba0eade5e08fb1d92dabbe6b41014ce841"
+dependencies = [
+ "log",
+ "serde",
+]
+
+[[package]]
 name = "marine-runtime"
 version = "0.32.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4c9a539b0b1586839f133f768db670f0b3f6cd5ffd977dc247cbf8acf8a3dc1a"
 dependencies = [
  "bytesize",
- "it-json-serde",
+ "it-json-serde 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "it-memory-traits",
  "itertools 0.10.5",
  "log",
  "marine-core 0.26.1",
- "marine-module-interface",
+ "marine-module-interface 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "marine-rs-sdk 0.10.3",
  "marine-rs-sdk-main 0.10.3",
- "marine-utils",
- "marine-wasm-backend-traits",
- "marine-wasmtime-backend",
+ "marine-utils 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "marine-wasm-backend-traits 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "marine-wasmtime-backend 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "parking_lot",
  "safe-transmute",
  "serde",
@@ -4615,23 +4791,24 @@ dependencies = [
 
 [[package]]
 name = "marine-runtime"
-version = "0.33.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee2daa12b5143d9a152d6ae2f6accdc884887a653a2b259af901df86a6f49833"
+version = "0.35.0"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
 dependencies = [
  "bytesize",
- "it-json-serde",
+ "it-json-serde 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
  "it-memory-traits",
  "itertools 0.10.5",
  "log",
  "marine-call-parameters 0.10.3",
- "marine-core 0.27.0",
- "marine-module-interface",
- "marine-rs-sdk 0.12.0",
- "marine-rs-sdk-main 0.12.0",
- "marine-utils",
- "marine-wasm-backend-traits",
- "marine-wasmtime-backend",
+ "marine-call-parameters 0.12.0",
+ "marine-call-parameters 0.13.0",
+ "marine-core 0.29.0",
+ "marine-module-interface 0.8.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-rs-sdk 0.14.0",
+ "marine-rs-sdk-main 0.14.0",
+ "marine-utils 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-wasm-backend-traits 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
+ "marine-wasmtime-backend 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
  "parking_lot",
  "safe-transmute",
  "serde",
@@ -4651,6 +4828,16 @@ checksum = "eb21d5419382307d97677d92c267f714a77549658270ada5d84496bfd74314e9"
 dependencies = [
  "bytesize",
  "marine-rs-sdk 0.12.0",
+]
+
+[[package]]
+name = "marine-sqlite-connector"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1c4d82c7e8c07f59aa526271b810c97ec7f79d14a77725025618a79b0b1d9051"
+dependencies = [
+ "bytesize",
+ "marine-rs-sdk 0.14.0",
 ]
 
 [[package]]
@@ -4674,16 +4861,45 @@ dependencies = [
 ]
 
 [[package]]
+name = "marine-timestamp-macro"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d03f267ac0a29f543ef12a1a519ff8d98e74ac66e1c580f2930d41ce2c50507d"
+dependencies = [
+ "chrono",
+ "quote",
+]
+
+[[package]]
 name = "marine-utils"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fce56bfabfd0af5326ff81c32c8d2261aa03b10e00ea6c165de4ebf8a3f998e4"
 
 [[package]]
+name = "marine-utils"
+version = "0.5.1"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
+
+[[package]]
 name = "marine-wasm-backend-traits"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "220bc47cfabb8b4ab97bf2bd7bbab9738857b69beeda0a1ac5776c600b64bb46"
+dependencies = [
+ "anyhow",
+ "it-memory-traits",
+ "multimap 0.8.3",
+ "paste",
+ "thiserror",
+ "wasmer-interface-types-fl",
+ "wasmparser 0.101.1",
+]
+
+[[package]]
+name = "marine-wasm-backend-traits"
+version = "0.5.1"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
 dependencies = [
  "anyhow",
  "it-memory-traits",
@@ -4703,7 +4919,23 @@ dependencies = [
  "anyhow",
  "it-memory-traits",
  "log",
- "marine-wasm-backend-traits",
+ "marine-wasm-backend-traits 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "multimap 0.8.3",
+ "paste",
+ "wasmer-interface-types-fl",
+ "wasmtime",
+ "wasmtime-wasi",
+]
+
+[[package]]
+name = "marine-wasmtime-backend"
+version = "0.5.1"
+source = "git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths#1b7702331af868d8a4e1e4b9e680ecb088e9a88b"
+dependencies = [
+ "anyhow",
+ "it-memory-traits",
+ "log",
+ "marine-wasm-backend-traits 0.5.1 (git+https://github.com/fluencelabs/marine?branch=feat/absolute_wasi_paths)",
  "multimap 0.8.3",
  "paste",
  "wasmer-interface-types-fl",
@@ -5046,12 +5278,12 @@ checksum = "995defdca0a589acfdd1bd2e8e3b896b4d4f7675a31fd14c32611440c7f608e6"
 [[package]]
 name = "now-millis"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 
 [[package]]
 name = "nox"
-version = "0.20.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+version = "0.20.1"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -5430,7 +5662,7 @@ dependencies = [
 [[package]]
 name = "particle-args"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "avm-server",
  "bs58",
@@ -5446,7 +5678,7 @@ dependencies = [
 [[package]]
 name = "particle-builtins"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "async-trait",
  "avm-server",
@@ -5493,7 +5725,7 @@ dependencies = [
 [[package]]
 name = "particle-execution"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "async-trait",
  "bs58",
@@ -5515,7 +5747,7 @@ dependencies = [
 [[package]]
 name = "particle-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "base64 0.21.7",
  "bytesize",
@@ -5528,7 +5760,7 @@ dependencies = [
  "json-utils",
  "libipld",
  "log",
- "marine-it-parser",
+ "marine-it-parser 0.15.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "parking_lot",
  "particle-args",
  "particle-execution",
@@ -5542,7 +5774,7 @@ dependencies = [
 [[package]]
 name = "particle-protocol"
 version = "0.3.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "air-interpreter-sede",
  "asynchronous-codec 0.7.0",
@@ -5571,7 +5803,7 @@ dependencies = [
 [[package]]
 name = "particle-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "derivative",
  "eyre",
@@ -5631,7 +5863,7 @@ dependencies = [
 [[package]]
 name = "peer-metrics"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "bytesize",
  "fluence-app-service",
@@ -6792,7 +7024,7 @@ dependencies = [
 [[package]]
 name = "server-config"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "air-interpreter-fs",
  "base64 0.21.7",
@@ -6826,7 +7058,7 @@ dependencies = [
 [[package]]
 name = "service-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "cid-utils",
  "eyre",
@@ -7004,14 +7236,14 @@ dependencies = [
 [[package]]
 name = "sorcerer"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "aquamarine",
  "connection-pool",
  "eyre",
  "fluence-keypair",
  "fluence-libp2p",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.7.3-feature-net-759-e429943-1048-1.0",
  "fstrings",
  "futures",
  "kademlia",
@@ -7043,13 +7275,13 @@ dependencies = [
 [[package]]
 name = "spell-event-bus"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "connection-pool",
  "derivative",
  "eyre",
  "fluence-libp2p",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.7.3-feature-net-759-e429943-1048-1.0",
  "fstrings",
  "futures",
  "log",
@@ -7072,10 +7304,10 @@ dependencies = [
 [[package]]
 name = "spell-service-api"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "fluence-libp2p",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.7.3-feature-net-759-e429943-1048-1.0",
  "particle-execution",
  "particle-services",
  "serde",
@@ -7087,7 +7319,7 @@ dependencies = [
 [[package]]
 name = "spell-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "derivative",
  "eyre",
@@ -7158,7 +7390,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 [[package]]
 name = "subnet-resolver"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "chain-data",
  "ethabi",
@@ -7259,13 +7491,13 @@ dependencies = [
 [[package]]
 name = "system-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "aqua-ipfs-distro",
- "decider-distro 0.6.1",
+ "decider-distro 0.6.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "eyre",
  "fluence-app-service",
- "fluence-spell-dtos",
+ "fluence-spell-dtos 0.7.3-feature-net-759-e429943-1048-1.0",
  "futures",
  "libp2p",
  "log",
@@ -7329,7 +7561,7 @@ dependencies = [
 [[package]]
 name = "test-constants"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 
 [[package]]
 name = "textwrap"
@@ -7547,7 +7779,7 @@ dependencies = [
 [[package]]
 name = "toml-utils"
 version = "0.0.1"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "toml 0.5.11",
 ]
@@ -7675,7 +7907,7 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "toy-vms"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "aquamarine",
  "avm-server",
@@ -7808,7 +8040,7 @@ checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 [[package]]
 name = "types"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "libp2p-identity",
  "serde",
@@ -7958,7 +8190,7 @@ dependencies = [
 [[package]]
 name = "uuid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "uuid",
 ]
@@ -8966,7 +9198,7 @@ dependencies = [
 [[package]]
 name = "workers"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#78fa8859686548e4cebecfdbcee8186c1b58e731"
+source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#749ef9c6198aa4616cd98d0013c4b63c650b31a1"
 dependencies = [
  "core-manager",
  "derivative",

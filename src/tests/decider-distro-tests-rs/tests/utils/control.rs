@@ -9,9 +9,7 @@ use maplit::hashmap;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::path::PathBuf;
-use std::sync::Arc;
 use std::time::Duration;
-use tempfile::TempDir;
 
 pub async fn update_config(
     client: &mut ConnectedClient,
@@ -34,12 +32,12 @@ pub async fn modify_decider_spell_script(
     decider_spell_id: String,
     updated_script: String,
 ) {
+
     let script_path: PathBuf = persistent_base_dir.join(
         [
             "services",
             "workdir",
             &decider_spell_id,
-            "tmp",
             "script.air",
         ]
         .iter()
