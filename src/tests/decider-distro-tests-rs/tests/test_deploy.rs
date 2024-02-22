@@ -87,6 +87,7 @@ async fn test_deploy_a_deal_single() {
             }
             "eth_getTransactionCount" => json!("0x1"),
             "eth_getTransactionReceipt" => default_receipt(),
+            "eth_estimateGas" => json!("0x3b9aca07"),
             "eth_gasPrice" => json!("0x3b9aca07"),
             "eth_call" => json!(DEAL_STATUS_ACTIVE),
             _ => panic!("mock http got unexpected rpc method: {}", method),

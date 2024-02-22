@@ -64,7 +64,7 @@ func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worke
     is_ok: *bool
     if result.success:
         try:
-            tx_hash <- Connector.send_tx(result.data, chain.matcher)
+            tx_hash <- Connector.send_tx(result.data, deal_id)
             deal_log(spell_id, deal_id, ["registered worker tx_hash", tx_hash])
             store_tx(spell_id, WorkerTxInfo(deal_id = deal_id, tx_hash = tx_hash))
             is_ok <<- true
