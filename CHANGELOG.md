@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.6](https://github.com/fluencelabs/decider/compare/connector-v0.6.5...connector-v0.6.6) (2024-02-22)
+
+
+### Features
+
+* update Installation Spell  ([#236](https://github.com/fluencelabs/decider/issues/236)) ([dbf670f](https://github.com/fluencelabs/decider/commit/dbf670fb1a2ef5465840308f30a56135c45748bb))
+
 ## [0.6.5](https://github.com/fluencelabs/decider/compare/connector-v0.6.4...connector-v0.6.5) (2024-02-22)
 
 
