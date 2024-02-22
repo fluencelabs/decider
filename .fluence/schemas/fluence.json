@@ -616,7 +616,7 @@
     },
     "ipfsAddr": {
       "type": "string",
-      "description": "IPFS multiaddress to use when uploading workers with 'deal deploy'. Default: /dns4/ipfs.fluence.dev/tcp/5001 or /ip4/127.0.0.1/tcp/5001 if using local local env (for 'workers deploy' IPFS address provided by relay that you are connected to is used)",
+      "description": "IPFS multiaddress to use when uploading workers with 'fluence deploy'. Default: /dns4/ipfs.fluence.dev/tcp/5001 or /ip4/127.0.0.1/tcp/5001 if using local local env (for 'workers deploy' IPFS address provided by relay that you are connected to is used)",
       "nullable": true,
       "default": "/dns4/ipfs.fluence.dev/tcp/5001"
     },
@@ -629,9 +629,9 @@
           "type": "string",
           "description": "Contracts environment to use for this fluence network to sign contracts on the blockchain",
           "enum": [
-            "kras",
-            "testnet",
+            "dar",
             "stage",
+            "kras",
             "local"
           ]
         },
