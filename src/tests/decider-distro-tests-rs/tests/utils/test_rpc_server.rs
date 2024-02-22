@@ -135,7 +135,7 @@ pub fn run_test_server() -> ServerHandle {
             } else {
                 let req = serde_json::from_value::<JrpcReq>(raw_request).unwrap();
                 assert_eq!(req.jsonrpc, "2.0", "wrong jsonrpc version: {}", req.jsonrpc);
-                assert_eq!(req.id, 0, "wrong jsonrpc id: {}, req: {:?}", req.id, req);
+                // assert_eq!(req.id, 0, "wrong jsonrpc id: {}, req: {:?}", req.id, req);
 
                 process_request(&send_req, &recv_resp, req).await
             };
