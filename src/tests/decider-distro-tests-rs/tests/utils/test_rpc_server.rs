@@ -79,6 +79,7 @@ pub struct JrpcReq {
     jsonrpc: String,
     id: u32,
     method: RpcMethod,
+    #[serde(default)]
     params: RpcParams,
 }
 
