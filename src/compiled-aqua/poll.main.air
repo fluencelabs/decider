@@ -1634,9 +1634,9 @@
                                                                           (seq
                                                                            (seq
                                                                             (ap ("deal_id" log-16-0_flat_flat) %WorkerArgs_obj_map)
-                                                                            (ap ("ipfs" -worker_settings-arg-.$.ipfs) %WorkerArgs_obj_map)
+                                                                            (ap ("h_worker_def_cid" log-16-0.$.info.app_cid) %WorkerArgs_obj_map)
                                                                            )
-                                                                           (ap ("worker_def_cid" log-16-0.$.info.app_cid) %WorkerArgs_obj_map)
+                                                                           (ap ("ipfs" -worker_settings-arg-.$.ipfs) %WorkerArgs_obj_map)
                                                                           )
                                                                           (canon worker_id-0_gate.$.[0] %WorkerArgs_obj_map  WorkerArgs_obj)
                                                                          )
@@ -4422,42 +4422,134 @@
                                            (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
                                           )
                                          )
-                                         (call change-0_flat-1 ("worker-spell" "set_string") ["worker_def_cid" ret-253] ret-258)
+                                         (call change-0_flat-1 ("worker-spell" "set_string") ["h_worker_def_cid" ret-253] ret-258)
                                         )
-                                        (call change-0_flat-1 ("worker" "is_active") [change-0_flat-0] ret-259)
-                                       )
-                                       (new -if-error-
                                         (xor
-                                         (seq
-                                          (match ret-259 true
-                                           (call change-0_flat-1 ("spell" "update_trigger_config") ["worker-spell" -worker_settings-arg-.$.config])
-                                          )
-                                          (new $-ephemeral-stream-
-                                           (new #-ephemeral-canon-
-                                            (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                                           )
-                                          )
+                                         (match ret-258.$.success true
+                                          (ap false not-17)
                                          )
-                                         (seq
-                                          (seq
-                                           (ap :error: -if-error-)
-                                           (xor
-                                            (seq
-                                             (match :error:.$.error_code 10001
-                                              (null)
+                                         (ap true not-17)
+                                        )
+                                       )
+                                       (new -if-else-error-
+                                        (new -else-error-
+                                         (new -if-error-
+                                          (xor
+                                           (seq
+                                            (match not-17 true
+                                             (seq
+                                              (seq
+                                               (seq
+                                                (seq
+                                                 (seq
+                                                  (new $array-inline-75
+                                                   (seq
+                                                    (seq
+                                                     (ap "can't update the worker's definition:" $array-inline-75)
+                                                     (ap ret-258.$.error $array-inline-75)
+                                                    )
+                                                    (canon change-0_flat-1 $array-inline-75  #array-inline-75-0)
+                                                   )
+                                                  )
+                                                  (call change-0_flat-1 ("op" "concat_strings") ["decider deal_id=" change-0_flat-0 ": "] ret-259)
+                                                 )
+                                                 (par
+                                                  (call change-0_flat-1 ("run-console" "print") [ret-259 #array-inline-75-0])
+                                                  (null)
+                                                 )
+                                                )
+                                                (call change-0_flat-1 ("json" "stringify") [#array-inline-75-0] ret-260)
+                                               )
+                                               (call change-0_flat-1 ("op" "concat_strings") [ret-259 ret-260] ret-261)
+                                              )
+                                              (call change-0_flat-1 (-spell_id-arg- "store_log") [ret-261] ret-262)
                                              )
-                                             (new $-ephemeral-stream-
-                                              (new #-ephemeral-canon-
-                                               (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                            )
+                                            (new $-ephemeral-stream-
+                                             (new #-ephemeral-canon-
+                                              (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                             )
+                                            )
+                                           )
+                                           (seq
+                                            (ap :error: -if-error-)
+                                            (xor
+                                             (match :error:.$.error_code 10001
+                                              (seq
+                                               (call change-0_flat-1 ("worker" "is_active") [change-0_flat-0] ret-263)
+                                               (new -if-error-
+                                                (xor
+                                                 (seq
+                                                  (match ret-263 true
+                                                   (call change-0_flat-1 ("spell" "update_trigger_config") ["worker-spell" -worker_settings-arg-.$.config])
+                                                  )
+                                                  (new $-ephemeral-stream-
+                                                   (new #-ephemeral-canon-
+                                                    (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                                   )
+                                                  )
+                                                 )
+                                                 (seq
+                                                  (seq
+                                                   (ap :error: -if-error-)
+                                                   (xor
+                                                    (seq
+                                                     (match :error:.$.error_code 10001
+                                                      (null)
+                                                     )
+                                                     (new $-ephemeral-stream-
+                                                      (new #-ephemeral-canon-
+                                                       (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                                      )
+                                                     )
+                                                    )
+                                                    (fail -if-error-)
+                                                   )
+                                                  )
+                                                  (new $-ephemeral-stream-
+                                                   (new #-ephemeral-canon-
+                                                    (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                                   )
+                                                  )
+                                                 )
+                                                )
+                                               )
+                                              )
+                                             )
+                                             (seq
+                                              (seq
+                                               (seq
+                                                (ap :error: -else-error-)
+                                                (xor
+                                                 (seq
+                                                  (match :error:.$.error_code 10001
+                                                   (ap -if-error- -if-else-error-)
+                                                  )
+                                                  (new $-ephemeral-stream-
+                                                   (new #-ephemeral-canon-
+                                                    (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                                   )
+                                                  )
+                                                 )
+                                                 (seq
+                                                  (ap -else-error- -if-else-error-)
+                                                  (new $-ephemeral-stream-
+                                                   (new #-ephemeral-canon-
+                                                    (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                                   )
+                                                  )
+                                                 )
+                                                )
+                                               )
+                                               (fail -if-else-error-)
+                                              )
+                                              (new $-ephemeral-stream-
+                                               (new #-ephemeral-canon-
+                                                (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                               )
                                               )
                                              )
                                             )
-                                            (fail -if-error-)
-                                           )
-                                          )
-                                          (new $-ephemeral-stream-
-                                           (new #-ephemeral-canon-
-                                            (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
                                            )
                                           )
                                          )
@@ -4486,27 +4578,27 @@
                                       (seq
                                        (seq
                                         (seq
-                                         (new $array-inline-75
+                                         (new $array-inline-76
                                           (seq
                                            (seq
-                                            (ap "can't update worker:" $array-inline-75)
-                                            (ap :error: $array-inline-75)
+                                            (ap "can't update worker:" $array-inline-76)
+                                            (ap :error: $array-inline-76)
                                            )
-                                           (canon %init_peer_id% $array-inline-75  #array-inline-75-0)
+                                           (canon %init_peer_id% $array-inline-76  #array-inline-76-0)
                                           )
                                          )
-                                         (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" change-0_flat_flat ": "] ret-260)
+                                         (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" change-0_flat_flat ": "] ret-264)
                                         )
                                         (par
-                                         (call %init_peer_id% ("run-console" "print") [ret-260 #array-inline-75-0])
+                                         (call %init_peer_id% ("run-console" "print") [ret-264 #array-inline-76-0])
                                          (null)
                                         )
                                        )
-                                       (call %init_peer_id% ("json" "stringify") [#array-inline-75-0] ret-261)
+                                       (call %init_peer_id% ("json" "stringify") [#array-inline-76-0] ret-265)
                                       )
-                                      (call %init_peer_id% ("op" "concat_strings") [ret-260 ret-261] ret-262)
+                                      (call %init_peer_id% ("op" "concat_strings") [ret-264 ret-265] ret-266)
                                      )
-                                     (call %init_peer_id% (-spell_id-arg- "store_log") [ret-262] ret-263)
+                                     (call %init_peer_id% (-spell_id-arg- "store_log") [ret-266] ret-267)
                                     )
                                    )
                                   )
@@ -4521,9 +4613,9 @@
                                  )
                                 )
                                )
-                               (call %init_peer_id% ("json" "stringify") [DealState_obj-1] ret-264)
+                               (call %init_peer_id% ("json" "stringify") [DealState_obj-1] ret-268)
                               )
-                              (call %init_peer_id% (-spell_id-arg- "set_string") [change-0_flat_flat ret-264] ret-265)
+                              (call %init_peer_id% (-spell_id-arg- "set_string") [change-0_flat_flat ret-268] ret-269)
                              )
                             )
                             (seq
@@ -4547,27 +4639,27 @@
                               (seq
                                (seq
                                 (seq
-                                 (new $array-inline-76
+                                 (new $array-inline-77
                                   (seq
                                    (seq
-                                    (ap "error retrieving deal change" $array-inline-76)
-                                    (ap change-0.$.error $array-inline-76)
+                                    (ap "error retrieving deal change" $array-inline-77)
+                                    (ap change-0.$.error $array-inline-77)
                                    )
-                                   (canon %init_peer_id% $array-inline-76  #array-inline-76-0)
+                                   (canon %init_peer_id% $array-inline-77  #array-inline-77-0)
                                   )
                                  )
-                                 (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" change-0_flat_flat ": "] ret-266)
+                                 (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" change-0_flat_flat ": "] ret-270)
                                 )
                                 (par
-                                 (call %init_peer_id% ("run-console" "print") [ret-266 #array-inline-76-0])
+                                 (call %init_peer_id% ("run-console" "print") [ret-270 #array-inline-77-0])
                                  (null)
                                 )
                                )
-                               (call %init_peer_id% ("json" "stringify") [#array-inline-76-0] ret-267)
+                               (call %init_peer_id% ("json" "stringify") [#array-inline-77-0] ret-271)
                               )
-                              (call %init_peer_id% ("op" "concat_strings") [ret-266 ret-267] ret-268)
+                              (call %init_peer_id% ("op" "concat_strings") [ret-270 ret-271] ret-272)
                              )
-                             (call %init_peer_id% (-spell_id-arg- "store_log") [ret-268] ret-269)
+                             (call %init_peer_id% (-spell_id-arg- "store_log") [ret-272] ret-273)
                             )
                            )
                            (seq
@@ -4608,41 +4700,41 @@
                               (ap change-1.$.deal_info change-1_flat)
                               (ap change-1_flat.$.deal_id change-1_flat_flat)
                              )
-                             (call %init_peer_id% ("chain_connector" "hex_min") [change-1.$.right_boundary -latest-flat-0.$.[0]] ret-270)
+                             (call %init_peer_id% ("chain_connector" "hex_min") [change-1.$.right_boundary -latest-flat-0.$.[0]] ret-274)
                             )
                             (xor
-                             (match ret-270.$.success true
-                              (ap false not-17)
+                             (match ret-274.$.success true
+                              (ap false not-18)
                              )
-                             (ap true not-17)
+                             (ap true not-18)
                             )
                            )
                            (new -if-error-
                             (xor
-                             (match not-17 true
+                             (match not-18 true
                               (seq
                                (seq
                                 (seq
-                                 (new $array-inline-77
+                                 (new $array-inline-78
                                   (seq
                                    (seq
                                     (seq
-                                     (ap "hex_min failed" $array-inline-77)
-                                     (ap change-1.$.right_boundary $array-inline-77)
+                                     (ap "hex_min failed" $array-inline-78)
+                                     (ap change-1.$.right_boundary $array-inline-78)
                                     )
-                                    (ap -latest-flat-0.$.[0] $array-inline-77)
+                                    (ap -latest-flat-0.$.[0] $array-inline-78)
                                    )
-                                   (canon %init_peer_id% $array-inline-77  #array-inline-77-0)
+                                   (canon %init_peer_id% $array-inline-78  #array-inline-78-0)
                                   )
                                  )
                                  (par
-                                  (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-77-0])
+                                  (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-78-0])
                                   (null)
                                  )
                                 )
-                                (call %init_peer_id% ("json" "stringify") [#array-inline-77-0] ret-271)
+                                (call %init_peer_id% ("json" "stringify") [#array-inline-78-0] ret-275)
                                )
-                               (call %init_peer_id% (-spell_id-arg- "store_log") [ret-271] ret-272)
+                               (call %init_peer_id% (-spell_id-arg- "store_log") [ret-275] ret-276)
                               )
                              )
                              (seq
@@ -4657,49 +4749,49 @@
                             )
                            )
                           )
-                          (ap ret-270.$.hex ret-270_flat)
+                          (ap ret-274.$.hex ret-274_flat)
                          )
                          (new -if-error-
                           (xor
-                           (mismatch ret-270_flat []
+                           (mismatch ret-274_flat []
                             (seq
                              (seq
                               (seq
                                (seq
-                                (call %init_peer_id% ("chain_connector" "hex_add") [ret-270_flat.$.[0] 1] ret-273)
+                                (call %init_peer_id% ("chain_connector" "hex_add") [ret-274_flat.$.[0] 1] ret-277)
                                 (xor
-                                 (match ret-273.$.success true
-                                  (ap false not-18)
+                                 (match ret-277.$.success true
+                                  (ap false not-19)
                                  )
-                                 (ap true not-18)
+                                 (ap true not-19)
                                 )
                                )
                                (new -if-error-
                                 (xor
-                                 (match not-18 true
+                                 (match not-19 true
                                   (seq
                                    (seq
                                     (seq
-                                     (new $array-inline-78
+                                     (new $array-inline-79
                                       (seq
                                        (seq
                                         (seq
-                                         (ap "hex_add failed" $array-inline-78)
-                                         (ap ret-270_flat.$.[0] $array-inline-78)
+                                         (ap "hex_add failed" $array-inline-79)
+                                         (ap ret-274_flat.$.[0] $array-inline-79)
                                         )
-                                        (ap 1 $array-inline-78)
+                                        (ap 1 $array-inline-79)
                                        )
-                                       (canon %init_peer_id% $array-inline-78  #array-inline-78-0)
+                                       (canon %init_peer_id% $array-inline-79  #array-inline-79-0)
                                       )
                                      )
                                      (par
-                                      (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-78-0])
+                                      (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-79-0])
                                       (null)
                                      )
                                     )
-                                    (call %init_peer_id% ("json" "stringify") [#array-inline-78-0] ret-274)
+                                    (call %init_peer_id% ("json" "stringify") [#array-inline-79-0] ret-278)
                                    )
-                                   (call %init_peer_id% (-spell_id-arg- "store_log") [ret-274] ret-275)
+                                   (call %init_peer_id% (-spell_id-arg- "store_log") [ret-278] ret-279)
                                   )
                                  )
                                  (seq
@@ -4714,22 +4806,22 @@
                                 )
                                )
                               )
-                              (ap ret-273.$.hex ret-273_flat)
+                              (ap ret-277.$.hex ret-277_flat)
                              )
                              (new -if-error-
                               (xor
-                               (mismatch ret-273_flat []
+                               (mismatch ret-277_flat []
                                 (seq
                                  (seq
                                   (new %DealState_obj-2_map
                                    (seq
-                                    (ap ("left_boundary" ret-273_flat.$.[0]) %DealState_obj-2_map)
+                                    (ap ("left_boundary" ret-277_flat.$.[0]) %DealState_obj-2_map)
                                     (canon %init_peer_id% %DealState_obj-2_map  DealState_obj-2)
                                    )
                                   )
-                                  (call %init_peer_id% ("json" "stringify") [DealState_obj-2] ret-276)
+                                  (call %init_peer_id% ("json" "stringify") [DealState_obj-2] ret-280)
                                  )
-                                 (call %init_peer_id% (-spell_id-arg- "set_string") [change-1_flat_flat ret-276] ret-277)
+                                 (call %init_peer_id% (-spell_id-arg- "set_string") [change-1_flat_flat ret-280] ret-281)
                                 )
                                )
                                (seq
@@ -4812,40 +4904,40 @@
                   (seq
                    (seq
                     (canon %init_peer_id% $deal_ids-1  #deal_ids-1_canon-0)
-                    (call %init_peer_id% ("chain_connector" "get_status_batch") [-chain-arg-.$.api_endpoint #deal_ids-1_canon-0] ret-278)
+                    (call %init_peer_id% ("chain_connector" "get_status_batch") [-chain-arg-.$.api_endpoint #deal_ids-1_canon-0] ret-282)
                    )
                    (xor
-                    (match ret-278.$.success true
-                     (ap false not-19)
+                    (match ret-282.$.success true
+                     (ap false not-20)
                     )
-                    (ap true not-19)
+                    (ap true not-20)
                    )
                   )
                   (new -if-else-error-
                    (new -else-error-
                     (new -if-error-
                      (xor
-                      (match not-19 true
+                      (match not-20 true
                        (seq
                         (seq
                          (seq
-                          (new $array-inline-79
+                          (new $array-inline-80
                            (seq
                             (seq
-                             (ap "couldn't obtain deal statuses, error: " $array-inline-79)
-                             (ap ret-278.$.error.[0] $array-inline-79)
+                             (ap "couldn't obtain deal statuses, error: " $array-inline-80)
+                             (ap ret-282.$.error.[0] $array-inline-80)
                             )
-                            (canon %init_peer_id% $array-inline-79  #array-inline-79-0)
+                            (canon %init_peer_id% $array-inline-80  #array-inline-80-0)
                            )
                           )
                           (par
-                           (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-79-0])
+                           (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-80-0])
                            (null)
                           )
                          )
-                         (call %init_peer_id% ("json" "stringify") [#array-inline-79-0] ret-279)
+                         (call %init_peer_id% ("json" "stringify") [#array-inline-80-0] ret-283)
                         )
-                        (call %init_peer_id% (-spell_id-arg- "store_log") [ret-279] ret-280)
+                        (call %init_peer_id% (-spell_id-arg- "store_log") [ret-283] ret-284)
                        )
                       )
                       (seq
@@ -4856,70 +4948,70 @@
                           (seq
                            (seq
                             (seq
-                             (new $array-inline-80
+                             (new $array-inline-81
                               (seq
                                (seq
                                 (seq
                                  (seq
                                   (seq
                                    (seq
-                                    (ap ret-278.$.statuses ret-278_flat)
-                                    (ap ret-278_flat ret-278_flat_to_functor)
+                                    (ap ret-282.$.statuses ret-282_flat)
+                                    (ap ret-282_flat ret-282_flat_to_functor)
                                    )
-                                   (ap ret-278_flat_to_functor.length ret-278_flat_length)
+                                   (ap ret-282_flat_to_functor.length ret-282_flat_length)
                                   )
-                                  (ap "found statuses for" $array-inline-80)
+                                  (ap "found statuses for" $array-inline-81)
                                  )
-                                 (ap ret-278_flat_length $array-inline-80)
+                                 (ap ret-282_flat_length $array-inline-81)
                                 )
-                                (ap "deals" $array-inline-80)
+                                (ap "deals" $array-inline-81)
                                )
-                               (canon %init_peer_id% $array-inline-80  #array-inline-80-0)
+                               (canon %init_peer_id% $array-inline-81  #array-inline-81-0)
                               )
                              )
                              (par
-                              (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-80-0])
+                              (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-81-0])
                               (null)
                              )
                             )
-                            (call %init_peer_id% ("json" "stringify") [#array-inline-80-0] ret-281)
+                            (call %init_peer_id% ("json" "stringify") [#array-inline-81-0] ret-285)
                            )
-                           (call %init_peer_id% (-spell_id-arg- "store_log") [ret-281] ret-282)
+                           (call %init_peer_id% (-spell_id-arg- "store_log") [ret-285] ret-286)
                           )
-                          (fold ret-278.$.statuses deal_status-1-0
+                          (fold ret-282.$.statuses deal_status-1-0
                            (seq
                             (seq
                              (xor
                               (match deal_status-1-0.$.success true
-                               (ap false not-20)
+                               (ap false not-21)
                               )
-                              (ap true not-20)
+                              (ap true not-21)
                              )
                              (new -if-else-error-
                               (new -else-error-
                                (new -if-error-
                                 (xor
-                                 (match not-20 true
+                                 (match not-21 true
                                   (seq
                                    (seq
                                     (seq
-                                     (new $array-inline-81
+                                     (new $array-inline-82
                                       (seq
                                        (seq
-                                        (ap "couldn't obtain deal status, error:" $array-inline-81)
-                                        (ap deal_status-1-0.$.error.[0] $array-inline-81)
+                                        (ap "couldn't obtain deal status, error:" $array-inline-82)
+                                        (ap deal_status-1-0.$.error.[0] $array-inline-82)
                                        )
-                                       (canon %init_peer_id% $array-inline-81  #array-inline-81-0)
+                                       (canon %init_peer_id% $array-inline-82  #array-inline-82-0)
                                       )
                                      )
                                      (par
-                                      (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-81-0])
+                                      (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-82-0])
                                       (null)
                                      )
                                     )
-                                    (call %init_peer_id% ("json" "stringify") [#array-inline-81-0] ret-283)
+                                    (call %init_peer_id% ("json" "stringify") [#array-inline-82-0] ret-287)
                                    )
-                                   (call %init_peer_id% (-spell_id-arg- "store_log") [ret-283] ret-284)
+                                   (call %init_peer_id% (-spell_id-arg- "store_log") [ret-287] ret-288)
                                   )
                                  )
                                  (seq
@@ -4934,33 +5026,33 @@
                                          (xor
                                           (seq
                                            (seq
-                                            (call %init_peer_id% ("worker" "is_active") [deal_status-1-0.$.deal_id] ret-285)
+                                            (call %init_peer_id% ("worker" "is_active") [deal_status-1-0.$.deal_id] ret-289)
                                             (xor
-                                             (match ret-285 true
-                                              (ap false not-21)
+                                             (match ret-289 true
+                                              (ap false not-22)
                                              )
-                                             (ap true not-21)
+                                             (ap true not-22)
                                             )
                                            )
                                            (new -if-error-
                                             (xor
-                                             (match not-21 true
+                                             (match not-22 true
                                               (seq
                                                (seq
                                                 (seq
                                                  (seq
                                                   (seq
-                                                   (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-286)
+                                                   (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-290)
                                                    (par
-                                                    (call %init_peer_id% ("run-console" "print") [ret-286 "activating worker"])
+                                                    (call %init_peer_id% ("run-console" "print") [ret-290 "activating worker"])
                                                     (null)
                                                    )
                                                   )
-                                                  (call %init_peer_id% ("json" "stringify") ["activating worker"] ret-287)
+                                                  (call %init_peer_id% ("json" "stringify") ["activating worker"] ret-291)
                                                  )
-                                                 (call %init_peer_id% ("op" "concat_strings") [ret-286 ret-287] ret-288)
+                                                 (call %init_peer_id% ("op" "concat_strings") [ret-290 ret-291] ret-292)
                                                 )
-                                                (call %init_peer_id% (-spell_id-arg- "store_log") [ret-288] ret-289)
+                                                (call %init_peer_id% (-spell_id-arg- "store_log") [ret-292] ret-293)
                                                )
                                                (call %init_peer_id% ("worker" "activate") [deal_status-1-0.$.deal_id])
                                               )
@@ -4982,27 +5074,27 @@
                                             (seq
                                              (seq
                                               (seq
-                                               (new $array-inline-82
+                                               (new $array-inline-83
                                                 (seq
                                                  (seq
-                                                  (ap "couldn't activate a worker" $array-inline-82)
-                                                  (ap :error: $array-inline-82)
+                                                  (ap "couldn't activate a worker" $array-inline-83)
+                                                  (ap :error: $array-inline-83)
                                                  )
-                                                 (canon %init_peer_id% $array-inline-82  #array-inline-82-0)
+                                                 (canon %init_peer_id% $array-inline-83  #array-inline-83-0)
                                                 )
                                                )
-                                               (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-290)
+                                               (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-294)
                                               )
                                               (par
-                                               (call %init_peer_id% ("run-console" "print") [ret-290 #array-inline-82-0])
+                                               (call %init_peer_id% ("run-console" "print") [ret-294 #array-inline-83-0])
                                                (null)
                                               )
                                              )
-                                             (call %init_peer_id% ("json" "stringify") [#array-inline-82-0] ret-291)
+                                             (call %init_peer_id% ("json" "stringify") [#array-inline-83-0] ret-295)
                                             )
-                                            (call %init_peer_id% ("op" "concat_strings") [ret-290 ret-291] ret-292)
+                                            (call %init_peer_id% ("op" "concat_strings") [ret-294 ret-295] ret-296)
                                            )
-                                           (call %init_peer_id% (-spell_id-arg- "store_log") [ret-292] ret-293)
+                                           (call %init_peer_id% (-spell_id-arg- "store_log") [ret-296] ret-297)
                                           )
                                          )
                                         )
@@ -5017,26 +5109,26 @@
                                                (match deal_status-1-0.$.status "INACTIVE"
                                                 (xor
                                                  (seq
-                                                  (call %init_peer_id% ("worker" "is_active") [deal_status-1-0.$.deal_id] ret-294)
+                                                  (call %init_peer_id% ("worker" "is_active") [deal_status-1-0.$.deal_id] ret-298)
                                                   (new -if-error-
                                                    (xor
-                                                    (match ret-294 true
+                                                    (match ret-298 true
                                                      (seq
                                                       (seq
                                                        (seq
                                                         (seq
                                                          (seq
-                                                          (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-295)
+                                                          (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-299)
                                                           (par
-                                                           (call %init_peer_id% ("run-console" "print") [ret-295 "deactivating worker"])
+                                                           (call %init_peer_id% ("run-console" "print") [ret-299 "deactivating worker"])
                                                            (null)
                                                           )
                                                          )
-                                                         (call %init_peer_id% ("json" "stringify") ["deactivating worker"] ret-296)
+                                                         (call %init_peer_id% ("json" "stringify") ["deactivating worker"] ret-300)
                                                         )
-                                                        (call %init_peer_id% ("op" "concat_strings") [ret-295 ret-296] ret-297)
+                                                        (call %init_peer_id% ("op" "concat_strings") [ret-299 ret-300] ret-301)
                                                        )
-                                                       (call %init_peer_id% (-spell_id-arg- "store_log") [ret-297] ret-298)
+                                                       (call %init_peer_id% (-spell_id-arg- "store_log") [ret-301] ret-302)
                                                       )
                                                       (call %init_peer_id% ("worker" "deactivate") [deal_status-1-0.$.deal_id])
                                                      )
@@ -5058,27 +5150,27 @@
                                                    (seq
                                                     (seq
                                                      (seq
-                                                      (new $array-inline-83
+                                                      (new $array-inline-84
                                                        (seq
                                                         (seq
-                                                         (ap "couldn't deactivate a worker" $array-inline-83)
-                                                         (ap :error: $array-inline-83)
+                                                         (ap "couldn't deactivate a worker" $array-inline-84)
+                                                         (ap :error: $array-inline-84)
                                                         )
-                                                        (canon %init_peer_id% $array-inline-83  #array-inline-83-0)
+                                                        (canon %init_peer_id% $array-inline-84  #array-inline-84-0)
                                                        )
                                                       )
-                                                      (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-299)
+                                                      (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-303)
                                                      )
                                                      (par
-                                                      (call %init_peer_id% ("run-console" "print") [ret-299 #array-inline-83-0])
+                                                      (call %init_peer_id% ("run-console" "print") [ret-303 #array-inline-84-0])
                                                       (null)
                                                      )
                                                     )
-                                                    (call %init_peer_id% ("json" "stringify") [#array-inline-83-0] ret-300)
+                                                    (call %init_peer_id% ("json" "stringify") [#array-inline-84-0] ret-304)
                                                    )
-                                                   (call %init_peer_id% ("op" "concat_strings") [ret-299 ret-300] ret-301)
+                                                   (call %init_peer_id% ("op" "concat_strings") [ret-303 ret-304] ret-305)
                                                   )
-                                                  (call %init_peer_id% (-spell_id-arg- "store_log") [ret-301] ret-302)
+                                                  (call %init_peer_id% (-spell_id-arg- "store_log") [ret-305] ret-306)
                                                  )
                                                 )
                                                )
@@ -5092,61 +5184,61 @@
                                                      (xor
                                                       (match deal_status-1-0.$.status "ENDED"
                                                        (seq
-                                                        (call %init_peer_id% ("worker" "get_worker_id") [deal_status-1-0.$.deal_id] ret-303)
+                                                        (call %init_peer_id% ("worker" "get_worker_id") [deal_status-1-0.$.deal_id] ret-307)
                                                         (new -if-else-error-
                                                          (new -else-error-
                                                           (new -if-error-
                                                            (xor
-                                                            (mismatch ret-303 []
+                                                            (mismatch ret-307 []
                                                              (seq
                                                               (seq
                                                                (seq
                                                                 (seq
                                                                  (seq
                                                                   (seq
-                                                                   (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-304)
+                                                                   (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-308)
                                                                    (par
-                                                                    (call %init_peer_id% ("run-console" "print") [ret-304 "removing the worker and the deal state from kv"])
+                                                                    (call %init_peer_id% ("run-console" "print") [ret-308 "removing the worker and the deal state from kv"])
                                                                     (null)
                                                                    )
                                                                   )
-                                                                  (call %init_peer_id% ("json" "stringify") ["removing the worker and the deal state from kv"] ret-305)
+                                                                  (call %init_peer_id% ("json" "stringify") ["removing the worker and the deal state from kv"] ret-309)
                                                                  )
-                                                                 (call %init_peer_id% ("op" "concat_strings") [ret-304 ret-305] ret-306)
+                                                                 (call %init_peer_id% ("op" "concat_strings") [ret-308 ret-309] ret-310)
                                                                 )
-                                                                (call %init_peer_id% (-spell_id-arg- "store_log") [ret-306] ret-307)
+                                                                (call %init_peer_id% (-spell_id-arg- "store_log") [ret-310] ret-311)
                                                                )
                                                                (xor
-                                                                (call %init_peer_id% ("worker" "remove") [ret-303.$.[0]])
+                                                                (call %init_peer_id% ("worker" "remove") [ret-307.$.[0]])
                                                                 (seq
                                                                  (seq
                                                                   (seq
                                                                    (seq
                                                                     (seq
-                                                                     (new $array-inline-84
+                                                                     (new $array-inline-85
                                                                       (seq
                                                                        (seq
                                                                         (seq
-                                                                         (ap "couldn't remove a worker" $array-inline-84)
-                                                                         (ap ret-303.$.[0] $array-inline-84)
+                                                                         (ap "couldn't remove a worker" $array-inline-85)
+                                                                         (ap ret-307.$.[0] $array-inline-85)
                                                                         )
-                                                                        (ap :error: $array-inline-84)
+                                                                        (ap :error: $array-inline-85)
                                                                        )
-                                                                       (canon %init_peer_id% $array-inline-84  #array-inline-84-0)
+                                                                       (canon %init_peer_id% $array-inline-85  #array-inline-85-0)
                                                                       )
                                                                      )
-                                                                     (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-308)
+                                                                     (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-312)
                                                                     )
                                                                     (par
-                                                                     (call %init_peer_id% ("run-console" "print") [ret-308 #array-inline-84-0])
+                                                                     (call %init_peer_id% ("run-console" "print") [ret-312 #array-inline-85-0])
                                                                      (null)
                                                                     )
                                                                    )
-                                                                   (call %init_peer_id% ("json" "stringify") [#array-inline-84-0] ret-309)
+                                                                   (call %init_peer_id% ("json" "stringify") [#array-inline-85-0] ret-313)
                                                                   )
-                                                                  (call %init_peer_id% ("op" "concat_strings") [ret-308 ret-309] ret-310)
+                                                                  (call %init_peer_id% ("op" "concat_strings") [ret-312 ret-313] ret-314)
                                                                  )
-                                                                 (call %init_peer_id% (-spell_id-arg- "store_log") [ret-310] ret-311)
+                                                                 (call %init_peer_id% (-spell_id-arg- "store_log") [ret-314] ret-315)
                                                                 )
                                                                )
                                                               )
@@ -5160,47 +5252,47 @@
                                                                      (seq
                                                                       (seq
                                                                        (ap ("deal_id" deal_status-1-0.$.deal_id) %JoinedDeal_obj-1_map)
-                                                                       (ap ("worker_id" ret-303.$.[0]) %JoinedDeal_obj-1_map)
+                                                                       (ap ("worker_id" ret-307.$.[0]) %JoinedDeal_obj-1_map)
                                                                       )
                                                                       (canon %init_peer_id% %JoinedDeal_obj-1_map  JoinedDeal_obj-1)
                                                                      )
                                                                     )
-                                                                    (call %init_peer_id% ("json" "stringify") [JoinedDeal_obj-1] ret-312)
+                                                                    (call %init_peer_id% ("json" "stringify") [JoinedDeal_obj-1] ret-316)
                                                                    )
-                                                                   (call %init_peer_id% (-spell_id-arg- "list_remove_string") ["joined_deals" ret-312] ret-313)
+                                                                   (call %init_peer_id% (-spell_id-arg- "list_remove_string") ["joined_deals" ret-316] ret-317)
                                                                   )
-                                                                  (call %init_peer_id% (-spell_id-arg- "remove_key") [deal_status-1-0.$.deal_id] ret-314)
+                                                                  (call %init_peer_id% (-spell_id-arg- "remove_key") [deal_status-1-0.$.deal_id] ret-318)
                                                                  )
-                                                                 (call %init_peer_id% ("op" "concat_strings") ["removed_state:" deal_status-1-0.$.deal_id] ret-315)
+                                                                 (call %init_peer_id% ("op" "concat_strings") ["removed_state:" deal_status-1-0.$.deal_id] ret-319)
                                                                 )
-                                                                (call %init_peer_id% (-spell_id-arg- "remove_key") [ret-315] ret-316)
+                                                                (call %init_peer_id% (-spell_id-arg- "remove_key") [ret-319] ret-320)
                                                                )
                                                                (seq
                                                                 (seq
                                                                  (seq
                                                                   (seq
                                                                    (seq
-                                                                    (new $array-inline-85
+                                                                    (new $array-inline-86
                                                                      (seq
                                                                       (seq
-                                                                       (ap "couldn't remove the deal" $array-inline-85)
-                                                                       (ap :error: $array-inline-85)
+                                                                       (ap "couldn't remove the deal" $array-inline-86)
+                                                                       (ap :error: $array-inline-86)
                                                                       )
-                                                                      (canon %init_peer_id% $array-inline-85  #array-inline-85-0)
+                                                                      (canon %init_peer_id% $array-inline-86  #array-inline-86-0)
                                                                      )
                                                                     )
-                                                                    (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-317)
+                                                                    (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-321)
                                                                    )
                                                                    (par
-                                                                    (call %init_peer_id% ("run-console" "print") [ret-317 #array-inline-85-0])
+                                                                    (call %init_peer_id% ("run-console" "print") [ret-321 #array-inline-86-0])
                                                                     (null)
                                                                    )
                                                                   )
-                                                                  (call %init_peer_id% ("json" "stringify") [#array-inline-85-0] ret-318)
+                                                                  (call %init_peer_id% ("json" "stringify") [#array-inline-86-0] ret-322)
                                                                  )
-                                                                 (call %init_peer_id% ("op" "concat_strings") [ret-317 ret-318] ret-319)
+                                                                 (call %init_peer_id% ("op" "concat_strings") [ret-321 ret-322] ret-323)
                                                                 )
-                                                                (call %init_peer_id% (-spell_id-arg- "store_log") [ret-319] ret-320)
+                                                                (call %init_peer_id% (-spell_id-arg- "store_log") [ret-323] ret-324)
                                                                )
                                                               )
                                                              )
@@ -5213,17 +5305,17 @@
                                                                 (seq
                                                                  (seq
                                                                   (seq
-                                                                   (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-321)
+                                                                   (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" deal_status-1-0.$.deal_id ": "] ret-325)
                                                                    (par
-                                                                    (call %init_peer_id% ("run-console" "print") [ret-321 "deal doesn't have associated worker O.o"])
+                                                                    (call %init_peer_id% ("run-console" "print") [ret-325 "deal doesn't have associated worker O.o"])
                                                                     (null)
                                                                    )
                                                                   )
-                                                                  (call %init_peer_id% ("json" "stringify") ["deal doesn't have associated worker O.o"] ret-322)
+                                                                  (call %init_peer_id% ("json" "stringify") ["deal doesn't have associated worker O.o"] ret-326)
                                                                  )
-                                                                 (call %init_peer_id% ("op" "concat_strings") [ret-321 ret-322] ret-323)
+                                                                 (call %init_peer_id% ("op" "concat_strings") [ret-325 ret-326] ret-327)
                                                                 )
-                                                                (call %init_peer_id% (-spell_id-arg- "store_log") [ret-323] ret-324)
+                                                                (call %init_peer_id% (-spell_id-arg- "store_log") [ret-327] ret-328)
                                                                )
                                                               )
                                                               (seq
@@ -5253,23 +5345,23 @@
                                                          (seq
                                                           (seq
                                                            (seq
-                                                            (new $array-inline-86
+                                                            (new $array-inline-87
                                                              (seq
                                                               (seq
-                                                               (ap "unsupported deal status: " $array-inline-86)
-                                                               (ap deal_status-1-0 $array-inline-86)
+                                                               (ap "unsupported deal status: " $array-inline-87)
+                                                               (ap deal_status-1-0 $array-inline-87)
                                                               )
-                                                              (canon %init_peer_id% $array-inline-86  #array-inline-86-0)
+                                                              (canon %init_peer_id% $array-inline-87  #array-inline-87-0)
                                                              )
                                                             )
                                                             (par
-                                                             (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-86-0])
+                                                             (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-87-0])
                                                              (null)
                                                             )
                                                            )
-                                                           (call %init_peer_id% ("json" "stringify") [#array-inline-86-0] ret-325)
+                                                           (call %init_peer_id% ("json" "stringify") [#array-inline-87-0] ret-329)
                                                           )
-                                                          (call %init_peer_id% (-spell_id-arg- "store_log") [ret-325] ret-326)
+                                                          (call %init_peer_id% (-spell_id-arg- "store_log") [ret-329] ret-330)
                                                          )
                                                         )
                                                         (seq
@@ -5412,21 +5504,21 @@
                         (seq
                          (seq
                           (seq
-                           (call %init_peer_id% ("op" "concat_strings") ["removed_state:" joined_deal-3-0_flat] ret-327)
-                           (call %init_peer_id% (-spell_id-arg- "get_string") [ret-327] ret-328)
+                           (call %init_peer_id% ("op" "concat_strings") ["removed_state:" joined_deal-3-0_flat] ret-331)
+                           (call %init_peer_id% (-spell_id-arg- "get_string") [ret-331] ret-332)
                           )
                           (xor
-                           (match ret-328.$.success false
-                            (ap ret-328.$.success and-0)
+                           (match ret-332.$.success false
+                            (ap ret-332.$.success and-0)
                            )
                            (seq
                             (xor
-                             (match ret-328.$.absent true
-                              (ap false not-22)
+                             (match ret-332.$.absent true
+                              (ap false not-23)
                              )
-                             (ap true not-22)
+                             (ap true not-23)
                             )
-                            (ap not-22 and-0)
+                            (ap not-23 and-0)
                            )
                           )
                          )
@@ -5441,35 +5533,35 @@
                                  (seq
                                   (xor
                                    (seq
-                                    (call %init_peer_id% ("json" "parse") [ret-328.$.value] ret-329)
-                                    (ap ret-329 $state-7)
+                                    (call %init_peer_id% ("json" "parse") [ret-332.$.value] ret-333)
+                                    (ap ret-333 $state-7)
                                    )
                                    (seq
                                     (seq
                                      (seq
                                       (seq
                                        (seq
-                                        (new $array-inline-87
+                                        (new $array-inline-88
                                          (seq
                                           (seq
-                                           (ap "failed to parse deal state from json" $array-inline-87)
-                                           (ap :error: $array-inline-87)
+                                           (ap "failed to parse deal state from json" $array-inline-88)
+                                           (ap :error: $array-inline-88)
                                           )
-                                          (canon %init_peer_id% $array-inline-87  #array-inline-87-0)
+                                          (canon %init_peer_id% $array-inline-88  #array-inline-88-0)
                                          )
                                         )
-                                        (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" joined_deal-3-0_flat ": "] ret-330)
+                                        (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" joined_deal-3-0_flat ": "] ret-334)
                                        )
                                        (par
-                                        (call %init_peer_id% ("run-console" "print") [ret-330 #array-inline-87-0])
+                                        (call %init_peer_id% ("run-console" "print") [ret-334 #array-inline-88-0])
                                         (null)
                                        )
                                       )
-                                      (call %init_peer_id% ("json" "stringify") [#array-inline-87-0] ret-331)
+                                      (call %init_peer_id% ("json" "stringify") [#array-inline-88-0] ret-335)
                                      )
-                                     (call %init_peer_id% ("op" "concat_strings") [ret-330 ret-331] ret-332)
+                                     (call %init_peer_id% ("op" "concat_strings") [ret-334 ret-335] ret-336)
                                     )
-                                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-332] ret-333)
+                                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-336] ret-337)
                                    )
                                   )
                                   (canon %init_peer_id% $state-7  #-state-fix-0-0)
@@ -5490,27 +5582,27 @@
                                    (seq
                                     (seq
                                      (seq
-                                      (new $array-inline-88
+                                      (new $array-inline-89
                                        (seq
                                         (seq
-                                         (ap "deal removed state not found:" $array-inline-88)
-                                         (ap ret-328.$.error $array-inline-88)
+                                         (ap "deal removed state not found:" $array-inline-89)
+                                         (ap ret-332.$.error $array-inline-89)
                                         )
-                                        (canon %init_peer_id% $array-inline-88  #array-inline-88-0)
+                                        (canon %init_peer_id% $array-inline-89  #array-inline-89-0)
                                        )
                                       )
-                                      (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" joined_deal-3-0_flat ": "] ret-334)
+                                      (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" joined_deal-3-0_flat ": "] ret-338)
                                      )
                                      (par
-                                      (call %init_peer_id% ("run-console" "print") [ret-334 #array-inline-88-0])
+                                      (call %init_peer_id% ("run-console" "print") [ret-338 #array-inline-89-0])
                                       (null)
                                      )
                                     )
-                                    (call %init_peer_id% ("json" "stringify") [#array-inline-88-0] ret-335)
+                                    (call %init_peer_id% ("json" "stringify") [#array-inline-89-0] ret-339)
                                    )
-                                   (call %init_peer_id% ("op" "concat_strings") [ret-334 ret-335] ret-336)
+                                   (call %init_peer_id% ("op" "concat_strings") [ret-338 ret-339] ret-340)
                                   )
-                                  (call %init_peer_id% (-spell_id-arg- "store_log") [ret-336] ret-337)
+                                  (call %init_peer_id% (-spell_id-arg- "store_log") [ret-340] ret-341)
                                  )
                                  (ap [] $state-6)
                                 )
@@ -5604,7 +5696,7 @@
                         (seq
                          (seq
                           (seq
-                           (new $array-inline-89
+                           (new $array-inline-90
                             (seq
                              (seq
                               (seq
@@ -5613,106 +5705,106 @@
                                  (canon %init_peer_id% $reqs  #reqs_to_functor)
                                  (ap #reqs_to_functor.length reqs_length)
                                 )
-                                (ap "find if deals are removed from the provider for" $array-inline-89)
+                                (ap "find if deals are removed from the provider for" $array-inline-90)
                                )
-                               (ap reqs_length $array-inline-89)
+                               (ap reqs_length $array-inline-90)
                               )
-                              (ap "deals" $array-inline-89)
+                              (ap "deals" $array-inline-90)
                              )
-                             (canon %init_peer_id% $array-inline-89  #array-inline-89-0)
+                             (canon %init_peer_id% $array-inline-90  #array-inline-90-0)
                             )
                            )
                            (par
-                            (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-89-0])
+                            (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-90-0])
                             (null)
                            )
                           )
-                          (call %init_peer_id% ("json" "stringify") [#array-inline-89-0] ret-338)
+                          (call %init_peer_id% ("json" "stringify") [#array-inline-90-0] ret-342)
                          )
-                         (call %init_peer_id% (-spell_id-arg- "store_log") [ret-338] ret-339)
+                         (call %init_peer_id% (-spell_id-arg- "store_log") [ret-342] ret-343)
                         )
                         (canon %init_peer_id% $reqs  #reqs_canon-0)
                        )
-                       (call %init_peer_id% ("chain_connector" "poll_deal_peer_removed_batch") [-chain-arg-.$.api_endpoint #reqs_canon-0] ret-340)
+                       (call %init_peer_id% ("chain_connector" "poll_deal_peer_removed_batch") [-chain-arg-.$.api_endpoint #reqs_canon-0] ret-344)
                       )
                       (xor
-                       (match ret-340.$.success true
-                        (ap false not-23)
+                       (match ret-344.$.success true
+                        (ap false not-24)
                        )
-                       (ap true not-23)
+                       (ap true not-24)
                       )
                      )
                      (new -if-else-error-
                       (new -else-error-
                        (new -if-error-
                         (xor
-                         (match not-23 true
+                         (match not-24 true
                           (seq
                            (seq
                             (seq
-                             (new $array-inline-90
+                             (new $array-inline-91
                               (seq
                                (seq
-                                (ap "can't find if deals are removed from provider:" $array-inline-90)
-                                (ap ret-340.$.error $array-inline-90)
+                                (ap "can't find if deals are removed from provider:" $array-inline-91)
+                                (ap ret-344.$.error $array-inline-91)
                                )
-                               (canon %init_peer_id% $array-inline-90  #array-inline-90-0)
+                               (canon %init_peer_id% $array-inline-91  #array-inline-91-0)
                               )
                              )
                              (par
-                              (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-90-0])
+                              (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-91-0])
                               (null)
                              )
                             )
-                            (call %init_peer_id% ("json" "stringify") [#array-inline-90-0] ret-341)
+                            (call %init_peer_id% ("json" "stringify") [#array-inline-91-0] ret-345)
                            )
-                           (call %init_peer_id% (-spell_id-arg- "store_log") [ret-341] ret-342)
+                           (call %init_peer_id% (-spell_id-arg- "store_log") [ret-345] ret-346)
                           )
                          )
                          (seq
                           (ap :error: -if-error-)
                           (xor
                            (match :error:.$.error_code 10001
-                            (fold ret-340.$.result removed-0
+                            (fold ret-344.$.result removed-0
                              (seq
                               (seq
                                (xor
                                 (match removed-0.$.success true
-                                 (ap false not-24)
+                                 (ap false not-25)
                                 )
-                                (ap true not-24)
+                                (ap true not-25)
                                )
                                (new -if-else-error-
                                 (new -else-error-
                                  (new -if-error-
                                   (xor
-                                   (match not-24 true
+                                   (match not-25 true
                                     (seq
                                      (seq
                                       (seq
                                        (seq
                                         (seq
-                                         (new $array-inline-91
+                                         (new $array-inline-92
                                           (seq
                                            (seq
-                                            (ap "can't find if the deal was removed from provider" $array-inline-91)
-                                            (ap removed-0.$.error $array-inline-91)
+                                            (ap "can't find if the deal was removed from provider" $array-inline-92)
+                                            (ap removed-0.$.error $array-inline-92)
                                            )
-                                           (canon %init_peer_id% $array-inline-91  #array-inline-91-0)
+                                           (canon %init_peer_id% $array-inline-92  #array-inline-92-0)
                                           )
                                          )
-                                         (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-343)
+                                         (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-347)
                                         )
                                         (par
-                                         (call %init_peer_id% ("run-console" "print") [ret-343 #array-inline-91-0])
+                                         (call %init_peer_id% ("run-console" "print") [ret-347 #array-inline-92-0])
                                          (null)
                                         )
                                        )
-                                       (call %init_peer_id% ("json" "stringify") [#array-inline-91-0] ret-344)
+                                       (call %init_peer_id% ("json" "stringify") [#array-inline-92-0] ret-348)
                                       )
-                                      (call %init_peer_id% ("op" "concat_strings") [ret-343 ret-344] ret-345)
+                                      (call %init_peer_id% ("op" "concat_strings") [ret-347 ret-348] ret-349)
                                      )
-                                     (call %init_peer_id% (-spell_id-arg- "store_log") [ret-345] ret-346)
+                                     (call %init_peer_id% (-spell_id-arg- "store_log") [ret-349] ret-350)
                                     )
                                    )
                                    (seq
@@ -5731,81 +5823,81 @@
                                                (seq
                                                 (seq
                                                  (seq
-                                                  (new $array-inline-92
+                                                  (new $array-inline-93
                                                    (seq
-                                                    (ap "the deal is removed from the provider" $array-inline-92)
-                                                    (canon %init_peer_id% $array-inline-92  #array-inline-92-0)
+                                                    (ap "the deal is removed from the provider" $array-inline-93)
+                                                    (canon %init_peer_id% $array-inline-93  #array-inline-93-0)
                                                    )
                                                   )
-                                                  (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-347)
+                                                  (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-351)
                                                  )
                                                  (par
-                                                  (call %init_peer_id% ("run-console" "print") [ret-347 #array-inline-92-0])
+                                                  (call %init_peer_id% ("run-console" "print") [ret-351 #array-inline-93-0])
                                                   (null)
                                                  )
                                                 )
-                                                (call %init_peer_id% ("json" "stringify") [#array-inline-92-0] ret-348)
+                                                (call %init_peer_id% ("json" "stringify") [#array-inline-93-0] ret-352)
                                                )
-                                               (call %init_peer_id% ("op" "concat_strings") [ret-347 ret-348] ret-349)
+                                               (call %init_peer_id% ("op" "concat_strings") [ret-351 ret-352] ret-353)
                                               )
-                                              (call %init_peer_id% (-spell_id-arg- "store_log") [ret-349] ret-350)
+                                              (call %init_peer_id% (-spell_id-arg- "store_log") [ret-353] ret-354)
                                              )
-                                             (call %init_peer_id% ("worker" "get_worker_id") [removed-0.$.deal_id] ret-351)
+                                             (call %init_peer_id% ("worker" "get_worker_id") [removed-0.$.deal_id] ret-355)
                                             )
                                             (new -if-else-error-
                                              (new -else-error-
                                               (new -if-error-
                                                (xor
-                                                (mismatch ret-351 []
+                                                (mismatch ret-355 []
                                                  (seq
                                                   (seq
                                                    (seq
                                                     (seq
                                                      (seq
                                                       (seq
-                                                       (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-352)
+                                                       (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-356)
                                                        (par
-                                                        (call %init_peer_id% ("run-console" "print") [ret-352 "removing the worker and the deal state from kv"])
+                                                        (call %init_peer_id% ("run-console" "print") [ret-356 "removing the worker and the deal state from kv"])
                                                         (null)
                                                        )
                                                       )
-                                                      (call %init_peer_id% ("json" "stringify") ["removing the worker and the deal state from kv"] ret-353)
+                                                      (call %init_peer_id% ("json" "stringify") ["removing the worker and the deal state from kv"] ret-357)
                                                      )
-                                                     (call %init_peer_id% ("op" "concat_strings") [ret-352 ret-353] ret-354)
+                                                     (call %init_peer_id% ("op" "concat_strings") [ret-356 ret-357] ret-358)
                                                     )
-                                                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-354] ret-355)
+                                                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-358] ret-359)
                                                    )
                                                    (xor
-                                                    (call %init_peer_id% ("worker" "remove") [ret-351.$.[0]])
+                                                    (call %init_peer_id% ("worker" "remove") [ret-355.$.[0]])
                                                     (seq
                                                      (seq
                                                       (seq
                                                        (seq
                                                         (seq
-                                                         (new $array-inline-93
+                                                         (new $array-inline-94
                                                           (seq
                                                            (seq
                                                             (seq
-                                                             (ap "couldn't remove a worker" $array-inline-93)
-                                                             (ap ret-351.$.[0] $array-inline-93)
+                                                             (ap "couldn't remove a worker" $array-inline-94)
+                                                             (ap ret-355.$.[0] $array-inline-94)
                                                             )
-                                                            (ap :error: $array-inline-93)
+                                                            (ap :error: $array-inline-94)
                                                            )
-                                                           (canon %init_peer_id% $array-inline-93  #array-inline-93-0)
+                                                           (canon %init_peer_id% $array-inline-94  #array-inline-94-0)
                                                           )
                                                          )
-                                                         (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-356)
+                                                         (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-360)
                                                         )
                                                         (par
-                                                         (call %init_peer_id% ("run-console" "print") [ret-356 #array-inline-93-0])
+                                                         (call %init_peer_id% ("run-console" "print") [ret-360 #array-inline-94-0])
                                                          (null)
                                                         )
                                                        )
-                                                       (call %init_peer_id% ("json" "stringify") [#array-inline-93-0] ret-357)
+                                                       (call %init_peer_id% ("json" "stringify") [#array-inline-94-0] ret-361)
                                                       )
-                                                      (call %init_peer_id% ("op" "concat_strings") [ret-356 ret-357] ret-358)
+                                                      (call %init_peer_id% ("op" "concat_strings") [ret-360 ret-361] ret-362)
                                                      )
-                                                     (call %init_peer_id% (-spell_id-arg- "store_log") [ret-358] ret-359)
+                                                     (call %init_peer_id% (-spell_id-arg- "store_log") [ret-362] ret-363)
                                                     )
                                                    )
                                                   )
@@ -5819,47 +5911,47 @@
                                                          (seq
                                                           (seq
                                                            (ap ("deal_id" removed-0.$.deal_id) %JoinedDeal_obj-2_map)
-                                                           (ap ("worker_id" ret-351.$.[0]) %JoinedDeal_obj-2_map)
+                                                           (ap ("worker_id" ret-355.$.[0]) %JoinedDeal_obj-2_map)
                                                           )
                                                           (canon %init_peer_id% %JoinedDeal_obj-2_map  JoinedDeal_obj-2)
                                                          )
                                                         )
-                                                        (call %init_peer_id% ("json" "stringify") [JoinedDeal_obj-2] ret-360)
+                                                        (call %init_peer_id% ("json" "stringify") [JoinedDeal_obj-2] ret-364)
                                                        )
-                                                       (call %init_peer_id% (-spell_id-arg- "list_remove_string") ["joined_deals" ret-360] ret-361)
+                                                       (call %init_peer_id% (-spell_id-arg- "list_remove_string") ["joined_deals" ret-364] ret-365)
                                                       )
-                                                      (call %init_peer_id% (-spell_id-arg- "remove_key") [removed-0.$.deal_id] ret-362)
+                                                      (call %init_peer_id% (-spell_id-arg- "remove_key") [removed-0.$.deal_id] ret-366)
                                                      )
-                                                     (call %init_peer_id% ("op" "concat_strings") ["removed_state:" removed-0.$.deal_id] ret-363)
+                                                     (call %init_peer_id% ("op" "concat_strings") ["removed_state:" removed-0.$.deal_id] ret-367)
                                                     )
-                                                    (call %init_peer_id% (-spell_id-arg- "remove_key") [ret-363] ret-364)
+                                                    (call %init_peer_id% (-spell_id-arg- "remove_key") [ret-367] ret-368)
                                                    )
                                                    (seq
                                                     (seq
                                                      (seq
                                                       (seq
                                                        (seq
-                                                        (new $array-inline-94
+                                                        (new $array-inline-95
                                                          (seq
                                                           (seq
-                                                           (ap "couldn't remove the deal" $array-inline-94)
-                                                           (ap :error: $array-inline-94)
+                                                           (ap "couldn't remove the deal" $array-inline-95)
+                                                           (ap :error: $array-inline-95)
                                                           )
-                                                          (canon %init_peer_id% $array-inline-94  #array-inline-94-0)
+                                                          (canon %init_peer_id% $array-inline-95  #array-inline-95-0)
                                                          )
                                                         )
-                                                        (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-365)
+                                                        (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-369)
                                                        )
                                                        (par
-                                                        (call %init_peer_id% ("run-console" "print") [ret-365 #array-inline-94-0])
+                                                        (call %init_peer_id% ("run-console" "print") [ret-369 #array-inline-95-0])
                                                         (null)
                                                        )
                                                       )
-                                                      (call %init_peer_id% ("json" "stringify") [#array-inline-94-0] ret-366)
+                                                      (call %init_peer_id% ("json" "stringify") [#array-inline-95-0] ret-370)
                                                      )
-                                                     (call %init_peer_id% ("op" "concat_strings") [ret-365 ret-366] ret-367)
+                                                     (call %init_peer_id% ("op" "concat_strings") [ret-369 ret-370] ret-371)
                                                     )
-                                                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-367] ret-368)
+                                                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-371] ret-372)
                                                    )
                                                   )
                                                  )
@@ -5872,17 +5964,17 @@
                                                     (seq
                                                      (seq
                                                       (seq
-                                                       (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-369)
+                                                       (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" removed-0.$.deal_id ": "] ret-373)
                                                        (par
-                                                        (call %init_peer_id% ("run-console" "print") [ret-369 "deal doesn't have associated worker O.o"])
+                                                        (call %init_peer_id% ("run-console" "print") [ret-373 "deal doesn't have associated worker O.o"])
                                                         (null)
                                                        )
                                                       )
-                                                      (call %init_peer_id% ("json" "stringify") ["deal doesn't have associated worker O.o"] ret-370)
+                                                      (call %init_peer_id% ("json" "stringify") ["deal doesn't have associated worker O.o"] ret-374)
                                                      )
-                                                     (call %init_peer_id% ("op" "concat_strings") [ret-369 ret-370] ret-371)
+                                                     (call %init_peer_id% ("op" "concat_strings") [ret-373 ret-374] ret-375)
                                                     )
-                                                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-371] ret-372)
+                                                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-375] ret-376)
                                                    )
                                                   )
                                                   (seq
@@ -5913,40 +6005,40 @@
                                               (seq
                                                (seq
                                                 (seq
-                                                 (call %init_peer_id% ("chain_connector" "hex_min") [removed-0.$.right_boundary -latest-flat-0.$.[0]] ret-373)
+                                                 (call %init_peer_id% ("chain_connector" "hex_min") [removed-0.$.right_boundary -latest-flat-0.$.[0]] ret-377)
                                                  (xor
-                                                  (match ret-373.$.success true
-                                                   (ap false not-25)
+                                                  (match ret-377.$.success true
+                                                   (ap false not-26)
                                                   )
-                                                  (ap true not-25)
+                                                  (ap true not-26)
                                                  )
                                                 )
                                                 (new -if-error-
                                                  (xor
-                                                  (match not-25 true
+                                                  (match not-26 true
                                                    (seq
                                                     (seq
                                                      (seq
-                                                      (new $array-inline-95
+                                                      (new $array-inline-96
                                                        (seq
                                                         (seq
                                                          (seq
-                                                          (ap "hex_min failed" $array-inline-95)
-                                                          (ap removed-0.$.right_boundary $array-inline-95)
+                                                          (ap "hex_min failed" $array-inline-96)
+                                                          (ap removed-0.$.right_boundary $array-inline-96)
                                                          )
-                                                         (ap -latest-flat-0.$.[0] $array-inline-95)
+                                                         (ap -latest-flat-0.$.[0] $array-inline-96)
                                                         )
-                                                        (canon %init_peer_id% $array-inline-95  #array-inline-95-0)
+                                                        (canon %init_peer_id% $array-inline-96  #array-inline-96-0)
                                                        )
                                                       )
                                                       (par
-                                                       (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-95-0])
+                                                       (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-96-0])
                                                        (null)
                                                       )
                                                      )
-                                                     (call %init_peer_id% ("json" "stringify") [#array-inline-95-0] ret-374)
+                                                     (call %init_peer_id% ("json" "stringify") [#array-inline-96-0] ret-378)
                                                     )
-                                                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-374] ret-375)
+                                                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-378] ret-379)
                                                    )
                                                   )
                                                   (seq
@@ -5961,49 +6053,49 @@
                                                  )
                                                 )
                                                )
-                                               (ap ret-373.$.hex ret-373_flat)
+                                               (ap ret-377.$.hex ret-377_flat)
                                               )
                                               (new -if-error-
                                                (xor
-                                                (mismatch ret-373_flat []
+                                                (mismatch ret-377_flat []
                                                  (seq
                                                   (seq
                                                    (seq
                                                     (seq
-                                                     (call %init_peer_id% ("chain_connector" "hex_add") [ret-373_flat.$.[0] 1] ret-376)
+                                                     (call %init_peer_id% ("chain_connector" "hex_add") [ret-377_flat.$.[0] 1] ret-380)
                                                      (xor
-                                                      (match ret-376.$.success true
-                                                       (ap false not-26)
+                                                      (match ret-380.$.success true
+                                                       (ap false not-27)
                                                       )
-                                                      (ap true not-26)
+                                                      (ap true not-27)
                                                      )
                                                     )
                                                     (new -if-error-
                                                      (xor
-                                                      (match not-26 true
+                                                      (match not-27 true
                                                        (seq
                                                         (seq
                                                          (seq
-                                                          (new $array-inline-96
+                                                          (new $array-inline-97
                                                            (seq
                                                             (seq
                                                              (seq
-                                                              (ap "hex_add failed" $array-inline-96)
-                                                              (ap ret-373_flat.$.[0] $array-inline-96)
+                                                              (ap "hex_add failed" $array-inline-97)
+                                                              (ap ret-377_flat.$.[0] $array-inline-97)
                                                              )
-                                                             (ap 1 $array-inline-96)
+                                                             (ap 1 $array-inline-97)
                                                             )
-                                                            (canon %init_peer_id% $array-inline-96  #array-inline-96-0)
+                                                            (canon %init_peer_id% $array-inline-97  #array-inline-97-0)
                                                            )
                                                           )
                                                           (par
-                                                           (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-96-0])
+                                                           (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-97-0])
                                                            (null)
                                                           )
                                                          )
-                                                         (call %init_peer_id% ("json" "stringify") [#array-inline-96-0] ret-377)
+                                                         (call %init_peer_id% ("json" "stringify") [#array-inline-97-0] ret-381)
                                                         )
-                                                        (call %init_peer_id% (-spell_id-arg- "store_log") [ret-377] ret-378)
+                                                        (call %init_peer_id% (-spell_id-arg- "store_log") [ret-381] ret-382)
                                                        )
                                                       )
                                                       (seq
@@ -6018,25 +6110,25 @@
                                                      )
                                                     )
                                                    )
-                                                   (ap ret-376.$.hex ret-376_flat)
+                                                   (ap ret-380.$.hex ret-380_flat)
                                                   )
                                                   (new -if-error-
                                                    (xor
-                                                    (mismatch ret-376_flat []
+                                                    (mismatch ret-380_flat []
                                                      (seq
                                                       (seq
                                                        (seq
                                                         (new %DealState_obj-3_map
                                                          (seq
-                                                          (ap ("left_boundary" ret-376_flat.$.[0]) %DealState_obj-3_map)
+                                                          (ap ("left_boundary" ret-380_flat.$.[0]) %DealState_obj-3_map)
                                                           (canon %init_peer_id% %DealState_obj-3_map  DealState_obj-3)
                                                          )
                                                         )
-                                                        (call %init_peer_id% ("json" "stringify") [DealState_obj-3] ret-379)
+                                                        (call %init_peer_id% ("json" "stringify") [DealState_obj-3] ret-383)
                                                        )
-                                                       (call %init_peer_id% ("op" "concat_strings") ["removed_state:" removed-0.$.deal_id] ret-380)
+                                                       (call %init_peer_id% ("op" "concat_strings") ["removed_state:" removed-0.$.deal_id] ret-384)
                                                       )
-                                                      (call %init_peer_id% (-spell_id-arg- "set_string") [ret-380 ret-379] ret-381)
+                                                      (call %init_peer_id% (-spell_id-arg- "set_string") [ret-384 ret-383] ret-385)
                                                      )
                                                     )
                                                     (seq
@@ -6170,45 +6262,45 @@
                    (seq
                     (seq
                      (seq
-                      (call %init_peer_id% (-spell_id-arg- "list_get_strings") ["worker_registration_txs"] ret-382)
-                      (call %init_peer_id% (-spell_id-arg- "list_get_strings") ["worker_registration_txs_statuses"] ret-383)
+                      (call %init_peer_id% (-spell_id-arg- "list_get_strings") ["worker_registration_txs"] ret-386)
+                      (call %init_peer_id% (-spell_id-arg- "list_get_strings") ["worker_registration_txs_statuses"] ret-387)
                      )
-                     (fold ret-383.$.value status_str-0
+                     (fold ret-387.$.value status_str-0
                       (seq
                        (xor
                         (seq
                          (seq
-                          (call %init_peer_id% ("json" "parse") [status_str-0] ret-384)
-                          (call %init_peer_id% ("json" "stringify") [ret-384.$.tx_info] ret-385)
+                          (call %init_peer_id% ("json" "parse") [status_str-0] ret-388)
+                          (call %init_peer_id% ("json" "stringify") [ret-388.$.tx_info] ret-389)
                          )
-                         (ap ret-385 $known_txs)
+                         (ap ret-389 $known_txs)
                         )
                         (seq
                          (seq
                           (seq
-                           (new $array-inline-97
+                           (new $array-inline-98
                             (seq
                              (seq
                               (seq
                                (seq
-                                (ap "can't parse worker tx status:" $array-inline-97)
-                                (ap status_str-0 $array-inline-97)
+                                (ap "can't parse worker tx status:" $array-inline-98)
+                                (ap status_str-0 $array-inline-98)
                                )
-                               (ap "error:" $array-inline-97)
+                               (ap "error:" $array-inline-98)
                               )
-                              (ap :error: $array-inline-97)
+                              (ap :error: $array-inline-98)
                              )
-                             (canon %init_peer_id% $array-inline-97  #array-inline-97-0)
+                             (canon %init_peer_id% $array-inline-98  #array-inline-98-0)
                             )
                            )
                            (par
-                            (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-97-0])
+                            (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-98-0])
                             (null)
                            )
                           )
-                          (call %init_peer_id% ("json" "stringify") [#array-inline-97-0] ret-386)
+                          (call %init_peer_id% ("json" "stringify") [#array-inline-98-0] ret-390)
                          )
-                         (call %init_peer_id% (-spell_id-arg- "store_log") [ret-386] ret-387)
+                         (call %init_peer_id% (-spell_id-arg- "store_log") [ret-390] ret-391)
                         )
                        )
                        (next status_str-0)
@@ -6218,41 +6310,41 @@
                     )
                     (canon %init_peer_id% $known_txs  #known_txs_canon)
                    )
-                   (call %init_peer_id% ("array" "diff") [ret-382.$.value #known_txs_canon] ret-388)
+                   (call %init_peer_id% ("array" "diff") [ret-386.$.value #known_txs_canon] ret-392)
                   )
-                  (fold ret-388 tx-0
+                  (fold ret-392 tx-0
                    (seq
                     (xor
                      (seq
-                      (call %init_peer_id% ("json" "parse") [tx-0] ret-389)
-                      (ap ret-389 $unknown_txs)
+                      (call %init_peer_id% ("json" "parse") [tx-0] ret-393)
+                      (ap ret-393 $unknown_txs)
                      )
                      (seq
                       (seq
                        (seq
-                        (new $array-inline-98
+                        (new $array-inline-99
                          (seq
                           (seq
                            (seq
                             (seq
-                             (ap "can't parse worker tx info:" $array-inline-98)
-                             (ap tx-0 $array-inline-98)
+                             (ap "can't parse worker tx info:" $array-inline-99)
+                             (ap tx-0 $array-inline-99)
                             )
-                            (ap "error:" $array-inline-98)
+                            (ap "error:" $array-inline-99)
                            )
-                           (ap :error: $array-inline-98)
+                           (ap :error: $array-inline-99)
                           )
-                          (canon %init_peer_id% $array-inline-98  #array-inline-98-0)
+                          (canon %init_peer_id% $array-inline-99  #array-inline-99-0)
                          )
                         )
                         (par
-                         (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-98-0])
+                         (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-99-0])
                          (null)
                         )
                        )
-                       (call %init_peer_id% ("json" "stringify") [#array-inline-98-0] ret-390)
+                       (call %init_peer_id% ("json" "stringify") [#array-inline-99-0] ret-394)
                       )
-                      (call %init_peer_id% (-spell_id-arg- "store_log") [ret-390] ret-391)
+                      (call %init_peer_id% (-spell_id-arg- "store_log") [ret-394] ret-395)
                      )
                     )
                     (next tx-0)
@@ -6279,7 +6371,7 @@
                  (seq
                   (seq
                    (seq
-                    (new $array-inline-99
+                    (new $array-inline-100
                      (seq
                       (seq
                        (seq
@@ -6288,113 +6380,113 @@
                           (ap -unknown_txs-flat-0 -unknown_txs-flat-0_to_functor-0)
                           (ap -unknown_txs-flat-0_to_functor-0.length -unknown_txs-flat-0_length-0)
                          )
-                         (ap "tracking txs for" $array-inline-99)
+                         (ap "tracking txs for" $array-inline-100)
                         )
-                        (ap -unknown_txs-flat-0_length-0 $array-inline-99)
+                        (ap -unknown_txs-flat-0_length-0 $array-inline-100)
                        )
-                       (ap "deals" $array-inline-99)
+                       (ap "deals" $array-inline-100)
                       )
-                      (canon %init_peer_id% $array-inline-99  #array-inline-99-0)
+                      (canon %init_peer_id% $array-inline-100  #array-inline-100-0)
                      )
                     )
                     (par
-                     (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-99-0])
+                     (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-100-0])
                      (null)
                     )
                    )
-                   (call %init_peer_id% ("json" "stringify") [#array-inline-99-0] ret-392)
+                   (call %init_peer_id% ("json" "stringify") [#array-inline-100-0] ret-396)
                   )
-                  (call %init_peer_id% (-spell_id-arg- "store_log") [ret-392] ret-393)
+                  (call %init_peer_id% (-spell_id-arg- "store_log") [ret-396] ret-397)
                  )
-                 (call %init_peer_id% ("chain_connector" "get_tx_statuses") [-chain-arg-.$.api_endpoint -unknown_txs-flat-0] ret-394)
+                 (call %init_peer_id% ("chain_connector" "get_tx_statuses") [-chain-arg-.$.api_endpoint -unknown_txs-flat-0] ret-398)
                 )
                 (xor
-                 (match ret-394.$.success true
-                  (ap false not-27)
+                 (match ret-398.$.success true
+                  (ap false not-28)
                  )
-                 (ap true not-27)
+                 (ap true not-28)
                 )
                )
                (new -if-else-error-
                 (new -else-error-
                  (new -if-error-
                   (xor
-                   (match not-27 true
+                   (match not-28 true
                     (seq
                      (seq
                       (seq
-                       (new $array-inline-100
+                       (new $array-inline-101
                         (seq
                          (seq
-                          (ap "couldn't make batch jsonrpc request:" $array-inline-100)
-                          (ap ret-394.$.error $array-inline-100)
+                          (ap "couldn't make batch jsonrpc request:" $array-inline-101)
+                          (ap ret-398.$.error $array-inline-101)
                          )
-                         (canon %init_peer_id% $array-inline-100  #array-inline-100-0)
+                         (canon %init_peer_id% $array-inline-101  #array-inline-101-0)
                         )
                        )
                        (par
-                        (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-100-0])
+                        (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-101-0])
                         (null)
                        )
                       )
-                      (call %init_peer_id% ("json" "stringify") [#array-inline-100-0] ret-395)
+                      (call %init_peer_id% ("json" "stringify") [#array-inline-101-0] ret-399)
                      )
-                     (call %init_peer_id% (-spell_id-arg- "store_log") [ret-395] ret-396)
+                     (call %init_peer_id% (-spell_id-arg- "store_log") [ret-399] ret-400)
                     )
                    )
                    (seq
                     (ap :error: -if-error-)
                     (xor
                      (match :error:.$.error_code 10001
-                      (fold ret-394.$.results status-1
+                      (fold ret-398.$.results status-1
                        (seq
                         (seq
                          (xor
                           (match status-1.$.success true
-                           (ap false not-28)
+                           (ap false not-29)
                           )
-                          (ap true not-28)
+                          (ap true not-29)
                          )
                          (new -if-else-error-
                           (new -else-error-
                            (new -if-error-
                             (xor
-                             (match not-28 true
+                             (match not-29 true
                               (seq
                                (seq
                                 (seq
                                  (seq
                                   (seq
-                                   (new $array-inline-101
+                                   (new $array-inline-102
                                     (seq
                                      (seq
                                       (seq
                                        (seq
                                         (seq
-                                         (ap "couldn't find tx status:" $array-inline-101)
-                                         (ap "tx_hash:" $array-inline-101)
+                                         (ap "couldn't find tx status:" $array-inline-102)
+                                         (ap "tx_hash:" $array-inline-102)
                                         )
-                                        (ap status-1.$.tx.tx_hash $array-inline-101)
+                                        (ap status-1.$.tx.tx_hash $array-inline-102)
                                        )
-                                       (ap "error:" $array-inline-101)
+                                       (ap "error:" $array-inline-102)
                                       )
-                                      (ap status-1.$.error $array-inline-101)
+                                      (ap status-1.$.error $array-inline-102)
                                      )
-                                     (canon %init_peer_id% $array-inline-101  #array-inline-101-0)
+                                     (canon %init_peer_id% $array-inline-102  #array-inline-102-0)
                                     )
                                    )
-                                   (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" status-1.$.tx.deal_id ": "] ret-397)
+                                   (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" status-1.$.tx.deal_id ": "] ret-401)
                                   )
                                   (par
-                                   (call %init_peer_id% ("run-console" "print") [ret-397 #array-inline-101-0])
+                                   (call %init_peer_id% ("run-console" "print") [ret-401 #array-inline-102-0])
                                    (null)
                                   )
                                  )
-                                 (call %init_peer_id% ("json" "stringify") [#array-inline-101-0] ret-398)
+                                 (call %init_peer_id% ("json" "stringify") [#array-inline-102-0] ret-402)
                                 )
-                                (call %init_peer_id% ("op" "concat_strings") [ret-397 ret-398] ret-399)
+                                (call %init_peer_id% ("op" "concat_strings") [ret-401 ret-402] ret-403)
                                )
-                               (call %init_peer_id% (-spell_id-arg- "store_log") [ret-399] ret-400)
+                               (call %init_peer_id% (-spell_id-arg- "store_log") [ret-403] ret-404)
                               )
                              )
                              (seq
@@ -6418,46 +6510,46 @@
                                           (canon %init_peer_id% %WorkerTxStatus_obj_map  WorkerTxStatus_obj)
                                          )
                                         )
-                                        (call %init_peer_id% ("json" "stringify") [WorkerTxStatus_obj] ret-401)
+                                        (call %init_peer_id% ("json" "stringify") [WorkerTxStatus_obj] ret-405)
                                        )
-                                       (call %init_peer_id% (-spell_id-arg- "list_push_string") ["worker_registration_txs_statuses" ret-401] ret-402)
+                                       (call %init_peer_id% (-spell_id-arg- "list_push_string") ["worker_registration_txs_statuses" ret-405] ret-406)
                                       )
                                       (xor
-                                       (match ret-402.$.success true
-                                        (ap false not-29)
+                                       (match ret-406.$.success true
+                                        (ap false not-30)
                                        )
-                                       (ap true not-29)
+                                       (ap true not-30)
                                       )
                                      )
                                      (new -if-error-
                                       (xor
-                                       (match not-29 true
+                                       (match not-30 true
                                         (seq
                                          (seq
                                           (seq
-                                           (new $array-inline-102
+                                           (new $array-inline-103
                                             (seq
                                              (seq
                                               (seq
                                                (seq
-                                                (ap "can't store value in list by key" $array-inline-102)
-                                                (ap "worker_registration_txs_statuses" $array-inline-102)
+                                                (ap "can't store value in list by key" $array-inline-103)
+                                                (ap "worker_registration_txs_statuses" $array-inline-103)
                                                )
-                                               (ap "error:" $array-inline-102)
+                                               (ap "error:" $array-inline-103)
                                               )
-                                              (ap ret-402.$.error $array-inline-102)
+                                              (ap ret-406.$.error $array-inline-103)
                                              )
-                                             (canon %init_peer_id% $array-inline-102  #array-inline-102-0)
+                                             (canon %init_peer_id% $array-inline-103  #array-inline-103-0)
                                             )
                                            )
                                            (par
-                                            (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-102-0])
+                                            (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-103-0])
                                             (null)
                                            )
                                           )
-                                          (call %init_peer_id% ("json" "stringify") [#array-inline-102-0] ret-403)
+                                          (call %init_peer_id% ("json" "stringify") [#array-inline-103-0] ret-407)
                                          )
-                                         (call %init_peer_id% (-spell_id-arg- "store_log") [ret-403] ret-404)
+                                         (call %init_peer_id% (-spell_id-arg- "store_log") [ret-407] ret-408)
                                         )
                                        )
                                        (seq
@@ -6530,46 +6622,46 @@
                                                    )
                                                   )
                                                  )
-                                                 (call %init_peer_id% ("json" "stringify") [FailedDeal_obj-1] ret-405)
+                                                 (call %init_peer_id% ("json" "stringify") [FailedDeal_obj-1] ret-409)
                                                 )
-                                                (call %init_peer_id% (-spell_id-arg- "list_push_string") ["failed_deals" ret-405] ret-406)
+                                                (call %init_peer_id% (-spell_id-arg- "list_push_string") ["failed_deals" ret-409] ret-410)
                                                )
                                                (xor
-                                                (match ret-406.$.success true
-                                                 (ap false not-30)
+                                                (match ret-410.$.success true
+                                                 (ap false not-31)
                                                 )
-                                                (ap true not-30)
+                                                (ap true not-31)
                                                )
                                               )
                                               (new -if-error-
                                                (xor
-                                                (match not-30 true
+                                                (match not-31 true
                                                  (seq
                                                   (seq
                                                    (seq
-                                                    (new $array-inline-103
+                                                    (new $array-inline-104
                                                      (seq
                                                       (seq
                                                        (seq
                                                         (seq
-                                                         (ap "can't store value in list by key" $array-inline-103)
-                                                         (ap "failed_deals" $array-inline-103)
+                                                         (ap "can't store value in list by key" $array-inline-104)
+                                                         (ap "failed_deals" $array-inline-104)
                                                         )
-                                                        (ap "error:" $array-inline-103)
+                                                        (ap "error:" $array-inline-104)
                                                        )
-                                                       (ap ret-406.$.error $array-inline-103)
+                                                       (ap ret-410.$.error $array-inline-104)
                                                       )
-                                                      (canon %init_peer_id% $array-inline-103  #array-inline-103-0)
+                                                      (canon %init_peer_id% $array-inline-104  #array-inline-104-0)
                                                      )
                                                     )
                                                     (par
-                                                     (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-103-0])
+                                                     (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-104-0])
                                                      (null)
                                                     )
                                                    )
-                                                   (call %init_peer_id% ("json" "stringify") [#array-inline-103-0] ret-407)
+                                                   (call %init_peer_id% ("json" "stringify") [#array-inline-104-0] ret-411)
                                                   )
-                                                  (call %init_peer_id% (-spell_id-arg- "store_log") [ret-407] ret-408)
+                                                  (call %init_peer_id% (-spell_id-arg- "store_log") [ret-411] ret-412)
                                                  )
                                                 )
                                                 (seq
@@ -6584,34 +6676,34 @@
                                                )
                                               )
                                              )
-                                             (new $array-inline-104
+                                             (new $array-inline-105
                                               (seq
                                                (seq
                                                 (seq
                                                  (seq
-                                                  (ap "transaction failed, tx_hash:" $array-inline-104)
-                                                  (ap status-1.$.tx.tx_hash $array-inline-104)
+                                                  (ap "transaction failed, tx_hash:" $array-inline-105)
+                                                  (ap status-1.$.tx.tx_hash $array-inline-105)
                                                  )
-                                                 (ap "block_number:" $array-inline-104)
+                                                 (ap "block_number:" $array-inline-105)
                                                 )
-                                                (ap status-1.$.block_number $array-inline-104)
+                                                (ap status-1.$.block_number $array-inline-105)
                                                )
-                                               (canon %init_peer_id% $array-inline-104  #array-inline-104-0)
+                                               (canon %init_peer_id% $array-inline-105  #array-inline-105-0)
                                               )
                                              )
                                             )
-                                            (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" status-1.$.tx.deal_id ": "] ret-409)
+                                            (call %init_peer_id% ("op" "concat_strings") ["decider deal_id=" status-1.$.tx.deal_id ": "] ret-413)
                                            )
                                            (par
-                                            (call %init_peer_id% ("run-console" "print") [ret-409 #array-inline-104-0])
+                                            (call %init_peer_id% ("run-console" "print") [ret-413 #array-inline-105-0])
                                             (null)
                                            )
                                           )
-                                          (call %init_peer_id% ("json" "stringify") [#array-inline-104-0] ret-410)
+                                          (call %init_peer_id% ("json" "stringify") [#array-inline-105-0] ret-414)
                                          )
-                                         (call %init_peer_id% ("op" "concat_strings") [ret-409 ret-410] ret-411)
+                                         (call %init_peer_id% ("op" "concat_strings") [ret-413 ret-414] ret-415)
                                         )
-                                        (call %init_peer_id% (-spell_id-arg- "store_log") [ret-411] ret-412)
+                                        (call %init_peer_id% (-spell_id-arg- "store_log") [ret-415] ret-416)
                                        )
                                       )
                                       (seq
@@ -6700,47 +6792,47 @@
         )
         (xor
          (seq
-          (new $result-16
+          (new $result-17
            (seq
             (seq
              (seq
               (seq
-               (call %init_peer_id% (-spell_id-arg- "get_string") ["last_seen_block"] ret-413)
+               (call %init_peer_id% (-spell_id-arg- "get_string") ["last_seen_block"] ret-417)
                (xor
-                (match ret-413.$.success true
-                 (ap false not-31)
+                (match ret-417.$.success true
+                 (ap false not-32)
                 )
-                (ap true not-31)
+                (ap true not-32)
                )
               )
               (new -if-else-error-
                (new -else-error-
                 (new -if-error-
                  (xor
-                  (match not-31 true
+                  (match not-32 true
                    (seq
                     (seq
                      (seq
-                      (new $array-inline-105
+                      (new $array-inline-106
                        (seq
                         (seq
                          (seq
-                          (ap "get_string failed" $array-inline-105)
-                          (ap "last_seen_block" $array-inline-105)
+                          (ap "get_string failed" $array-inline-106)
+                          (ap "last_seen_block" $array-inline-106)
                          )
-                         (ap ret-413.$.error $array-inline-105)
+                         (ap ret-417.$.error $array-inline-106)
                         )
-                        (canon %init_peer_id% $array-inline-105  #array-inline-105-0)
+                        (canon %init_peer_id% $array-inline-106  #array-inline-106-0)
                        )
                       )
                       (par
-                       (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-105-0])
+                       (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-106-0])
                        (null)
                       )
                      )
-                     (call %init_peer_id% ("json" "stringify") [#array-inline-105-0] ret-414)
+                     (call %init_peer_id% ("json" "stringify") [#array-inline-106-0] ret-418)
                     )
-                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-414] ret-415)
+                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-418] ret-419)
                    )
                   )
                   (seq
@@ -6749,15 +6841,15 @@
                     (match :error:.$.error_code 10001
                      (seq
                       (xor
-                       (match ret-413.$.absent true
-                        (ap false not-32)
+                       (match ret-417.$.absent true
+                        (ap false not-33)
                        )
-                       (ap true not-32)
+                       (ap true not-33)
                       )
                       (new -if-error-
                        (xor
-                        (match not-32 true
-                         (ap ret-413.$.value $result-16)
+                        (match not-33 true
+                         (ap ret-417.$.value $result-17)
                         )
                         (seq
                          (ap :error: -if-error-)
@@ -6791,7 +6883,7 @@
                )
               )
              )
-             (canon %init_peer_id% $result-16  #-result-fix-0-4)
+             (canon %init_peer_id% $result-17  #-result-fix-0-4)
             )
             (ap #-result-fix-0-4 -result-flat-0-4)
            )
@@ -6805,23 +6897,23 @@
                 (seq
                  (seq
                   (seq
-                   (call %init_peer_id% ("chain_connector" "hex_diff") [-result-flat-0-4.$.[0] -latest-flat-0.$.[0]] ret-416)
-                   (new $result-17
+                   (call %init_peer_id% ("chain_connector" "hex_diff") [-result-flat-0-4.$.[0] -latest-flat-0.$.[0]] ret-420)
+                   (new $result-18
                     (seq
                      (seq
-                      (call %init_peer_id% (-spell_id-arg- "get_u32") ["counter"] ret-417)
+                      (call %init_peer_id% (-spell_id-arg- "get_u32") ["hw_counter"] ret-421)
                       (new -if-else-error-
                        (new -else-error-
                         (new -if-error-
                          (xor
-                          (match ret-417.$.success true
-                           (ap ret-417.$.value $result-17)
+                          (match ret-421.$.success true
+                           (ap ret-421.$.value $result-18)
                           )
                           (seq
                            (ap :error: -if-error-)
                            (xor
                             (match :error:.$.error_code 10001
-                             (ap 0 $result-17)
+                             (ap 0 $result-18)
                             )
                             (seq
                              (seq
@@ -6842,27 +6934,27 @@
                        )
                       )
                      )
-                     (new $result-17_test
+                     (new $result-18_test
                       (seq
                        (seq
-                        (fold $result-17 result-17_fold_var
+                        (fold $result-18 result-18_fold_var
                          (seq
                           (seq
-                           (ap result-17_fold_var $result-17_test)
-                           (canon %init_peer_id% $result-17_test  #result-17_iter_canon)
+                           (ap result-18_fold_var $result-18_test)
+                           (canon %init_peer_id% $result-18_test  #result-18_iter_canon)
                           )
                           (xor
-                           (match #result-17_iter_canon.length 1
+                           (match #result-18_iter_canon.length 1
                             (null)
                            )
-                           (next result-17_fold_var)
+                           (next result-18_fold_var)
                           )
                          )
                          (never)
                         )
-                        (canon %init_peer_id% $result-17_test  #result-17_result_canon)
+                        (canon %init_peer_id% $result-18_test  #result-18_result_canon)
                        )
-                       (ap #result-17_result_canon result-17_gate)
+                       (ap #result-18_result_canon result-18_gate)
                       )
                      )
                     )
@@ -6871,53 +6963,53 @@
                   (new %SyncInfo_obj_map
                    (seq
                     (seq
-                     (ap ("blocks_diff" ret-416) %SyncInfo_obj_map)
-                     (ap ("run_updated" result-17_gate.$.[0]) %SyncInfo_obj_map)
+                     (ap ("blocks_diff" ret-420) %SyncInfo_obj_map)
+                     (ap ("run_updated" result-18_gate.$.[0]) %SyncInfo_obj_map)
                     )
                     (canon %init_peer_id% %SyncInfo_obj_map  SyncInfo_obj)
                    )
                   )
                  )
-                 (call %init_peer_id% ("json" "stringify") [SyncInfo_obj] ret-418)
+                 (call %init_peer_id% ("json" "stringify") [SyncInfo_obj] ret-422)
                 )
-                (call %init_peer_id% (-spell_id-arg- "set_string") ["sync_info" ret-418] ret-419)
+                (call %init_peer_id% (-spell_id-arg- "set_string") ["sync_info" ret-422] ret-423)
                )
                (xor
-                (match ret-419.$.success true
-                 (ap false not-33)
+                (match ret-423.$.success true
+                 (ap false not-34)
                 )
-                (ap true not-33)
+                (ap true not-34)
                )
               )
               (new -if-error-
                (xor
-                (match not-33 true
+                (match not-34 true
                  (seq
                   (seq
                    (seq
-                    (new $array-inline-106
+                    (new $array-inline-107
                      (seq
                       (seq
                        (seq
                         (seq
-                         (ap "can't updated sync state" $array-inline-106)
-                         (ap SyncInfo_obj $array-inline-106)
+                         (ap "can't updated sync state" $array-inline-107)
+                         (ap SyncInfo_obj $array-inline-107)
                         )
-                        (ap "error" $array-inline-106)
+                        (ap "error" $array-inline-107)
                        )
-                       (ap ret-419.$.error $array-inline-106)
+                       (ap ret-423.$.error $array-inline-107)
                       )
-                      (canon %init_peer_id% $array-inline-106  #array-inline-106-0)
+                      (canon %init_peer_id% $array-inline-107  #array-inline-107-0)
                      )
                     )
                     (par
-                     (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-106-0])
+                     (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-107-0])
                      (null)
                     )
                    )
-                   (call %init_peer_id% ("json" "stringify") [#array-inline-106-0] ret-420)
+                   (call %init_peer_id% ("json" "stringify") [#array-inline-107-0] ret-424)
                   )
-                  (call %init_peer_id% (-spell_id-arg- "store_log") [ret-420] ret-421)
+                  (call %init_peer_id% (-spell_id-arg- "store_log") [ret-424] ret-425)
                  )
                 )
                 (seq
@@ -6954,30 +7046,30 @@
           (seq
            (seq
             (seq
-             (call %init_peer_id% (-spell_id-arg- "get_mailbox") [] ret-422)
-             (new $array-inline-107
+             (call %init_peer_id% (-spell_id-arg- "get_mailbox") [] ret-426)
+             (new $array-inline-108
               (seq
                (seq
-                (ap "mailbox" $array-inline-107)
-                (ap ret-422 $array-inline-107)
+                (ap "mailbox" $array-inline-108)
+                (ap ret-426 $array-inline-108)
                )
-               (canon %init_peer_id% $array-inline-107  #array-inline-107-0)
+               (canon %init_peer_id% $array-inline-108  #array-inline-108-0)
               )
              )
             )
             (par
-             (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-107-0])
+             (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-108-0])
              (null)
             )
            )
-           (call %init_peer_id% ("json" "stringify") [#array-inline-107-0] ret-423)
+           (call %init_peer_id% ("json" "stringify") [#array-inline-108-0] ret-427)
           )
-          (call %init_peer_id% (-spell_id-arg- "store_log") [ret-423] ret-424)
+          (call %init_peer_id% (-spell_id-arg- "store_log") [ret-427] ret-428)
          )
          (new -if-error-
           (xor
-           (match ret-422.$.success true
-            (fold ret-422.$.messages msg-233-0
+           (match ret-426.$.success true
+            (fold ret-426.$.messages msg-235-0
              (seq
               (xor
                (seq
@@ -6991,36 +7083,36 @@
                        (seq
                         (seq
                          (seq
-                          (call %init_peer_id% ("json" "parse") [msg-233-0.$.message] ret-425)
+                          (call %init_peer_id% ("json" "parse") [msg-235-0.$.message] ret-429)
                           (new -if-error-
                            (xor
-                            (mismatch ret-425.$.remove []
+                            (mismatch ret-429.$.remove []
                              (seq
                               (seq
                                (seq
                                 (seq
-                                 (ap ret-425.$.remove ret-425_flat)
-                                 (new $array-inline-108
+                                 (ap ret-429.$.remove ret-429_flat)
+                                 (new $array-inline-109
                                   (seq
                                    (seq
                                     (seq
-                                     (ap "called remove worker via mailbox" $array-inline-108)
-                                     (ap ret-425_flat.$.[0].host_id $array-inline-108)
+                                     (ap "called remove worker via mailbox" $array-inline-109)
+                                     (ap ret-429_flat.$.[0].host_id $array-inline-109)
                                     )
-                                    (ap ret-425_flat.$.[0].worker_id $array-inline-108)
+                                    (ap ret-429_flat.$.[0].worker_id $array-inline-109)
                                    )
-                                   (canon %init_peer_id% $array-inline-108  #array-inline-108-0)
+                                   (canon %init_peer_id% $array-inline-109  #array-inline-109-0)
                                   )
                                  )
                                 )
                                 (par
-                                 (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-108-0])
+                                 (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-109-0])
                                  (null)
                                 )
                                )
-                               (call %init_peer_id% ("json" "stringify") [#array-inline-108-0] ret-426)
+                               (call %init_peer_id% ("json" "stringify") [#array-inline-109-0] ret-430)
                               )
-                              (call %init_peer_id% ("decider" "store_log") [ret-426] ret-427)
+                              (call %init_peer_id% ("decider" "store_log") [ret-430] ret-431)
                              )
                             )
                             (seq
@@ -7040,20 +7132,20 @@
                           (null)
                          )
                         )
-                        (call %init_peer_id% ("json" "stringify") ["will pop"] ret-428)
+                        (call %init_peer_id% ("json" "stringify") ["will pop"] ret-432)
                        )
-                       (call %init_peer_id% (-spell_id-arg- "store_log") [ret-428] ret-429)
+                       (call %init_peer_id% (-spell_id-arg- "store_log") [ret-432] ret-433)
                       )
-                      (call %init_peer_id% (-spell_id-arg- "pop_mailbox") [] ret-430)
+                      (call %init_peer_id% (-spell_id-arg- "pop_mailbox") [] ret-434)
                      )
-                     (ap ret-430.$.message ret-430_flat)
+                     (ap ret-434.$.message ret-434_flat)
                     )
-                    (ap ret-430_flat ret-430_flat_to_functor)
+                    (ap ret-434_flat ret-434_flat_to_functor)
                    )
-                   (ap ret-430_flat_to_functor.length ret-430_flat_length)
+                   (ap ret-434_flat_to_functor.length ret-434_flat_length)
                   )
                   (xor
-                   (match ret-430_flat_length 0
+                   (match ret-434_flat_length 0
                     (ap true eq)
                    )
                    (ap false eq)
@@ -7065,7 +7157,7 @@
                   )
                   (seq
                    (xor
-                    (mismatch ret-430.$.message.[0].message msg-233-0.$.message
+                    (mismatch ret-434.$.message.[0].message msg-235-0.$.message
                      (ap true neq)
                     )
                     (ap false neq)
@@ -7080,29 +7172,29 @@
                    (seq
                     (seq
                      (seq
-                      (new $array-inline-109
+                      (new $array-inline-110
                        (seq
                         (seq
                          (seq
                           (seq
-                           (ap "broken invariant, expected" $array-inline-109)
-                           (ap msg-233-0 $array-inline-109)
+                           (ap "broken invariant, expected" $array-inline-110)
+                           (ap msg-235-0 $array-inline-110)
                           )
-                          (ap "popped" $array-inline-109)
+                          (ap "popped" $array-inline-110)
                          )
-                         (ap ret-430 $array-inline-109)
+                         (ap ret-434 $array-inline-110)
                         )
-                        (canon %init_peer_id% $array-inline-109  #array-inline-109-0)
+                        (canon %init_peer_id% $array-inline-110  #array-inline-110-0)
                        )
                       )
                       (par
-                       (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-109-0])
+                       (call %init_peer_id% ("run-console" "print") ["decider" #array-inline-110-0])
                        (null)
                       )
                      )
-                     (call %init_peer_id% ("json" "stringify") [#array-inline-109-0] ret-431)
+                     (call %init_peer_id% ("json" "stringify") [#array-inline-110-0] ret-435)
                     )
-                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-431] ret-432)
+                    (call %init_peer_id% (-spell_id-arg- "store_log") [ret-435] ret-436)
                    )
                   )
                   (seq
@@ -7119,7 +7211,7 @@
                )
                (null)
               )
-              (next msg-233-0)
+              (next msg-235-0)
              )
              (null)
             )
