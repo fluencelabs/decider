@@ -7,10 +7,10 @@ use utils::test_rpc_server::run_test_server;
 
 use crate::utils::default::DEFAULT_POLL_WINDOW_BLOCK_SIZE;
 use connected_client::ConnectedClient;
-use created_swarm::make_swarms_with_cfg;
-use eyre::WrapErr;
 use created_swarm::fluence_app_service::TomlMarineConfig;
 use created_swarm::fluence_spell_dtos::trigger_config::TriggerConfig;
+use created_swarm::make_swarms_with_cfg;
+use eyre::WrapErr;
 use maplit::hashmap;
 use serde_json::{json, Value};
 use utils::chain::LogsReq;
@@ -116,7 +116,7 @@ async fn test_left_boundary_idle() {
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
     // To be able to wait 'til the end of one cycle
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
 
     let block_numbers = vec!["0x0", "0x10", "0x10", "0xffffff"];
     // last_seen = from_block + DEFAULT_BLOCK_RANGE
@@ -165,7 +165,7 @@ async fn test_sync_info() {
     let distro = make_distro_with_api(url);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
         rpc_block_number!(server, LATEST_BLOCK_FIRST_RUN);

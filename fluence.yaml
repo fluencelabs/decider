@@ -29,8 +29,8 @@ deployments:
 
 aquaDependencies:
   "@fluencelabs/aqua-ipfs": 0.5.31
-  "@fluencelabs/installation-spell": 0.7.3
-  "@fluencelabs/spell": 0.7.3
+  "@fluencelabs/installation-spell": 0.7.4
+  "@fluencelabs/spell": 0.7.4
   "@fluencelabs/aqua-lib": 0.10.1
   "@fluencelabs/registry": 0.9.4
 

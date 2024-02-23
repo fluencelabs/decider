@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "@fluencelabs/aqua-ipfs": "0.5.30",
-    "@fluencelabs/installation-spell": "0.7.1",
-    "@fluencelabs/spell": "0.7.1",
+    "@fluencelabs/aqua-ipfs": "0.5.31",
+    "@fluencelabs/installation-spell": "0.7.2",
+    "@fluencelabs/spell": "0.7.4",
     "@fluencelabs/aqua-lib": "0.10.1",
     "@fluencelabs/registry": "0.9.4"
   }
