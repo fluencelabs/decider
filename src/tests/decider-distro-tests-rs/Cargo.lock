@@ -1837,6 +1837,8 @@ dependencies = [
 [[package]]
 name = "decider-distro"
 version = "0.6.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03a8de76f4a45b6c3199a96f81ea6e6cb84fa814b2dd3dbed2cdf5583b3f53ab"
 dependencies = [
  "built 0.7.1",
  "fluence-spell-dtos",
@@ -1846,9 +1848,7 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.6.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "03a8de76f4a45b6c3199a96f81ea6e6cb84fa814b2dd3dbed2cdf5583b3f53ab"
+version = "0.6.8"
 dependencies = [
  "built 0.7.1",
  "fluence-spell-dtos",
@@ -1863,7 +1863,7 @@ dependencies = [
  "clarity",
  "connected-client",
  "created-swarm",
- "decider-distro 0.6.7",
+ "decider-distro 0.6.8",
  "eyre",
  "hyper 0.14.27",
  "log-utils",
@@ -7579,7 +7579,7 @@ version = "0.1.0"
 source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "aqua-ipfs-distro",
- "decider-distro 0.6.7 (registry+https://github.com/rust-lang/crates.io-index)",
+ "decider-distro 0.6.7",
  "eyre",
  "fluence-app-service",
  "fluence-spell-dtos",
