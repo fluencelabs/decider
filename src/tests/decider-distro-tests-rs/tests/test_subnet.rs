@@ -61,7 +61,7 @@ async fn test_register_worker_fails() {
         // - Deal 2: 1 * (getBlockByNumber + estimateGas + maxPriorityFeePerGas + getTransactionCount + sendRawTransaction + getTransactionReceipt)
         // - Deal 3: 1 * (getBlockByNumber + estimateGas + maxPriorityFeePerGas + getTransactionCount + sendRawTransaction)
         // - 1 + eth_call
-        for step in 0..18 {
+        for step in 0..19 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 // step 0
@@ -159,8 +159,8 @@ async fn test_transaction_tracking() {
     // Return NULL for getTransactionReceipt to simulate pending transaction
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
-        // Reqs: blockNumber, getLogs and 3x of gasPrice, estimateGas, getTransactionCount, sendRawTransaction, getTransactionReceipt, eth_call
-        for _step in 0..20 {
+        // Reqs: blockNumber, getLogs and 3x of getBlockByNumber, maxPriorityFeePerGas, estimateGas, getTransactionCount, sendRawTransaction, getTransactionReceipt, eth_call
+        for _step in 0..23 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => json!(to_hex(LATEST_BLOCK)),
@@ -179,7 +179,8 @@ async fn test_transaction_tracking() {
                     json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
                 }
                 "eth_getTransactionCount" => json!("0x1"),
-                "eth_gasPrice" => json!("0x3b9aca07"),
+                "eth_getBlockByNumber" => json!({"baseFeePerGas": "0x3b9aca07"}),
+                "eth_maxPriorityFeePerGas" => json!("0x3b9aca07"),
                 "eth_estimateGas" => json!("0x3b9aca07"),
                 "eth_getTransactionReceipt" => serde_json::Value::Null,
                 "eth_call" => json!(DEAL_STATUS_ACTIVE),
