@@ -87,7 +87,7 @@ dependencies = [
 [[package]]
 name = "air-interpreter-fs"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "air-interpreter-wasm",
  "eyre",
@@ -241,7 +241,7 @@ dependencies = [
 [[package]]
 name = "aquamarine"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -808,6 +808,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "bnum"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "29ed1ec45f6ef6e8d1125cc2c2fec8f8fe7d4fa5b262f15885fdccb9e26f0f15"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "bs58"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -974,6 +983,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "ccp-rpc-client"
+version = "0.1.0"
+source = "git+https://github.com/fluencelabs/capacity-commitment-prover/?branch=main#5de05462da4444f7fd3633fecaecd82c854a1618"
+dependencies = [
+ "ccp-shared",
+ "hex",
+ "jsonrpsee",
+ "serde",
+]
+
+[[package]]
 name = "ccp-shared"
 version = "0.1.0"
 source = "git+https://github.com/fluencelabs/capacity-commitment-prover/?branch=main#5de05462da4444f7fd3633fecaecd82c854a1618"
@@ -1016,11 +1036,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "chain-connector"
+version = "0.1.0"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
+dependencies = [
+ "ccp-shared",
+ "chain-data",
+ "chain-types",
+ "clarity",
+ "ethabi",
+ "eyre",
+ "fluence-libp2p",
+ "futures",
+ "hex",
+ "hex-utils",
+ "jsonrpsee",
+ "particle-args",
+ "particle-builtins",
+ "particle-execution",
+ "serde_json",
+ "server-config",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
 name = "chain-data"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "ethabi",
+ "eyre",
  "hex",
  "hex-utils",
  "libp2p-identity",
@@ -1032,13 +1078,20 @@ dependencies = [
 [[package]]
 name = "chain-listener"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
+ "ccp-rpc-client",
+ "ccp-shared",
+ "chain-connector",
  "chain-data",
+ "chain-types",
+ "core-manager",
+ "cpu-utils",
  "ethabi",
  "eyre",
  "fluence-libp2p",
  "fs-utils",
+ "futures",
  "hex",
  "hex-utils",
  "jsonrpsee",
@@ -1051,8 +1104,22 @@ dependencies = [
  "tempfile",
  "thiserror",
  "tokio",
+ "tokio-stream",
  "tracing",
  "types",
+]
+
+[[package]]
+name = "chain-types"
+version = "0.1.0"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
+dependencies = [
+ "ccp-shared",
+ "chain-data",
+ "ethabi",
+ "eyre",
+ "hex",
+ "serde",
 ]
 
 [[package]]
@@ -1098,7 +1165,7 @@ dependencies = [
 [[package]]
 name = "cid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "base64 0.21.7",
  "bytes",
@@ -1176,6 +1243,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "702fc72eb24e5a1e48ce58027a675bc24edd52096d5397d4aea7c6dd9eca0bd1"
 
 [[package]]
+name = "clarity"
+version = "1.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "273c656822c0367587c0fc6ae5a0bf6e19a10d700cd49168a084975b7f84dcfe"
+dependencies = [
+ "num-traits",
+ "num256",
+ "secp256k1",
+ "serde",
+ "serde_derive",
+ "sha3",
+]
+
+[[package]]
 name = "colorchoice"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1222,7 +1303,7 @@ dependencies = [
 [[package]]
 name = "config-utils"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "libp2p-identity",
 ]
@@ -1230,7 +1311,7 @@ dependencies = [
 [[package]]
 name = "connected-client"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "derivative",
  "either",
@@ -1256,7 +1337,7 @@ dependencies = [
 [[package]]
 name = "connection-pool"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "fluence-libp2p",
  "futures",
@@ -1325,7 +1406,7 @@ checksum = "f7144d30dcf0fafbce74250a3963025d8d52177934239851c917d29f1df280c2"
 [[package]]
 name = "control-macro"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 
 [[package]]
 name = "core-foundation"
@@ -1346,7 +1427,7 @@ checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 [[package]]
 name = "core-manager"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "async-trait",
  "bimap",
@@ -1541,7 +1622,7 @@ dependencies = [
 [[package]]
 name = "created-swarm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "air-interpreter-fs",
  "aquamarine",
@@ -1755,7 +1836,7 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.6.6"
+version = "0.6.7"
 dependencies = [
  "built 0.7.1",
  "fluence-spell-dtos",
@@ -1765,9 +1846,9 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.6.6"
+version = "0.6.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6fc977928aedc97953c9bd41627dd498c7cfd06e63b55b62464be45f6299287e"
+checksum = "03a8de76f4a45b6c3199a96f81ea6e6cb84fa814b2dd3dbed2cdf5583b3f53ab"
 dependencies = [
  "built 0.7.1",
  "fluence-spell-dtos",
@@ -1779,9 +1860,10 @@ dependencies = [
 name = "decider-distro-tests-rs"
 version = "0.1.0"
 dependencies = [
+ "clarity",
  "connected-client",
  "created-swarm",
- "decider-distro 0.6.6",
+ "decider-distro 0.6.7",
  "eyre",
  "hyper 0.14.27",
  "log-utils",
@@ -2241,7 +2323,7 @@ dependencies = [
 [[package]]
 name = "fluence-libp2p"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "base64 0.21.7",
  "bs58",
@@ -2326,7 +2408,7 @@ dependencies = [
 [[package]]
 name = "fs-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "eyre",
  "futures-util",
@@ -2472,6 +2554,10 @@ name = "futures-timer"
 version = "3.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e64b03909df88034c26dc1547e8970b91f98bdb65165d6a4e9110d94263dbb2c"
+dependencies = [
+ "gloo-timers",
+ "send_wrapper",
+]
 
 [[package]]
 name = "futures-util"
@@ -2579,6 +2665,52 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d2fabcfbdc87f4758337ca535fb41a6d701b65693ce38287d856d1674551ec9b"
 
 [[package]]
+name = "gloo-net"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "43aaa242d1239a8822c15c645f02166398da4f8b5c4bae795c1f5b44e9eee173"
+dependencies = [
+ "futures-channel",
+ "futures-core",
+ "futures-sink",
+ "gloo-utils",
+ "http 0.2.11",
+ "js-sys",
+ "pin-project",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
+name = "gloo-timers"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9b995a66bb87bebce9a0f4a95aed01daca4872c050bfcb21653361c03bc35e5c"
+dependencies = [
+ "futures-channel",
+ "futures-core",
+ "js-sys",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "gloo-utils"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b5555354113b18c547c1d3a98fbf7fb32a9ff4f6fa112ce823a21641a0ba3aa"
+dependencies = [
+ "js-sys",
+ "serde",
+ "serde_json",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "h2"
 version = "0.3.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2660,7 +2792,7 @@ dependencies = [
 [[package]]
 name = "health"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "eyre",
 ]
@@ -2704,7 +2836,7 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 [[package]]
 name = "hex-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "hex",
 ]
@@ -3357,7 +3489,7 @@ dependencies = [
 [[package]]
 name = "ivalue-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "fluence-it-types",
  "serde_json",
@@ -3384,7 +3516,7 @@ dependencies = [
 [[package]]
 name = "json-utils"
 version = "0.0.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "base64 0.21.7",
  "itertools 0.12.1",
@@ -3409,11 +3541,13 @@ version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9579d0ca9fb30da026bac2f0f7d9576ec93489aeb7cd4971dd5b4617d82c79b2"
 dependencies = [
+ "jsonrpsee-client-transport",
  "jsonrpsee-core",
  "jsonrpsee-http-client",
  "jsonrpsee-proc-macros",
  "jsonrpsee-server",
  "jsonrpsee-types",
+ "jsonrpsee-wasm-client",
  "jsonrpsee-ws-client",
  "tokio",
  "tracing",
@@ -3425,7 +3559,9 @@ version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f9f9ed46590a8d5681975f126e22531698211b926129a40a2db47cbca429220"
 dependencies = [
+ "futures-channel",
  "futures-util",
+ "gloo-net",
  "http 0.2.11",
  "jsonrpsee-core",
  "pin-project",
@@ -3438,6 +3574,7 @@ dependencies = [
  "tokio-util",
  "tracing",
  "url",
+ "webpki-roots 0.26.1",
 ]
 
 [[package]]
@@ -3464,6 +3601,7 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tracing",
+ "wasm-bindgen-futures",
 ]
 
 [[package]]
@@ -3537,6 +3675,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "jsonrpsee-wasm-client"
+version = "0.21.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "30f36d27503d0efc0355c1630b74ecfb367050847bf7241a0ed75fab6dfa96c0"
+dependencies = [
+ "jsonrpsee-client-transport",
+ "jsonrpsee-core",
+ "jsonrpsee-types",
+]
+
+[[package]]
 name = "jsonrpsee-ws-client"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3552,7 +3701,7 @@ dependencies = [
 [[package]]
 name = "kademlia"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "bs58",
  "control-macro",
@@ -4100,7 +4249,7 @@ dependencies = [
  "soketto",
  "tracing",
  "url",
- "webpki-roots",
+ "webpki-roots 0.25.3",
 ]
 
 [[package]]
@@ -4192,7 +4341,7 @@ checksum = "c4cd1a83af159aa67994778be9070f0ae1bd732942279cabb14f86f986a21456"
 [[package]]
 name = "local-vm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -4236,7 +4385,7 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 [[package]]
 name = "log-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "console-subscriber",
  "log",
@@ -5190,12 +5339,12 @@ checksum = "995defdca0a589acfdd1bd2e8e3b896b4d4f7675a31fd14c32611440c7f608e6"
 [[package]]
 name = "now-millis"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 
 [[package]]
 name = "nox"
 version = "0.20.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -5203,6 +5352,7 @@ dependencies = [
  "avm-server",
  "axum 0.7.4",
  "base64 0.21.7",
+ "chain-connector",
  "chain-listener",
  "config",
  "config-utils",
@@ -5217,6 +5367,7 @@ dependencies = [
  "health",
  "humantime-serde",
  "itertools 0.12.1",
+ "jsonrpsee",
  "kademlia",
  "libp2p",
  "libp2p-connection-limits",
@@ -5289,6 +5440,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39e3200413f237f41ab11ad6d161bc7239c84dcb631773ccd7de3dfe4b5c267c"
 dependencies = [
  "autocfg",
+]
+
+[[package]]
+name = "num256"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "27dd9df2c73f8724f4f6930882c127f042656bc84e6000fe9f6026bb43fe1a57"
+dependencies = [
+ "bnum",
+ "num-traits",
+ "serde",
 ]
 
 [[package]]
@@ -5574,7 +5736,7 @@ dependencies = [
 [[package]]
 name = "particle-args"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "avm-server",
  "bs58",
@@ -5590,7 +5752,7 @@ dependencies = [
 [[package]]
 name = "particle-builtins"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "async-trait",
  "avm-server",
@@ -5637,7 +5799,7 @@ dependencies = [
 [[package]]
 name = "particle-execution"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "async-trait",
  "bs58",
@@ -5659,7 +5821,7 @@ dependencies = [
 [[package]]
 name = "particle-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "base64 0.21.7",
  "bytesize",
@@ -5686,7 +5848,7 @@ dependencies = [
 [[package]]
 name = "particle-protocol"
 version = "0.3.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "air-interpreter-sede",
  "asynchronous-codec 0.7.0",
@@ -5715,7 +5877,7 @@ dependencies = [
 [[package]]
 name = "particle-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "derivative",
  "eyre",
@@ -5775,7 +5937,7 @@ dependencies = [
 [[package]]
 name = "peer-metrics"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "bytesize",
  "fluence-app-service",
@@ -6752,6 +6914,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "secp256k1"
+version = "0.28.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d24b59d129cdadea20aea4fb2352fa053712e5d713eee47d700cd4b2bc002f10"
+dependencies = [
+ "secp256k1-sys",
+]
+
+[[package]]
+name = "secp256k1-sys"
+version = "0.9.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e5d1746aae42c19d583c3c1a8c646bfad910498e2051c551a7f2e3c0c9fbb7eb"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "security-framework"
 version = "2.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6788,6 +6968,12 @@ checksum = "836fa6a3e1e547f9a2c4040802ec865b5d85f4014efe00555d7090a3dcaa1090"
 dependencies = [
  "serde",
 ]
+
+[[package]]
+name = "send_wrapper"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f638d531eccd6e23b980caf34876660d38e265409d8e99b397ab71eb3612fad0"
 
 [[package]]
 name = "serde"
@@ -6922,13 +7108,14 @@ dependencies = [
 [[package]]
 name = "server-config"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "air-interpreter-fs",
  "base64 0.21.7",
  "bs58",
  "bytesize",
  "clap 4.4.18",
+ "clarity",
  "config",
  "config-utils",
  "core-manager",
@@ -6956,7 +7143,7 @@ dependencies = [
 [[package]]
 name = "service-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "cid-utils",
  "eyre",
@@ -7134,7 +7321,7 @@ dependencies = [
 [[package]]
 name = "sorcerer"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "aquamarine",
  "connection-pool",
@@ -7173,7 +7360,7 @@ dependencies = [
 [[package]]
 name = "spell-event-bus"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "connection-pool",
  "derivative",
@@ -7202,7 +7389,7 @@ dependencies = [
 [[package]]
 name = "spell-service-api"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "fluence-libp2p",
  "fluence-spell-dtos",
@@ -7217,7 +7404,7 @@ dependencies = [
 [[package]]
 name = "spell-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "derivative",
  "eyre",
@@ -7288,7 +7475,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 [[package]]
 name = "subnet-resolver"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "chain-data",
  "ethabi",
@@ -7389,10 +7576,10 @@ dependencies = [
 [[package]]
 name = "system-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "aqua-ipfs-distro",
- "decider-distro 0.6.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "decider-distro 0.6.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "eyre",
  "fluence-app-service",
  "fluence-spell-dtos",
@@ -7459,7 +7646,7 @@ dependencies = [
 [[package]]
 name = "test-constants"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 
 [[package]]
 name = "textwrap"
@@ -7677,7 +7864,7 @@ dependencies = [
 [[package]]
 name = "toml-utils"
 version = "0.0.1"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "toml 0.5.11",
 ]
@@ -7805,7 +7992,7 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "toy-vms"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "aquamarine",
  "avm-server",
@@ -7938,7 +8125,7 @@ checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 [[package]]
 name = "types"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "libp2p-identity",
  "serde",
@@ -8088,7 +8275,7 @@ dependencies = [
 [[package]]
 name = "uuid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "uuid",
 ]
@@ -8789,6 +8976,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1778a42e8b3b90bff8d0f5032bf22250792889a5cdc752aa0020c84abe3aaf10"
 
 [[package]]
+name = "webpki-roots"
+version = "0.26.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b3de34ae270483955a94f4b21bdaaeb83d508bb84a01435f393818edb0012009"
+dependencies = [
+ "rustls-pki-types",
+]
+
+[[package]]
 name = "widestring"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -9096,7 +9292,7 @@ dependencies = [
 [[package]]
 name = "workers"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#b023edd207bf17563598125244c97e17212e8bb5"
 dependencies = [
  "core-manager",
  "derivative",

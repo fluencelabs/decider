@@ -64,6 +64,6 @@ pub fn parse_chain_data(data: &str, signature: &[ParamType]) -> Result<Vec<Token
     if data.is_empty() {
         return Err(ChainDataError::Empty);
     }
-    let data = decode_hex(&data).map_err(DecodeHex)?;
+    let data = decode_hex(data).map_err(DecodeHex)?;
     Ok(ethabi::decode(signature, &data)?)
 }

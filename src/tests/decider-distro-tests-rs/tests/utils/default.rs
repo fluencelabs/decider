@@ -13,6 +13,11 @@ pub const DEAL_IDS: &[&'static str] = &[
 
 pub const IPFS_MULTIADDR: &str = "/ip4/127.0.0.1/tcp/5001";
 
+/// Wallet Private Key to pass to Nox in tests
+pub const WALLET_KEY: &str = "0xfdc4ba94809c7930fe4676b7d845cbf8fa5c1beae8744d959530e5073004cf3f";
+
+pub const NETWORK_ID: u64 = 11;
+
 pub fn default_receipt() -> Value {
     json!({"status" : "0x1", "blockNumber": "0x300"})
 }

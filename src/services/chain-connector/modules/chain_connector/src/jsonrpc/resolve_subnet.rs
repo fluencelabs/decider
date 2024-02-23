@@ -93,7 +93,7 @@ fn decode_compute_units(data: String) -> Result<Vec<JoinedWorker>, ResolveSubnet
         let peer_id = parse_peer_id(peer_id).map_err(|e| InvalidPeerId(e, "compute_peer_id"))?;
         let worker_id = next_opt(&mut tuple, "compute_worker_id", Token::into_fixed_bytes)?;
         // if all bytes are 0, then worker_id is considered empty
-        let all_zeros = worker_id.iter().find(|b| **b != 0).is_none();
+        let all_zeros = worker_id.iter().all(|b| *b == 0);
         let worker_id = if all_zeros {
             vec![]
         } else {

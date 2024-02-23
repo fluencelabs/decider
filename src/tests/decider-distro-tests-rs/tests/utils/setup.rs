@@ -1,12 +1,16 @@
 use crate::utils::chain::LogsReq;
-use crate::utils::default::{default_receipt, default_status, DEAL_STATUS_ACTIVE, IPFS_MULTIADDR};
+use crate::utils::default::{
+    default_receipt, default_status, DEAL_STATUS_ACTIVE, IPFS_MULTIADDR, NETWORK_ID, WALLET_KEY,
+};
 use crate::utils::test_rpc_server::ServerHandle;
 use crate::utils::*;
+use clarity::PrivateKey;
 use connected_client::ConnectedClient;
 use created_swarm::system_services::PackageDistro;
 use created_swarm::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
-use created_swarm::{make_swarms_with_cfg, CreatedSwarm};
+use created_swarm::{make_swarms_with_cfg, ChainConfig, CreatedSwarm};
 use serde_json::json;
+use std::str::FromStr;
 
 pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
     let mut config = AquaIpfsConfig::default();
@@ -37,6 +41,16 @@ pub async fn setup_swarm(distro: PackageDistro, peers: usize) -> Vec<CreatedSwar
         // to make worker spell oneshot
         config.decider.worker_period_sec = 0;
         cfg.override_system_services_config = Some(config);
+
+        let chain_info = distro.spells[0].kv["chain"].as_object().unwrap();
+        cfg.chain_config = Some(ChainConfig {
+            http_endpoint: chain_info["api_endpoint"].as_str().unwrap().to_string(),
+            core_contract_address: "".to_string(),
+            cc_contract_address: "".to_string(),
+            market_contract_address: chain_info["market"].as_str().unwrap().to_string(),
+            network_id: NETWORK_ID,
+            wallet_key: PrivateKey::from_str(WALLET_KEY).unwrap(),
+        });
         cfg
     })
     .await;
@@ -71,7 +85,11 @@ pub async fn setup_rpc_deploy_deals(
     latest_block: u32,
     deals: Vec<(&str, u32)>,
 ) -> Option<()> {
-    let expected_reqs = 2 + 5 * deals.len();
+    // Expected calls:
+    // - 1 eth_blockNumber
+    // - 1 eth_getLogs
+    // - (1 eth_getBlockByNumber, 1 eth_maxPriorityFeePerGas, 1 eth_estimateGas, 1 eth_getTransactionCount, 1 eth_sendRawTransaction, 1 eth_getTransactionReceipt, 1 eth_call) * deals number
+    let expected_reqs = 2 + 7 * deals.len();
     for _ in 0..expected_reqs {
         let (method, params) = server.receive_request().await?;
         let response = match method.as_str() {
@@ -90,7 +108,9 @@ pub async fn setup_rpc_deploy_deals(
                 json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
             }
             "eth_getTransactionCount" => json!("0x1"),
-            "eth_gasPrice" => json!("0x3b9aca07"),
+            "eth_getBlockByNumber" => json!({"baseFeePerGas": "0x3b9aca07"}),
+            "eth_maxPriorityFeePerGas" => json!("0x3b9aca07"),
+            "eth_estimateGas" => json!("0x3b9aca07"),
             "eth_getTransactionReceipt" => default_receipt(),
             "eth_call" => default_status(),
             _ => panic!("mock http got an unexpected rpc method: {}", method),
@@ -139,7 +159,9 @@ Expected RPC calls:
 eth_blockNumber
 eth_getLogs (for new deals) -> new_deals
     for new_deal in new_deals {
-        eth_gasPrice
+        eth_getBlockByNumber
+        eth_estimateGas
+        eth_maxPriorityFeePerGas
         eth_getTransactionCount
         eth_sendRawTransaction
         eth_getTransactionReceipt

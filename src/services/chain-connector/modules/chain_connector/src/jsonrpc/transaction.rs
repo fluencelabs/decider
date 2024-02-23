@@ -6,6 +6,7 @@ use crate::jsonrpc::JsonRpcResp;
 use crate::jsonrpc::JSON_RPC_VERSION;
 use marine_rs_sdk::marine;
 use serde::{Deserialize, Serialize};
+use std::fmt::Display;
 use thiserror::Error;
 
 #[marine]
@@ -58,13 +59,17 @@ enum TxStatus {
     Pending,
 }
 
-impl TxStatus {
-    fn to_string(self) -> String {
-        match self {
-            TxStatus::Failed => "failed".to_string(),
-            TxStatus::Ok => "ok".to_string(),
-            TxStatus::Pending => "pending".to_string(),
-        }
+impl Display for TxStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                TxStatus::Failed => "failed".to_string(),
+                TxStatus::Ok => "ok".to_string(),
+                TxStatus::Pending => "pending".to_string(),
+            }
+        )
     }
 }
 
@@ -87,12 +92,13 @@ struct TxResp {
 
 #[derive(Serialize, Deserialize)]
 struct TxReq(String);
+
 impl TxReq {
     pub fn new(tx_hash: String) -> Self {
         Self(tx_hash)
     }
 
-    pub fn to_jsonrpc(self, id: u32) -> JsonRpcReq<Self> {
+    pub fn into_jsonrpc(self, id: u32) -> JsonRpcReq<Self> {
         JsonRpcReq {
             jsonrpc: JSON_RPC_VERSION.to_string(),
             id,
@@ -107,7 +113,7 @@ pub fn get_tx_statuses(api_endpoint: String, txs: Vec<WorkerTxInfo>) -> TxStatus
     let req_batch = txs
         .iter()
         .enumerate()
-        .map(|(idx, tx)| TxReq::new(tx.tx_hash.clone()).to_jsonrpc(idx as u32))
+        .map(|(idx, tx)| TxReq::new(tx.tx_hash.clone()).into_jsonrpc(idx as u32))
         .collect::<Vec<_>>();
 
     let result: Result<Vec<JsonRpcResp<Option<TxResp>>>, _> =

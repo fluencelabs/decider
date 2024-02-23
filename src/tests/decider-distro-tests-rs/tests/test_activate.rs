@@ -39,7 +39,7 @@ async fn test_activate() {
     update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
 
-    let expected_reqs = 7;
+    let expected_reqs = 9;
     for _ in 0..expected_reqs {
         let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
@@ -56,7 +56,9 @@ async fn test_activate() {
                 json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
             }
             "eth_getTransactionCount" => json!("0x1"),
-            "eth_gasPrice" => json!("0x3b9aca07"),
+            "eth_getBlockByNumber" => json!({"baseFeePerGas": "0x3b9aca07"}),
+            "eth_maxPriorityFeePerGas" => json!("0x3b9aca07"),
+            "eth_estimateGas" => json!("0x3b9aca07"),
             "eth_getTransactionReceipt" => default_receipt(),
             "eth_call" => {
                 let req = serde_json::from_value::<DealStatusReq>(params[0].clone()).unwrap();

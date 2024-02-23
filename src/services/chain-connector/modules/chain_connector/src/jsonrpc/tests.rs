@@ -36,7 +36,7 @@ fn test_get_logs_request() {
             "0x04157dc3f231c23b7cbecbadb1af08b865aa2e8d6624fe39a72a17279da72278".to_string(),
         ],
     };
-    let jsonrpc_req = req.to_jsonrpc(0);
+    let jsonrpc_req = req.into_jsonrpc(0);
 
     assert_eq!(
         serde_json::to_string(&result).unwrap(),

@@ -62,7 +62,7 @@ pub fn poll_deal_created(
         vec![DealCreatedData::topic()],
     );
     match result {
-        Err(err) => return DealCreatedResult::error(err.to_string()),
+        Err(err) => DealCreatedResult::error(err.to_string()),
         Ok(logs) => {
             let created_deals = parse_logs::<DealCreatedData, DealCreated>(logs);
             DealCreatedResult::ok(created_deals, right_boundary)

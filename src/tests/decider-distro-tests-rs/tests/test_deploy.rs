@@ -69,6 +69,7 @@ async fn test_deploy_a_deal_single() {
     const BLOCK: u32 = 32;
     const LATEST_BLOCK: u32 = 35;
     let server = run_test_server_predefined(async move |method, params| {
+        println!("{}", method.as_str());
         match method.as_str() {
             "eth_blockNumber" => {
                 json!(to_hex(LATEST_BLOCK))
@@ -87,7 +88,9 @@ async fn test_deploy_a_deal_single() {
             }
             "eth_getTransactionCount" => json!("0x1"),
             "eth_getTransactionReceipt" => default_receipt(),
-            "eth_gasPrice" => json!("0x3b9aca07"),
+            "eth_getBlockByNumber" => json!({"baseFeePerGas": "0x3b9aca07"}),
+            "eth_maxPriorityFeePerGas" => json!("0x3b9aca07"),
+            "eth_estimateGas" => json!("0x3b9aca07"),
             "eth_call" => json!(DEAL_STATUS_ACTIVE),
             _ => panic!("mock http got unexpected rpc method: {}", method),
         }
@@ -266,12 +269,13 @@ async fn test_deploy_deals_diff_blocks() {
 
     update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    // Reqs: blockNumber, getLogs, 2x of gasPrice, getTransactionCount and sendRawTransaction, getTransactionReceipt, eth_call
-    let expected_reqs_count = 12;
+    // Reqs: blockNumber, getLogs, 2x of getBlockByNumber, maxPriorityFeePerGas, estimateGas, getTransactionCount and sendRawTransaction, getTransactionReceipt, eth_call
+    let expected_reqs_count = 16;
     {
         let mut register_worker_counter = 0;
         for _ in 0..expected_reqs_count {
             let (method, params) = server.receive_request().await.unwrap();
+            println!("{}", method.as_str());
             let response = match method.as_str() {
                 "eth_blockNumber" => {
                     json!(to_hex(LATEST_BLOCK))
@@ -289,7 +293,9 @@ async fn test_deploy_deals_diff_blocks() {
                     json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
                 }
                 "eth_getTransactionCount" => json!("0x1"),
-                "eth_gasPrice" => json!("0x3b9aca07"),
+                "eth_getBlockByNumber" => json!({"baseFeePerGas": "0x3b9aca07"}),
+                "eth_maxPriorityFeePerGas" => json!("0x3b9aca07"),
+                "eth_estimateGas" => json!("0x3b9aca07"),
                 "eth_getTransactionReceipt" => json!({"status" : "0x1"}),
                 "eth_call" => json!(DEAL_STATUS_ACTIVE),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
@@ -417,8 +423,12 @@ async fn test_deploy_a_deal_in_seq() {
 
     // The second run
     update_config(&mut client, &oneshot_config()).await.unwrap();
-    // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction, getLogs and eth_call for the old deal
-    for step in 0..10 {
+    // Reqs:
+    // - 1 blockNumber
+    // - 1 getLogs
+    // - new deal: (1 getBlockByNumber, 1 maxPriorityFeePerGas, 1 estimateGas, 1 getTransactionCount, 1 sendRawTransaction, 1 getTransactionReceipt, 1 eth_call)
+    // - old deal: (2 getLogs, 1 eth_call)
+    for step in 0..12 {
         let (method, params) = server.receive_request().await.unwrap();
         let response = match method.as_str() {
             "eth_blockNumber" => {
@@ -441,7 +451,9 @@ async fn test_deploy_a_deal_in_seq() {
             }
             "eth_getTransactionCount" => json!("0x1"),
             "eth_getTransactionReceipt" => default_receipt(),
-            "eth_gasPrice" => json!("0x3b9aca07"),
+            "eth_estimateGas" => json!("0x3b9aca07"),
+            "eth_getBlockByNumber" => json!({"baseFeePerGas": "0x3b9aca07"}),
+            "eth_maxPriorityFeePerGas" => json!("0x3b9aca07"),
             "eth_call" => json!(DEAL_STATUS_ACTIVE),
             _ => panic!("mock http got an unexpected rpc method: {}", method),
         };
@@ -552,9 +564,15 @@ async fn test_deploy_deals_in_one_block() {
 
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
-        // Reqs: blockNumber, getLogs, gasPrice, getTransactionCount and sendRawTransaction, getTransactionReceipt
+        // Reqs: blockNumber, getLogs, gasPrice, estimateGas, getTransactionCount and sendRawTransaction, getTransactionReceipt, eth_call
         // and getLogs for the old deal
-        for step in 0..10 {
+        // - 1 blockNumber
+        // - For joined deal:
+        //  -- 2 getLogs
+        //  -- 1 eth_call
+        //  -- 1 getTransactionReceipt
+        // - getBlockByNumber + maxPriorityFeePerGas + getTransactionCount + sendRawTransaction + getTransactionReceipt + eth_call + estimateGas
+        for step in 0..12 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 "eth_blockNumber" => {
@@ -583,7 +601,9 @@ async fn test_deploy_deals_in_one_block() {
                     json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
                 }
                 "eth_getTransactionCount" => json!("0x1"),
-                "eth_gasPrice" => json!("0x3b9aca07"),
+                "eth_getBlockByNumber" => json!({"baseFeePerGas": "0x3b9aca07"}),
+                "eth_maxPriorityFeePerGas" => json!("0x3b9aca07"),
+                "eth_estimateGas" => json!("0x3b9aca07"),
                 "eth_getTransactionReceipt" => default_receipt(),
                 "eth_call" => json!(DEAL_STATUS_ACTIVE),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),

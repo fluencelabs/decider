@@ -2,7 +2,7 @@ aqua RegisterWorker declares register_worker, poll_txs
 
 import DealId, SpellId, WorkerId, PAT from "../types.aqua"
 import spell_log, deal_log, list_push from "../fluence/spell.aqua"
-import ChainConnector, RegisterWorkerResult, WorkerTxInfo from "services.aqua"
+import ChainConnector, EncodeRegisterWorkerResult, WorkerTxInfo from "services.aqua"
 import ChainInfo from "../chain/chain.aqua"
 import Spell, StringListValue from "@fluencelabs/spell/spell_service.aqua"
 import Array from "@fluencelabs/aqua-lib/math.aqua"
@@ -11,6 +11,9 @@ import store_tx_failed_deal from "./deal_storage.aqua"
 import TXS_KEY, TXS_STATUS_KEY from "./consts.aqua"
 
 alias TxHash: string
+
+service Connector("connector"):
+    send_tx(data: []u8, to: string) -> TxHash
 
 service JsonWorkerTxInfo("json"):
     parse(str: string) -> WorkerTxInfo
@@ -57,15 +60,23 @@ func remove_tx_status(spell_id: SpellId, status: WorkerTxStatus):
 --  so we'll load same Chain Events and repeat the whole deployment and registration once again.
 -- Remember to track registration failures though, and retry them
 func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, unit_id: []u8) -> bool:
-    result <- ChainConnector.register_worker(unit_id, worker_id, chain, deal_id)
-    is_ok = result.success
+    result <- ChainConnector.encode_register_worker(unit_id, worker_id)
+    is_ok: *bool
     if result.success:
-        deal_log(spell_id, deal_id, ["registered worker tx_hash", result.tx_hash])
-        store_tx(spell_id, WorkerTxInfo(deal_id = deal_id, tx_hash = result.tx_hash!))
+        try:
+            tx_hash <- Connector.send_tx(result.data, deal_id)
+            deal_log(spell_id, deal_id, ["registered worker tx_hash", tx_hash])
+            store_tx(spell_id, WorkerTxInfo(deal_id = deal_id, tx_hash = tx_hash))
+            is_ok <<- true
+        catch e:
+            deal_log(spell_id, deal_id, ["couldn't send register_worker tx:", e])
+            store_tx_failed_deal(spell_id, deal_id, e.message, nil, nil)
+            is_ok <<- false
     else:
-        deal_log(spell_id, deal_id, ["error registering worker", result.error!])
+        deal_log(spell_id, deal_id, ["error encoding register_worker call", result.error!])
         store_tx_failed_deal(spell_id, deal_id, result.error!, nil, nil)
-    <- is_ok
+        is_ok <<- false
+    <- is_ok!
 
 func txs_unknown(spell_id: SpellId) -> []WorkerTxInfo:
     Spell spell_id
