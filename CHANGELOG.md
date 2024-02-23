@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.7](https://github.com/fluencelabs/decider/compare/connector-v0.6.6...connector-v0.6.7) (2024-02-23)
+
+
+### Bug Fixes
+
+* **config:** introduce persistence config ([#230](https://github.com/fluencelabs/decider/issues/230)) ([7c658d8](https://github.com/fluencelabs/decider/commit/7c658d815d1cee17b163dc0b83ea616fa358d491))
+
 ## [0.6.6](https://github.com/fluencelabs/decider/compare/connector-v0.6.5...connector-v0.6.6) (2024-02-22)
 
 
