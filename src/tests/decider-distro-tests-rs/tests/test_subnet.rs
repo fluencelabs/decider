@@ -44,7 +44,7 @@ async fn test_register_worker_fails() {
     let distro = make_distro_with_api_and_config(url, empty_config);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
     // Initial run for installing the first deal
     update_config(&mut client, &oneshot_config()).await.unwrap();
     {
@@ -154,7 +154,7 @@ async fn test_transaction_tracking() {
     let distro = make_distro_with_api_and_config(url, empty_config);
     let (swarm, mut client) = setup_nox(distro.clone()).await;
 
-    update_decider_script_for_tests(&mut client, swarm.tmp_dir.clone()).await;
+    update_decider_script_for_tests(&mut client, swarm.config.dir_config.persistent_base_dir).await;
     // Initial run for installing the first deal
     // Return NULL for getTransactionReceipt to simulate pending transaction
     update_config(&mut client, &oneshot_config()).await.unwrap();

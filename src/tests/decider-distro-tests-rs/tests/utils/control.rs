@@ -9,9 +9,7 @@ use maplit::hashmap;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::path::PathBuf;
-use std::sync::Arc;
 use std::time::Duration;
-use tempfile::TempDir;
 
 pub async fn update_config(
     client: &mut ConnectedClient,
@@ -30,21 +28,14 @@ pub async fn update_config(
 
 // God left me here
 pub async fn modify_decider_spell_script(
-    tmp_dir: Arc<TempDir>,
+    persistent_base_dir: PathBuf,
     decider_spell_id: String,
     updated_script: String,
 ) {
-    let temp_dir_path = tmp_dir.path();
-    let script_path: PathBuf = temp_dir_path.join(
-        [
-            "services",
-            "workdir",
-            &decider_spell_id,
-            "tmp",
-            "script.air",
-        ]
-        .iter()
-        .collect::<PathBuf>(),
+    let script_path: PathBuf = persistent_base_dir.join(
+        ["services", "workdir", &decider_spell_id, "script.air"]
+            .iter()
+            .collect::<PathBuf>(),
     );
 
     tokio::fs::write(&script_path, updated_script)
@@ -52,7 +43,10 @@ pub async fn modify_decider_spell_script(
         .unwrap();
 }
 
-pub async fn update_decider_script_for_tests(client: &mut ConnectedClient, test_dir: Arc<TempDir>) {
+pub async fn update_decider_script_for_tests(
+    client: &mut ConnectedClient,
+    persistent_base_dir: PathBuf,
+) {
     let result = utils::execute(
         client,
         r#"
@@ -89,7 +83,7 @@ pub async fn update_decider_script_for_tests(client: &mut ConnectedClient, test_
         script = script.value,
     );
 
-    modify_decider_spell_script(test_dir, decider_id, updated_script).await;
+    modify_decider_spell_script(persistent_base_dir, decider_id, updated_script).await;
 }
 
 pub async fn wait_worker_spell_stopped(

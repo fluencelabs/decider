@@ -160,9 +160,10 @@ Expected RPC calls:
 eth_blockNumber
 eth_getLogs (for new deals) -> new_deals
     for new_deal in new_deals {
-        eth_gasPrice
-        eth_getTransactionCount
+        eth_getBlockByNumber
         eth_estimateGas
+        eth_maxPriorityFeePerGas
+        eth_getTransactionCount
         eth_sendRawTransaction
         eth_getTransactionReceipt
         eth_call (getStatus) <--- This call is batched, done after all logs are processed
