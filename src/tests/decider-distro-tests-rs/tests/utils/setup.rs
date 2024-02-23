@@ -89,8 +89,8 @@ pub async fn setup_rpc_deploy_deals(
     // Expected calls:
     // - 1 eth_blockNumber
     // - 1 eth_getLogs
-    // - (1 eth_gasPrice, 1 estimateGas, 1 eth_getTransactionCount, 1 eth_sendRawTransaction, 1 eth_getTransactionReceipt, 1 eth_call) * deals number
-    let expected_reqs = 2 + 6 * deals.len();
+    // - (1 eth_getBlockByNumber, 1 eth_maxPriorityFeePerGas, 1 eth_estimateGas, 1 eth_getTransactionCount, 1 eth_sendRawTransaction, 1 eth_getTransactionReceipt, 1 eth_call) * deals number
+    let expected_reqs = 2 + 7 * deals.len();
     for _ in 0..expected_reqs {
         let (method, params) = server.receive_request().await?;
         let response = match method.as_str() {
@@ -109,7 +109,8 @@ pub async fn setup_rpc_deploy_deals(
                 json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
             }
             "eth_getTransactionCount" => json!("0x1"),
-            "eth_gasPrice" => json!("0x3b9aca07"),
+            "eth_getBlockByNumber" => json!({"baseFeePerGas": "0x3b9aca07"}),
+            "eth_maxPriorityFeePerGas" => json!("0x3b9aca07"),
             "eth_estimateGas" => json!("0x3b9aca07"),
             "eth_getTransactionReceipt" => default_receipt(),
             "eth_call" => default_status(),
