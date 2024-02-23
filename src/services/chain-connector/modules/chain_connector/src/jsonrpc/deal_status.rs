@@ -147,7 +147,7 @@ pub fn get_status_batch(api_endpoint: &str, deal_ids: Vec<String>) -> DealStatus
                 id: idx as u32,
                 method: "eth_call".to_owned(),
                 // TODO: is there a situation where we should ask not for 'latest', but for a specific block?
-                params: vec![json!({"data": input, "to": deal_id}), "latest"],
+                params: vec![json!({"data": input, "to": deal_id}), json!("latest")],
             })
             .collect::<_>();
         let mut responses: Vec<JsonRpcResp<String>> = send_jsonrpc_batch(api_endpoint, batch)?;
