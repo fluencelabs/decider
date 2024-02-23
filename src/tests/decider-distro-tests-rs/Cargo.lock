@@ -1755,7 +1755,7 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.6.5"
+version = "0.6.6"
 dependencies = [
  "built 0.7.1",
  "fluence-spell-dtos",
@@ -1781,7 +1781,7 @@ version = "0.1.0"
 dependencies = [
  "connected-client",
  "created-swarm",
- "decider-distro 0.6.5",
+ "decider-distro 0.6.6",
  "eyre",
  "hyper 0.14.27",
  "log-utils",
@@ -7392,7 +7392,7 @@ version = "0.1.0"
 source = "git+https://github.com/fluencelabs/nox.git?branch=feature/net-759#3a1544e127638b4fdb5a38a792a92eb531cb4508"
 dependencies = [
  "aqua-ipfs-distro",
- "decider-distro 0.6.6",
+ "decider-distro 0.6.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "eyre",
  "fluence-app-service",
  "fluence-spell-dtos",

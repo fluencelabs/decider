@@ -80,8 +80,8 @@ async fn test_remove_deal() {
         "workers",
         hashmap! {},
     )
-        .await
-        .unwrap();
+    .await
+    .unwrap();
     let workers = serde_json::from_value::<Vec<String>>(workers[0].clone()).unwrap();
     assert!(!workers.contains(&deal.worker_id), "worker must be removed");
 
@@ -126,17 +126,25 @@ async fn test_remove_deal_from_provider() {
         swarms[0].multiaddr.clone(),
         Some(swarms[0].management_keypair.clone()),
     )
-        .await
-        .unwrap();
-    update_decider_script_for_tests(&mut client1, swarms[0].config.dir_config.persistent_base_dir.clone()).await;
+    .await
+    .unwrap();
+    update_decider_script_for_tests(
+        &mut client1,
+        swarms[0].config.dir_config.persistent_base_dir.clone(),
+    )
+    .await;
 
     let mut client2 = ConnectedClient::connect_with_keypair(
         swarms[1].multiaddr.clone(),
         Some(swarms[1].management_keypair.clone()),
     )
-        .await
-        .unwrap();
-    update_decider_script_for_tests(&mut client2, swarms[1].config.dir_config.persistent_base_dir.clone()).await;
+    .await
+    .unwrap();
+    update_decider_script_for_tests(
+        &mut client2,
+        swarms[1].config.dir_config.persistent_base_dir.clone(),
+    )
+    .await;
 
     // Deploy a deal on the first provider
     update_config(&mut client1, &oneshot_config())

@@ -32,16 +32,10 @@ pub async fn modify_decider_spell_script(
     decider_spell_id: String,
     updated_script: String,
 ) {
-
     let script_path: PathBuf = persistent_base_dir.join(
-        [
-            "services",
-            "workdir",
-            &decider_spell_id,
-            "script.air",
-        ]
-        .iter()
-        .collect::<PathBuf>(),
+        ["services", "workdir", &decider_spell_id, "script.air"]
+            .iter()
+            .collect::<PathBuf>(),
     );
 
     tokio::fs::write(&script_path, updated_script)
