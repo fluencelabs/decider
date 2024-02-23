@@ -40,7 +40,6 @@ jobs:
 
     uses: fluencelabs/nox/.github/workflows/build.yml@master
     with:
-      ref: cc_chain_integration
       cargo-dependencies: |
         [
           {
