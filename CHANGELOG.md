@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.8](https://github.com/fluencelabs/decider/compare/connector-v0.6.7...connector-v0.6.8) (2024-02-23)
+
+
+### Features
+
+* migrate to connector.send_tx ([#232](https://github.com/fluencelabs/decider/issues/232)) ([590562e](https://github.com/fluencelabs/decider/commit/590562e91a74d6be0b3a6b9ffb01f1da11205f37))
+
 ## [0.6.7](https://github.com/fluencelabs/decider/compare/connector-v0.6.6...connector-v0.6.7) (2024-02-23)
 
 
