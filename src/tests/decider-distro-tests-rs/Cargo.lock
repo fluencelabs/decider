@@ -87,7 +87,7 @@ dependencies = [
 [[package]]
 name = "air-interpreter-fs"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "air-interpreter-wasm",
  "eyre",
@@ -241,7 +241,7 @@ dependencies = [
 [[package]]
 name = "aquamarine"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -973,6 +973,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "ccp-randomx-types"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b3769b7222a8e4cf35252235fe7d7be66328b5440687275ee592dbdb04b7efd7"
+dependencies = [
+ "hex",
+ "serde",
+]
+
+[[package]]
+name = "ccp-rpc-client"
+version = "0.1.0"
+source = "git+https://github.com/fluencelabs/capacity-commitment-prover/?branch=main#5de05462da4444f7fd3633fecaecd82c854a1618"
+dependencies = [
+ "ccp-shared",
+ "hex",
+ "jsonrpsee",
+ "serde",
+]
+
+[[package]]
 name = "ccp-shared"
 version = "0.1.0"
 source = "git+https://github.com/fluencelabs/capacity-commitment-prover/?branch=main#5de05462da4444f7fd3633fecaecd82c854a1618"
@@ -1017,7 +1038,7 @@ dependencies = [
 [[package]]
 name = "chain-connector"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "ccp-shared",
  "chain-data",
@@ -1042,7 +1063,7 @@ dependencies = [
 [[package]]
 name = "chain-data"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "ethabi",
  "eyre",
@@ -1057,7 +1078,7 @@ dependencies = [
 [[package]]
 name = "chain-listener"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "ccp-rpc-client",
  "ccp-shared",
@@ -1091,7 +1112,7 @@ dependencies = [
 [[package]]
 name = "chain-types"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "ccp-shared",
  "chain-data",
@@ -1144,7 +1165,7 @@ dependencies = [
 [[package]]
 name = "cid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "base64 0.21.7",
  "bytes",
@@ -1222,12 +1243,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "702fc72eb24e5a1e48ce58027a675bc24edd52096d5397d4aea7c6dd9eca0bd1"
 
 [[package]]
-name = "cmake"
-version = "0.1.50"
+name = "clarity"
+version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a31c789563b815f77f4250caee12365734369f942439b7defd71e18a48197130"
+checksum = "273c656822c0367587c0fc6ae5a0bf6e19a10d700cd49168a084975b7f84dcfe"
 dependencies = [
- "cc",
+ "num-traits",
+ "num256",
+ "secp256k1",
+ "serde",
+ "serde_derive",
+ "sha3",
 ]
 
 [[package]]
@@ -1277,7 +1303,7 @@ dependencies = [
 [[package]]
 name = "config-utils"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "libp2p-identity",
 ]
@@ -1285,7 +1311,7 @@ dependencies = [
 [[package]]
 name = "connected-client"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "derivative",
  "either",
@@ -1311,7 +1337,7 @@ dependencies = [
 [[package]]
 name = "connection-pool"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "fluence-libp2p",
  "futures",
@@ -1380,7 +1406,7 @@ checksum = "f7144d30dcf0fafbce74250a3963025d8d52177934239851c917d29f1df280c2"
 [[package]]
 name = "control-macro"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 
 [[package]]
 name = "core-foundation"
@@ -1401,7 +1427,7 @@ checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 [[package]]
 name = "core-manager"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "async-trait",
  "bimap",
@@ -1596,7 +1622,7 @@ dependencies = [
 [[package]]
 name = "created-swarm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "air-interpreter-fs",
  "aquamarine",
@@ -2242,16 +2268,16 @@ dependencies = [
 
 [[package]]
 name = "fluence-app-service"
-version = "0.33.0"
+version = "0.35.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec5358cd011d91885b81539bc36f8f67075cd6bb1bf260c7ab35a7ff31b5870d"
+checksum = "53f1b1edfa366551382890ecf2b18d8b9675b3a105bf2d90c444446cc081115d"
 dependencies = [
  "log",
  "maplit",
  "marine-min-it-version",
- "marine-runtime 0.34.0",
- "marine-wasm-backend-traits",
- "marine-wasmtime-backend",
+ "marine-runtime 0.36.0",
+ "marine-wasm-backend-traits 0.6.0",
+ "marine-wasmtime-backend 0.6.0",
  "serde",
  "serde_derive",
  "serde_json",
@@ -2297,7 +2323,7 @@ dependencies = [
 [[package]]
 name = "fluence-libp2p"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "base64 0.21.7",
  "bs58",
@@ -2317,9 +2343,9 @@ dependencies = [
 
 [[package]]
 name = "fluence-spell-distro"
-version = "0.7.2"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcab0c673763b0dc4da616cab46c43c90d8f1bf184f62c6420773e7fb59673bb"
+checksum = "b4f7a6eb40ae202258affc0cde4ec51e4b49dfb01e44b2b01fe97352beaa46a1"
 dependencies = [
  "built 0.7.1",
  "maplit",
@@ -2327,12 +2353,12 @@ dependencies = [
 
 [[package]]
 name = "fluence-spell-dtos"
-version = "0.7.2"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "717b91cd76394c8dbb7a9564750beb77234af456e5f129082c25cb535ac6ea2e"
+checksum = "13c65a23ae0bd9c838c3dba0ed167222e36026d7ce0f29f89faf5a47eff28148"
 dependencies = [
  "eyre",
- "marine-rs-sdk 0.12.0",
+ "marine-rs-sdk 0.14.0",
  "marine-sqlite-connector",
  "serde",
  "thiserror",
@@ -2382,7 +2408,7 @@ dependencies = [
 [[package]]
 name = "fs-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "eyre",
  "futures-util",
@@ -2766,7 +2792,7 @@ dependencies = [
 [[package]]
 name = "health"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "eyre",
 ]
@@ -2810,7 +2836,7 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 [[package]]
 name = "hex-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "hex",
 ]
@@ -3463,7 +3489,7 @@ dependencies = [
 [[package]]
 name = "ivalue-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "fluence-it-types",
  "serde_json",
@@ -3490,7 +3516,7 @@ dependencies = [
 [[package]]
 name = "json-utils"
 version = "0.0.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "base64 0.21.7",
  "itertools 0.12.1",
@@ -3675,7 +3701,7 @@ dependencies = [
 [[package]]
 name = "kademlia"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "bs58",
  "control-macro",
@@ -4315,7 +4341,7 @@ checksum = "c4cd1a83af159aa67994778be9070f0ae1bd732942279cabb14f86f986a21456"
 [[package]]
 name = "local-vm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -4359,7 +4385,7 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 [[package]]
 name = "log-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "console-subscriber",
  "log",
@@ -4435,6 +4461,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "marine-call-parameters"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "05495180730abae04abe209386ce367309a82110edb65fcdb1f3080f819bc1a0"
+dependencies = [
+ "marine-macro 0.14.0",
+ "marine-rs-sdk-main 0.14.0",
+ "serde",
+]
+
+[[package]]
 name = "marine-core"
 version = "0.26.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4447,13 +4484,13 @@ dependencies = [
  "log",
  "marine-it-generator 0.13.1",
  "marine-it-interfaces",
- "marine-it-parser",
+ "marine-it-parser 0.15.1",
  "marine-min-it-version",
  "marine-module-info-parser 0.11.1",
  "marine-module-interface",
  "marine-utils",
- "marine-wasm-backend-traits",
- "marine-wasmtime-backend",
+ "marine-wasm-backend-traits 0.5.1",
+ "marine-wasmtime-backend 0.5.1",
  "multimap 0.8.3",
  "once_cell",
  "paste",
@@ -4465,24 +4502,24 @@ dependencies = [
 
 [[package]]
 name = "marine-core"
-version = "0.28.0"
+version = "0.30.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9b9a08bd99ea96356abdac57700a58496dc4034d1f48000fb54e532fc5021c8d"
+checksum = "2989c1670a82d69724804c7af5d8e4c35231083338806c49485d983f27dd440f"
 dependencies = [
  "anyhow",
  "bytesize",
  "it-lilo",
  "it-memory-traits",
  "log",
- "marine-it-generator 0.15.0",
+ "marine-it-generator 0.17.0",
  "marine-it-interfaces",
- "marine-it-parser",
+ "marine-it-parser 0.16.0",
  "marine-min-it-version",
- "marine-module-info-parser 0.13.0",
+ "marine-module-info-parser 0.15.0",
  "marine-module-interface",
  "marine-utils",
- "marine-wasm-backend-traits",
- "marine-wasmtime-backend",
+ "marine-wasm-backend-traits 0.6.0",
+ "marine-wasmtime-backend 0.6.0",
  "multimap 0.8.3",
  "once_cell",
  "paste",
@@ -4499,7 +4536,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7d03328e174951faf739e7e12be3d9ffb044cfc308508dc89260d63a1a43a0df"
 dependencies = [
  "it-lilo",
- "marine-it-parser",
+ "marine-it-parser 0.15.1",
  "marine-macro-impl 0.7.1",
  "once_cell",
  "serde",
@@ -4511,13 +4548,13 @@ dependencies = [
 
 [[package]]
 name = "marine-it-generator"
-version = "0.15.0"
+version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64902f7fee0488f2b1e27e8f595772f1a7a386d07f74e55a07def1ad967a64fd"
+checksum = "993c33c6df3ae978022058dfd63a33b52de1307adec59e0c3f3367dd06bdf342"
 dependencies = [
  "it-lilo",
- "marine-it-parser",
- "marine-macro-impl 0.13.0",
+ "marine-it-parser 0.16.0",
+ "marine-macro-impl 0.14.0",
  "once_cell",
  "serde",
  "serde_json",
@@ -4546,7 +4583,26 @@ dependencies = [
  "itertools 0.10.5",
  "marine-it-interfaces",
  "marine-module-interface",
- "marine-wasm-backend-traits",
+ "marine-wasm-backend-traits 0.5.1",
+ "nom",
+ "semver 1.0.20",
+ "serde",
+ "thiserror",
+ "walrus",
+ "wasmer-interface-types-fl",
+]
+
+[[package]]
+name = "marine-it-parser"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4fa9ba677486e1f1bf2bfd3e34b259255df277887fa90d5c22acb258bdedc34e"
+dependencies = [
+ "anyhow",
+ "itertools 0.10.5",
+ "marine-it-interfaces",
+ "marine-module-interface",
+ "marine-wasm-backend-traits 0.6.0",
  "nom",
  "semver 1.0.20",
  "serde",
@@ -4583,6 +4639,16 @@ checksum = "cec2cd19fedf559833d0f1e6a33cbcc5cf0efa338bb0975346ff12538a3cdde4"
 dependencies = [
  "marine-macro-impl 0.13.0",
  "marine-rs-sdk-main 0.13.0",
+]
+
+[[package]]
+name = "marine-macro"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f502185316f584a9373cceb6ff24a11d260dfd39505c817056bc127cd1a96a08"
+dependencies = [
+ "marine-macro-impl 0.14.0",
+ "marine-rs-sdk-main 0.14.0",
 ]
 
 [[package]]
@@ -4638,6 +4704,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "marine-macro-impl"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e50fbc0e70ee4cde7802f0748acfb197d7770c7feffb980ce8c29bddd007519e"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_json",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "marine-min-it-version"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4657,7 +4736,7 @@ dependencies = [
  "chrono",
  "derivative",
  "marine-rs-sdk-main 0.10.3",
- "marine-wasm-backend-traits",
+ "marine-wasm-backend-traits 0.5.1",
  "semver 1.0.20",
  "serde",
  "thiserror",
@@ -4666,15 +4745,15 @@ dependencies = [
 
 [[package]]
 name = "marine-module-info-parser"
-version = "0.13.0"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e39ef4b727e6e895b0b53682dc35463e00004aa0089d49797b4f289227ea3b5d"
+checksum = "1db5fe45b6f0f397ecce757c23a3d0c4a08c2e9ffa6e7f642cb89e1ec777b16d"
 dependencies = [
  "anyhow",
  "chrono",
  "derivative",
- "marine-rs-sdk-main 0.13.0",
- "marine-wasm-backend-traits",
+ "marine-rs-sdk-main 0.14.0",
+ "marine-wasm-backend-traits 0.6.0",
  "semver 1.0.20",
  "serde",
  "thiserror",
@@ -4713,27 +4792,14 @@ dependencies = [
 
 [[package]]
 name = "marine-rs-sdk"
-version = "0.12.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7662e4c6c08f7cd1b63cd6ff8e473e3239a9d3dd10fb46bec357cb8331423268"
+checksum = "f93d2bd852fea1fea8097c195044430347eda98fd6a3752119b549192d5ac4ba"
 dependencies = [
- "marine-call-parameters 0.12.0",
- "marine-macro 0.12.0",
- "marine-rs-sdk-main 0.12.0",
- "marine-timestamp-macro 0.12.0",
- "serde",
-]
-
-[[package]]
-name = "marine-rs-sdk"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f33834365d1e6dd041e821a758000f32bed5b960edb09f9d8c61e340dd82e29"
-dependencies = [
- "marine-call-parameters 0.13.0",
- "marine-macro 0.13.0",
- "marine-rs-sdk-main 0.13.0",
- "marine-timestamp-macro 0.13.0",
+ "marine-call-parameters 0.14.0",
+ "marine-macro 0.14.0",
+ "marine-rs-sdk-main 0.14.0",
+ "marine-timestamp-macro 0.14.0",
  "serde",
 ]
 
@@ -4768,6 +4834,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "marine-rs-sdk-main"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b79c165fc21438b069babeec5ae36ba0eade5e08fb1d92dabbe6b41014ce841"
+dependencies = [
+ "log",
+ "serde",
+]
+
+[[package]]
 name = "marine-runtime"
 version = "0.32.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4783,8 +4859,8 @@ dependencies = [
  "marine-rs-sdk 0.10.3",
  "marine-rs-sdk-main 0.10.3",
  "marine-utils",
- "marine-wasm-backend-traits",
- "marine-wasmtime-backend",
+ "marine-wasm-backend-traits 0.5.1",
+ "marine-wasmtime-backend 0.5.1",
  "parking_lot",
  "safe-transmute",
  "serde",
@@ -4798,9 +4874,9 @@ dependencies = [
 
 [[package]]
 name = "marine-runtime"
-version = "0.34.0"
+version = "0.36.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e26c68703d0dc853790adf27813734a696dc75182a93c2a7b3d24a86eed56254"
+checksum = "00e428f8066ed3cbd6def39a818ffe949d7ab15559666927b25401068ce2655d"
 dependencies = [
  "bytesize",
  "it-json-serde",
@@ -4809,13 +4885,14 @@ dependencies = [
  "log",
  "marine-call-parameters 0.10.3",
  "marine-call-parameters 0.12.0",
- "marine-core 0.28.0",
+ "marine-call-parameters 0.13.0",
+ "marine-core 0.30.0",
  "marine-module-interface",
- "marine-rs-sdk 0.13.0",
- "marine-rs-sdk-main 0.13.0",
+ "marine-rs-sdk 0.14.0",
+ "marine-rs-sdk-main 0.14.0",
  "marine-utils",
- "marine-wasm-backend-traits",
- "marine-wasmtime-backend",
+ "marine-wasm-backend-traits 0.6.0",
+ "marine-wasmtime-backend 0.6.0",
  "parking_lot",
  "safe-transmute",
  "serde",
@@ -4829,12 +4906,12 @@ dependencies = [
 
 [[package]]
 name = "marine-sqlite-connector"
-version = "0.10.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb21d5419382307d97677d92c267f714a77549658270ada5d84496bfd74314e9"
+checksum = "1c4d82c7e8c07f59aa526271b810c97ec7f79d14a77725025618a79b0b1d9051"
 dependencies = [
  "bytesize",
- "marine-rs-sdk 0.12.0",
+ "marine-rs-sdk 0.14.0",
 ]
 
 [[package]]
@@ -4849,19 +4926,9 @@ dependencies = [
 
 [[package]]
 name = "marine-timestamp-macro"
-version = "0.12.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "47ec0d664570661ecba1feba2dda610ab63f23733edf189dcde7b5ed23966144"
-dependencies = [
- "chrono",
- "quote",
-]
-
-[[package]]
-name = "marine-timestamp-macro"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a5086357724dc2a65e7abe39c85d58b9971198f8678ebc642a69aae1bbc7ae0"
+checksum = "d03f267ac0a29f543ef12a1a519ff8d98e74ac66e1c580f2930d41ce2c50507d"
 dependencies = [
  "chrono",
  "quote",
@@ -4889,6 +4956,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "marine-wasm-backend-traits"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "50ba17135a13735abfc8fbbb221cd27fb8c607482ec72d7cd8f37315c9fdf6c5"
+dependencies = [
+ "anyhow",
+ "it-memory-traits",
+ "multimap 0.8.3",
+ "paste",
+ "thiserror",
+ "wasmer-interface-types-fl",
+ "wasmparser 0.101.1",
+]
+
+[[package]]
 name = "marine-wasmtime-backend"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4897,7 +4979,24 @@ dependencies = [
  "anyhow",
  "it-memory-traits",
  "log",
- "marine-wasm-backend-traits",
+ "marine-wasm-backend-traits 0.5.1",
+ "multimap 0.8.3",
+ "paste",
+ "wasmer-interface-types-fl",
+ "wasmtime",
+ "wasmtime-wasi",
+]
+
+[[package]]
+name = "marine-wasmtime-backend"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "db7a74c532073142ced94fdeaf7a3e84f92ec5ebef5751fbd5516185ae3cf211"
+dependencies = [
+ "anyhow",
+ "it-memory-traits",
+ "log",
+ "marine-wasm-backend-traits 0.6.0",
  "multimap 0.8.3",
  "paste",
  "wasmer-interface-types-fl",
@@ -5240,12 +5339,12 @@ checksum = "995defdca0a589acfdd1bd2e8e3b896b4d4f7675a31fd14c32611440c7f608e6"
 [[package]]
 name = "now-millis"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 
 [[package]]
 name = "nox"
 version = "0.20.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -5637,7 +5736,7 @@ dependencies = [
 [[package]]
 name = "particle-args"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "avm-server",
  "bs58",
@@ -5653,7 +5752,7 @@ dependencies = [
 [[package]]
 name = "particle-builtins"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "async-trait",
  "avm-server",
@@ -5700,10 +5799,11 @@ dependencies = [
 [[package]]
 name = "particle-execution"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "async-trait",
  "bs58",
+ "eyre",
  "fluence-app-service",
  "fluence-libp2p",
  "fs-utils",
@@ -5721,7 +5821,7 @@ dependencies = [
 [[package]]
 name = "particle-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "base64 0.21.7",
  "bytesize",
@@ -5734,7 +5834,7 @@ dependencies = [
  "json-utils",
  "libipld",
  "log",
- "marine-it-parser",
+ "marine-it-parser 0.16.0",
  "parking_lot",
  "particle-args",
  "particle-execution",
@@ -5748,7 +5848,7 @@ dependencies = [
 [[package]]
 name = "particle-protocol"
 version = "0.3.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "air-interpreter-sede",
  "asynchronous-codec 0.7.0",
@@ -5777,7 +5877,7 @@ dependencies = [
 [[package]]
 name = "particle-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "derivative",
  "eyre",
@@ -5837,7 +5937,7 @@ dependencies = [
 [[package]]
 name = "peer-metrics"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "bytesize",
  "fluence-app-service",
@@ -7008,7 +7108,7 @@ dependencies = [
 [[package]]
 name = "server-config"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "air-interpreter-fs",
  "base64 0.21.7",
@@ -7043,7 +7143,7 @@ dependencies = [
 [[package]]
 name = "service-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "cid-utils",
  "eyre",
@@ -7221,7 +7321,7 @@ dependencies = [
 [[package]]
 name = "sorcerer"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "aquamarine",
  "connection-pool",
@@ -7260,7 +7360,7 @@ dependencies = [
 [[package]]
 name = "spell-event-bus"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "connection-pool",
  "derivative",
@@ -7289,7 +7389,7 @@ dependencies = [
 [[package]]
 name = "spell-service-api"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "fluence-libp2p",
  "fluence-spell-dtos",
@@ -7304,7 +7404,7 @@ dependencies = [
 [[package]]
 name = "spell-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "derivative",
  "eyre",
@@ -7375,7 +7475,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 [[package]]
 name = "subnet-resolver"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "chain-data",
  "ethabi",
@@ -7476,7 +7576,7 @@ dependencies = [
 [[package]]
 name = "system-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "aqua-ipfs-distro",
  "decider-distro 0.6.6 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -7546,7 +7646,7 @@ dependencies = [
 [[package]]
 name = "test-constants"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 
 [[package]]
 name = "textwrap"
@@ -7764,7 +7864,7 @@ dependencies = [
 [[package]]
 name = "toml-utils"
 version = "0.0.1"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "toml 0.5.11",
 ]
@@ -7892,7 +7992,7 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "toy-vms"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "aquamarine",
  "avm-server",
@@ -8025,7 +8125,7 @@ checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 [[package]]
 name = "types"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "libp2p-identity",
  "serde",
@@ -8175,7 +8275,7 @@ dependencies = [
 [[package]]
 name = "uuid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "uuid",
 ]
@@ -9192,7 +9292,7 @@ dependencies = [
 [[package]]
 name = "workers"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=update-spell-kv-restrictions#bd78f58818f43f24443440eb802753ab7c134238"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#56fbe8415cf68fde8182e7d269d51b65204cde75"
 dependencies = [
  "core-manager",
  "derivative",
