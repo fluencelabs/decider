@@ -57,11 +57,11 @@ async fn test_register_worker_fails() {
         // deal 2 should be ok, but deal 1 and deal 3 should fail in sendRawTransaction
         // - 1 blockNumber
         // - 1 getLogs
-        // - Deal 1: 1 * (gasPrice + getTransactionCount + estimateGas + sendRawTransaction)
-        // - Deal 2: 1 * (gasPrice + getTransactionCount + estimateGas + sendRawTransaction + getTransactionReceipt)
-        // - Deal 3: 1 * (gasPrice + getTransactionCount + estimateGas + sendRawTransaction)
+        // - Deal 1: 1 * (getBlockByNumber + estimateGas + maxPriorityFeePerGas + getTransactionCount + sendRawTransaction)
+        // - Deal 2: 1 * (getBlockByNumber + estimateGas + maxPriorityFeePerGas + getTransactionCount + sendRawTransaction + getTransactionReceipt)
+        // - Deal 3: 1 * (getBlockByNumber + estimateGas + maxPriorityFeePerGas + getTransactionCount + sendRawTransaction)
         // - 1 + eth_call
-        for step in 0..16 {
+        for step in 0..18 {
             let (method, params) = server.receive_request().await.unwrap();
             let response = match method.as_str() {
                 // step 0
@@ -78,15 +78,17 @@ async fn test_register_worker_fails() {
                         .collect::<Vec<_>>();
                     Ok(json!(reply))
                 }
-                // step 2 for deal 1, step 6 for deal 2, step 12 for deal 3
-                "eth_gasPrice" => Ok(json!("0x3b9aca07")),
-                // step 3 for deal 1, step 7 for deal 2, step 13 for deal 3
-                "eth_getTransactionCount" => Ok(json!("0x1")),
-                // step 4 for deal 1, step 8 for deal 2, step 14 for deal 3
+                // step 2 for deal 1, step 7 for deal 2, step 13 for deal 3
+                "eth_getBlockByNumber" => Ok(json!({"baseFeePerGas": "0x3b9aca07"})),
+                // step 3 for deal 1, step 8 for deal 2, step 14 for deal 3
                 "eth_estimateGas" => Ok(json!("0x3b9aca07")),
-                // step 5 for deal 1, step 9 for deal 2, step 15 for deal 3
+                // step 4 for deal 1, step 9 for deal 2, step 15 for deal 3
+                "eth_maxPriorityFeePerGas" => Ok(json!("0x3b9aca07")),
+                // step 5 for deal 1, step 10 for deal 2, step 16 for deal 3
+                "eth_getTransactionCount" => Ok(json!("0x1")),
+                // step 6 for deal 1, step 11 for deal 2, step 17 for deal 3
                 "eth_sendRawTransaction" => {
-                    if step != 9 {
+                    if step != 11 {
                         Err(error_value.clone())
                     } else {
                         Ok(json!(
@@ -94,9 +96,9 @@ async fn test_register_worker_fails() {
                         ))
                     }
                 }
-                // step 10 for deal 2
+                // step 12 for deal 2, 1
                 "eth_getTransactionReceipt" => Ok(default_receipt()),
-                // step 11 for deal 2
+                // step 18 for deal 2
                 "eth_call" => Ok(default_status()),
                 _ => panic!("mock http got an unexpected rpc method: {}", method),
             };
