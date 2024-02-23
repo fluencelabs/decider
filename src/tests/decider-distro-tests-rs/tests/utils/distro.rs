@@ -46,7 +46,10 @@ pub fn make_distro_default() -> PackageDistro {
         worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),
         chain_api_endpoint: "http://127.0.0.1:12009".to_string(),
         chain_contract_block_hex: "0x0".to_string(),
-        chain_market_addr: "0x0".to_string(),
+        chain_workers_gas: 0,
+        chain_wallet_key: "".to_string(),
+        chain_matcher_addr: "0x0".to_string(),
+        chain_network_id: 0,
     };
     // let's try to run a decider cycle on demand by updating the config
     let mut trigger_config = TriggerConfig::default();
@@ -61,7 +64,10 @@ pub fn make_distro_with_api(api: String) -> PackageDistro {
         worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),
         chain_api_endpoint: api,
         chain_contract_block_hex: "0x0".to_string(),
-        chain_market_addr: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed".to_string(),
+        chain_workers_gas: 0,
+        chain_wallet_key: "".to_string(),
+        chain_matcher_addr: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed".to_string(),
+        chain_network_id: 0,
     };
     // decider will run once
     let trigger_config = TriggerConfig::default();
@@ -75,7 +81,10 @@ pub fn make_distro_with_api_and_config(api: String, config: TriggerConfig) -> Pa
         worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),
         chain_api_endpoint: api,
         chain_contract_block_hex: "0x0".to_string(),
-        chain_market_addr: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed".to_string(),
+        chain_workers_gas: 0,
+        chain_wallet_key: "".to_string(),
+        chain_matcher_addr: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed".to_string(),
+        chain_network_id: 0,
     };
     // decider will run once
     make_distro(config, decider_settings)

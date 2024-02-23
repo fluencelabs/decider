@@ -69,6 +69,7 @@ async fn test_deploy_a_deal_single() {
     const BLOCK: u32 = 32;
     const LATEST_BLOCK: u32 = 35;
     let server = run_test_server_predefined(async move |method, params| {
+        println!("{}", method.as_str());
         match method.as_str() {
             "eth_blockNumber" => {
                 json!(to_hex(LATEST_BLOCK))
