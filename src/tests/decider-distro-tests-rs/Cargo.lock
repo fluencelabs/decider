@@ -87,7 +87,7 @@ dependencies = [
 [[package]]
 name = "air-interpreter-fs"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "air-interpreter-wasm",
  "eyre",
@@ -241,7 +241,7 @@ dependencies = [
 [[package]]
 name = "aquamarine"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1038,7 +1038,7 @@ dependencies = [
 [[package]]
 name = "chain-connector"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "ccp-shared",
  "chain-data",
@@ -1063,7 +1063,7 @@ dependencies = [
 [[package]]
 name = "chain-data"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "ethabi",
  "eyre",
@@ -1078,7 +1078,7 @@ dependencies = [
 [[package]]
 name = "chain-listener"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "ccp-rpc-client",
  "ccp-shared",
@@ -1112,7 +1112,7 @@ dependencies = [
 [[package]]
 name = "chain-types"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "ccp-shared",
  "chain-data",
@@ -1165,7 +1165,7 @@ dependencies = [
 [[package]]
 name = "cid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "base64 0.21.7",
  "bytes",
@@ -1303,7 +1303,7 @@ dependencies = [
 [[package]]
 name = "config-utils"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "libp2p-identity",
 ]
@@ -1311,7 +1311,7 @@ dependencies = [
 [[package]]
 name = "connected-client"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "derivative",
  "either",
@@ -1337,7 +1337,7 @@ dependencies = [
 [[package]]
 name = "connection-pool"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "fluence-libp2p",
  "futures",
@@ -1406,7 +1406,7 @@ checksum = "f7144d30dcf0fafbce74250a3963025d8d52177934239851c917d29f1df280c2"
 [[package]]
 name = "control-macro"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 
 [[package]]
 name = "core-foundation"
@@ -1427,7 +1427,7 @@ checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 [[package]]
 name = "core-manager"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "async-trait",
  "bimap",
@@ -1622,7 +1622,7 @@ dependencies = [
 [[package]]
 name = "created-swarm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "air-interpreter-fs",
  "aquamarine",
@@ -1847,7 +1847,8 @@ dependencies = [
 [[package]]
 name = "decider-distro"
 version = "0.6.6"
-source = "git+https://github.com/fluencelabs/decider.git?branch=send_tx_builtin#2e9b9e0b210a3458bf8bdf49e37f56931503db30"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6fc977928aedc97953c9bd41627dd498c7cfd06e63b55b62464be45f6299287e"
 dependencies = [
  "built 0.7.1",
  "fluence-spell-dtos",
@@ -2322,7 +2323,7 @@ dependencies = [
 [[package]]
 name = "fluence-libp2p"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "base64 0.21.7",
  "bs58",
@@ -2407,7 +2408,7 @@ dependencies = [
 [[package]]
 name = "fs-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "eyre",
  "futures-util",
@@ -2791,7 +2792,7 @@ dependencies = [
 [[package]]
 name = "health"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "eyre",
 ]
@@ -2835,7 +2836,7 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 [[package]]
 name = "hex-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "hex",
 ]
@@ -3488,7 +3489,7 @@ dependencies = [
 [[package]]
 name = "ivalue-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "fluence-it-types",
  "serde_json",
@@ -3515,7 +3516,7 @@ dependencies = [
 [[package]]
 name = "json-utils"
 version = "0.0.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "base64 0.21.7",
  "itertools 0.12.1",
@@ -3700,7 +3701,7 @@ dependencies = [
 [[package]]
 name = "kademlia"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "bs58",
  "control-macro",
@@ -4340,7 +4341,7 @@ checksum = "c4cd1a83af159aa67994778be9070f0ae1bd732942279cabb14f86f986a21456"
 [[package]]
 name = "local-vm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -4384,7 +4385,7 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 [[package]]
 name = "log-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "console-subscriber",
  "log",
@@ -5265,12 +5266,12 @@ checksum = "995defdca0a589acfdd1bd2e8e3b896b4d4f7675a31fd14c32611440c7f608e6"
 [[package]]
 name = "now-millis"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 
 [[package]]
 name = "nox"
 version = "0.20.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -5662,7 +5663,7 @@ dependencies = [
 [[package]]
 name = "particle-args"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "avm-server",
  "bs58",
@@ -5678,7 +5679,7 @@ dependencies = [
 [[package]]
 name = "particle-builtins"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "async-trait",
  "avm-server",
@@ -5725,7 +5726,7 @@ dependencies = [
 [[package]]
 name = "particle-execution"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "async-trait",
  "bs58",
@@ -5746,7 +5747,7 @@ dependencies = [
 [[package]]
 name = "particle-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "base64 0.21.7",
  "bytesize",
@@ -5773,7 +5774,7 @@ dependencies = [
 [[package]]
 name = "particle-protocol"
 version = "0.3.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "air-interpreter-sede",
  "asynchronous-codec 0.7.0",
@@ -5802,7 +5803,7 @@ dependencies = [
 [[package]]
 name = "particle-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "derivative",
  "eyre",
@@ -5862,7 +5863,7 @@ dependencies = [
 [[package]]
 name = "peer-metrics"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "bytesize",
  "fluence-app-service",
@@ -7033,7 +7034,7 @@ dependencies = [
 [[package]]
 name = "server-config"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "air-interpreter-fs",
  "base64 0.21.7",
@@ -7068,7 +7069,7 @@ dependencies = [
 [[package]]
 name = "service-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "cid-utils",
  "eyre",
@@ -7246,7 +7247,7 @@ dependencies = [
 [[package]]
 name = "sorcerer"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "aquamarine",
  "connection-pool",
@@ -7285,7 +7286,7 @@ dependencies = [
 [[package]]
 name = "spell-event-bus"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "connection-pool",
  "derivative",
@@ -7314,7 +7315,7 @@ dependencies = [
 [[package]]
 name = "spell-service-api"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "fluence-libp2p",
  "fluence-spell-dtos",
@@ -7329,7 +7330,7 @@ dependencies = [
 [[package]]
 name = "spell-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "derivative",
  "eyre",
@@ -7400,7 +7401,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 [[package]]
 name = "subnet-resolver"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "chain-data",
  "ethabi",
@@ -7501,10 +7502,10 @@ dependencies = [
 [[package]]
 name = "system-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "aqua-ipfs-distro",
- "decider-distro 0.6.6 (git+https://github.com/fluencelabs/decider.git?branch=send_tx_builtin)",
+ "decider-distro 0.6.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "eyre",
  "fluence-app-service",
  "fluence-spell-dtos",
@@ -7571,7 +7572,7 @@ dependencies = [
 [[package]]
 name = "test-constants"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 
 [[package]]
 name = "textwrap"
@@ -7789,7 +7790,7 @@ dependencies = [
 [[package]]
 name = "toml-utils"
 version = "0.0.1"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "toml 0.5.11",
 ]
@@ -7917,7 +7918,7 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "toy-vms"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "aquamarine",
  "avm-server",
@@ -8050,7 +8051,7 @@ checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 [[package]]
 name = "types"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "libp2p-identity",
  "serde",
@@ -8200,7 +8201,7 @@ dependencies = [
 [[package]]
 name = "uuid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "uuid",
 ]
@@ -9217,7 +9218,7 @@ dependencies = [
 [[package]]
 name = "workers"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#7a0efddd409128dd995e19ff160a7b64c94397ab"
+source = "git+https://github.com/fluencelabs/nox.git?branch=cc_chain_integration#8ea7a93438ebae96f2aff873ae992ff00569ba94"
 dependencies = [
  "core-manager",
  "derivative",
