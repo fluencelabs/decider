@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.9](https://github.com/fluencelabs/decider/compare/connector-v0.6.8...connector-v0.6.9) (2024-02-24)
+
+
+### Bug Fixes
+
+* **deal_status:** specify "latest" block on get status ([#241](https://github.com/fluencelabs/decider/issues/241)) ([b980fff](https://github.com/fluencelabs/decider/commit/b980fff9c2be41e93ebf75e2fceae6569ec77bd8))
+
 ## [0.6.8](https://github.com/fluencelabs/decider/compare/connector-v0.6.7...connector-v0.6.8) (2024-02-23)
 
 
