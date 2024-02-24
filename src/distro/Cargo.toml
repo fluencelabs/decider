@@ -2,7 +2,7 @@
 name = "decider-distro"
 description = "Distribution package for the decider spell including all services, configs and scripts used by it"
 license = "Apache-2.0"
-version = "0.6.8"
+version = "0.6.9"
 edition = "2021"
 build = "built.rs"
 include = [ "/src", "built.rs", "Cargo.toml", "decider-spell" ]
