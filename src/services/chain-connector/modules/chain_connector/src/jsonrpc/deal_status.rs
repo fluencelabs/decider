@@ -179,6 +179,7 @@ mod tests {
     use super::JsonRpcReq;
     use marine_rs_sdk_test::marine_test;
     use serde::Deserialize;
+    use serde_json::Value;
     use std::sync::{Arc, Mutex};
 
     #[derive(Deserialize, Debug)]
@@ -186,6 +187,13 @@ mod tests {
         data: String,
         to: String, // deal_id
     }
+
+    #[derive(Deserialize, Debug)]
+    struct DealStatusParams {
+        data: String,
+        to: String, // deal_id
+    }
+
 
     #[marine_test(config_path = "../../../../../../../src/distro/decider-spell/Config.toml")]
     fn test_get_status(connector: marine_test_env::chain_connector::ModuleInterface) {
@@ -214,12 +222,19 @@ mod tests {
             .mock("POST", "/")
             .with_body_from_request(move |req| {
                 let body = req.body().expect("mock: get req body");
-                let body: Vec<JsonRpcReq<DealStatusRequest>> =
+                let body: Vec<JsonRpcReq<Value>> =
                     serde_json::from_slice(body).expect("mock: parse req body as json");
                 assert!(!body.is_empty());
-                assert_eq!(body[0].params[0].to, DEAL_ID);
+                let block = serde_json::from_value::<String>(body[0].params[1].clone())
+                    .expect("mock: parse deal status request");
+                assert_eq!(block, "latest");
+                let addr = serde_json::from_value::<DealStatusRequest>(body[0].params[0].clone())
+                    .expect("mock: parse deal status request");
+                assert_eq!(addr.to, DEAL_ID);
                 if body.len() == 2 {
-                    assert_eq!(body[1].params[0].to, DEAL_ID_2)
+                    let addr = serde_json::from_value::<DealStatusRequest>(body[1].params[0].clone())
+                        .expect("mock: parse deal status request");
+                    assert_eq!(addr.to, DEAL_ID_2)
                 }
 
                 let jsonrpc = jsonrpcs.lock().unwrap().pop().unwrap();
