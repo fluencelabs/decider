@@ -11,6 +11,7 @@ use created_swarm::system_services_config::{AquaIpfsConfig, SystemServicesConfig
 use created_swarm::{make_swarms_with_cfg, ChainConfig, CreatedSwarm};
 use serde_json::json;
 use std::str::FromStr;
+use maplit::hashmap;
 
 pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
     let mut config = AquaIpfsConfig::default();
@@ -38,6 +39,12 @@ pub async fn setup_swarm(distro: PackageDistro, peers: usize) -> Vec<CreatedSwar
             config.aqua_ipfs.ipfs_binary_path.clone(),
             config.connector.curl_binary_path.clone(),
         ];
+        cfg.allowed_effectors = hashmap! {
+            // curl-adepter effector; ./resources/upload.sh to see the effector CID
+            "bafkreihbz4szbmix7tphbiprnbhnmjqavpzyndtntzrcbbcdnancd2cjae".to_string() => hashmap! {
+                "curl".to_string() => config.connector.curl_binary_path.clone()
+            }
+        };
         // to make worker spell oneshot
         config.decider.worker_period_sec = 0;
         cfg.override_system_services_config = Some(config);
