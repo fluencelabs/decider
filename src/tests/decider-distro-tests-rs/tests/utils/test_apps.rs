@@ -57,7 +57,7 @@ impl TestApp {
                 "topics": [
                   "0x0e85c04920a2349be7d0f03a765fa172e5dabc0a4a9fc47acb81c07ce8d260d0",
                 ],
-                "data": "0x{app_cid}",
+                "data": format!("0x{app_cid}"),
 
                 "blockNumber": "0x300",
                 "transactionHash": "0xb825edf7da59840ce838a9ed70aa0aa6c54c322ca5d6f0be4f070766e46ebbd8",
@@ -106,7 +106,7 @@ impl TestApp {
                 "topics": [
                   "0x0e85c04920a2349be7d0f03a765fa172e5dabc0a4a9fc47acb81c07ce8d260d0",
                 ],
-                "data": "0x{app_cid}",
+                "data": format!("0x{app_cid}"),
                 "blockNumber": "0x300",
                 "transactionHash": "0xb825edf7da59840ce838a9ed70aa0aa6c54c322ca5d6f0be4f070766e46ebbd8",
                 "transactionIndex": "0xb",
