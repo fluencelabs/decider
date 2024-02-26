@@ -616,7 +616,7 @@
     },
     "ipfsAddr": {
       "type": "string",
-      "description": "IPFS multiaddress to use when uploading workers with 'deal deploy'. Default: /dns4/ipfs.fluence.dev/tcp/5001 or /ip4/127.0.0.1/tcp/5001 if using local local env (for 'workers deploy' IPFS address provided by relay that you are connected to is used)",
+      "description": "IPFS multiaddress to use when uploading workers with 'fluence deploy'. Default: /dns4/ipfs.fluence.dev/tcp/5001 or /ip4/127.0.0.1/tcp/5001 if using local local env (for 'workers deploy' IPFS address provided by relay that you are connected to is used)",
       "nullable": true,
       "default": "/dns4/ipfs.fluence.dev/tcp/5001"
     },
@@ -629,9 +629,9 @@
           "type": "string",
           "description": "Contracts environment to use for this fluence network to sign contracts on the blockchain",
           "enum": [
-            "kras",
-            "testnet",
+            "dar",
             "stage",
+            "kras",
             "local"
           ]
         },
@@ -919,7 +919,7 @@
           "targetWorkers": {
             "type": "number",
             "description": "Max workers in the deal",
-            "default": 1,
+            "default": 3,
             "nullable": true,
             "minimum": 1
           },
@@ -936,16 +936,15 @@
             "minimum": 1
           },
           "pricePerWorkerEpoch": {
-            "type": "number",
-            "description": "Price per worker epoch in FLT",
-            "default": 0.00001,
-            "nullable": true,
-            "minimum": 1e-18
+            "type": "string",
+            "description": "Price per worker epoch in USDC",
+            "default": "0.0001",
+            "nullable": true
           },
           "initialBalance": {
-            "type": "number",
-            "description": "Initial balance after deploy in FLT",
-            "default": 0.001,
+            "type": "string",
+            "description": "Initial balance after deploy in USDC",
+            "default": "1",
             "nullable": true
           },
           "effectors": {
@@ -992,7 +991,7 @@
             "targetWorkers": {
               "type": "number",
               "description": "Max workers in the deal",
-              "default": 1,
+              "default": 3,
               "nullable": true,
               "minimum": 1
             },
@@ -1009,16 +1008,15 @@
               "minimum": 1
             },
             "pricePerWorkerEpoch": {
-              "type": "number",
-              "description": "Price per worker epoch in FLT",
-              "default": 0.00001,
-              "nullable": true,
-              "minimum": 1e-18
+              "type": "string",
+              "description": "Price per worker epoch in USDC",
+              "default": "0.0001",
+              "nullable": true
             },
             "initialBalance": {
-              "type": "number",
-              "description": "Initial balance after deploy in FLT",
-              "default": 0.001,
+              "type": "string",
+              "description": "Initial balance after deploy in USDC",
+              "default": "1",
               "nullable": true
             },
             "effectors": {
