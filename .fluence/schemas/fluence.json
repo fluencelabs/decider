@@ -936,16 +936,15 @@
             "minimum": 1
           },
           "pricePerWorkerEpoch": {
-            "type": "number",
-            "description": "Price per worker epoch in FLT",
-            "default": 0.00001,
-            "nullable": true,
-            "minimum": 1e-18
+            "type": "string",
+            "description": "Price per worker epoch in USDC",
+            "default": "0.0001",
+            "nullable": true
           },
           "initialBalance": {
-            "type": "number",
-            "description": "Initial balance after deploy in FLT",
-            "default": 10,
+            "type": "string",
+            "description": "Initial balance after deploy in USDC",
+            "default": "1",
             "nullable": true
           },
           "effectors": {
@@ -1009,16 +1008,15 @@
               "minimum": 1
             },
             "pricePerWorkerEpoch": {
-              "type": "number",
-              "description": "Price per worker epoch in FLT",
-              "default": 0.00001,
-              "nullable": true,
-              "minimum": 1e-18
+              "type": "string",
+              "description": "Price per worker epoch in USDC",
+              "default": "0.0001",
+              "nullable": true
             },
             "initialBalance": {
-              "type": "number",
-              "description": "Initial balance after deploy in FLT",
-              "default": 10,
+              "type": "string",
+              "description": "Initial balance after deploy in USDC",
+              "default": "1",
               "nullable": true
             },
             "effectors": {
