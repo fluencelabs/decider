@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.10](https://github.com/fluencelabs/decider/compare/connector-v0.6.9...connector-v0.6.10) (2024-02-26)
+
+
+### Features
+
+* update to new Installation Spell with new effector restrictions ([#248](https://github.com/fluencelabs/decider/issues/248)) ([f2882cd](https://github.com/fluencelabs/decider/commit/f2882cd83cf01151c8412332071cbd0467fc0584))
+
 ## [0.6.9](https://github.com/fluencelabs/decider/compare/connector-v0.6.8...connector-v0.6.9) (2024-02-24)
 
 
