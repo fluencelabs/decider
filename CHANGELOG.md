@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.11](https://github.com/fluencelabs/decider/compare/connector-v0.6.10...connector-v0.6.11) (2024-03-07)
+
+
+### Features
+
+* support new deal status ([#253](https://github.com/fluencelabs/decider/issues/253)) ([d95fe9d](https://github.com/fluencelabs/decider/commit/d95fe9d2c07198d3a76fda7afff8bdc6ea0fb417))
+
 ## [0.6.10](https://github.com/fluencelabs/decider/compare/connector-v0.6.9...connector-v0.6.10) (2024-02-26)
 
 
