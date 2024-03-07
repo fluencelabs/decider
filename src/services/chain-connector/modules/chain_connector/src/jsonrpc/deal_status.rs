@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use crate::chain::chain_data::{parse_chain_data, ChainDataError};
 use crate::curl::send_jsonrpc_batch;
 use crate::jsonrpc::deal_status::DealStatusError::UnknownStatus;
@@ -23,29 +24,33 @@ pub enum DealStatusError {
 
 #[derive(Debug)]
 pub enum DealStatus {
-    INACTIVE = 0,
-    ACTIVE,
-    ENDED,
+    InsufficientFunds = 0,
+    Active,
+    Ended,
+    NotEnoughWorkers
 }
 
 impl DealStatus {
     fn from(num: u8) -> Option<Self> {
         match num {
-            0 => Some(DealStatus::INACTIVE),
-            1 => Some(DealStatus::ACTIVE),
-            2 => Some(DealStatus::ENDED),
+            0 => Some(DealStatus::InsufficientFunds),
+            1 => Some(DealStatus::Active),
+            2 => Some(DealStatus::Ended),
+            3 => Some(DealStatus::NotEnoughWorkers),
             _ => None,
         }
     }
 }
 
-impl ToString for DealStatus {
-    fn to_string(&self) -> String {
-        match self {
-            DealStatus::INACTIVE => "INACTIVE".to_string(),
-            DealStatus::ACTIVE => "ACTIVE".to_string(),
-            DealStatus::ENDED => "ENDED".to_string(),
-        }
+impl Display for DealStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let str = match self {
+            DealStatus::InsufficientFunds => "INSUFFICIENT_FUNDS".to_string(),
+            DealStatus::Active => "ACTIVE".to_string(),
+            DealStatus::Ended => "ENDED".to_string(),
+            DealStatus::NotEnoughWorkers => "NOT_ENOUGH_WORKERS".to_string(),
+        };
+        write!(f, "{}", str)
     }
 }
 
@@ -202,7 +207,7 @@ mod tests {
         const DEAL_ID: &'static str = "0x6328bb918a01603adc91eae689b848a9ecaef26d";
         const DEAL_ID_2: &'static str = "0x6328bb918a01603adc91eae689b848a9ecaef26f";
 
-        let jsonrpc_inactive = r#"[{"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000000"}]"#;
+        let jsonrpc_INSUFFICIENT_FUNDS = r#"[{"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000000"}]"#;
         let jsonrpc_active = r#"[{"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000001"}]"#;
         let jsonrpc_ended = r#"[{"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000002"}]"#;
         let jsonrpc_unknown = r#"[{"jsonrpc":"2.0","id":0,"result":"0x"}]"#;
@@ -216,7 +221,7 @@ mod tests {
             jsonrpc_unknown,
             jsonrpc_ended,
             jsonrpc_active,
-            jsonrpc_inactive,
+            jsonrpc_INSUFFICIENT_FUNDS,
         ]));
         let mock = server
             .mock("POST", "/")
@@ -264,7 +269,7 @@ mod tests {
         );
         assert!(result.statuses[0].error.is_empty());
 
-        assert_eq!(result.statuses[0].status, "INACTIVE");
+        assert_eq!(result.statuses[0].status, "INSUFFICIENT_FUNDS");
         assert_eq!(result.statuses[0].deal_id, DEAL_ID);
 
         let result = connector.get_status_batch(url.clone(), vec![DEAL_ID.to_string()]);
@@ -315,7 +320,7 @@ mod tests {
 
         assert!(result.statuses[0].error.is_empty());
         assert_eq!(result.statuses[0].deal_id, DEAL_ID);
-        assert_eq!(result.statuses[0].status, "INACTIVE");
+        assert_eq!(result.statuses[0].status, "INSUFFICIENT_FUNDS");
 
         assert!(!result.statuses[1].success,);
         assert!(!result.statuses[1].error.is_empty());

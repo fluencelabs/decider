@@ -5,7 +5,7 @@ use crate::utils::chain::{DealStatusReq, LogsReq};
 use crate::utils::control::{
     update_config, update_decider_script_for_tests, wait_decider_stopped, wait_worker_spell_stopped,
 };
-use crate::utils::default::{default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE, DEAL_STATUS_INACTIVE};
+use crate::utils::default::{default_receipt, DEAL_IDS, DEAL_STATUS_ACTIVE, DEAL_STATUS_NOT_ENOUGH_WORKERS};
 use crate::utils::distro::make_distro_with_api;
 use crate::utils::oneshot_config;
 use crate::utils::setup::{setup_nox, setup_rpc_empty_run_with_status};
@@ -20,7 +20,7 @@ pub mod utils;
 
 /// Test plan:
 /// - Use standard nox setup.
-/// - On the first run, deploy a deal to create a worker. The deal is INACTIVE.
+/// - On the first run, deploy a deal to create a worker. The deal is NOT_ENOUGH_WORKERS.
 /// - On the second run, the deal is ACTIVE, so decider should activate the worker.
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_activate() {
@@ -63,7 +63,7 @@ async fn test_activate() {
             "eth_call" => {
                 let req = serde_json::from_value::<DealStatusReq>(params[0].clone()).unwrap();
                 assert_eq!(req.to, deal_address, "request the status of the wrong deal");
-                json!(DEAL_STATUS_INACTIVE)
+                json!(DEAL_STATUS_NOT_ENOUGH_WORKERS)
             }
             _ => panic!("mock http got an unexpected rpc method: {}", method),
         };
@@ -109,7 +109,7 @@ async fn test_activate() {
     setup_rpc_empty_run_with_status(
         &mut server,
         LATEST_BLOCK + 10,
-        DEAL_STATUS_INACTIVE,
+        DEAL_STATUS_NOT_ENOUGH_WORKERS,
         joined.len(),
     )
     .await

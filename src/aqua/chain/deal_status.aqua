@@ -3,7 +3,7 @@ aqua DealStatus declares *
 import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 
 import JoinedDeal from "../decider/deal_storage.aqua"
-import DEAL_STATUS_ENDED, DEAL_STATUS_ACTIVE, DEAL_STATUS_INACTIVE from "../decider/consts.aqua"
+import DEAL_STATUS_ENDED, DEAL_STATUS_ACTIVE, DEAL_STATUS_INSUFFICIENT_FUNDS, DEAL_STATUS_NOT_ENOUGH_WORKERS from "../decider/consts.aqua"
 import spell_log, deal_log from "../fluence/spell.aqua"
 import SpellId, DealId from "../types.aqua"
 import remove_ended_deal from "../decider/deal_removed.aqua"
@@ -41,10 +41,10 @@ func poll_deal_statuses_by_ids(spell_id: SpellId, api_endpoint: string, deal_ids
                 if deal_status.status == DEAL_STATUS_ACTIVE:
                     activate_deal(spell_id, deal_status.deal_id)
                 else:
-                    if deal_status.status == DEAL_STATUS_INACTIVE:
+                    if deal_status.status == DEAL_STATUS_NOT_ENOUGH_WORKERS:
                         deactivate_deal(spell_id, deal_status.deal_id)
                     else: 
-                        if deal_status.status == DEAL_STATUS_ENDED:
+                        if deal_status.status == DEAL_STATUS_ENDED or :
                             remove_ended_deal(spell_id, deal_status.deal_id)
                         else:
                             spell_log(spell_id, ["unsupported deal status: ", deal_status])
