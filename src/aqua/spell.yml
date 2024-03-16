@@ -12,14 +12,6 @@ clock:
   endDelaySec: 1800
 
 initArgs:
-  chain:
-    api_endpoint: http://127.0.0.1:8545
-    # https://github.com/fluencelabs/deal/blob/56f5141/src/deployments/localnet/Matcher.json
-    matcher: "0x3dd5Ccb79F5763e85e4D57E4Bf4380C9B7aBC40D"
-    workers_gas: 210000
-    wallet_key: "0xbb3457514f768615c8bc4061c7e47f817c8a570c5c3537479639d4fad052a98a"
-    network_id: 31337
-  from_block: "0x0"
   worker_ipfs: /dns4/ipfs.fluence.dev/tcp/5001
   worker_config:
     clock:

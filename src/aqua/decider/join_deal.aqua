@@ -41,11 +41,11 @@ func install_deal_spell(deal_id: DealId, cid: CID, settings: WorkerSettings) -> 
 -- 
 -- When joinin a deal we create a worker. BUT the worker must be deactivated. Later, we will check the deal status
 -- to determine if it's time to activate the deal. For now, it's enough to allocate the worker.
-func join_deal(spell_id: SpellId, block: string, deal_id: DealId, app_cid: CID, settings: WorkerSettings, cu_ids: []CUID) -> ?WorkerId, ?string:
+func join_deal(spell_id: SpellId, deal_id: DealId, app_cid: CID, settings: WorkerSettings, cu_ids: []CUID) -> ?WorkerId, ?string:
     log = (msg: ⊤):
         deal_log(spell_id, deal_id, msg)
 
-    log(["joining a deal from_block", block])
+    log(["joining a deal"])
     worker_id: *WorkerId
     error: *string
     try:

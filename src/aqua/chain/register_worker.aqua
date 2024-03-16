@@ -2,18 +2,13 @@ aqua RegisterWorker declares register_worker, poll_txs
 
 import DealId, SpellId, WorkerId, PAT from "../types.aqua"
 import spell_log, deal_log, list_push from "../fluence/spell.aqua"
-import ChainConnector, EncodeRegisterWorkerResult, WorkerTxInfo from "services.aqua"
-import ChainInfo from "../chain/chain.aqua"
 import Spell, StringListValue from "@fluencelabs/spell/spell_service.aqua"
 import Array from "@fluencelabs/aqua-lib/math.aqua"
 import Json from "../fluence/peer.aqua"
 import store_tx_failed_deal from "./deal_storage.aqua"
 import TXS_KEY, TXS_STATUS_KEY from "./consts.aqua"
-
-alias TxHash: string
-
-service Connector("connector"):
-    send_tx(data: []u8, to: string) -> TxHash
+import CUID from "@fluencelabs/aqua-lib/workers.aqua"
+import Connector from "../chain/connector.aqua"
 
 service JsonWorkerTxInfo("json"):
     parse(str: string) -> WorkerTxInfo
@@ -59,23 +54,18 @@ func remove_tx_status(spell_id: SpellId, status: WorkerTxStatus):
 -- If TTL happens during registration, last_seen_block won't be incremented,
 --  so we'll load same Chain Events and repeat the whole deployment and registration once again.
 -- Remember to track registration failures though, and retry them
-func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, unit_id: []u8) -> bool:
-    result <- ChainConnector.encode_register_worker(unit_id, worker_id)
+func register_worker(chain: ChainInfo, spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, unit_ids: []CUID) -> bool:
     is_ok: *bool
-    if result.success:
-        try:
-            tx_hash <- Connector.send_tx(result.data, deal_id)
-            deal_log(spell_id, deal_id, ["registered worker tx_hash", tx_hash])
-            store_tx(spell_id, WorkerTxInfo(deal_id = deal_id, tx_hash = tx_hash))
-            is_ok <<- true
-        catch e:
-            deal_log(spell_id, deal_id, ["couldn't send register_worker tx:", e])
-            store_tx_failed_deal(spell_id, deal_id, e.message, nil, nil)
-            is_ok <<- false
-    else:
-        deal_log(spell_id, deal_id, ["error encoding register_worker call", result.error!])
-        store_tx_failed_deal(spell_id, deal_id, result.error!, nil, nil)
+    try:
+        tx_hash <- Connector.register_worker( deal_id, worker_id, unit_ids)
+        deal_log(spell_id, deal_id, ["registered worker tx_hash", tx_hash])
+        store_tx(spell_id, WorkerTxInfo(deal_id = deal_id, tx_hash = tx_hash))
+        is_ok <<- true
+    catch e:
+        deal_log(spell_id, deal_id, ["couldn't send register_worker tx:", e])
+        store_tx_failed_deal(spell_id, deal_id, e.message, nil, nil)
         is_ok <<- false
+ 
     <- is_ok!
 
 func txs_unknown(spell_id: SpellId) -> []WorkerTxInfo:
@@ -108,7 +98,7 @@ func poll_txs(spell_id: SpellId, api_endpoint: string):
     txs <- txs_unknown(spell_id)
     if txs.length != 0:
         spell_log(spell_id, ["tracking txs for", txs.length, "deals"])
-        result <- ChainConnector.get_tx_statuses(api_endpoint, txs)
+        result <- Connector.get_tx_receipts(txs)
         if !result.success:
             spell_log(spell_id, ["couldn't make batch jsonrpc request:", result.error])
         else:
