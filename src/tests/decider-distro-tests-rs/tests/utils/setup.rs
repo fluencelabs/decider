@@ -57,6 +57,8 @@ pub async fn setup_swarm(distro: PackageDistro, peers: usize) -> Vec<CreatedSwar
             market_contract_address: chain_info["market"].as_str().unwrap().to_string(),
             network_id: NETWORK_ID,
             wallet_key: PrivateKey::from_str(WALLET_KEY).unwrap(),
+            default_base_fee: None,
+            default_priority_fee: None,
         });
         cfg
     })
