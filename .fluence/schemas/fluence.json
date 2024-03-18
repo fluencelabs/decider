@@ -41,7 +41,7 @@
                   "description": "Set true to allow module to use the Marine SDK logger"
                 },
                 "loggingMask": {
-                  "type": "number",
+                  "type": "integer",
                   "nullable": true,
                   "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
                 },
@@ -92,6 +92,16 @@
                   "nullable": true,
                   "required": [],
                   "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                },
+                "cid": {
+                  "description": "CID of the module when it was packed",
+                  "type": "string",
+                  "nullable": true
+                },
+                "rustBindingCrate": {
+                  "description": "Name of the interface crate that should be used with this module",
+                  "type": "string",
+                  "nullable": true
                 }
               },
               "required": [],
@@ -116,7 +126,7 @@
                     "description": "Set true to allow module to use the Marine SDK logger"
                   },
                   "loggingMask": {
-                    "type": "number",
+                    "type": "integer",
                     "nullable": true,
                     "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
                   },
@@ -167,6 +177,16 @@
                     "nullable": true,
                     "required": [],
                     "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                  },
+                  "cid": {
+                    "description": "CID of the module when it was packed",
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "rustBindingCrate": {
+                    "description": "Name of the interface crate that should be used with this module",
+                    "type": "string",
+                    "nullable": true
                   }
                 },
                 "required": [],
@@ -220,7 +240,7 @@
                     "description": "Set true to allow module to use the Marine SDK logger"
                   },
                   "loggingMask": {
-                    "type": "number",
+                    "type": "integer",
                     "nullable": true,
                     "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
                   },
@@ -271,6 +291,16 @@
                     "nullable": true,
                     "required": [],
                     "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                  },
+                  "cid": {
+                    "description": "CID of the module when it was packed",
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "rustBindingCrate": {
+                    "description": "Name of the interface crate that should be used with this module",
+                    "type": "string",
+                    "nullable": true
                   }
                 },
                 "required": [],
@@ -295,7 +325,7 @@
                       "description": "Set true to allow module to use the Marine SDK logger"
                     },
                     "loggingMask": {
-                      "type": "number",
+                      "type": "integer",
                       "nullable": true,
                       "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
                     },
@@ -346,6 +376,16 @@
                       "nullable": true,
                       "required": [],
                       "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                    },
+                    "cid": {
+                      "description": "CID of the module when it was packed",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "rustBindingCrate": {
+                      "description": "Name of the interface crate that should be used with this module",
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [],
@@ -367,7 +407,7 @@
       "nullable": true
     },
     "version": {
-      "type": "number",
+      "type": "integer",
       "const": 8
     },
     "hosts": {
@@ -455,7 +495,7 @@
             "description": "Path to spell"
           },
           "version": {
-            "type": "number",
+            "type": "integer",
             "const": 0
           },
           "aquaFilePath": {
@@ -480,7 +520,7 @@
             "description": "Trigger the spell execution periodically. If you want to disable this property by overriding it in fluence.yaml - pass empty config for it like this: `clock: {}`",
             "properties": {
               "periodSec": {
-                "type": "number",
+                "type": "integer",
                 "description": "How often the spell will be executed. If set to 0, the spell will be executed only once. If this value not provided at all - the spell will never be executed",
                 "minimum": 0,
                 "maximum": 3153600000,
@@ -497,14 +537,14 @@
                 "nullable": true
               },
               "startDelaySec": {
-                "type": "number",
+                "type": "integer",
                 "description": "How long to wait before the first execution in seconds. If this property or `startTimestamp` not specified, periodic execution will start immediately. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. This property conflicts with `startTimestamp`. You can specify only one of them",
                 "nullable": true,
                 "minimum": 0,
                 "maximum": 4294967295
               },
               "endDelaySec": {
-                "type": "number",
+                "type": "integer",
                 "description": "How long to wait before the last execution in seconds. If this property or `endTimestamp` not specified, periodic execution will never end. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. If it is in the past at the moment of spell creation - the spell will never be executed. This property conflicts with `endTimestamp`. You can specify only one of them",
                 "nullable": true,
                 "minimum": 0,
@@ -529,7 +569,7 @@
               "description": "Path to spell"
             },
             "version": {
-              "type": "number",
+              "type": "integer",
               "const": 0
             },
             "aquaFilePath": {
@@ -554,7 +594,7 @@
               "description": "Trigger the spell execution periodically. If you want to disable this property by overriding it in fluence.yaml - pass empty config for it like this: `clock: {}`",
               "properties": {
                 "periodSec": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "How often the spell will be executed. If set to 0, the spell will be executed only once. If this value not provided at all - the spell will never be executed",
                   "minimum": 0,
                   "maximum": 3153600000,
@@ -571,14 +611,14 @@
                   "nullable": true
                 },
                 "startDelaySec": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "How long to wait before the first execution in seconds. If this property or `startTimestamp` not specified, periodic execution will start immediately. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. This property conflicts with `startTimestamp`. You can specify only one of them",
                   "nullable": true,
                   "minimum": 0,
                   "maximum": 4294967295
                 },
                 "endDelaySec": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "How long to wait before the last execution in seconds. If this property or `endTimestamp` not specified, periodic execution will never end. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. If it is in the past at the moment of spell creation - the spell will never be executed. This property conflicts with `endTimestamp`. You can specify only one of them",
                   "nullable": true,
                   "minimum": 0,
@@ -631,7 +671,6 @@
           "enum": [
             "dar",
             "stage",
-            "kras",
             "local"
           ]
         },
@@ -909,7 +948,7 @@
             "nullable": true
           },
           "computeUnits": {
-            "type": "number",
+            "type": "integer",
             "minimum": 1,
             "maximum": 1,
             "default": 1,
@@ -917,20 +956,20 @@
             "nullable": true
           },
           "targetWorkers": {
-            "type": "number",
+            "type": "integer",
             "description": "Max workers in the deal",
             "default": 3,
             "nullable": true,
             "minimum": 1
           },
           "minWorkers": {
-            "type": "number",
+            "type": "integer",
             "description": "Required workers to activate the deal. Matches target workers by default",
             "nullable": true,
             "minimum": 1
           },
           "maxWorkersPerProvider": {
-            "type": "number",
+            "type": "integer",
             "description": "Max workers per provider. Matches target workers by default",
             "nullable": true,
             "minimum": 1
@@ -954,6 +993,29 @@
               "type": "string"
             },
             "nullable": true
+          },
+          "whitelist": {
+            "type": "array",
+            "description": "Whitelist of providers to deploy to. Can't be used together with blacklist",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "blacklist": {
+            "type": "array",
+            "description": "Blacklist of providers to deploy to. Can't be used together with whitelist",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "protocolVersion": {
+            "type": "integer",
+            "description": "Protocol version. Default: 1",
+            "nullable": true,
+            "default": 1,
+            "minimum": 1
           }
         },
         "required": [],
@@ -981,7 +1043,7 @@
               "nullable": true
             },
             "computeUnits": {
-              "type": "number",
+              "type": "integer",
               "minimum": 1,
               "maximum": 1,
               "default": 1,
@@ -989,20 +1051,20 @@
               "nullable": true
             },
             "targetWorkers": {
-              "type": "number",
+              "type": "integer",
               "description": "Max workers in the deal",
               "default": 3,
               "nullable": true,
               "minimum": 1
             },
             "minWorkers": {
-              "type": "number",
+              "type": "integer",
               "description": "Required workers to activate the deal. Matches target workers by default",
               "nullable": true,
               "minimum": 1
             },
             "maxWorkersPerProvider": {
-              "type": "number",
+              "type": "integer",
               "description": "Max workers per provider. Matches target workers by default",
               "nullable": true,
               "minimum": 1
@@ -1026,6 +1088,29 @@
                 "type": "string"
               },
               "nullable": true
+            },
+            "whitelist": {
+              "type": "array",
+              "description": "Whitelist of providers to deploy to. Can't be used together with blacklist",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "blacklist": {
+              "type": "array",
+              "description": "Blacklist of providers to deploy to. Can't be used together with whitelist",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "protocolVersion": {
+              "type": "integer",
+              "description": "Protocol version. Default: 1",
+              "nullable": true,
+              "default": 1,
+              "minimum": 1
             }
           },
           "required": [],

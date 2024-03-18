@@ -1,0 +1,74 @@
+aqua NewDeals declares join_new_deals
+
+import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
+
+import ChainConnector, DealMatched from "services.aqua"
+
+import deal_log, spell_log, get_string from "../fluence/spell.aqua"
+import is_worker_created, WorkerSettings from "../fluence/worker.aqua"
+import Json from "../fluence/peer.aqua"
+import join_deal from "../decider/join_deal.aqua"
+import JoinedDeal, store_deal, store_installation_failed_deal from "../decider/deal_storage.aqua"
+import SpellId, DealId from "../types.aqua"
+import register_worker from "../chain/register_worker.aqua"
+import poll_deal_statuses_by_ids from "../chain/deal_status.aqua"
+
+import Connector, Deal from "../chain/connector.aqua"
+
+use "../hex.aqua" as Hex
+
+func join_deals(chain: ChainInfo, spell_id: SpellId, deals: []Deal, settings: WorkerSettings):
+    Spell spell_id
+
+    deal_ids: *DealId
+    for deal <- deals:
+        deal_id = deal.deal_id
+        worker_id, error <- join_deal(spell_i, deal_id, deal.app_cid, settings, deal.unit_ids)
+        if worker_id == nil:
+            store_installation_failed_deal(spell_id, deal_id, log, error!)
+        else:
+            -- At this point, if worker registration return is_ok=false, it did all it could do
+            -- so here we move forward anyway
+            is_ok <- register_worker(chain, spell_id, deal_id, worker_id!, log.info.unit_id)
+            if is_ok:
+                store_deal(spell_id, deal_id, worker_id!, log.block_number)
+                deal_ids <<- deal_id
+
+            -- Use `log.block_number - 1` as a `last seen block`
+            -- Can not use `log.block_number` because it is unknown if there are more events from that block in `logs`
+            -- If a log from block N is received, then the whole `N-1` block was processed, so save it as the `last seen`
+            prev_block <- Hex.dec(spell_id, log.block_number)
+            if prev_block != nil:
+                -- Set `last seen block` to the `log.block_number - 1` (if it is > `left`)
+                -- This way, if particle has timed out during process of a log, `last seen block` would not be updated
+                -- And we will try all events from that block again
+                LastSeen.gt_set(spell_id, prev_block!, left)
+
+
+-- Returns 'matches' that were not yet joined
+func filter_new(spell_id: SpellId, matches: []DealMatched, joined_deals: []JoinedDeal) -> []DealMatched:
+    new: *DealMatched
+    -- TODO: replace with a more optimal implementation once hashmaps land in AquaVM
+    for match <- matches:
+        joined: *bool
+        match_deal_id = match.info.deal_id
+        -- first, check if worker for that deal is created
+        if is_worker_created(spell_id, match_deal_id):
+            -- then, check if `deal_id` is among `joined_deals`
+            for deal <- joined_deals:
+                if match_deal_id == deal.deal_id:
+                    joined <<- true
+        -- if there's no worker or deal_id is not among `joined_deals`, mark that deal as `new`
+        if joined == nil:
+            new <<- match
+        else:
+            deal_log(spell_id, match_deal_id, "deal is already joined")
+    <- new
+
+func join_new_deals(spell_id: SpellId, chain: ChainInfo, joined_deals: []JoinedDeal, deals: []DealMatched, settings: WorkerSettings):
+    new_deals <- filter_new(spell_id, deals, joined_deals)
+    join_deals(chain, spell_id, new_deals, settings)
+
+    else:
+        -- if it's not possible to retrieve `left boundary`, then it's not possible to `poll_logs`
+        spell_log(spell_id, ["get_left_boundary returns nil, unable to proceed"])

@@ -1,0 +1,55 @@
+aqua ChangedDeals declares poll_deal_changes_batch
+
+import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
+import PeerSpell from "@fluencelabs/spell/api.aqua"
+import Worker from "@fluencelabs/aqua-lib/workers.aqua"
+
+import deal_log, spell_log, get_string from "../fluence/spell.aqua"
+import Json from "../fluence/peer.aqua"
+import JoinedDeal, JsonDealState, DealState, store_deal_state, get_deal_state  from "../decider/deal_storage.aqua"
+import SpellId, DealId from "../types.aqua"
+import WORKER_DEF_CID from "../decider/consts.aqua"
+import WorkerSettings from "../fluence/worker.aqua"
+
+import DealInfo, DealChangesReq, ChainConnector, DealChangedResult, DealChanged from "services.aqua"
+
+use "../chain/blocks.aqua" as Blocks
+use "../hex.aqua" as Hex
+
+-- Update app_cid of the deal on the corresponding worker spell
+-- and retrigger spell to update the worker sooner
+func update_worker(spell_id: SpellId, deal_info: DealInfo, log: DealChanged, settings: WorkerSettings):
+    deal_id = deal_info.deal_id
+    worker_id = deal_info.worker_id
+    app_cid <- Json.stringify(log.info.app_cid)
+    deal_log(spell_id, deal_id, ["sending the latest update to the worker", worker_id, app_cid])
+    on worker_id:
+        -- stringify app_cid to be able to use it as an argument of a spell
+        Spell "worker-spell"
+        result <- Spell.set_string(WORKER_DEF_CID, app_cid)
+        if !result.success:
+            deal_log(spell_id, deal_id, ["can't update the worker's definition:", result.error])
+        else:
+            if Worker.is_active(deal_id):
+                PeerSpell.update_trigger_config("worker-spell", settings.config)
+
+
+func poll_deal_changes_batch(spell_id: SpellId, chain: ChainInfo, deals: []JoinedDeal, latest_block: string, settings: WorkerSettings):
+    Spell spell_id
+
+    changes <- get_deal_changes(spell_id, chain.api_endpoint, deals)
+    if changes != nil:
+        -- Update all deals with new info
+        for change <- changes!:
+            deal_id = change.deal_info.deal_id
+            if change.success:
+                if change.log != nil:
+                    deal_log(spell_id, deal_id, ["found a deal changed log on block", change.log!.block_number])
+                    -- Update app_cid of the deal on the corresponding worker spell
+                    try:
+                        update_worker(spell_id, change.deal_info, change.log!, settings)
+                    catch e:
+                        deal_log(spell_id, deal_id, ["can't update worker:", e])
+
+            else:
+                deal_log(spell_id, deal_id, ["error retrieving deal change", change.error])
