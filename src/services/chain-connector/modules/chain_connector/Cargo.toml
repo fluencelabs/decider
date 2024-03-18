@@ -12,7 +12,7 @@ path = "src/main.rs"
 marine-rs-sdk = { version = "0.10.3", features = ["logger"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0.91"
-log = "0.4.17"
+log = "0.4.21"
 thiserror = "1.0.38"
 ethabi = "18.0.0"
 hex = "0.4.3"
