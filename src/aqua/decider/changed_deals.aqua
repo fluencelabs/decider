@@ -13,7 +13,6 @@ import WorkerSettings from "../fluence/worker.aqua"
 
 import DealInfo, DealChangesReq, ChainConnector, DealChangedResult, DealChanged from "services.aqua"
 
-use "../chain/blocks.aqua" as Blocks
 use "../hex.aqua" as Hex
 
 -- Update app_cid of the deal on the corresponding worker spell
@@ -34,7 +33,7 @@ func update_worker(spell_id: SpellId, deal_info: DealInfo, log: DealChanged, set
                 PeerSpell.update_trigger_config("worker-spell", settings.config)
 
 
-func poll_deal_changes_batch(spell_id: SpellId, chain: ChainInfo, deals: []JoinedDeal, latest_block: string, settings: WorkerSettings):
+func update_deals(spell_id: SpellId, deals: []JoinedDeal,  settings: WorkerSettings):
     Spell spell_id
 
     changes <- get_deal_changes(spell_id, chain.api_endpoint, deals)

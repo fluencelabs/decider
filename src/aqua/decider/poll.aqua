@@ -3,18 +3,15 @@ aqua Poll declares main
 export main
 
 import SpellId from "../types.aqua"
-import ChainInfo from "../chain/chain.aqua"
-import join_new_deals from "../chain/new_deals.aqua"
-import poll_deal_changes_batch from "../chain/changed_deals.aqua"
+import join_new_deals from "./new_deals.aqua"
+import poll_deal_changes_batch from "./changed_deals.aqua"
 import get_joined_deals from "../decider/deal_storage.aqua"
-import poll_txs from "./register_worker.aqua"
-import poll_deal_statuses from "../chain/deal_status.aqua"
-import poll_deal_peer_removed from "../chain/deal_peer_removed.aqua"
+import poll_txs from "../chain/register_worker.aqua"
+import poll_deal_statuses from "./deal_status.aqua"
 import Connector, Deal from "../chain/connector.aqua"
 
 import WorkerSettings from "../fluence/worker.aqua"
 
-use "../chain/blocks.aqua" as Blocks
 
 
 
