@@ -1,4 +1,4 @@
-aqua Spell declares get_string, spell_log, get_counter, deal_log, list_push
+aqua Spell declares get_string, spell_log, get_counter, deal_log, list_push, list_remove, list_get
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 import Op from "@fluencelabs/aqua-lib/builtin.aqua"
@@ -35,7 +35,6 @@ func get_string(spell_id: SpellId, key: string) -> ?string:
 
     <- result
 
-
 func get_counter(spell_id: SpellId) -> u32:
     Spell spell_id
     result: *u32
@@ -46,9 +45,26 @@ func get_counter(spell_id: SpellId) -> u32:
         result <<- 0
     <- result!
 
+func list_get(spell_id: SpellId, key: string) -> ?[]string:
+    Spell spell_id
+    list: *[]string
+    result <- Spell.list_get_strings(key)
+    if !result.success:
+        spell_log(spell_id, ["can't get list by key", key, "error:", result.error])
+    else:
+        list <<- result.value
+    <- list
+
 func list_push(spell_id: SpellId, key: string, val: ⊤):
     Spell spell_id
     str <- Json.stringify(val)
     result <- Spell.list_push_string(key, str)
     if !result.success:
-        spell_log(spell_id, ["can't store value in list by key", key, "error:", result.error])
+        spell_log(spell_id, ["can't store value in list by key", key, "value", val, "error:", result.error])
+
+func list_remove(spell_id: SpellId, key: string, val: ⊤):
+    Spell spell_id
+    str <- Json.stringify(val)
+    result <- Spell.list_remove_string(key, str)
+    if !result.success:
+        spell_log(spell_id, ["can't remove value in list by key", key, "value", val, "error:", result.error])

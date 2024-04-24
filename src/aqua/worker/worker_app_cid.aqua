@@ -1,0 +1,17 @@
+aqua AppCid declares *
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+import WorkerId, DealId from "../types.aqua"
+import deal_log from "../fluence/spell.aqua"
+import "../consts.aqua"
+import Json from "../fluence/peer.aqua"
+
+func update_app_cid(worker_id: WorkerId, deal_id: DealId, app_cid: string):
+    on worker_id:
+        Spell "worker-spell"
+        -- We need a json string for the app cid because it's used as an argument to the spell function
+        -- which all must be a json objects
+        str <- Json.stringify(app_cid)
+        result <- Spell.set_string(WORKER_DEF_CID, str)
+        if !result.success:
+            deal_log("spell", deal_id, ["Failed to update app_cid on worker", result.error])

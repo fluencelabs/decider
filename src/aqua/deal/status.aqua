@@ -1,0 +1,40 @@
+aqua DealStatus declares update_deal_status
+
+import Worker from "@fluencelabs/aqua-lib/workers.aqua"
+
+import JoinedDeal from "../storage/deal.aqua"
+import DEAL_STATUS_ENDED, DEAL_STATUS_ACTIVE, DEAL_STATUS_INSUFFICIENT_FUNDS, DEAL_STATUS_NOT_ENOUGH_WORKERS from "../consts.aqua"
+import spell_log, deal_log from "../fluence/spell.aqua"
+import DealId, WorkerId from "../types.aqua"
+import remove_deal from "./remove.aqua"
+import Deal from "../fluence/connector.aqua"
+
+func activate_deal(deal_id: DealId):
+    try:
+        if !Worker.is_active(deal_id):
+            deal_log("spell", deal_id, "activating worker")
+            Worker.activate(deal_id)
+    catch e:
+        deal_log("spell", deal_id, ["couldn't activate a worker", e])
+
+func deactivate_deal(deal_id: DealId):
+    try:
+        if Worker.is_active(deal_id):
+            deal_log("spell", deal_id, "deactivating worker")
+            Worker.deactivate(deal_id)
+    catch e:
+        deal_log("spell", deal_id, ["couldn't deactivate a worker", e])
+
+
+func update_deal_status(worker_id: WorkerId, deal: Deal):
+    -- What if Aqua had else-if statement? What if Aqua has match statement? Dreams.
+    if deal.status == DEAL_STATUS_ACTIVE:
+        activate_deal(deal.deal_id)
+    else:
+        if deal.status == DEAL_STATUS_NOT_ENOUGH_WORKERS:
+            deactivate_deal(deal.deal_id)
+        else: 
+            if deal.status == DEAL_STATUS_ENDED || deal.status == DEAL_STATUS_INSUFFICIENT_FUNDS:
+                remove_deal(JoinedDeal(deal_id = deal.deal_id), worker_id)
+            else:
+                spell_log("spell", ["unsupported deal status: ", deal.status])

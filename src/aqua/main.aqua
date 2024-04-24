@@ -1,0 +1,91 @@
+aqua Main declares *
+
+export main
+
+import SpellId, DealId, WorkerId from "./types.aqua"
+import CUID, Worker from "@fluencelabs/aqua-lib/workers.aqua"
+
+import WorkerSettings from "./worker/worker.aqua"
+
+import ChainConnector, Deal from "./fluence/connector.aqua"
+import spell_log, deal_log from "./fluence/spell.aqua"
+
+import JoinedDeal from "./storage/deal.aqua"
+use "./storage/deal.aqua" as DealStorage
+
+import install_deals from "./deal/install.aqua"
+import update_deals from "./deal/update.aqua"
+import remove_deals from "./deal/remove.aqua"
+import fetch_register_status from "./worker/tx_status.aqua"
+
+func deal_exists(joined_deals: []JoinedDeal, deal_id: DealId) -> bool:
+    result: *bool
+    for joined_deal <- joined_deals:
+        if joined_deal.deal_id == deal_id:
+            result <<- true
+    if result == nil:
+        result <<- false
+    <- result!
+
+func deal_removed(joined_deals: []Deal, deal_id: DealId) -> bool:
+    result: *bool
+    for joined_deal <- joined_deals:
+        if joined_deal.deal_id == deal_id:
+            result <<- false 
+    if result == nil:
+        result <<- true 
+    <- result!
+
+func filter_deals(chain_deals: []Deal, joined_deals: []JoinedDeal) -> []Deal, []JoinedDeal, []Deal:
+    new: *Deal
+    update: *Deal
+    remove: *JoinedDeal
+
+    for deal <- chain_deals:
+        if deal_exists(joined_deals, deal.deal_id):
+            -- If the deal from the chain is in the list of joined deals, we need to update it
+            update <<- deal
+        else:
+            -- Otherwise, it's a new deal
+            new <<- deal
+
+    for joined_deal <- joined_deals:
+        -- If the joined deal isn't in the chain list, it means the deal was removed 
+        -- (it was ended or intentionally removed from the provider)
+        if deal_removed(chain_deals, joined_deal.deal_id):
+            remove <<- joined_deal
+    <- new, remove, update
+
+func fetch_deals() -> ?[]Deal:
+    result: *[]Deal
+    try:
+        spell_log("spell", ["fetch deals"])
+        result <<- ChainConnector.get_deals()
+    catch e:
+        spell_log("spell", ["Failed to get deals: ", e])
+    <- result
+
+func main(worker_settings: WorkerSettings):
+    spell_log("spell", ["run decider"])
+    -- Get the latest deals for the peer from the chain 
+    deals <- fetch_deals()
+    spell_log("spell", ["fetched deals: ", deals])
+    if deals != nil:
+        -- Get the list of known joined deals stored in the Decider
+        joined_deals <- DealStorage.get_deals()
+
+        -- Filter the deals into three categories: 
+        -- - new_deals we need to install
+        -- - for removed_deals we need to remove the worker from the peer and the state from the storage
+        -- - updated_deals we need to update:
+        new, remove, update <- filter_deals(deals!, joined_deals)
+        spell_log("spell", ["new_deals: ", new])
+        install_deals(worker_settings, new)
+
+        spell_log("spell", ["updated_deals: ", update])
+        update_deals(update)
+
+        spell_log("spell", ["removed deals: ", remove])
+        remove_deals(remove)
+    
+    fetch_register_status()

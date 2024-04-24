@@ -1,0 +1,29 @@
+aqua DealUpdate declares *
+
+import Worker from "@fluencelabs/aqua-lib/workers.aqua"
+
+import SpellId from "../types.aqua"
+import spell_log, deal_log from "../fluence/spell.aqua"
+import Deal from "../fluence/connector.aqua"
+import update_deal_status from "./status.aqua"
+import update_app_cid from "../worker/worker_app_cid.aqua"
+import DEAL_STATUS_ACTIVE from "../consts.aqua"
+
+
+-- If the app cid changes during worker inactivity, we won't update the app cid on the worker
+-- We can save only the app cid we encounter when the worker is active 
+func update_deals(deals: []Deal):
+    for deal <- deals:
+        worker_id <- Worker.get_worker_id(deal.deal_id)
+        if worker_id == nil:
+            deal_log("spell", deal.deal_id, ["Worker not found"])
+        else:
+            update_deal_status(worker_id!, deal)
+            if deal.status == DEAL_STATUS_ACTIVE:
+                try:
+                    if Worker.is_active(deal.deal_id):
+                        update_app_cid(worker_id!, deal.deal_id, deal.app_cid)
+                    else:
+                        deal_log("spell", deal.deal_id, ["Worker", worker_id!, "is not active, nothing will be updated"])
+                catch e:
+                    deal_log("spell", deal.deal_id, ["Error updating deal:", e])

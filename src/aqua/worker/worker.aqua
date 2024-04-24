@@ -1,4 +1,4 @@
-aqua Worker declares WorkerArgs, WorkerSettings, is_worker_created, create, remove
+aqua Worker declares WorkerArgs, WorkerSettings, create, remove
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
 import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
@@ -27,19 +27,7 @@ data WorkerSettings:
     -- IPFS API for the worker to pull info from
     ipfs: string
 
--- Check if a worker for a deal is already created
-func is_worker_created(spell_id: SpellId, deal_id: DealId) -> bool:
-    created: *bool
-
-    existing_worker <- Worker.get_worker_id(deal_id)
-    if existing_worker != nil:
-        created <<- true
-    else:
-        created <<- false
-
-    <- created!
-
-func create(spell_id: SpellId, deal_id: DealId, cu_ids: []CUID) -> ?WorkerId:
+func create(deal_id: DealId, cu_ids: []CUID) -> ?WorkerId:
     worker_id: *WorkerId
 
     existing_worker <- Worker.get_worker_id(deal_id)
@@ -48,11 +36,11 @@ func create(spell_id: SpellId, deal_id: DealId, cu_ids: []CUID) -> ?WorkerId:
         -- if worker was not created yet, create it
         try:
             worker_id <- Worker.create(deal_id, cu_ids)
-            deal_log(spell_id, deal_id, ["created worker for deal", worker_id!])
+            deal_log("spell", deal_id, ["created worker for deal", worker_id!])
         catch e:
-            deal_log(spell_id, deal_id, ["error creating worker", e.message])
+            deal_log("spell", deal_id, ["error creating worker", e.message])
     else:
-        deal_log(spell_id, deal_id, ["found existing worker", existing_worker!])
+        deal_log("spell", deal_id, ["found existing worker", existing_worker!])
         -- if worker was already created, get its id
         worker_id <<- existing_worker!
 

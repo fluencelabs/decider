@@ -1,0 +1,43 @@
+aqua DealStorage declares *
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+
+import DealId from "../types.aqua"
+import Json from "../fluence/peer.aqua"
+import deal_log, spell_log from "../fluence/spell.aqua"
+import JOINED_DEALS from "../consts.aqua"
+
+data JoinedDeal:
+    deal_id: DealId
+
+service JsonJoinedDeal("json"):
+    parse(json: string) -> JoinedDeal
+
+func store_deal(deal: JoinedDeal):
+    Spell "spell" 
+    json <- Json.stringify(deal)
+    result <- Spell.list_push_string(JOINED_DEALS, json)
+    if !result.success:
+        deal_log("spell", deal.deal_id, ["Can't store deal_id in storage:", result.error])
+
+func remove_deal(deal: JoinedDeal):
+    Spell "spell"
+    json <- Json.stringify(deal)
+    deal_log("spell", deal.deal_id, ["Removing deal from storage:", json])
+    result <- Spell.list_remove_string(JOINED_DEALS, json)
+    if !result.success:
+        deal_log("spell", deal.deal_id, ["Can't remove deal_id from storage:", result.error])
+
+func get_deals() -> []JoinedDeal:
+    Spell "spell"
+    joined_deals: *JoinedDeal
+    deals <- Spell.list_get_strings(JOINED_DEALS)
+    if !deals.success:
+        spell_log("spell", ["Can't get deals from storage:", deals.error])
+    else:
+       for deal_str <- deals.value:
+            try:
+                joined_deals <<- JsonJoinedDeal.parse(deal_str)
+            catch e:
+                spell_log("spell", ["Can't parse deal from storage:", e])
+    <- joined_deals

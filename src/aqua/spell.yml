@@ -3,7 +3,7 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/spell.md
 version: 0
 
-aquaFilePath: ./decider/poll.aqua
+aquaFilePath: ./main.aqua
 
 function: main
 

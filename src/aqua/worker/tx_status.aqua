@@ -1,0 +1,46 @@
+aqua WorkerStatus declares * 
+
+import PeerSpell from "@fluencelabs/spell/api.aqua"
+import CUID from "@fluencelabs/aqua-lib/workers.aqua"
+import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
+import "@fluencelabs/spell/spell_service.aqua"
+
+import deal_log, spell_log from "../fluence/spell.aqua"
+import DealId, WorkerId from "../types.aqua"
+import ChainConnector from "../fluence/connector.aqua"
+
+import WorkerTxInfo, WorkerTxStatus from "../storage/tx.aqua"
+use "../storage/tx.aqua" as TxStorage
+import "../consts.aqua"
+
+func find_tx_info(txs: []WorkerTxInfo, hash: string) -> ?WorkerTxInfo:
+    result: *WorkerTxInfo
+    for tx <- txs:
+        if tx.tx_hash == hash:
+            result <<- tx
+    <- result 
+
+func fetch_register_status():
+    txs <- TxStorage.get_txs("spell")
+    spell_log("spell", ["Stored:", txs])
+    hashes: *string
+    for tx <- txs:
+        hashes <<- tx.tx_hash
+    if hashes != nil:
+        try:
+            results <- ChainConnector.get_tx_receipts(hashes) 
+            spell_log("spell", ["Fetched receipts:", results])
+            for result <- results:
+                if !result.success:
+                    spell_log("spell", ["Fail to fetch register status for a tx:", result.error])
+                else:
+                    receipt = result.receipt!
+                    if receipt.status != TX_STATUS_PENDING:
+                        tx_info <- find_tx_info(txs, receipt.tx_hash)
+                        TxStorage.store_tx_status("spell", WorkerTxStatus(tx_info = tx_info!, status = receipt.status))
+                        TxStorage.remove_tx("spell", tx_info!)
+                        if receipt.status == TX_STATUS_FAILED:
+                            deal_log("spell", tx_info!.deal_id, ["Worker registration failed", receipt.tx_hash, receipt.block_number])
+                            -- TODO: write to a errors storage
+        catch e:
+            spell_log("spell", ["Failed to fetch register status: ", e])

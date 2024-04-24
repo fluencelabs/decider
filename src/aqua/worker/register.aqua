@@ -1,0 +1,24 @@
+aqua WorkerRegister declares * 
+
+import PeerSpell from "@fluencelabs/spell/api.aqua"
+import CUID from "@fluencelabs/aqua-lib/workers.aqua"
+import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
+import "@fluencelabs/spell/spell_service.aqua"
+
+import deal_log, spell_log from "../fluence/spell.aqua"
+import DealId, WorkerId from "../types.aqua"
+import ChainConnector from "../fluence/connector.aqua"
+
+import WorkerTxInfo, WorkerTxStatus from "../storage/tx.aqua"
+use "../storage/tx.aqua" as TxStorage
+import "../consts.aqua"
+
+
+func register_worker(deal_id: DealId, worker_id: WorkerId, cu_ids: []CUID):
+    try:
+        tx <- ChainConnector.register_worker(deal_id, worker_id, cu_ids)
+        TxStorage.store_tx("spell", WorkerTxInfo(deal_id = deal_id, tx_hash = tx))
+        deal_log("spell", deal_id, ["Worker registered: ", tx])
+    catch e:
+        deal_log("spell", deal_id, ["Failed to register worker: ", e])
+        -- TODO: store_tx_fail_register(spell_id, deal.deal_id, e.message, nill, nill)

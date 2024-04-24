@@ -4,5 +4,4 @@ alias DealId: string
 alias SpellId: string
 alias WorkerId: string
 alias CID: string
-alias Block: string
-alias PAT: string
+alias TxHash: string

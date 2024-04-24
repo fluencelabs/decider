@@ -17,16 +17,10 @@ const FAILED_DEALS = "failed_deals"
 -- subnet registration request was sent
 const JOINED_DEALS = "joined_deals"
 
--- The block from chain decider processed.
-const LAST_SEEN_BLOCK = "last_seen_block"
-
 -- Decider puts in Worker Spell's KV storage CID of worker definition
 -- This name must be in sync with Worker Spell.
 -- IMPORTANT: In this code base we have several places where we use this constant as a field name
 const WORKER_DEF_CID = "h_worker_def_cid"
-
--- Info about how synched the decider is with the chain
-const SYNC_INFO = "sync_info"
 
 -- Deal statuses
 const DEAL_STATUS_ENDED = "ENDED"
@@ -34,6 +28,7 @@ const DEAL_STATUS_ACTIVE = "ACTIVE"
 const DEAL_STATUS_INSUFFICIENT_FUNDS = "INSUFFICIENT_FUNDS"
 const DEAL_STATUS_NOT_ENOUGH_WORKERS = "NOT_ENOUGH_WORKERS"
 
--- Keys prefixes
-func removed_state_key(deal_id: string) -> string:
-    <- Op.concat_strings("removed_state:", deal_id)
+-- Tx Status
+const TX_STATUS_OK = "ok"
+const TX_STATUS_PENDING = "pending"
+const TX_STATUS_FAILED = "failed"
