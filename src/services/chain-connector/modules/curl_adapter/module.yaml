@@ -1,6 +1,0 @@
-# yaml-language-server: $schema=../../../../../.fluence/schemas/module.json
-version: 0
-type: rust
-name: curl_adapter
-mountedBinaries:
-  curl: /usr/bin/curl

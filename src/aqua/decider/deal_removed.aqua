@@ -17,3 +17,6 @@ func remove_ended_deal(spell_id: SpellId, deal_id: DealId):
         remove_deal_storage(spell_id, deal_id, worker_id!)
     else:
         deal_log(spell_id, deal_id, "deal doesn't have associated worker O.o")
+
+
+func remove_ended_deals(spell_id: SpellId, joined_deals: )

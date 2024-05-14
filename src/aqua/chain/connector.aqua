@@ -1,0 +1,13 @@
+aqua Connector declares *
+import CUID from "@fluencelabs/aqua-lib/workers.aqua"
+
+data Deal:
+    deal_id: string
+    status: string
+    unit_ids: []CUID
+    app_cid: string
+
+service Connector("connector"):
+   register_worker(deal_id: string, worker_id: string, cu_ids: []CUID) -> string
+   get_deals() -> []Deal
+   get_tx_receipts()
