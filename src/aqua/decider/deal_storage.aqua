@@ -112,8 +112,8 @@ func get_joined_deals(spell_id: SpellId) -> []JoinedDeal:
 
 func store_deal(spell_id: SpellId, deal_id: DealId, worker_id: WorkerId, block: Block):
     try:
-        store_joined_deal(spell_id, deal_id, worker_id)
         store_deal_state(spell_id, deal_id, DealState(left_boundary = block))
+        store_joined_deal(spell_id, deal_id, worker_id)
         store_deal_state_removed(spell_id, deal_id, block)
         deal_log(spell_id, deal_id, "deal state saved to kv")
     catch e:
