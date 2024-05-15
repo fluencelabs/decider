@@ -8,9 +8,11 @@ import "@fluencelabs/spell/spell_service.aqua"
 import deal_log, spell_log from "../fluence/spell.aqua"
 import DealId, WorkerId from "../types.aqua"
 import ChainConnector from "../fluence/connector.aqua"
+import Json from "../fluence/peer.aqua"
 
 import WorkerTxInfo, WorkerTxStatus from "../storage/tx.aqua"
 use "../storage/tx.aqua" as TxStorage
+use "../storage/failed.aqua" as FailedStorage
 import "../consts.aqua"
 
 func find_tx_info(txs: []WorkerTxInfo, hash: string) -> ?WorkerTxInfo:
@@ -40,7 +42,9 @@ func fetch_register_status():
                         TxStorage.store_tx_status("spell", WorkerTxStatus(tx_info = tx_info!, status = receipt.status))
                         TxStorage.remove_tx("spell", tx_info!)
                         if receipt.status == TX_STATUS_FAILED:
-                            deal_log("spell", tx_info!.deal_id, ["Worker registration failed", receipt.tx_hash, receipt.block_number])
-                            -- TODO: write to a errors storage
+                            err = ["Worker registration failed", receipt.tx_hash, receipt.block_number]
+                            deal_log("spell", tx_info!.deal_id, err)
+                            msg <- Json.stringify(err)
+                            FailedStorage.store_failed(tx_info!.deal_id, msg)
         catch e:
             spell_log("spell", ["Failed to fetch register status: ", e])

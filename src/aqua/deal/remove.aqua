@@ -22,6 +22,6 @@ func remove_deals(deals: []JoinedDeal):
         worker_id <- Worker.get_worker_id(deal.deal_id)
         if worker_id == nil:
             -- wtf
-            deal_log("spell", deal.deal_id, "worker is not found for the deal")
+            deal_log("spell", deal.deal_id, "cannot remove the deal: worker isn't found for the deal")
         else:
             remove_deal(deal, worker_id!)

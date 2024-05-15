@@ -8,7 +8,7 @@ const TXS_KEY = "worker_registration_txs"
 -- List of the transactions statuses: ok or failed
 const TXS_STATUS_KEY = "worker_registration_txs_statuses"
 
--- List of deals that failed (to install, to joined a subnet).
+-- List of deals that failed
 -- Note the some deals may be both joined and failed since there can be a problem during
 -- subnet registration
 const FAILED_DEALS = "failed_deals"

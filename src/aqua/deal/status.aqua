@@ -1,4 +1,4 @@
-aqua DealStatus declares update_deal_status
+aqua DealStatus declares update_deal_status, should_install, is_active
 
 import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 
@@ -6,7 +6,6 @@ import JoinedDeal from "../storage/deal.aqua"
 import DEAL_STATUS_ENDED, DEAL_STATUS_ACTIVE, DEAL_STATUS_INSUFFICIENT_FUNDS, DEAL_STATUS_NOT_ENOUGH_WORKERS from "../consts.aqua"
 import spell_log, deal_log from "../fluence/spell.aqua"
 import DealId, WorkerId from "../types.aqua"
-import remove_deal from "./remove.aqua"
 import Deal from "../fluence/connector.aqua"
 
 func activate_deal(deal_id: DealId):
@@ -27,14 +26,22 @@ func deactivate_deal(deal_id: DealId):
 
 
 func update_deal_status(worker_id: WorkerId, deal: Deal):
-    -- What if Aqua had else-if statement? What if Aqua has match statement? Dreams.
     if deal.status == DEAL_STATUS_ACTIVE:
         activate_deal(deal.deal_id)
     else:
         if deal.status == DEAL_STATUS_NOT_ENOUGH_WORKERS:
             deactivate_deal(deal.deal_id)
         else: 
+            -- On these statuses, Nox will eventually exit the deal and decider will remove it when these happens,
+            -- now just deactivate the workers to prevent them from doing any work
             if deal.status == DEAL_STATUS_ENDED || deal.status == DEAL_STATUS_INSUFFICIENT_FUNDS:
-                remove_deal(JoinedDeal(deal_id = deal.deal_id), worker_id)
+                deal_log("spell", "deal_id", ["deactivating deal before removal based on status:", deal.status])
+                deactivate_deal(deal.deal_id)
             else:
-                spell_log("spell", ["unsupported deal status: ", deal.status])
+                deal_log("spell", "deal_id", ["unsupported deal status:", deal.status])
+
+func should_install(status: string) -> bool:
+    <- status == DEAL_STATUS_ACTIVE || status == DEAL_STATUS_NOT_ENOUGH_WORKERS
+
+func is_active(status: string) -> bool:
+    <- status == DEAL_STATUS_ACTIVE

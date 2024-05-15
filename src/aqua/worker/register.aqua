@@ -11,7 +11,9 @@ import ChainConnector from "../fluence/connector.aqua"
 
 import WorkerTxInfo, WorkerTxStatus from "../storage/tx.aqua"
 use "../storage/tx.aqua" as TxStorage
+use "../storage/failed.aqua" as FailedStorage
 import "../consts.aqua"
+import Json from "../fluence/peer.aqua"
 
 
 func register_worker(deal_id: DealId, worker_id: WorkerId, cu_ids: []CUID):
@@ -20,5 +22,7 @@ func register_worker(deal_id: DealId, worker_id: WorkerId, cu_ids: []CUID):
         TxStorage.store_tx("spell", WorkerTxInfo(deal_id = deal_id, tx_hash = tx))
         deal_log("spell", deal_id, ["Worker registered: ", tx])
     catch e:
-        deal_log("spell", deal_id, ["Failed to register worker: ", e])
-        -- TODO: store_tx_fail_register(spell_id, deal.deal_id, e.message, nill, nill)
+        err = ["Failed to register worker: ", e]
+        deal_log("spell", deal_id, err)
+        str <- Json.stringify(err)
+        FailedStorage.store_failed(deal_id, str)

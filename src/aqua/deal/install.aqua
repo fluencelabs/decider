@@ -17,8 +17,10 @@ import Srv from "@fluencelabs/aqua-lib/builtin.aqua"
 
 import WorkerTxInfo from "../storage/tx.aqua"
 use "../storage/tx.aqua" as TxStorage
+import JoinedDeal from "../storage/deal.aqua"
 use "../storage/deal.aqua" as DealStorage
 
+use "./status.aqua" as DealStatus
 
 use "../worker/worker.aqua" as WorkerHelper
 import "@fluencelabs/aqua-lib/workers.aqua"
@@ -48,22 +50,6 @@ func install_deal_spell_stopped(deal_id: DealId, cid: CID, settings: WorkerSetti
     worker_spell_id <- PeerSpell.install(settings.script, args, empty_trigger_config(), "worker-spell")
     <- worker_spell_id
 
--- Possible pre:
--- * worker doesn't exist
---    - Okay, need to do:
---      1. create worker
---      2. install worker spell
---      3. deactivate worker
--- 
--- * worker exists and active
---     - This can mean:
---        - failed to install worker spell 
---        - worker spell is installed, failed to deactivate
---          - why would we fail to deactivate the worker?
--- * worker exists and deactivated
---    - most likely the worker spell is installed
---    - How can we come to this situation?
---      - We failed to save the state to the deal storage?
 func install_deal(settings: WorkerSettings, deal: Deal) -> ?WorkerId:
     log = (msg: ⊤):
         deal_log("spell", deal.deal_id, msg)
@@ -74,7 +60,7 @@ func install_deal(settings: WorkerSettings, deal: Deal) -> ?WorkerId:
         if Worker.is_active(deal.deal_id):
             on worker_id!:
                 try:
-                    if deal.status == DEAL_STATUS_ACTIVE:
+                    if DealStatus.is_active(deal.status):
                         worker_spell_id <- install_deal_spell(deal.deal_id, deal.app_cid, settings)
                         log(["created worker spell", worker_spell_id, "on worker", worker_id!])
                     else:
@@ -91,10 +77,11 @@ func install_deal(settings: WorkerSettings, deal: Deal) -> ?WorkerId:
 
 func install_deals(worker_settings: WorkerSettings, deals: []Deal):
     for deal <- deals:
-        worker_id <- install_deal(worker_settings, deal)
-        if worker_id != nil:
-            deal_log("spell", deal.deal_id, ["Worker installed", worker_id])
-            register_worker(deal.deal_id, worker_id!, deal.unit_ids)
-            DealStorage.store_deal(deal)
-        else:
-            deal_log("spell", deal.deal_id, ["Failed to install worker for deal", deal.deal_id, ", will try again"])
+        if DealStatus.should_install(deal.status):
+            worker_id <- install_deal(worker_settings, deal)
+            if worker_id != nil:
+                deal_log("spell", deal.deal_id, ["Worker installed", worker_id])
+                register_worker(deal.deal_id, worker_id!, deal.unit_ids)
+                DealStorage.store_deal(JoinedDeal(deal_id = deal.deal_id))
+            else:
+                deal_log("spell", deal.deal_id, ["Failed to install worker for deal", deal.deal_id, ", will try again"])
