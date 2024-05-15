@@ -7,7 +7,7 @@ use serde_json::{json, Value as JValue};
 pub use build_info::PKG_VERSION as VERSION;
 
 const DECIDER_SPELL: &'static str = include_str!("../decider-spell/main.main.air");
-const WORKER_SPELL: &'static str = include_str!("../decider-spell/deal_spell.main.air");
+const WORKER_SPELL: &'static str = include_str!("../decider-spell/worker_spell.main.air");
 
 pub mod build_info {
     include!(concat!(env!("OUT_DIR"), "/built.rs"));

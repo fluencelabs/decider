@@ -14,7 +14,7 @@ fluence build
 cp example/Config.toml "$DISTRO_DIR"
 
 # compile aqua file
-cp src/compiled-aqua/deal_spell.main.air "$DISTRO_DIR/"
+cp src/compiled-aqua/worker_spell.main.air "$DISTRO_DIR/"
 cp src/compiled-aqua/main.main.air "$DISTRO_DIR/"
 
 # compile distro
