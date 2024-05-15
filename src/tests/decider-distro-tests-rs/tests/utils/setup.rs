@@ -64,6 +64,9 @@ pub async fn setup_swarm(
             market_contract_address: "market_contract".to_string(),
             network_id: NETWORK_ID,
             wallet_key: PrivateKey::from_str(WALLET_KEY).unwrap(),
+            default_base_fee: None,
+            default_priority_fee: None,
+
         });
 
         if let Some(tmp_dir) = &tmp_dir {
@@ -76,7 +79,7 @@ pub async fn setup_swarm(
 
         cfg
     })
-    .await;
+        .await;
     swarms
 }
 
@@ -109,13 +112,13 @@ async fn setup_client(swarm: &CreatedSwarm) -> ConnectedClient {
         swarm.multiaddr.clone(),
         Some(swarm.management_keypair.clone()),
     )
-    .await
-    .unwrap();
+        .await
+        .unwrap();
     update_decider_script_for_tests(
         &mut client,
         swarm.config.dir_config.persistent_base_dir.clone(),
     )
-    .await;
+        .await;
     client
 }
 
