@@ -1,13 +1,16 @@
 #![feature(async_closure)]
 
-use crate::utils::{enable_decider_logs, TestApp};
-use crate::utils::chain::{ChainReplies, Deal, random_tx};
+use crate::utils::chain::{random_tx, ChainReplies, Deal};
 use crate::utils::control::run_decider;
-use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE, DEAL_STATUS_ENDED, DEAL_STATUS_INSUFFICIENT_FUNDS, DEAL_STATUS_NOT_ENOUGH_WORKERS};
+use crate::utils::default::{
+    DEAL_IDS, DEAL_STATUS_ACTIVE, DEAL_STATUS_ENDED, DEAL_STATUS_INSUFFICIENT_FUNDS,
+    DEAL_STATUS_NOT_ENOUGH_WORKERS,
+};
 use crate::utils::setup::setup_nox;
 use crate::utils::state::deal;
 use crate::utils::state::worker;
 use crate::utils::test_rpc_server::run_test_server;
+use crate::utils::{enable_decider_logs, TestApp};
 
 pub mod utils;
 
@@ -35,7 +38,11 @@ async fn test_deal_status() {
     let (_swarm, mut client) = setup_nox(url).await;
 
     // Install an inactive deal
-    let mut deal = Deal::ok(DEAL_IDS[0], TestApp::test_app1(), DEAL_STATUS_NOT_ENOUGH_WORKERS);
+    let mut deal = Deal::ok(
+        DEAL_IDS[0],
+        TestApp::test_app1(),
+        DEAL_STATUS_NOT_ENOUGH_WORKERS,
+    );
     let tx_hash = random_tx();
     let chain_replies = ChainReplies::new(vec![deal.clone()], vec![tx_hash]);
     run_decider(&mut server, &mut client, chain_replies).await;
@@ -92,18 +99,28 @@ async fn test_install_ended() {
 
     let (_swarm, mut client) = setup_nox(url).await;
 
-    let deal = Deal::ok(DEAL_IDS[0], TestApp::test_app1(), DEAL_STATUS_INSUFFICIENT_FUNDS);
+    let deal = Deal::ok(
+        DEAL_IDS[0],
+        TestApp::test_app1(),
+        DEAL_STATUS_INSUFFICIENT_FUNDS,
+    );
     let chain_replies = ChainReplies::new(vec![deal.clone()], vec![]);
     run_decider(&mut server, &mut client, chain_replies).await;
 
     let joined = deal::get_joined_deals(&mut client).await;
-    assert!(joined.is_empty(), "Deal must not be installed, got {joined:?}");
+    assert!(
+        joined.is_empty(),
+        "Deal must not be installed, got {joined:?}"
+    );
 
     let deal = Deal::ok(DEAL_IDS[0], TestApp::test_app1(), DEAL_STATUS_ENDED);
     let chain_replies = ChainReplies::new(vec![deal.clone()], vec![]);
     run_decider(&mut server, &mut client, chain_replies).await;
 
     let joined = deal::get_joined_deals(&mut client).await;
-    assert!(joined.is_empty(), "Deal must not be installed, got {joined:?}");
+    assert!(
+        joined.is_empty(),
+        "Deal must not be installed, got {joined:?}"
+    );
     server.shutdown().await;
 }

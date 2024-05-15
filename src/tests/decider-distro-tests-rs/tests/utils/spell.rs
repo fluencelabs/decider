@@ -37,10 +37,10 @@ pub async fn get_string_on(
             "spell_id" => json!(spell_id)
         },
     )
-        .await
-        .wrap_err("get_string failed")?
-        .pop()
-        .ok_or(eyre::eyre!("no result of particle execution"))?;
+    .await
+    .wrap_err("get_string failed")?
+    .pop()
+    .ok_or(eyre::eyre!("no result of particle execution"))?;
     serde_json::from_value::<StringValue>(result).wrap_err("failed to parse StringValue")
 }
 
@@ -74,15 +74,20 @@ pub async fn list_get_strings_on(
             "spell_id" => json!(spell_id),
         },
     )
-        .await
-        .wrap_err("list_get_strings failed")?
-        .pop()
-        .ok_or(eyre::eyre!("no result of particle execution"))?;
+    .await
+    .wrap_err("list_get_strings failed")?
+    .pop()
+    .ok_or(eyre::eyre!("no result of particle execution"))?;
 
     serde_json::from_value::<StringListValue>(result).wrap_err("failed to parse StringListValue")
 }
 
-pub async fn list_remove_string(mut client: &mut ConnectedClient, spell_id: &str, key: &str, value: &str) -> eyre::Result<UnitValue> {
+pub async fn list_remove_string(
+    mut client: &mut ConnectedClient,
+    spell_id: &str,
+    key: &str,
+    value: &str,
+) -> eyre::Result<UnitValue> {
     let relay = client.node.to_string();
     let result = execute(
         &mut client,
@@ -100,10 +105,10 @@ pub async fn list_remove_string(mut client: &mut ConnectedClient, spell_id: &str
             "spell_id" => json!(spell_id)
         },
     )
-        .await
-        .wrap_err("get_string failed")?
-        .pop()
-        .ok_or(eyre::eyre!("no result of particle execution"))?;
+    .await
+    .wrap_err("get_string failed")?
+    .pop()
+    .ok_or(eyre::eyre!("no result of particle execution"))?;
 
     serde_json::from_value::<UnitValue>(result).wrap_err("failed to parse StringListValue")
 }

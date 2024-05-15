@@ -1,12 +1,9 @@
 #![feature(async_closure)]
 #![feature(try_blocks)]
 
-
-use crate::utils::{enable_decider_logs, oneshot_config, TestApp};
-use crate::utils::chain::{ChainReplies, Deal, random_tx};
+use crate::utils::chain::{random_tx, ChainReplies, Deal};
 use crate::utils::control::{
-    run_decider, update_worker_config
-    , wait_worker_spell_stopped, wait_worker_spell_stopped_after,
+    run_decider, update_worker_config, wait_worker_spell_stopped, wait_worker_spell_stopped_after,
 };
 use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE};
 use crate::utils::setup::setup_nox;
@@ -14,6 +11,7 @@ use crate::utils::state::deal;
 use crate::utils::state::subnet;
 use crate::utils::state::worker;
 use crate::utils::test_rpc_server::run_test_server;
+use crate::utils::{enable_decider_logs, oneshot_config, TestApp};
 
 pub mod utils;
 
@@ -273,7 +271,7 @@ async fn test_update_happy_path() {
         current_timestamp,
         std::time::Duration::from_secs(20),
     )
-        .await;
+    .await;
 
     // Check that worker spell installed the updated app
     {

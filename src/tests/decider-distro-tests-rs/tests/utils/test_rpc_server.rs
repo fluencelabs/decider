@@ -170,9 +170,9 @@ pub fn run_test_server() -> ServerHandle {
 }
 
 pub fn run_test_server_predefined<T, S>(handle: T) -> ServerHandle
-    where
-        T: Fn(String, Vec<Value>) -> S + Send + Sync + 'static,
-        S: Future<Output=Value> + Send + Sync,
+where
+    T: Fn(String, Vec<Value>) -> S + Send + Sync + 'static,
+    S: Future<Output = Value> + Send + Sync,
 {
     let server = run_test_server();
     let mut view = server.view();

@@ -6,10 +6,10 @@ use maplit::hashmap;
 use tempfile::TempDir;
 
 use connected_client::ConnectedClient;
+use created_swarm::fluence_keypair::KeyPair;
 use created_swarm::system_services::PackageDistro;
 use created_swarm::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
 use created_swarm::{make_swarms_with_cfg, ChainConfig, CreatedSwarm};
-use created_swarm::fluence_keypair::KeyPair;
 
 use crate::utils::control::update_decider_script_for_tests;
 use crate::utils::default::{IPFS_MULTIADDR, NETWORK_ID, WALLET_KEY};
@@ -32,7 +32,13 @@ pub fn setup_system_config() -> SystemServicesConfig {
     config
 }
 
-pub async fn setup_swarm(distro: PackageDistro, peers: usize, url: String, tmp_dir: Option<Arc<TempDir>>, kp: Option<KeyPair>) -> Vec<CreatedSwarm> {
+pub async fn setup_swarm(
+    distro: PackageDistro,
+    peers: usize,
+    url: String,
+    tmp_dir: Option<Arc<TempDir>>,
+    kp: Option<KeyPair>,
+) -> Vec<CreatedSwarm> {
     let swarms = make_swarms_with_cfg(peers, move |mut cfg| {
         cfg.enabled_system_services = vec!["aqua-ipfs".to_string()];
         cfg.extend_system_services = vec![distro.clone()];
@@ -70,7 +76,7 @@ pub async fn setup_swarm(distro: PackageDistro, peers: usize, url: String, tmp_d
 
         cfg
     })
-        .await;
+    .await;
     swarms
 }
 
@@ -78,11 +84,20 @@ pub async fn setup_nox(url: String) -> (CreatedSwarm, ConnectedClient) {
     setup_nox_gen(make_distro_stopped(), url, None, None).await
 }
 
-pub async fn setup_nox_with(url: String, temp_dir: Arc<TempDir>, kp: KeyPair) -> (CreatedSwarm, ConnectedClient) {
+pub async fn setup_nox_with(
+    url: String,
+    temp_dir: Arc<TempDir>,
+    kp: KeyPair,
+) -> (CreatedSwarm, ConnectedClient) {
     setup_nox_gen(make_distro_stopped(), url, Some(temp_dir), Some(kp)).await
 }
 
-async fn setup_nox_gen(distro: PackageDistro, url: String, temp_dir: Option<Arc<TempDir>>, kp: Option<KeyPair>) -> (CreatedSwarm, ConnectedClient) {
+async fn setup_nox_gen(
+    distro: PackageDistro,
+    url: String,
+    temp_dir: Option<Arc<TempDir>>,
+    kp: Option<KeyPair>,
+) -> (CreatedSwarm, ConnectedClient) {
     let mut swarms = setup_swarm(distro, 1, url, temp_dir, kp).await;
     let swarm = swarms.remove(0);
     let client = setup_client(&swarm).await;
@@ -94,13 +109,13 @@ async fn setup_client(swarm: &CreatedSwarm) -> ConnectedClient {
         swarm.multiaddr.clone(),
         Some(swarm.management_keypair.clone()),
     )
-        .await
-        .unwrap();
+    .await
+    .unwrap();
     update_decider_script_for_tests(
         &mut client,
         swarm.config.dir_config.persistent_base_dir.clone(),
     )
-        .await;
+    .await;
     client
 }
 

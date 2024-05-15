@@ -25,7 +25,10 @@ pub async fn remove_joined_deal(client: &mut ConnectedClient, deal_id: &str) -> 
     let result = spell::list_remove_string(client, "decider", "joined_deals", deal_id)
         .await
         .unwrap();
-    result.success.then(|| ()).ok_or_else(|| eyre::eyre!("failed to remove deal: {}", result.error))
+    result
+        .success
+        .then(|| ())
+        .ok_or_else(|| eyre::eyre!("failed to remove deal: {}", result.error))
 }
 
 #[allow(dead_code)]

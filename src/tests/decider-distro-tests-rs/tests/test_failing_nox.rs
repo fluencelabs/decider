@@ -8,16 +8,16 @@ use maplit::hashmap;
 use serde_json::{json, Value};
 use tempfile::TempDir;
 
-use created_swarm::{Args, CreatedSwarm, FunctionOutcome, JError};
 use created_swarm::fluence_keypair::KeyPair;
+use created_swarm::{Args, CreatedSwarm, FunctionOutcome, JError};
 
-use crate::utils::{enable_decider_logs, TestApp};
-use crate::utils::chain::{ChainReplies, Deal, random_tx};
+use crate::utils::chain::{random_tx, ChainReplies, Deal};
 use crate::utils::control::run_decider;
 use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE, DEAL_STATUS_NOT_ENOUGH_WORKERS};
 use crate::utils::setup::{setup_nox_with, stop_nox};
 use crate::utils::state::{deal, worker};
 use crate::utils::test_rpc_server::run_test_server;
+use crate::utils::{enable_decider_logs, TestApp};
 
 pub mod utils;
 
@@ -66,7 +66,10 @@ async fn test_failed_nox_install_create() {
 
     {
         let joined_deals = deal::get_joined_deals(&mut client).await;
-        assert!(joined_deals.is_empty(), "No deals should be joined, got: {joined_deals:?}");
+        assert!(
+            joined_deals.is_empty(),
+            "No deals should be joined, got: {joined_deals:?}"
+        );
     }
 
     stop_nox(swarm).expect("couldn't stop nox");
@@ -118,13 +121,20 @@ async fn test_failed_nox_update_activate() {
 
     let (swarm, mut client) = setup_nox_with(url.clone(), tmp_dir.clone(), kp.clone()).await;
     let deal_id = DEAL_IDS[0];
-    let deal = Deal::ok(deal_id, TestApp::test_app1(), DEAL_STATUS_NOT_ENOUGH_WORKERS);
+    let deal = Deal::ok(
+        deal_id,
+        TestApp::test_app1(),
+        DEAL_STATUS_NOT_ENOUGH_WORKERS,
+    );
     let chain_replies = ChainReplies::new(vec![deal], vec![random_tx()]);
     run_decider(&mut server, &mut client, chain_replies).await;
 
     let worker_id = {
         let mut worker = worker::get_worker(&mut client, deal_id).await;
-        assert!(!worker.is_empty(), "couldn't get worker of a deal {deal_id}");
+        assert!(
+            !worker.is_empty(),
+            "couldn't get worker of a deal {deal_id}"
+        );
         worker.remove(0)
     };
 
@@ -148,7 +158,6 @@ async fn test_failed_nox_update_activate() {
         assert!(!is_active, "Worker must be inactive");
     }
 
-
     run_decider(&mut server, &mut client, chain_replies).await;
     {
         let is_active = worker::is_active(&mut client, deal_id).await.unwrap();
@@ -163,7 +172,6 @@ async fn test_failed_nox_update_activate() {
 
     server.shutdown().await;
 }
-
 
 /// Test Scenario: Installation with the failing Nox
 ///
@@ -196,7 +204,10 @@ async fn test_failed_nox_remove_removed() {
     let deal_id = DEAL_IDS[0];
 
     // Install a deal
-    let chain_replies = ChainReplies::new(vec![Deal::ok(deal_id, TestApp::test_app1(), DEAL_STATUS_ACTIVE)], vec![random_tx()]);
+    let chain_replies = ChainReplies::new(
+        vec![Deal::ok(deal_id, TestApp::test_app1(), DEAL_STATUS_ACTIVE)],
+        vec![random_tx()],
+    );
     run_decider(&mut server, &mut client, chain_replies).await;
     let worker_id = {
         let mut worker = worker::get_worker(&mut client, deal_id).await;
@@ -236,37 +247,27 @@ struct WorkerReplies {
     get_worker_id: Option<String>,
 }
 
-
 async fn add_broken_worker_builtin<'a>(swarm: &CreatedSwarm, replies: WorkerReplies) {
     let err = |msg: String| -> Box<
         dyn Fn(_, _) -> BoxFuture<'static, FunctionOutcome> + 'static + Send + Sync,
     > {
         Box::new(move |_, _| {
             let msg = msg.clone();
-            async move {
-                FunctionOutcome::Err(JError::new(msg))
-            }.boxed()
+            async move { FunctionOutcome::Err(JError::new(msg)) }.boxed()
         })
     };
 
-    let none = || -> Box<
-        dyn Fn(_, _) -> BoxFuture<'static, FunctionOutcome> + 'static + Send + Sync,
-    > {
-        Box::new(move |_, _| {
-            async move {
-                FunctionOutcome::Ok(Value::Array(vec![]))
-            }.boxed()
-        })
-    };
+    let none =
+        || -> Box<dyn Fn(_, _) -> BoxFuture<'static, FunctionOutcome> + 'static + Send + Sync> {
+            Box::new(move |_, _| async move { FunctionOutcome::Ok(Value::Array(vec![])) }.boxed())
+        };
 
     let constant = |val: Value| -> Box<
         dyn Fn(_, _) -> BoxFuture<'static, FunctionOutcome> + 'static + Send + Sync,
     > {
         Box::new(move |_, _| {
             let val = val.clone();
-            async move {
-                FunctionOutcome::Ok(val)
-            }.boxed()
+            async move { FunctionOutcome::Ok(val) }.boxed()
         })
     };
     let is_active = if let Some(is_active) = replies.is_active {
@@ -279,19 +280,19 @@ async fn add_broken_worker_builtin<'a>(swarm: &CreatedSwarm, replies: WorkerRepl
     } else {
         none()
     };
-    swarm.aquamarine_api
+    swarm
+        .aquamarine_api
         .clone()
         .add_service(
             "worker".into(),
             hashmap! {
-                    "create".to_string() => err("Worker creation failed".to_string()).into(),
-                    "get_worker_id".to_string() => get_worker_id.into(),
-                    "activate".to_string() => err("Worker activation failed".to_string()).into(),
-                    "is_active".to_string() => is_active.into(),
-                    "remove".to_string() => err("Worker removal failed".to_string()).into(),
-                },
+                "create".to_string() => err("Worker creation failed".to_string()).into(),
+                "get_worker_id".to_string() => get_worker_id.into(),
+                "activate".to_string() => err("Worker activation failed".to_string()).into(),
+                "is_active".to_string() => is_active.into(),
+                "remove".to_string() => err("Worker removal failed".to_string()).into(),
+            },
         )
         .await
         .expect("add service");
 }
-

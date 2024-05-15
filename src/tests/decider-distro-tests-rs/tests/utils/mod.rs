@@ -69,8 +69,8 @@ pub fn oneshot_config() -> TriggerConfig {
 }
 
 pub fn hex_u32_deserialize<'de, D>(deserializer: D) -> Result<u32, D::Error>
-    where
-        D: serde::Deserializer<'de>,
+where
+    D: serde::Deserializer<'de>,
 {
     let s: String = serde::Deserialize::deserialize(deserializer)?;
     if s.starts_with("0x") {

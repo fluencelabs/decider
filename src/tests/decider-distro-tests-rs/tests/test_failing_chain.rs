@@ -1,12 +1,12 @@
 #![feature(async_closure)]
 
-use crate::utils::chain::{ChainReplies, Deal, random_tx, TxReceipt};
+use crate::utils::chain::{random_tx, ChainReplies, Deal, TxReceipt};
 use crate::utils::control::run_decider;
 use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE};
-use crate::utils::{chain, enable_decider_logs, TestApp};
 use crate::utils::setup::setup_nox;
 use crate::utils::state::{deal, subnet, worker};
 use crate::utils::test_rpc_server::run_test_server;
+use crate::utils::{chain, enable_decider_logs, TestApp};
 
 pub mod utils;
 
@@ -32,17 +32,20 @@ async fn test_failed_get_deals() {
 
     let deal_id = DEAL_IDS[0];
 
-    let chain_replies = ChainReplies::new(
-        vec![Deal::broken(deal_id)],
-        vec![],
-    );
+    let chain_replies = ChainReplies::new(vec![Deal::broken(deal_id)], vec![]);
     run_decider(&mut server, &mut client, chain_replies).await;
 
     {
         let joined = deal::get_joined_deals(&mut client).await;
-        assert!(joined.is_empty(), "No deals should be installed, got: {joined:?}");
+        assert!(
+            joined.is_empty(),
+            "No deals should be installed, got: {joined:?}"
+        );
         let workers = worker::get_worker_list(&mut client).await;
-        assert!(workers.is_empty(), "No workers should be created, got: {workers:?}");
+        assert!(
+            workers.is_empty(),
+            "No workers should be created, got: {workers:?}"
+        );
     }
 
     let chain_replies = ChainReplies::new(
@@ -57,14 +60,14 @@ async fn test_failed_get_deals() {
         assert_eq!(deal_id, joined[0].deal_id, "wrong deal is joined");
 
         let mut worker = worker::get_worker(&mut client, &deal_id).await;
-        assert!(!worker.is_empty(), "Worker for deal {deal_id} must be created");
+        assert!(
+            !worker.is_empty(),
+            "Worker for deal {deal_id} must be created"
+        );
         worker.remove(0)
     };
 
-    let chain_replies = ChainReplies::new(
-        vec![Deal::broken(deal_id)],
-        vec![],
-    );
+    let chain_replies = ChainReplies::new(vec![Deal::broken(deal_id)], vec![]);
     run_decider(&mut server, &mut client, chain_replies).await;
     {
         let joined = deal::get_joined_deals(&mut client).await;
@@ -72,8 +75,14 @@ async fn test_failed_get_deals() {
         assert_eq!(deal_id, joined[0].deal_id, "wrong deal is joined");
 
         let worker = worker::get_worker(&mut client, &deal_id).await;
-        assert!(!worker.is_empty(), "Worker for deal {deal_id} must be created");
-        assert_eq!(worker_id, worker[0], "Worker for the deal {deal_id} has changed");
+        assert!(
+            !worker.is_empty(),
+            "Worker for deal {deal_id} must be created"
+        );
+        assert_eq!(
+            worker_id, worker[0],
+            "Worker for the deal {deal_id} has changed"
+        );
     }
     server.shutdown().await;
 }
@@ -109,13 +118,19 @@ async fn test_failed_register_workers() {
     assert!(!joined.is_empty(), "The deal {deal_id} must be joined");
     assert_eq!(deal_id, joined[0].deal_id, "wrong deal is joined");
     let worker_id = worker::get_worker(&mut client, &deal_id).await;
-    assert!(!worker_id.is_empty(), "Worker for deal {deal_id} must be created");
+    assert!(
+        !worker_id.is_empty(),
+        "Worker for deal {deal_id} must be created"
+    );
 
     let txs = subnet::get_txs(&mut client).await;
     assert!(txs.is_empty(), "No txs should be registered, got: {txs:?}");
 
     let failed = deal::get_failed_deals(&mut client).await;
-    assert!(!failed.is_empty(), "No failed deals should be registered, got: {failed:?}");
+    assert!(
+        !failed.is_empty(),
+        "No failed deals should be registered, got: {failed:?}"
+    );
     assert_eq!(failed[0].deal_id, deal_id, "wrong deal failed");
 
     server.shutdown().await;
@@ -143,7 +158,10 @@ async fn test_failed_get_receipts() {
     let chain_replies = ChainReplies {
         deals: vec![Deal::ok(deal_id, TestApp::test_app1(), DEAL_STATUS_ACTIVE)],
         new_deals_tx_hashes: vec![Some(tx.clone())],
-        new_deals_receipts: vec![Some(TxReceipt { tx_hash: tx.clone(), status: "pending".to_string() })],
+        new_deals_receipts: vec![Some(TxReceipt {
+            tx_hash: tx.clone(),
+            status: "pending".to_string(),
+        })],
     };
     run_decider(&mut server, &mut client, chain_replies).await;
     // We joined the deal, but the status is unknown
@@ -161,7 +179,10 @@ async fn test_failed_get_receipts() {
         assert_eq!(txs[0].deal_id, deal_id);
 
         let statuses = subnet::get_txs_statuses(&mut client).await;
-        assert!(statuses.is_empty(), "no statuses should be registered, got: {statuses:?}");
+        assert!(
+            statuses.is_empty(),
+            "no statuses should be registered, got: {statuses:?}"
+        );
     }
 
     let chain_replies = ChainReplies {
@@ -177,13 +198,19 @@ async fn test_failed_get_receipts() {
         assert_eq!(txs[0].deal_id, deal_id);
 
         let statuses = subnet::get_txs_statuses(&mut client).await;
-        assert!(statuses.is_empty(), "no statuses should be registered, got: {statuses:?}");
+        assert!(
+            statuses.is_empty(),
+            "no statuses should be registered, got: {statuses:?}"
+        );
     }
 
     let chain_replies = ChainReplies {
         deals: vec![Deal::ok(deal_id, TestApp::test_app1(), DEAL_STATUS_ACTIVE)],
         new_deals_tx_hashes: vec![],
-        new_deals_receipts: vec![Some(TxReceipt { tx_hash: tx.clone(), status: "error".to_string() })],
+        new_deals_receipts: vec![Some(TxReceipt {
+            tx_hash: tx.clone(),
+            status: "error".to_string(),
+        })],
     };
     run_decider(&mut server, &mut client, chain_replies).await;
     {
@@ -191,9 +218,11 @@ async fn test_failed_get_receipts() {
         assert!(txs.is_empty(), "txs must be cleared, got {txs:?}");
 
         let statuses = subnet::get_txs_statuses(&mut client).await;
-        assert!(!statuses.is_empty(), "tx status must be saved, got: {statuses:?}");
+        assert!(
+            !statuses.is_empty(),
+            "tx status must be saved, got: {statuses:?}"
+        );
     }
-
 
     server.shutdown().await;
 }

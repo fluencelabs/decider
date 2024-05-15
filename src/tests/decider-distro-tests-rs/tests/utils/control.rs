@@ -39,7 +39,7 @@ pub async fn update_decider_config(
             "config" => json!(trigger_config),
         },
     )
-        .await
+    .await
 }
 
 pub async fn update_worker_config(
@@ -59,7 +59,7 @@ pub async fn update_worker_config(
             "config" => json!(trigger_config),
         },
     )
-        .await
+    .await
 }
 
 // God left me here
@@ -94,8 +94,8 @@ pub async fn update_decider_script_for_tests(
         "id script",
         hashmap! {},
     )
-        .await
-        .unwrap();
+    .await
+    .unwrap();
     assert_eq!(
         result[0].as_array().unwrap().len(),
         1,
@@ -145,8 +145,8 @@ pub async fn wait_worker_spell_stopped_after(
             "worker-spell",
             "__installation_spell_status__",
         )
-            .await
-            .unwrap();
+        .await
+        .unwrap();
         assert!(
             strings.success,
             "can't get installation spell status: {}",

@@ -105,15 +105,19 @@ pub async fn play_get_deals(server: &mut ServerHandle, deals: &Vec<Deal>) {
         server.send_response(Ok(json!(get_compute_units(&ids))));
     }
 
-
     // get app cid
     for _ in 0..deals.len() {
         let (method, params) = server.receive_request().await.unwrap();
         assert_eq!(method, "eth_call");
 
         let requested_deal = params[0].get("to").unwrap().as_str().unwrap();
-        let deal = deals.iter().find(|deal| requested_deal.ends_with(&deal.deal_id));
-        assert!(deal.is_some(), "nox requested non-existent deal {requested_deal}, deals: {deals:?}");
+        let deal = deals
+            .iter()
+            .find(|deal| requested_deal.ends_with(&deal.deal_id));
+        assert!(
+            deal.is_some(),
+            "nox requested non-existent deal {requested_deal}, deals: {deals:?}"
+        );
         let deal = deal.unwrap();
 
         let reply = if let Some(ref app_cid) = deal.app {
@@ -135,8 +139,13 @@ pub async fn play_get_deals(server: &mut ServerHandle, deals: &Vec<Deal>) {
         assert_eq!(method, "eth_call");
 
         let requested_deal = params[0].get("to").unwrap().as_str().unwrap();
-        let deal = deals.iter().find(|deal| requested_deal.ends_with(&deal.deal_id));
-        assert!(deal.is_some(), "nox requested non-existent deal {requested_deal}, deals: {deals:?}");
+        let deal = deals
+            .iter()
+            .find(|deal| requested_deal.ends_with(&deal.deal_id));
+        assert!(
+            deal.is_some(),
+            "nox requested non-existent deal {requested_deal}, deals: {deals:?}"
+        );
         let deal = deal.unwrap();
 
         let reply = if let Some(ref status) = deal.status {
