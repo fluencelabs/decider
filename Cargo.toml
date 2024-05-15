@@ -1,7 +1,0 @@
-[workspace]
-resolver = "2"
-members = [
-  "src/services/chain-connector/modules/curl_adapter",
-  "src/services/chain-connector/modules/chain_connector"
-]
-exclude = [ "src/tests", "src/distro/" ]
