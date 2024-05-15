@@ -9,7 +9,7 @@
   ],
   "properties": {
     "version": {
-      "type": "number",
+      "type": "integer",
       "const": 1,
       "description": "Config version"
     },
@@ -46,15 +46,21 @@
                 "type": "string",
                 "enum": [
                   "dar",
-                  "stage",
                   "kras",
+                  "stage",
                   "local"
                 ],
-                "description": "Blockchain network name that was used when deploying workers"
+                "description": "DEPRECATED. Blockchain network name that was used when deploying workers",
+                "nullable": true
               },
               "chainNetworkId": {
-                "type": "number",
+                "type": "integer",
                 "description": "Blockchain network id that was used when deploying workers"
+              },
+              "matched": {
+                "type": "boolean",
+                "description": "Is deal matched",
+                "nullable": true
               }
             },
             "required": [
@@ -62,7 +68,6 @@
               "definition",
               "dealId",
               "dealIdOriginal",
-              "chainNetwork",
               "chainNetworkId"
             ],
             "additionalProperties": false,
@@ -92,15 +97,21 @@
                   "type": "string",
                   "enum": [
                     "dar",
-                    "stage",
                     "kras",
+                    "stage",
                     "local"
                   ],
-                  "description": "Blockchain network name that was used when deploying workers"
+                  "description": "DEPRECATED. Blockchain network name that was used when deploying workers",
+                  "nullable": true
                 },
                 "chainNetworkId": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "Blockchain network id that was used when deploying workers"
+                },
+                "matched": {
+                  "type": "boolean",
+                  "description": "Is deal matched",
+                  "nullable": true
                 }
               },
               "required": [
@@ -108,7 +119,6 @@
                 "definition",
                 "dealId",
                 "dealIdOriginal",
-                "chainNetwork",
                 "chainNetworkId"
               ],
               "additionalProperties": false,
@@ -144,15 +154,21 @@
                 "type": "string",
                 "enum": [
                   "dar",
-                  "stage",
                   "kras",
+                  "stage",
                   "local"
                 ],
-                "description": "Blockchain network name that was used when deploying workers"
+                "description": "DEPRECATED. Blockchain network name that was used when deploying workers",
+                "nullable": true
               },
               "chainNetworkId": {
-                "type": "number",
+                "type": "integer",
                 "description": "Blockchain network id that was used when deploying workers"
+              },
+              "matched": {
+                "type": "boolean",
+                "description": "Is deal matched",
+                "nullable": true
               }
             },
             "required": [
@@ -160,7 +176,6 @@
               "definition",
               "dealId",
               "dealIdOriginal",
-              "chainNetwork",
               "chainNetworkId"
             ],
             "additionalProperties": false,
@@ -190,15 +205,21 @@
                   "type": "string",
                   "enum": [
                     "dar",
-                    "stage",
                     "kras",
+                    "stage",
                     "local"
                   ],
-                  "description": "Blockchain network name that was used when deploying workers"
+                  "description": "DEPRECATED. Blockchain network name that was used when deploying workers",
+                  "nullable": true
                 },
                 "chainNetworkId": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "Blockchain network id that was used when deploying workers"
+                },
+                "matched": {
+                  "type": "boolean",
+                  "description": "Is deal matched",
+                  "nullable": true
                 }
               },
               "required": [
@@ -206,7 +227,6 @@
                 "definition",
                 "dealId",
                 "dealIdOriginal",
-                "chainNetwork",
                 "chainNetworkId"
               ],
               "additionalProperties": false,
@@ -242,15 +262,21 @@
                 "type": "string",
                 "enum": [
                   "dar",
-                  "stage",
                   "kras",
+                  "stage",
                   "local"
                 ],
-                "description": "Blockchain network name that was used when deploying workers"
+                "description": "DEPRECATED. Blockchain network name that was used when deploying workers",
+                "nullable": true
               },
               "chainNetworkId": {
-                "type": "number",
+                "type": "integer",
                 "description": "Blockchain network id that was used when deploying workers"
+              },
+              "matched": {
+                "type": "boolean",
+                "description": "Is deal matched",
+                "nullable": true
               }
             },
             "required": [
@@ -258,7 +284,6 @@
               "definition",
               "dealId",
               "dealIdOriginal",
-              "chainNetwork",
               "chainNetworkId"
             ],
             "additionalProperties": false,
@@ -288,15 +313,21 @@
                   "type": "string",
                   "enum": [
                     "dar",
-                    "stage",
                     "kras",
+                    "stage",
                     "local"
                   ],
-                  "description": "Blockchain network name that was used when deploying workers"
+                  "description": "DEPRECATED. Blockchain network name that was used when deploying workers",
+                  "nullable": true
                 },
                 "chainNetworkId": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "Blockchain network id that was used when deploying workers"
+                },
+                "matched": {
+                  "type": "boolean",
+                  "description": "Is deal matched",
+                  "nullable": true
                 }
               },
               "required": [
@@ -304,7 +335,6 @@
                 "definition",
                 "dealId",
                 "dealIdOriginal",
-                "chainNetwork",
                 "chainNetworkId"
               ],
               "additionalProperties": false,
@@ -340,15 +370,21 @@
                 "type": "string",
                 "enum": [
                   "dar",
-                  "stage",
                   "kras",
+                  "stage",
                   "local"
                 ],
-                "description": "Blockchain network name that was used when deploying workers"
+                "description": "DEPRECATED. Blockchain network name that was used when deploying workers",
+                "nullable": true
               },
               "chainNetworkId": {
-                "type": "number",
+                "type": "integer",
                 "description": "Blockchain network id that was used when deploying workers"
+              },
+              "matched": {
+                "type": "boolean",
+                "description": "Is deal matched",
+                "nullable": true
               }
             },
             "required": [
@@ -356,7 +392,6 @@
               "definition",
               "dealId",
               "dealIdOriginal",
-              "chainNetwork",
               "chainNetworkId"
             ],
             "additionalProperties": false,
@@ -386,15 +421,21 @@
                   "type": "string",
                   "enum": [
                     "dar",
-                    "stage",
                     "kras",
+                    "stage",
                     "local"
                   ],
-                  "description": "Blockchain network name that was used when deploying workers"
+                  "description": "DEPRECATED. Blockchain network name that was used when deploying workers",
+                  "nullable": true
                 },
                 "chainNetworkId": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "Blockchain network id that was used when deploying workers"
+                },
+                "matched": {
+                  "type": "boolean",
+                  "description": "Is deal matched",
+                  "nullable": true
                 }
               },
               "required": [
@@ -402,7 +443,6 @@
                 "definition",
                 "dealId",
                 "dealIdOriginal",
-                "chainNetwork",
                 "chainNetworkId"
               ],
               "additionalProperties": false,
@@ -438,15 +478,21 @@
                 "type": "string",
                 "enum": [
                   "dar",
-                  "stage",
                   "kras",
+                  "stage",
                   "local"
                 ],
-                "description": "Blockchain network name that was used when deploying workers"
+                "description": "DEPRECATED. Blockchain network name that was used when deploying workers",
+                "nullable": true
               },
               "chainNetworkId": {
-                "type": "number",
+                "type": "integer",
                 "description": "Blockchain network id that was used when deploying workers"
+              },
+              "matched": {
+                "type": "boolean",
+                "description": "Is deal matched",
+                "nullable": true
               }
             },
             "required": [
@@ -454,7 +500,6 @@
               "definition",
               "dealId",
               "dealIdOriginal",
-              "chainNetwork",
               "chainNetworkId"
             ],
             "additionalProperties": false,
@@ -484,15 +529,21 @@
                   "type": "string",
                   "enum": [
                     "dar",
-                    "stage",
                     "kras",
+                    "stage",
                     "local"
                   ],
-                  "description": "Blockchain network name that was used when deploying workers"
+                  "description": "DEPRECATED. Blockchain network name that was used when deploying workers",
+                  "nullable": true
                 },
                 "chainNetworkId": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "Blockchain network id that was used when deploying workers"
+                },
+                "matched": {
+                  "type": "boolean",
+                  "description": "Is deal matched",
+                  "nullable": true
                 }
               },
               "required": [
@@ -500,7 +551,6 @@
                 "definition",
                 "dealId",
                 "dealIdOriginal",
-                "chainNetwork",
                 "chainNetworkId"
               ],
               "additionalProperties": false,
