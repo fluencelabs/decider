@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.12](https://github.com/fluencelabs/decider/compare/connector-v0.6.11...connector-v0.6.12) (2024-05-14)
+
+
+### Features
+
+* update nox crates; fix build ([#256](https://github.com/fluencelabs/decider/issues/256)) ([7f95162](https://github.com/fluencelabs/decider/commit/7f95162e858122791c3ccb75f69a7251ea656b23))
+
+
+### Bug Fixes
+
+* fixed deal store ([#266](https://github.com/fluencelabs/decider/issues/266)) ([3b6173d](https://github.com/fluencelabs/decider/commit/3b6173db331931698f2e5c15c3a2e910ffd2fe5b))
+
 ## [0.6.11](https://github.com/fluencelabs/decider/compare/connector-v0.6.10...connector-v0.6.11) (2024-03-07)
 
 
