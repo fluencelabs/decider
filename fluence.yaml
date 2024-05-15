@@ -26,10 +26,6 @@ aquaDependencies:
   "@fluencelabs/aqua-lib": 0.10.2
   "@fluencelabs/registry": 0.9.4
 
-marineVersion: 0.19.0
-
-mreplVersion: 0.26.0
-
 compileAqua:
   decider-spell:
     input: src/aqua/main.aqua
