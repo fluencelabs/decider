@@ -1,8 +1,11 @@
-use crate::utils::to_hex;
-use cid::Cid;
-use serde_json::{json, Value};
 use std::str::FromStr;
 
+use cid::Cid;
+use serde_json::{json, Value};
+
+use crate::utils::to_hex;
+
+#[derive(Debug, Clone)]
 pub struct TestApp {
     pub cid: String,
     pub services_names: Vec<String>,
@@ -17,7 +20,7 @@ impl TestApp {
         }
     }
 
-    fn encoded_cid(&self) -> String {
+    pub fn encoded_cid(&self) -> String {
         let x = Cid::from_str(&self.cid).unwrap();
         let bts = x.to_bytes();
         let prefix = hex::encode(bts[0..4].to_vec());

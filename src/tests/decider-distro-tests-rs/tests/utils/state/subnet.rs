@@ -1,13 +1,11 @@
-use crate::utils::spell;
-use connected_client::ConnectedClient;
 use serde::Deserialize;
+use connected_client::ConnectedClient;
+use crate::utils::spell;
 
-// atm the we don't use some fields in the tests, but will do in future
-#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct WorkerTxInfo {
-    deal_id: String,
-    tx_hash: String,
+    pub deal_id: String,
+    pub tx_hash: String,
 }
 
 pub async fn get_txs(mut client: &mut ConnectedClient) -> Vec<WorkerTxInfo> {
@@ -25,11 +23,10 @@ pub async fn get_txs(mut client: &mut ConnectedClient) -> Vec<WorkerTxInfo> {
         .collect::<Vec<_>>()
 }
 
-#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct WorkerTxStatus {
-    tx_info: WorkerTxInfo,
-    status: String,
+    pub tx_info: WorkerTxInfo,
+    pub status: String,
 }
 
 pub async fn get_txs_statuses(mut client: &mut ConnectedClient) -> Vec<WorkerTxStatus> {

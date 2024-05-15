@@ -1,22 +1,14 @@
 #![feature(async_closure)]
 #![feature(try_blocks)]
 
-use std::str::FromStr;
-
-use created_swarm::{Args, CreatedSwarm, FunctionOutcome};
-use futures::future::BoxFuture;
-use futures::FutureExt;
-use maplit::hashmap;
-use serde_json::json;
 
 use crate::utils::{enable_decider_logs, oneshot_config, TestApp};
-use crate::utils::chain::{
-    ChainReplies, Deal, play_chain,
-    random_tx, TxReceipt,
+use crate::utils::chain::{ChainReplies, Deal, random_tx};
+use crate::utils::control::{
+    run_decider, update_worker_config
+    , wait_worker_spell_stopped, wait_worker_spell_stopped_after,
 };
-use crate::utils::control::{update_decider_config, update_decider_script_for_tests, update_worker_config, wait_decider_stopped, wait_worker_spell_stopped, wait_worker_spell_stopped_after};
-use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE, TX_RECEIPT_STATUS_OK};
-use crate::utils::distro::make_distro_stopped;
+use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE};
 use crate::utils::setup::setup_nox;
 use crate::utils::state::deal;
 use crate::utils::state::subnet;
@@ -25,36 +17,9 @@ use crate::utils::test_rpc_server::run_test_server;
 
 pub mod utils;
 
-pub async fn add_broken_worker_builtin<'a>(swarms: impl Iterator<Item=&'a mut CreatedSwarm>) {
-    let print = |peer_id| -> Box<
-        dyn Fn(_, _) -> BoxFuture<'static, FunctionOutcome> + 'static + Send + Sync,
-    > {
-        Box::new(move |args: Args, _| {
-            async move {
-                println!(
-                    "worker-create: {} printing {}",
-                    peer_id,
-                    json!(args.function_args)
-                );
-                FunctionOutcome::Empty
-            }
-                .boxed()
-        })
-    };
-    for s in swarms {
-        s.aquamarine_api
-            .clone()
-            .add_service(
-                "worker2".into(),
-                hashmap! {
-                    "create2".to_string() => print(s.peer_id).into(),
-                },
-            )
-            .await
-            .expect("add service");
-    }
-}
-
+/// Test Scenario: Empty Run
+///
+/// Check that Decider works fine when there are no deals
 #[tokio::test]
 async fn test_run_empty() {
     enable_decider_logs();
@@ -62,23 +27,16 @@ async fn test_run_empty() {
     let mut server = run_test_server();
     let url = server.url.clone();
 
-    let distro = make_distro_stopped();
-    let (swarm, mut client) = setup_nox(distro, url).await;
+    let (_swarm, mut client) = setup_nox(url).await;
 
-    update_decider_script_for_tests(
-        &mut client,
-        swarm.config.dir_config.persistent_base_dir.clone(),
-    )
-        .await;
-    update_decider_config(&mut client, &oneshot_config()).await.unwrap();
-    play_chain(&mut server, ChainReplies::default()).await;
-    wait_decider_stopped(&mut client).await;
+    run_decider(&mut server, &mut client, ChainReplies::default()).await;
 
     let deals = deal::get_joined_deals(&mut client).await;
     assert!(deals.is_empty(), "no deals must be installed");
 
     let workers = worker::get_worker_list(&mut client).await;
     assert!(workers.is_empty(), "no workers must be created");
+    server.shutdown().await;
 }
 
 /// Test Scenario: Installation Happy Path
@@ -102,35 +60,18 @@ async fn test_install_happy_path() {
     let mut server = run_test_server();
     let url = server.url.clone();
 
-    let distro = make_distro_stopped();
-    let (swarm, mut client) = setup_nox(distro, url).await;
-
-    update_decider_script_for_tests(
-        &mut client,
-        swarm.config.dir_config.persistent_base_dir.clone(),
-    )
-        .await;
-    update_decider_config(&mut client, &oneshot_config()).await.unwrap();
+    let (_swarm, mut client) = setup_nox(url).await;
 
     let deal_id = DEAL_IDS[0];
     let test_app = TestApp::test_app1();
     let deal_status = DEAL_STATUS_ACTIVE;
     let tx_hash = random_tx();
 
-    let chain_replies = ChainReplies {
-        deals: vec![Deal {
-            deal_id: deal_id.to_string(),
-            app_cid: Some(test_app.clone()),
-            status: Some(deal_status.to_string()),
-        }],
-        new_deals_tx_hashes: vec![Some(tx_hash.clone())],
-        new_deals_receipts: vec![Some(TxReceipt {
-            tx_hash: tx_hash.clone(),
-            status: TX_RECEIPT_STATUS_OK.to_string(),
-        })],
-    };
-    play_chain(&mut server, chain_replies).await;
-    wait_decider_stopped(&mut client).await;
+    let chain_replies = ChainReplies::new(
+        vec![Deal::ok(deal_id, test_app.clone(), deal_status)],
+        vec![tx_hash.clone()],
+    );
+    run_decider(&mut server, &mut client, chain_replies).await;
 
     // Check that the worker is resolved via deal_id
     let worker_id = {
@@ -184,7 +125,7 @@ async fn test_install_happy_path() {
             service_list.is_ok(),
             "can't get list of services on the worker: {service_list:?}"
         );
-        let mut service_list = service_list.unwrap();
+        let service_list = service_list.unwrap();
 
         test_app.services_names.iter().for_each(|s| {
             assert!(
@@ -227,6 +168,7 @@ async fn test_install_happy_path() {
         assert_eq!(tx_statuses[0].tx_info.deal_id, deal_id);
         assert_eq!(tx_statuses[0].status, "ok");
     }
+    server.shutdown().await;
 }
 
 /// Test Scenario: Update Happy Path
@@ -247,15 +189,7 @@ async fn test_update_happy_path() {
     let mut server = run_test_server();
     let url = server.url.clone();
 
-    let distro = make_distro_stopped();
-    let (swarm, mut client) = setup_nox(distro, url).await;
-
-    update_decider_script_for_tests(
-        &mut client,
-        swarm.config.dir_config.persistent_base_dir.clone(),
-    )
-        .await;
-    update_decider_config(&mut client, &oneshot_config()).await.unwrap();
+    let (_swarm, mut client) = setup_nox(url).await;
 
     let deal_id = DEAL_IDS[0];
     let test_app = TestApp::test_app1();
@@ -263,20 +197,11 @@ async fn test_update_happy_path() {
     let tx_hash = random_tx();
 
     // Run first time to install
-    let chain_replies = ChainReplies {
-        deals: vec![Deal {
-            deal_id: deal_id.to_string(),
-            app_cid: Some(test_app.clone()),
-            status: Some(deal_status.to_string()),
-        }],
-        new_deals_tx_hashes: vec![Some(tx_hash.clone())],
-        new_deals_receipts: vec![Some(TxReceipt {
-            tx_hash: tx_hash.clone(),
-            status: TX_RECEIPT_STATUS_OK.to_string(),
-        })],
-    };
-    play_chain(&mut server, chain_replies).await;
-    wait_decider_stopped(&mut client).await;
+    let chain_replies = ChainReplies::new(
+        vec![Deal::ok(deal_id, test_app.clone(), deal_status)],
+        vec![tx_hash.clone()],
+    );
+    run_decider(&mut server, &mut client, chain_replies).await;
 
     let worker_id = {
         let mut worker = worker::get_worker(&mut client, &deal_id).await;
@@ -292,24 +217,20 @@ async fn test_update_happy_path() {
 
     let test_app_updated = TestApp::test_app2();
     // Run second time to update
-    update_decider_config(&mut client, &oneshot_config()).await.unwrap();
-    let chain_replies = ChainReplies {
-        deals: vec![Deal {
-            deal_id: deal_id.to_string(),
-            app_cid: Some(test_app_updated.clone()),
-            status: Some(deal_status.to_string()),
-        }],
-        ..Default::default()
-    };
-    play_chain(&mut server, chain_replies).await;
-    wait_decider_stopped(&mut client).await;
+    let chain_replies = ChainReplies::new(
+        vec![Deal::ok(deal_id, test_app_updated.clone(), deal_status)],
+        vec![],
+    );
+    run_decider(&mut server, &mut client, chain_replies).await;
 
     let current_timestamp = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
         .as_secs();
     // Run worker-spell to install the update
-    update_worker_config(&mut client, &worker_id, &oneshot_config()).await.unwrap();
+    update_worker_config(&mut client, &worker_id, &oneshot_config())
+        .await
+        .unwrap();
 
     // Check Worker
     {
@@ -346,7 +267,13 @@ async fn test_update_happy_path() {
         let worker_app_cid = worker::get_worker_app_cid(&mut client, &worker_id).await;
         assert_eq!(worker_app_cid, test_app_updated.cid);
     }
-    wait_worker_spell_stopped_after(&mut client, &worker_id, current_timestamp, std::time::Duration::from_secs(20)).await;
+    wait_worker_spell_stopped_after(
+        &mut client,
+        &worker_id,
+        current_timestamp,
+        std::time::Duration::from_secs(20),
+    )
+        .await;
 
     // Check that worker spell installed the updated app
     {
@@ -355,7 +282,7 @@ async fn test_update_happy_path() {
             service_list.is_ok(),
             "can't get list of services on the worker: {service_list:?}"
         );
-        let mut service_list = service_list.unwrap();
+        let service_list = service_list.unwrap();
         test_app_updated.services_names.iter().for_each(|s| {
             assert!(
                 service_list
@@ -371,6 +298,7 @@ async fn test_update_happy_path() {
     let joined = deal::get_joined_deals(&mut client).await;
     assert_eq!(joined.len(), 1);
     assert_eq!(joined[0].deal_id, deal_id);
+    server.shutdown().await;
 }
 
 /// Test Scenario: Remove Happy Path
@@ -390,35 +318,18 @@ async fn test_remove_happy_path() {
     let mut server = run_test_server();
     let url = server.url.clone();
 
-    let distro = make_distro_stopped();
-    let (swarm, mut client) = setup_nox(distro, url).await;
-
-    update_decider_script_for_tests(
-        &mut client,
-        swarm.config.dir_config.persistent_base_dir.clone(),
-    )
-        .await;
-    update_decider_config(&mut client, &oneshot_config()).await.unwrap();
+    let (_swarm, mut client) = setup_nox(url).await;
 
     let deal_id = DEAL_IDS[0];
     let test_app = TestApp::test_app1();
     let deal_status = DEAL_STATUS_ACTIVE;
     let tx_hash = random_tx();
 
-    let chain_replies = ChainReplies {
-        deals: vec![Deal {
-            deal_id: deal_id.to_string(),
-            app_cid: Some(test_app.clone()),
-            status: Some(deal_status.to_string()),
-        }],
-        new_deals_tx_hashes: vec![Some(tx_hash.clone())],
-        new_deals_receipts: vec![Some(TxReceipt {
-            tx_hash: tx_hash.clone(),
-            status: TX_RECEIPT_STATUS_OK.to_string(),
-        })],
-    };
-    play_chain(&mut server, chain_replies).await;
-    wait_decider_stopped(&mut client).await;
+    let chain_replies = ChainReplies::new(
+        vec![Deal::ok(deal_id, test_app.clone(), deal_status)],
+        vec![tx_hash.clone()],
+    );
+    run_decider(&mut server, &mut client, chain_replies).await;
 
     let worker_id = {
         let mut worker = worker::get_worker(&mut client, &deal_id).await;
@@ -431,19 +342,26 @@ async fn test_remove_happy_path() {
         worker.remove(0)
     };
 
-    update_decider_config(&mut client, &oneshot_config()).await.unwrap();
     // Next run, remove the deal from the list
-    let chain_replies = ChainReplies::default();
-    play_chain(&mut server, chain_replies).await;
-    wait_decider_stopped(&mut client).await;
+    run_decider(&mut server, &mut client, ChainReplies::default()).await;
 
     // 1. Deal isn't resolved
     let worker = worker::get_worker(&mut client, &deal_id).await;
-    assert!(worker.is_empty(), "worker for the deal must be removed: {worker:?}");
+    assert!(
+        worker.is_empty(),
+        "worker for the deal must be removed: {worker:?}"
+    );
     // 2. Worker doesn't exist
     let workers = worker::get_worker_list(&mut client).await;
-    assert!(workers.is_empty(), "no workers must be created: {workers:?}, target worker_id {worker_id}");
+    assert!(
+        workers.is_empty(),
+        "no workers must be created: {workers:?}, target worker_id {worker_id}"
+    );
 
     let joined_deals = deal::get_joined_deals(&mut client).await;
-    assert!(joined_deals.is_empty(), "no deals must be installed: {joined_deals:?}, target deal_id {deal_id}");
+    assert!(
+        joined_deals.is_empty(),
+        "no deals must be installed: {joined_deals:?}, target deal_id {deal_id}"
+    );
+    server.shutdown().await;
 }
