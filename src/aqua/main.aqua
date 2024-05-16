@@ -59,14 +59,12 @@ func filter_deals(chain_deals: []Deal, joined_deals: []JoinedDeal) -> []Deal, []
 func fetch_deals() -> ?[]Deal:
     result: *[]Deal
     try:
-        spell_log("spell", ["fetch deals"])
         result <<- ChainConnector.get_deals()
     catch e:
         spell_log("spell", ["Failed to get deals: ", e])
     <- result
 
 func main(worker_settings: WorkerSettings):
-    spell_log("spell", ["run decider"])
     -- Get the latest deals for the peer from the chain 
     deals <- fetch_deals()
     spell_log("spell", ["fetched deals: ", deals])

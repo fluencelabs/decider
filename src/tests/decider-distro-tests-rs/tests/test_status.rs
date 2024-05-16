@@ -29,6 +29,10 @@ pub mod utils;
 ///     - Worker must be deactivated
 ///     - Note: the deal will be removed on one of the next runs when Nox exists the deal
 /// 6. Update the deal status to _some unsupported status_
+///
+/// Note: on INSUFFICIENT_FUNDS and ENDED statuses Decider just stops the workers and doesn't remove
+/// them because the deals with these statuses must be removed from the list of deals by chain, so
+/// Decider will remove the deals when they will be gone from the list.
 #[tokio::test]
 async fn test_deal_status() {
     enable_decider_logs();
@@ -48,40 +52,51 @@ async fn test_deal_status() {
     run_decider(&mut server, &mut client, chain_replies).await;
 
     // Check the status of the installed deal
-    let is_active = worker::is_active(&mut client, &deal.deal_id).await.unwrap();
-    assert!(!is_active, "Deal {} must be inactive", deal.deal_id);
+    {
+        let is_active = worker::is_active(&mut client, &deal.deal_id).await.unwrap();
+        assert!(!is_active, "Deal {} must be inactive", deal.deal_id);
+    }
 
     // Update the deal status to active
-    deal.status = Some(DEAL_STATUS_ACTIVE.to_string());
-    let chain_replies = ChainReplies::new(vec![deal.clone()], vec![]);
-    run_decider(&mut server, &mut client, chain_replies).await;
+    {
+        deal.status = Some(DEAL_STATUS_ACTIVE.to_string());
+        let chain_replies = ChainReplies::new(vec![deal.clone()], vec![]);
+        run_decider(&mut server, &mut client, chain_replies).await;
 
-    let is_active = worker::is_active(&mut client, &deal.deal_id).await.unwrap();
-    assert!(is_active, "Deal {} must be active", deal.deal_id);
+        let is_active = worker::is_active(&mut client, &deal.deal_id).await.unwrap();
+        assert!(is_active, "Deal {} must be active", deal.deal_id);
+    }
 
     // Update the deal status to deactivate
-    deal.status = Some(DEAL_STATUS_NOT_ENOUGH_WORKERS.to_string());
-    let chain_replies = ChainReplies::new(vec![deal.clone()], vec![]);
-    run_decider(&mut server, &mut client, chain_replies).await;
+    {
+        deal.status = Some(DEAL_STATUS_NOT_ENOUGH_WORKERS.to_string());
+        let chain_replies = ChainReplies::new(vec![deal.clone()], vec![]);
+        run_decider(&mut server, &mut client, chain_replies).await;
 
-    let is_active = worker::is_active(&mut client, &deal.deal_id).await.unwrap();
-    assert!(!is_active, "Deal {} must be inactive", deal.deal_id);
+        let is_active = worker::is_active(&mut client, &deal.deal_id).await.unwrap();
+        assert!(!is_active, "Deal {} must be inactive", deal.deal_id);
+    }
 
     // Update the deal status to INSUFFICIENT_FUNDS
-    deal.status = Some(DEAL_STATUS_INSUFFICIENT_FUNDS.to_string());
-    let chain_replies = ChainReplies::new(vec![], vec![]);
-    run_decider(&mut server, &mut client, chain_replies).await;
+    {
+        deal.status = Some(DEAL_STATUS_INSUFFICIENT_FUNDS.to_string());
+        let chain_replies = ChainReplies::new(vec![deal.clone()], vec![]);
+        run_decider(&mut server, &mut client, chain_replies).await;
 
-    let is_active = worker::is_active(&mut client, &deal.deal_id).await.unwrap();
-    assert!(!is_active, "Deal {} must be inactive", deal.deal_id);
+        let is_active = worker::is_active(&mut client, &deal.deal_id).await.unwrap();
+        assert!(!is_active, "Deal {} must be inactive", deal.deal_id);
+    }
 
     // Update the deal status to ENDED
-    deal.status = Some(DEAL_STATUS_ENDED.to_string());
-    let chain_replies = ChainReplies::new(vec![], vec![]);
-    run_decider(&mut server, &mut client, chain_replies).await;
+    {
+        deal.status = Some(DEAL_STATUS_ENDED.to_string());
+        let chain_replies = ChainReplies::new(vec![deal.clone()], vec![]);
+        run_decider(&mut server, &mut client, chain_replies).await;
 
-    let is_active = worker::is_active(&mut client, &deal.deal_id).await.unwrap();
-    assert!(!is_active, "Deal {} must be inactive", deal.deal_id);
+        let is_active = worker::is_active(&mut client, &deal.deal_id).await.unwrap();
+        assert!(!is_active, "Deal {} must be inactive", deal.deal_id);
+    }
+
     server.shutdown().await;
 }
 
@@ -89,7 +104,7 @@ async fn test_deal_status() {
 ///
 /// 1. Chain sends info that the deal in INSUFFICIENT_FUNDS status has matched the peer
 /// 2. The deal must not be installed.
-/// 3. Chain sends info that the deal in INSUFFICIENT_FUNDS status has matched the peer
+/// 3. Chain sends info that the deal in ENDED status has matched the peer
 /// 4. The deal must not be installed.
 #[tokio::test]
 async fn test_install_ended() {
