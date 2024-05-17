@@ -2,22 +2,21 @@
 
 use std::sync::Arc;
 
+use created_swarm::{CreatedSwarm, FunctionOutcome, JError};
+use created_swarm::fluence_keypair::KeyPair;
 use futures::future::BoxFuture;
 use futures::FutureExt;
 use maplit::hashmap;
 use serde_json::{json, Value};
 use tempfile::TempDir;
 
-use created_swarm::fluence_keypair::KeyPair;
-use created_swarm::{Args, CreatedSwarm, FunctionOutcome, JError};
-
-use crate::utils::chain::{random_tx, ChainReplies, Deal};
+use crate::utils::{enable_decider_logs, TestApp};
+use crate::utils::chain::{ChainReplies, Deal, random_tx};
 use crate::utils::control::run_decider;
 use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE, DEAL_STATUS_NOT_ENOUGH_WORKERS};
 use crate::utils::setup::{setup_nox_with, stop_nox};
 use crate::utils::state::{deal, worker};
 use crate::utils::test_rpc_server::run_test_server;
-use crate::utils::{enable_decider_logs, TestApp};
 
 pub mod utils;
 
