@@ -81,7 +81,7 @@ func main(worker_settings: WorkerSettings):
         install_deals(worker_settings, new)
 
         spell_log("spell", ["updated_deals: ", update])
-        update_deals(update)
+        update_deals(worker_settings, update)
 
         spell_log("spell", ["removed deals: ", remove])
         remove_deals(remove)

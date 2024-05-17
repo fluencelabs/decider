@@ -7,12 +7,13 @@ import spell_log, deal_log from "../fluence/spell.aqua"
 import Deal from "../fluence/connector.aqua"
 import update_deal_status from "./status.aqua"
 import update_app_cid from "../worker/worker_app_cid.aqua"
+import WorkerSettings, trigger_worker_spell from "../worker/worker.aqua"
 import DEAL_STATUS_ACTIVE from "../consts.aqua"
 
 
 -- If the app cid changes during worker inactivity, we won't update the app cid on the worker
 -- We can save only the app cid we encounter when the worker is active 
-func update_deals(deals: []Deal):
+func update_deals(worker_settings: WorkerSettings, deals: []Deal):
     for deal <- deals:
         worker_id <- Worker.get_worker_id(deal.deal_id)
         if worker_id == nil:
@@ -22,7 +23,13 @@ func update_deals(deals: []Deal):
             if deal.status == DEAL_STATUS_ACTIVE:
                 try:
                     if Worker.is_active(deal.deal_id):
-                        update_app_cid(worker_id!, deal.deal_id, deal.app_cid)
+                        is_updated <- update_app_cid(worker_id!, deal.deal_id, deal.app_cid)
+                        if is_updated == nil:
+                            deal_log("spell", deal.deal_id, ["Error updating app cid"])
+                        else:
+                            if is_updated!:
+                                deal_log("spell", deal.deal_id, ["App cid updated: ", deal.app_cid])
+                                trigger_worker_spell(worker_id!, worker_settings)
                     else:
                         deal_log("spell", deal.deal_id, ["Worker", worker_id!, "is not active, nothing will be updated"])
                 catch e:

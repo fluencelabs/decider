@@ -24,14 +24,13 @@ func find_tx_info(txs: []WorkerTxInfo, hash: string) -> ?WorkerTxInfo:
 
 func fetch_register_status():
     txs <- TxStorage.get_txs("spell")
-    spell_log("spell", ["Stored:", txs])
+    spell_log("spell", ["Checking", txs.length, "registration txs for status"])
     hashes: *string
     for tx <- txs:
         hashes <<- tx.tx_hash
     if hashes != nil:
         try:
             results <- ChainConnector.get_tx_receipts(hashes) 
-            spell_log("spell", ["Fetched receipts:", results])
             for result <- results:
                 if !result.success:
                     spell_log("spell", ["Fail to fetch register status for a tx:", result.error])
