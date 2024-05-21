@@ -5,10 +5,10 @@ import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 import SpellId from "../types.aqua"
 import spell_log, deal_log from "../fluence/spell.aqua"
 import Deal from "../fluence/connector.aqua"
-import update_deal_status from "./status.aqua"
 import update_app_cid from "../worker/worker_app_cid.aqua"
 import WorkerSettings, trigger_worker_spell from "../worker/worker.aqua"
-import DEAL_STATUS_ACTIVE from "../consts.aqua"
+
+use "./status.aqua" as DealStatus
 
 
 -- If the app cid changes during worker inactivity, we won't update the app cid on the worker
@@ -19,18 +19,29 @@ func update_deals(worker_settings: WorkerSettings, deals: []Deal):
         if worker_id == nil:
             deal_log("spell", deal.deal_id, ["Worker not found"])
         else:
-            update_deal_status(worker_id!, deal)
-            if deal.status == DEAL_STATUS_ACTIVE:
-                try:
-                    if Worker.is_active(deal.deal_id):
-                        is_updated <- update_app_cid(worker_id!, deal.deal_id, deal.app_cid)
-                        if is_updated == nil:
-                            deal_log("spell", deal.deal_id, ["Error updating app cid"])
-                        else:
-                            if is_updated!:
-                                deal_log("spell", deal.deal_id, ["App cid updated: ", deal.app_cid])
-                                trigger_worker_spell(worker_id!, worker_settings)
+            -- Note: this is a bit of a hack to avoid double worker-spell running
+            -- 
+            -- Double-running can occure when a worker is both acitvated (deal status is changed to ACTIVE)
+            -- AND the App CID is updated. So we need to detect if the worker-spell was already trigerred
+            -- by the worker activation and don't run it.
+            --
+            -- Also, this may lead to a race: the worker spell is run with the old App CID and we'll see
+            -- an update only on the next worker-spell run.
+            -- 
+            -- This feels like an unsolvable problem since we can't update the app cid before the run
+            -- TODO: should we allow Root Nox to access all the workers independent of their activity status?
+            was_active <- Worker.is_active(deal.deal_id)
+            DealStatus.update(worker_id!, deal)
+            try:
+                if Worker.is_active(deal.deal_id):
+                    is_updated <- update_app_cid(worker_id!, deal.deal_id, deal.app_cid)
+                    if is_updated == nil:
+                        deal_log("spell", deal.deal_id, ["Error updating app cid"])
                     else:
-                        deal_log("spell", deal.deal_id, ["Worker", worker_id!, "is not active, nothing will be updated"])
-                catch e:
-                    deal_log("spell", deal.deal_id, ["Error updating deal:", e])
+                        if is_updated! && was_active:
+                            deal_log("spell", deal.deal_id, ["App cid updated: ", deal.app_cid])
+                            trigger_worker_spell(worker_id!, worker_settings)
+                else:
+                    deal_log("spell", deal.deal_id, ["Worker", worker_id!, "is not active, nothing will be updated"])
+            catch e:
+                deal_log("spell", deal.deal_id, ["Error updating deal:", e])

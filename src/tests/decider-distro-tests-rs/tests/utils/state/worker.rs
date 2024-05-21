@@ -13,7 +13,8 @@ pub async fn get_worker_app_cid(client: &mut ConnectedClient, worker_id: &String
         .await
         .wrap_err("get_worker_app_cid failed")
         .unwrap();
-    assert!(!result.absent, "worker-spell doesn't have worker_def_cid");
+    assert!(result.success, "worker-spell failed to get worker_def_cid: {result:?}");
+    assert!(!result.absent, "worker-spell doesn't have worker_def_cid: {result:?}");
     serde_json::from_str::<String>(&result.value).unwrap()
 }
 
@@ -28,9 +29,9 @@ pub async fn get_worker(mut client: &mut ConnectedClient, deal: &str) -> Vec<Str
             "dealid" => json!(format!("0x{deal}"))
         },
     )
-    .await
-    .wrap_err("get worker id failed")
-    .unwrap();
+        .await
+        .wrap_err("get worker id failed")
+        .unwrap();
     serde_json::from_value::<Vec<String>>(worker.remove(0)).unwrap()
 }
 
@@ -43,9 +44,9 @@ pub async fn get_worker_list(mut client: &mut ConnectedClient) -> Vec<String> {
         "workers",
         Default::default(),
     )
-    .await
-    .wrap_err("get worker id failed")
-    .unwrap();
+        .await
+        .wrap_err("get worker id failed")
+        .unwrap();
     serde_json::from_value::<Vec<String>>(worker.remove(0)).unwrap()
 }
 
@@ -57,8 +58,8 @@ pub async fn is_active(mut client: &mut ConnectedClient, deal: &str) -> eyre::Re
         "result",
         hashmap! {"deal" => json!(deal) },
     )
-    .await
-    .wrap_err("is_active failed")?;
+        .await
+        .wrap_err("is_active failed")?;
     serde_json::from_value::<bool>(is_active.remove(0)).wrap_err("parse is_active result")
 }
 
@@ -84,7 +85,7 @@ pub async fn service_list_on(
         "result",
         hashmap! {"worker_id" => json!(worker_id) },
     )
-    .await
-    .wrap_err("srv.list failed")?;
+        .await
+        .wrap_err("srv.list failed")?;
     serde_json::from_value::<Vec<Service>>(result.remove(0)).wrap_err("parse is_active result")
 }

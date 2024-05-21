@@ -1,4 +1,4 @@
-aqua DealStatus declares update_deal_status, should_install, is_active
+aqua DealStatus declares update, should_install, is_active
 
 import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 
@@ -25,7 +25,7 @@ func deactivate_deal(deal_id: DealId):
         deal_log("spell", deal_id, ["couldn't deactivate a worker", e])
 
 
-func update_deal_status(worker_id: WorkerId, deal: Deal):
+func update(worker_id: WorkerId, deal: Deal):
     if deal.status == DEAL_STATUS_ACTIVE:
         activate_deal(deal.deal_id)
     else:

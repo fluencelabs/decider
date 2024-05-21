@@ -10,7 +10,7 @@ use crate::utils::setup::setup_nox;
 use crate::utils::state::deal;
 use crate::utils::state::worker;
 use crate::utils::test_rpc_server::run_test_server;
-use crate::utils::{enable_decider_logs, TestApp};
+use crate::utils::{enable_decider_logs, spell, TestApp};
 
 pub mod utils;
 
@@ -137,5 +137,69 @@ async fn test_install_ended() {
         joined.is_empty(),
         "Deal must not be installed, got {joined:?}"
     );
+    server.shutdown().await;
+}
+
+/// Test Scenario: Worker Spell Double Trigger
+///
+/// Check that the worker-spell isn't run twice.
+/// This can occur when the status is changed to active and the App Cid is changed
+///
+/// Plan:
+/// 1. Install a deal.
+/// 2. Change status to NOT_ENOUGH_WORKERS
+/// 3. Update the deal to ACTIVE + new App CID
+///    Checks:
+///    - worker is active
+///    - worker app cid is new
+///    - worker-spell is run only twice (first installation run + second update run)
+///
+#[tokio::test]
+async fn test_worker_spell_double_run() {
+    enable_decider_logs();
+    let mut server = run_test_server();
+    let url = server.url.clone();
+
+    let (_swarm, mut client) = setup_nox(url).await;
+
+    // Install a deal
+    let mut deal = Deal::ok(
+        DEAL_IDS[0],
+        TestApp::test_app1(),
+        DEAL_STATUS_ACTIVE,
+    );
+    let chain_replies = ChainReplies::new(vec![deal.clone()], vec![random_tx()]);
+    run_decider(&mut server, &mut client, chain_replies).await;
+
+    // Deactive the deal
+    deal.status = Some(DEAL_STATUS_NOT_ENOUGH_WORKERS.to_string());
+    let chain_replies = ChainReplies::new(vec![deal.clone()], vec![]);
+    run_decider(&mut server, &mut client, chain_replies).await;
+
+    // Update the deal with activation
+    let app = TestApp::test_app2();
+    let expected_app_cid = app.cid.clone();
+    deal.status = Some(DEAL_STATUS_ACTIVE.to_string());
+    deal.app = Some(app);
+    let chain_replies = ChainReplies::new(vec![deal.clone()], vec![]);
+    run_decider(&mut server, &mut client, chain_replies).await;
+
+    {
+        let is_active = worker::is_active(&mut client, &deal.deal_id).await.expect("can't get worker active status");
+        assert!(is_active, "worker must be activated");
+        let worker_id = {
+            let mut worker_id = worker::get_worker(&mut client, &deal.deal_id).await;
+            assert!(!worker_id.is_empty(), "couldn't get worker id, empty string");
+            worker_id.remove(0)
+        };
+
+        let app_cid = worker::get_worker_app_cid(&mut client, &worker_id).await;
+        assert_eq!(expected_app_cid, app_cid, "the app cid should be changed");
+
+        let counter = spell::get_counter_on(&mut client, &worker_id, "worker-spell").await.expect("worker-spell counter failed");
+        assert_eq!(2, counter, "worker-spell must be run only twice");
+    }
+
+
     server.shutdown().await;
 }

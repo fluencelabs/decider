@@ -3,7 +3,7 @@ use maplit::hashmap;
 use serde_json::json;
 
 use connected_client::ConnectedClient;
-use created_swarm::fluence_spell_dtos::value::{StringListValue, StringValue, UnitValue};
+use created_swarm::fluence_spell_dtos::value::{StringListValue, StringValue, U32Value, UnitValue};
 
 use crate::utils::execute;
 
@@ -37,10 +37,10 @@ pub async fn get_string_on(
             "spell_id" => json!(spell_id)
         },
     )
-    .await
-    .wrap_err("get_string failed")?
-    .pop()
-    .ok_or(eyre::eyre!("no result of particle execution"))?;
+        .await
+        .wrap_err("get_string failed")?
+        .pop()
+        .ok_or(eyre::eyre!("no result of particle execution"))?;
     serde_json::from_value::<StringValue>(result).wrap_err("failed to parse StringValue")
 }
 
@@ -74,10 +74,10 @@ pub async fn list_get_strings_on(
             "spell_id" => json!(spell_id),
         },
     )
-    .await
-    .wrap_err("list_get_strings failed")?
-    .pop()
-    .ok_or(eyre::eyre!("no result of particle execution"))?;
+        .await
+        .wrap_err("list_get_strings failed")?
+        .pop()
+        .ok_or(eyre::eyre!("no result of particle execution"))?;
 
     serde_json::from_value::<StringListValue>(result).wrap_err("failed to parse StringListValue")
 }
@@ -105,10 +105,50 @@ pub async fn list_remove_string(
             "spell_id" => json!(spell_id)
         },
     )
-    .await
-    .wrap_err("get_string failed")?
-    .pop()
-    .ok_or(eyre::eyre!("no result of particle execution"))?;
+        .await
+        .wrap_err("get_string failed")?
+        .pop()
+        .ok_or(eyre::eyre!("no result of particle execution"))?;
 
     serde_json::from_value::<UnitValue>(result).wrap_err("failed to parse StringListValue")
+}
+
+pub async fn get_u32_on(
+    mut client: &mut ConnectedClient,
+    worker_id: &str,
+    spell_id: &str,
+    key: &str,
+) -> eyre::Result<U32Value> {
+    let result = execute(
+        &mut client,
+        r#"
+       (seq
+            (call relay ("op" "noop") [])
+            (call worker_id (spell_id "get_u32") [key] result)
+       )
+       "#,
+        "result",
+        hashmap! {
+            "key" => json!(key),
+            "worker_id" => json!(worker_id) ,
+            "spell_id" => json!(spell_id)
+        },
+    )
+        .await
+        .wrap_err("get_string failed")?
+        .pop()
+        .ok_or(eyre::eyre!("no result of particle execution"))?;
+    serde_json::from_value::<U32Value>(result).wrap_err("failed to parse U32Value")
+}
+
+
+pub async fn get_counter_on(
+    client: &mut ConnectedClient,
+    worker_id: &str,
+    spell_id: &str,
+) -> eyre::Result<u32> {
+    let result = get_u32_on(client, worker_id, spell_id, "hw_counter").await?;
+    assert!(result.success, "couldn't get hw_counter: {result:?}");
+    assert!(!result.absent, "not hw_counter found: {result:?}");
+    Ok(result.value)
 }
