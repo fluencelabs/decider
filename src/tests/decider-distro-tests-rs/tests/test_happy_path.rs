@@ -5,7 +5,7 @@ use crate::utils::chain::{random_tx, ChainReplies, Deal};
 use crate::utils::control::{
     run_decider, update_worker_config, wait_worker_spell_stopped, wait_worker_spell_stopped_after,
 };
-use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE};
+use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE, TX_RECEIPT_STATUS_OK};
 use crate::utils::setup::setup_nox;
 use crate::utils::state::deal;
 use crate::utils::state::subnet;
@@ -164,7 +164,7 @@ async fn test_install_happy_path() {
         assert_eq!(tx_statuses.len(), 1);
         assert_eq!(tx_statuses[0].tx_info.tx_hash, tx_hash);
         assert_eq!(tx_statuses[0].tx_info.deal_id, deal_id);
-        assert_eq!(tx_statuses[0].status, "ok");
+        assert_eq!(tx_statuses[0].status, TX_RECEIPT_STATUS_OK);
     }
     server.shutdown().await;
 }
@@ -271,7 +271,7 @@ async fn test_update_happy_path() {
         current_timestamp,
         std::time::Duration::from_secs(20),
     )
-    .await;
+        .await;
 
     // Check that worker spell installed the updated app
     {
