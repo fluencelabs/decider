@@ -52,7 +52,7 @@ func install_deal_spell_stopped(deal_id: DealId, cid: CID, settings: WorkerSetti
 
 func install_deal(settings: WorkerSettings, deal: Deal) -> ?WorkerId:
     log = (msg: ⊤):
-        deal_log("spell", deal.deal_id, msg)
+        deal_log(deal.deal_id, msg)
     
     worker_id <- WorkerHelper.create(deal.deal_id, deal.unit_ids)
     if worker_id != nil:
@@ -80,8 +80,8 @@ func install_deals(worker_settings: WorkerSettings, deals: []Deal):
         if DealStatus.should_install(deal.status):
             worker_id <- install_deal(worker_settings, deal)
             if worker_id != nil:
-                deal_log("spell", deal.deal_id, ["Worker installed", worker_id])
+                deal_log(deal.deal_id, ["Worker installed", worker_id])
                 register_worker(deal.deal_id, worker_id!, deal.unit_ids)
                 DealStorage.store_deal(JoinedDeal(deal_id = deal.deal_id))
             else:
-                deal_log("spell", deal.deal_id, ["Failed to install worker for deal", deal.deal_id, ", will try again"])
+                deal_log(deal.deal_id, ["Failed to install worker for deal", deal.deal_id, ", will try again"])

@@ -21,7 +21,8 @@ func update_app_cid(worker_id: WorkerId, deal_id: DealId, app_cid: string) -> ?b
         else:
             result <- Spell.set_string(WORKER_DEF_CID, str)
             if !result.success:
-                deal_log("spell", deal_id, ["Failed to update app_cid on worker", result.error])
+                on HOST_PEER_ID:
+                    deal_log(deal_id, ["Failed to update app_cid on worker", result.error])
             else:
                 is_updated <<- true
     

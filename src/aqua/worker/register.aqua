@@ -19,10 +19,10 @@ import Json from "../fluence/peer.aqua"
 func register_worker(deal_id: DealId, worker_id: WorkerId, cu_ids: []CUID):
     try:
         tx <- ChainConnector.register_worker(deal_id, worker_id, cu_ids)
-        TxStorage.store_tx("spell", WorkerTxInfo(deal_id = deal_id, tx_hash = tx))
-        deal_log("spell", deal_id, ["Worker registered: ", tx])
+        TxStorage.store_tx(WorkerTxInfo(deal_id = deal_id, tx_hash = tx))
+        deal_log(deal_id, ["Worker registered: ", tx])
     catch e:
         err = ["Failed to register worker: ", e]
-        deal_log("spell", deal_id, err)
+        deal_log(deal_id, err)
         str <- Json.stringify(err)
         FailedStorage.store_failed(deal_id, str)

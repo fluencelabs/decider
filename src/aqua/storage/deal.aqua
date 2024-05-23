@@ -18,26 +18,26 @@ func store_deal(deal: JoinedDeal):
     json <- Json.stringify(deal)
     result <- Spell.list_push_string(JOINED_DEALS, json)
     if !result.success:
-        deal_log("spell", deal.deal_id, ["Can't store deal_id in storage:", result])
+        deal_log(deal.deal_id, ["Can't store deal_id in storage:", result])
 
 func remove_deal(deal: JoinedDeal):
     Spell "spell"
     json <- Json.stringify(deal)
-    deal_log("spell", deal.deal_id, ["Removing deal from storage:", json])
+    deal_log(deal.deal_id, ["Removing deal from storage:", json])
     result <- Spell.list_remove_string(JOINED_DEALS, json)
     if !result.success:
-        deal_log("spell", deal.deal_id, ["Can't remove deal_id from storage:", result])
+        deal_log(deal.deal_id, ["Can't remove deal_id from storage:", result])
 
 func get_deals() -> []JoinedDeal:
     Spell "spell"
     joined_deals: *JoinedDeal
     deals <- Spell.list_get_strings(JOINED_DEALS)
     if !deals.success:
-        spell_log("spell", ["Can't get deals from storage:", deals.error])
+        spell_log(["Can't get deals from storage:", deals.error])
     else:
        for deal_str <- deals.value:
             try:
                 joined_deals <<- JsonJoinedDeal.parse(deal_str)
             catch e:
-                spell_log("spell", ["Can't parse deal from storage:", e])
+                spell_log(["Can't parse deal from storage:", e])
     <- joined_deals

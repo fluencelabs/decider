@@ -37,11 +37,11 @@ func create(deal_id: DealId, cu_ids: []CUID) -> ?WorkerId:
         -- if worker was not created yet, create it
         try:
             worker_id <- Worker.create(deal_id, cu_ids)
-            deal_log("spell", deal_id, ["created worker for deal", worker_id!])
+            deal_log(deal_id, ["created worker for deal", worker_id!])
         catch e:
-            deal_log("spell", deal_id, ["error creating worker", e.message])
+            deal_log(deal_id, ["error creating worker", e.message])
     else:
-        deal_log("spell", deal_id, ["found existing worker", existing_worker!])
+        deal_log(deal_id, ["found existing worker", existing_worker!])
         -- if worker was already created, get its id
         worker_id <<- existing_worker!
 
@@ -49,7 +49,7 @@ func create(deal_id: DealId, cu_ids: []CUID) -> ?WorkerId:
     <- worker_id
 
 func remove(host_id: PeerId, worker_id: WorkerId):
-    spell_log("spell", ["will remove worker", worker_id, "from host", host_id])
+    spell_log(["will remove worker", worker_id, "from host", host_id])
     on host_id:
         Worker.remove(worker_id)
 
@@ -58,4 +58,4 @@ func trigger_worker_spell(worker_id: WorkerId, worker_settings: WorkerSettings):
         try:
             PeerSpell.update_trigger_config("worker-spell", worker_settings.config)
         catch e:
-            spell_log("spell", ["error updating trigger config", e.message])
+            spell_log(["error updating trigger config", e.message])

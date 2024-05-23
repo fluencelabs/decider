@@ -23,28 +23,29 @@ func find_tx_info(txs: []WorkerTxInfo, hash: string) -> ?WorkerTxInfo:
     <- result 
 
 func fetch_register_status():
-    txs <- TxStorage.get_txs("spell")
-    spell_log("spell", ["Checking", txs.length, "registration txs for status"])
+    txs <- TxStorage.get_txs()
+    spell_log(["Checking", txs.length, "registration txs for status"])
     hashes: *string
     for tx <- txs:
         hashes <<- tx.tx_hash
     if hashes != nil:
         try:
             results <- ChainConnector.get_tx_receipts(hashes) 
-            spell_log("spell", ["Got receipts:", results])
             for result <- results:
                 if !result.success:
-                    spell_log("spell", ["Fail to fetch register status for a tx:", result.error])
+                    spell_log(["Fail to fetch register status for a tx:", result.error])
                 else:
                     if result.status != TX_STATUS_PENDING:
                         receipt = result.receipt!
                         tx_info <- find_tx_info(txs, receipt.tx_hash)
-                        TxStorage.store_tx_status("spell", WorkerTxStatus(tx_info = tx_info!, status = result.status))
-                        TxStorage.remove_tx("spell", tx_info!)
+                        TxStorage.store_tx_status(WorkerTxStatus(tx_info = tx_info!, status = result.status))
+                        TxStorage.remove_tx(tx_info!)
                         if result.status == TX_STATUS_FAILED:
                             err = ["Worker registration failed", receipt.tx_hash, receipt.block_number]
-                            deal_log("spell", tx_info!.deal_id, err)
+                            deal_log(tx_info!.deal_id, err)
                             msg <- Json.stringify(err)
                             FailedStorage.store_failed(tx_info!.deal_id, msg)
+                        else:
+                            deal_log(tx_info!.deal_id, ["Worker registration succeeded", receipt.tx_hash, receipt.block_number])
         catch e:
-            spell_log("spell", ["Failed to fetch register status: ", e])
+            spell_log(["Failed to fetch register status: ", e])

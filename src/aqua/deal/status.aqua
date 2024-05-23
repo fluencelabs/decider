@@ -11,18 +11,18 @@ import Deal from "../fluence/connector.aqua"
 func activate_deal(deal_id: DealId):
     try:
         if !Worker.is_active(deal_id):
-            deal_log("spell", deal_id, "activating worker")
+            deal_log(deal_id, "activating worker")
             Worker.activate(deal_id)
     catch e:
-        deal_log("spell", deal_id, ["couldn't activate a worker", e])
+        deal_log(deal_id, ["couldn't activate a worker", e])
 
 func deactivate_deal(deal_id: DealId):
     try:
         if Worker.is_active(deal_id):
-            deal_log("spell", deal_id, "deactivating worker")
+            deal_log(deal_id, "deactivating worker")
             Worker.deactivate(deal_id)
     catch e:
-        deal_log("spell", deal_id, ["couldn't deactivate a worker", e])
+        deal_log(deal_id, ["couldn't deactivate a worker", e])
 
 
 func update(worker_id: WorkerId, deal: Deal):
@@ -35,10 +35,10 @@ func update(worker_id: WorkerId, deal: Deal):
             -- On these statuses, Nox will eventually exit the deal and decider will remove it when these happens,
             -- now just deactivate the workers to prevent them from doing any work
             if deal.status == DEAL_STATUS_ENDED || deal.status == DEAL_STATUS_INSUFFICIENT_FUNDS:
-                deal_log("spell", "deal_id", ["deactivating deal before removal based on status:", deal.status])
+                deal_log(deal.deal_id, ["deactivating deal before removal based on status:", deal.status])
                 deactivate_deal(deal.deal_id)
             else:
-                deal_log("spell", "deal_id", ["unsupported deal status:", deal.status])
+                deal_log(deal.deal_id, ["unsupported deal status:", deal.status])
 
 func should_install(status: string) -> bool:
     <- status == DEAL_STATUS_ACTIVE || status == DEAL_STATUS_NOT_ENOUGH_WORKERS

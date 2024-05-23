@@ -17,7 +17,7 @@ func update_deals(worker_settings: WorkerSettings, deals: []Deal):
     for deal <- deals:
         worker_id <- Worker.get_worker_id(deal.deal_id)
         if worker_id == nil:
-            deal_log("spell", deal.deal_id, ["Worker not found"])
+            deal_log(deal.deal_id, ["Worker not found"])
         else:
             -- Note: this is a bit of a hack to avoid double worker-spell running
             -- 
@@ -36,12 +36,12 @@ func update_deals(worker_settings: WorkerSettings, deals: []Deal):
                 if Worker.is_active(deal.deal_id):
                     is_updated <- update_app_cid(worker_id!, deal.deal_id, deal.app_cid)
                     if is_updated == nil:
-                        deal_log("spell", deal.deal_id, ["Error updating app cid"])
+                        deal_log(deal.deal_id, ["Error updating app cid"])
                     else:
                         if is_updated! && was_active:
-                            deal_log("spell", deal.deal_id, ["App cid updated: ", deal.app_cid])
+                            deal_log(deal.deal_id, ["App cid updated: ", deal.app_cid])
                             trigger_worker_spell(worker_id!, worker_settings)
                 else:
-                    deal_log("spell", deal.deal_id, ["Worker", worker_id!, "is not active, nothing will be updated"])
+                    deal_log(deal.deal_id, ["Worker", worker_id!, "is not active, nothing will be updated"])
             catch e:
-                deal_log("spell", deal.deal_id, ["Error updating deal:", e])
+                deal_log(deal.deal_id, ["Error updating deal:", e])

@@ -13,14 +13,14 @@ data WorkerTxInfo:
 service JsonWorkerTxInfo("json"):
     parse(str: string) -> WorkerTxInfo
 
-func store_tx(spell_id: SpellId, tx_info: WorkerTxInfo):
-    list_push(spell_id, TXS_KEY, tx_info)
+func store_tx(tx_info: WorkerTxInfo):
+    list_push("spell", TXS_KEY, tx_info)
 
-func remove_tx(spell_id: SpellId, tx_info: WorkerTxInfo):
-    list_remove(spell_id, TXS_KEY, tx_info)
+func remove_tx(tx_info: WorkerTxInfo):
+    list_remove("spell", TXS_KEY, tx_info)
 
-func get_txs(spell_id: SpellId) -> []WorkerTxInfo:
-    txs <- list_get(spell_id, TXS_KEY)
+func get_txs() -> []WorkerTxInfo:
+    txs <- list_get("spell", TXS_KEY)
 
     infos: *WorkerTxInfo
     if txs != nil:
@@ -28,7 +28,7 @@ func get_txs(spell_id: SpellId) -> []WorkerTxInfo:
             try:
                 infos <- JsonWorkerTxInfo.parse(tx)
             catch e:
-                spell_log(spell_id, ["Failed to parse tx info:", tx, e])
+                spell_log(["Failed to parse tx info:", tx, e])
     <- infos 
 
 data WorkerTxStatus:
@@ -38,5 +38,5 @@ data WorkerTxStatus:
 service JsonWorkerTxStatus("json"):
     parse(str: string) -> WorkerTxStatus
 
-func store_tx_status(spell_id: SpellId, tx_status: WorkerTxStatus):
-    list_push(spell_id, TXS_STATUS_KEY, tx_status)
+func store_tx_status(tx_status: WorkerTxStatus):
+    list_push("spell", TXS_STATUS_KEY, tx_status)

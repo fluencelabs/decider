@@ -6,18 +6,18 @@ import RunConsoleManyAny from "../debug.aqua"
 import SpellId, DealId from "../types.aqua"
 import OpExt, Json from "peer.aqua"
 
-func spell_log(spell_id: SpellId, msg: ⊤):
+func spell_log(msg: ⊤):
     co RunConsoleManyAny.print("decider", msg)
     msg_str <- Json.stringify(msg)
-    Spell spell_id
+    Spell "spell" 
     Spell.store_log(msg_str)
 
-func deal_log(spell_id: SpellId, deal_id: DealId, msg: ⊤):
+func deal_log(deal_id: DealId, msg: ⊤):
     title <- OpExt.concat_strings("decider deal_id=", deal_id, ": ")
     co RunConsoleManyAny.print(title, msg)
     msg_str <- Json.stringify(msg)
     msg_full <- Op.concat_strings(title, msg_str)
-    Spell spell_id
+    Spell "spell" 
     Spell.store_log(msg_full)
 
 -- Wrapper over spell.get_string to get a string from spell's KV with reduced amount of if-else's
@@ -28,7 +28,7 @@ func get_string(spell_id: SpellId, key: string) -> ?string:
 
     value <- Spell.get_string(key)
     if !value.success:
-        spell_log(spell_id, ["get_string failed", key, value.error])
+        spell_log(["get_string failed", key, value.error])
     else:
         if !value.absent:
             result <<- value.value
@@ -50,7 +50,7 @@ func list_get(spell_id: SpellId, key: string) -> ?[]string:
     list: *[]string
     result <- Spell.list_get_strings(key)
     if !result.success:
-        spell_log(spell_id, ["can't get list by key", key, "error:", result.error])
+        spell_log(["can't get list by key", key, "error:", result.error])
     else:
         list <<- result.value
     <- list
@@ -60,11 +60,11 @@ func list_push(spell_id: SpellId, key: string, val: ⊤):
     str <- Json.stringify(val)
     result <- Spell.list_push_string(key, str)
     if !result.success:
-        spell_log(spell_id, ["can't store value in list by key", key, "value", val, "error:", result.error])
+        spell_log(["can't store value in list by key", key, "value", val, "error:", result.error])
 
 func list_remove(spell_id: SpellId, key: string, val: ⊤):
     Spell spell_id
     str <- Json.stringify(val)
     result <- Spell.list_remove_string(key, str)
     if !result.success:
-        spell_log(spell_id, ["can't remove value in list by key", key, "value", val, "error:", result.error])
+        spell_log(["can't remove value in list by key", key, "value", val, "error:", result.error])

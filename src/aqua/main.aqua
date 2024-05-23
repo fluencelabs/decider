@@ -61,29 +61,30 @@ func fetch_deals() -> ?[]Deal:
     try:
         result <<- ChainConnector.get_deals()
     catch e:
-        spell_log("spell", ["Failed to get deals: ", e])
+        spell_log(["Failed to get deals: ", e])
     <- result
 
 func main(worker_settings: WorkerSettings):
     -- Get the latest deals for the peer from the chain 
     deals <- fetch_deals()
-    spell_log("spell", ["fetched deals: ", deals])
+    spell_log(["Fetched", deals.length, "deals"])
     if deals != nil:
         -- Get the list of known joined deals stored in the Decider
         joined_deals <- DealStorage.get_deals()
 
         -- Filter the deals into three categories: 
         -- - new_deals we need to install
+        -- - updated_deals we need to update
         -- - for removed_deals we need to remove the worker from the peer and the state from the storage
-        -- - updated_deals we need to update:
         new, remove, update <- filter_deals(deals!, joined_deals)
-        spell_log("spell", ["new_deals: ", new])
+        spell_log(["Found", new.length, "new deals"])
         install_deals(worker_settings, new)
 
-        spell_log("spell", ["updated_deals: ", update])
+        spell_log(["Found", update.length, "updated deals"])
         update_deals(worker_settings, update)
 
-        spell_log("spell", ["removed deals: ", remove])
+        spell_log(["Found", remove.length, "removed deals"])
         remove_deals(remove)
     
+    -- Track the transaction for worker registration and report the problems
     fetch_register_status()
