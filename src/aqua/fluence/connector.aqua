@@ -17,11 +17,11 @@ data TxInfo:
 data TxReceipt:
     block_number: string
     tx_hash: TxHash
-    status: string
 
 data TxResult:
     success: bool
     error: ?string
+    status: string
     receipt: ?TxReceipt
 
 service ChainConnector("connector"):

@@ -1,8 +1,7 @@
 use rand::Rng;
-use serde_json::json;
+use serde_json::{json, Value};
 use tracing::log;
 
-use crate::utils::default::TX_RECEIPT_STATUS_OK;
 use crate::utils::test_rpc_server::ServerHandle;
 use crate::utils::TestApp;
 
@@ -50,9 +49,10 @@ fn get_compute_units(ids: &Vec<&String>) -> String {
 }
 
 #[derive(Clone)]
-pub struct TxReceipt {
-    pub tx_hash: String,
-    pub status: String,
+pub enum TxReceipt {
+    Failed { hash: String },
+    Ok { hash: String },
+    Pending,
 }
 
 #[derive(Default, Clone)]
@@ -70,11 +70,8 @@ impl ChainReplies {
             new_deals_tx_hashes: tx_hashes.clone().into_iter().map(Some).collect(),
             new_deals_receipts: tx_hashes
                 .into_iter()
-                .map(|tx_hash| {
-                    Some(TxReceipt {
-                        tx_hash,
-                        status: TX_RECEIPT_STATUS_OK.to_string(),
-                    })
+                .map(|hash| {
+                    Some(TxReceipt::Ok { hash })
                 })
                 .collect(),
         }
@@ -222,14 +219,26 @@ pub async fn play_register_worker_gen(server: &mut ServerHandle, tx_hash: &Optio
 pub async fn play_tx_receipts_gen(server: &mut ServerHandle, receipt: &Option<TxReceipt>) {
     let (method, _params) = server.receive_request().await.unwrap();
     assert_eq!(method, "eth_getTransactionReceipt");
-    let reply = if let Some(receipt) = receipt {
-        Ok(json!({
-            "blockNumber": "0x1",
-            "transactionHash": receipt.tx_hash,
-            "status": receipt.status
-        }))
-    } else {
-        Err(json!("no receipt provided"))
+
+    let reply = match receipt {
+        None => Err(json!("no receipt provided")),
+        Some(receipt) =>
+            match receipt {
+                TxReceipt::Failed { hash } =>
+                    Ok(json!({
+                        "blockNumber": "0x1",
+                        "transactionHash": hash,
+                        "status": "0x0"
+                    })),
+                TxReceipt::Ok { hash } =>
+                    Ok(json!({
+                        "blockNumber": "0x1",
+                        "transactionHash": hash,
+                        "status": "0x1"
+                    })),
+                TxReceipt::Pending => Ok(Value::Null)
+            }
     };
+
     server.send_response(reply);
 }

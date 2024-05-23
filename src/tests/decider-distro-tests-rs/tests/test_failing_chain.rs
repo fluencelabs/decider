@@ -2,7 +2,7 @@
 
 use crate::utils::chain::{random_tx, ChainReplies, Deal, TxReceipt};
 use crate::utils::control::run_decider;
-use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE};
+use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE, TX_RECEIPT_STATUS_FAILED};
 use crate::utils::setup::setup_nox;
 use crate::utils::state::{deal, subnet, worker};
 use crate::utils::test_rpc_server::run_test_server;
@@ -142,7 +142,8 @@ async fn test_failed_register_workers() {
 /// - `ChainConnector.get_receipts` returns an error
 ///
 /// 1. Install a deal, register the worker, but provide a pending receipt
-/// 2. On the next run, provide the failed receipt
+/// 2. On the next run, eth rpc request for th receipt returns error
+/// 3. On the third run, the receipt is returned with an error status
 ///
 #[tokio::test]
 async fn test_failed_get_receipts() {
@@ -154,14 +155,11 @@ async fn test_failed_get_receipts() {
     let (_swarm, mut client) = setup_nox(url).await;
 
     let deal_id = DEAL_IDS[0];
-    let tx = random_tx();
+    let tx_hash = random_tx();
     let chain_replies = ChainReplies {
         deals: vec![Deal::ok(deal_id, TestApp::test_app1(), DEAL_STATUS_ACTIVE)],
-        new_deals_tx_hashes: vec![Some(tx.clone())],
-        new_deals_receipts: vec![Some(TxReceipt {
-            tx_hash: tx.clone(),
-            status: "pending".to_string(),
-        })],
+        new_deals_tx_hashes: vec![Some(tx_hash.clone())],
+        new_deals_receipts: vec![Some(TxReceipt::Pending)],
     };
     run_decider(&mut server, &mut client, chain_replies).await;
     // We joined the deal, but the status is unknown
@@ -175,7 +173,7 @@ async fn test_failed_get_receipts() {
 
         let txs = subnet::get_txs(&mut client).await;
         assert!(!txs.is_empty(), "txs must be registered");
-        assert_eq!(txs[0].tx_hash, tx);
+        assert_eq!(txs[0].tx_hash, tx_hash);
         assert_eq!(txs[0].deal_id, deal_id);
 
         let statuses = subnet::get_txs_statuses(&mut client).await;
@@ -194,7 +192,7 @@ async fn test_failed_get_receipts() {
     {
         let txs = subnet::get_txs(&mut client).await;
         assert!(!txs.is_empty(), "txs must be registered");
-        assert_eq!(txs[0].tx_hash, tx);
+        assert_eq!(txs[0].tx_hash, tx_hash);
         assert_eq!(txs[0].deal_id, deal_id);
 
         let statuses = subnet::get_txs_statuses(&mut client).await;
@@ -207,10 +205,7 @@ async fn test_failed_get_receipts() {
     let chain_replies = ChainReplies {
         deals: vec![Deal::ok(deal_id, TestApp::test_app1(), DEAL_STATUS_ACTIVE)],
         new_deals_tx_hashes: vec![],
-        new_deals_receipts: vec![Some(TxReceipt {
-            tx_hash: tx.clone(),
-            status: "error".to_string(),
-        })],
+        new_deals_receipts: vec![Some(TxReceipt::Failed { hash: tx_hash.clone() })],
     };
     run_decider(&mut server, &mut client, chain_replies).await;
     {
@@ -222,6 +217,10 @@ async fn test_failed_get_receipts() {
             !statuses.is_empty(),
             "tx status must be saved, got: {statuses:?}"
         );
+
+        assert_eq!(statuses[0].status, TX_RECEIPT_STATUS_FAILED);
+        assert_eq!(statuses[0].tx_info.tx_hash, tx_hash);
+        assert_eq!(statuses[0].tx_info.deal_id, deal_id);
     }
 
     server.shutdown().await;
