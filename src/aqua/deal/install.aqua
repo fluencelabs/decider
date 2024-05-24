@@ -44,6 +44,8 @@ func install_deal_spell(deal_id: DealId, cid: CID, settings: WorkerSettings) -> 
     worker_spell_id <- PeerSpell.install(settings.script, args, settings.config, "worker-spell")
     <- worker_spell_id
 
+-- Install a deal with an empty trigger config
+-- We need this for the worker that will be deactivated after the worker-spell creation due to the inactive status
 func install_deal_spell_stopped(deal_id: DealId, cid: CID, settings: WorkerSettings) -> string:
     args = WorkerArgs(deal_id = deal_id, h_worker_def_cid = cid, ipfs = settings.ipfs)
     -- Here we install the spell but want the worker-spell not to run since the worker will be deactivated afterwards
@@ -62,16 +64,16 @@ func install_deal(settings: WorkerSettings, deal: Deal) -> ?WorkerId:
                 try:
                     if DealStatus.is_active(deal.status):
                         worker_spell_id <- install_deal_spell(deal.deal_id, deal.app_cid, settings)
-                        log(["created worker spell", worker_spell_id, "on worker", worker_id!])
+                        log(["Created worker spell", worker_spell_id, "on worker", worker_id!])
                     else:
                         worker_spell_id <- install_deal_spell_stopped(deal.deal_id, deal.app_cid, settings)
-                        log(["created worker spell", worker_spell_id, "on worker", worker_id!])
+                        log(["Created worker spell", worker_spell_id, "on worker", worker_id!])
                         try:
                             Worker.deactivate(deal.deal_id)
                         catch e:
-                            log(["error deactivating worker", e])
+                            log(["Error deactivating worker", e])
                 catch e:
-                    log(["error installing deal spell", e])
+                    log(["Error installing deal spell", e])
     <- worker_id
 
 
@@ -84,4 +86,6 @@ func install_deals(worker_settings: WorkerSettings, deals: []Deal):
                 register_worker(deal.deal_id, worker_id!, deal.unit_ids)
                 DealStorage.store_deal(JoinedDeal(deal_id = deal.deal_id))
             else:
-                deal_log(deal.deal_id, ["Failed to install worker for deal", deal.deal_id, ", will try again"])
+                deal_log(deal.deal_id, ["Failed to install worker for the deal, will try again on the next run"])
+        else:
+            deal_log(deal.deal_id, ["Deal won't be installed due to the status", deal.status])

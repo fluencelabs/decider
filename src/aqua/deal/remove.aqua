@@ -9,19 +9,19 @@ import JoinedDeal from "../storage/deal.aqua"
 use "../storage/deal.aqua" as DealStorage
 
 func remove_deal(deal: JoinedDeal, worker_id: WorkerId):
-    deal_log(deal.deal_id, "removing the worker and the deal state from kv")
+    deal_log(deal.deal_id, "Removing the worker and the deal state from kv")
     try:
         Worker.remove(worker_id)
         -- remove the state of the deal only when the worker is removed, otherwise we couldn't try on the next run
         DealStorage.remove_deal(deal)
     catch e:
-        deal_log(deal.deal_id, ["couldn't remove a worker, try on the next run", worker_id, e])
+        deal_log(deal.deal_id, ["Couldn't remove a worker, try on the next run", worker_id, e])
 
 func remove_deals(deals: []JoinedDeal):
     for deal <- deals:
         worker_id <- Worker.get_worker_id(deal.deal_id)
         if worker_id == nil:
-            -- wtf
-            deal_log(deal.deal_id, "cannot remove the deal: worker isn't found for the deal")
+            deal_log(deal.deal_id, ["Cannot remove the deal: worker isn't found for the deal, will only clear storage"])
+            DealStorage.remove_deal(deal)
         else:
             remove_deal(deal, worker_id!)

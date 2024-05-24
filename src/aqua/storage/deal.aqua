@@ -4,7 +4,7 @@ import Spell from "@fluencelabs/spell/spell_service.aqua"
 
 import DealId from "../types.aqua"
 import Json from "../fluence/peer.aqua"
-import deal_log, spell_log from "../fluence/spell.aqua"
+import deal_log, spell_log, list_get from "../fluence/spell.aqua"
 import JOINED_DEALS from "../consts.aqua"
 
 data JoinedDeal:
@@ -23,7 +23,6 @@ func store_deal(deal: JoinedDeal):
 func remove_deal(deal: JoinedDeal):
     Spell "spell"
     json <- Json.stringify(deal)
-    deal_log(deal.deal_id, ["Removing deal from storage:", json])
     result <- Spell.list_remove_string(JOINED_DEALS, json)
     if !result.success:
         deal_log(deal.deal_id, ["Can't remove deal_id from storage:", result])
@@ -31,11 +30,9 @@ func remove_deal(deal: JoinedDeal):
 func get_deals() -> []JoinedDeal:
     Spell "spell"
     joined_deals: *JoinedDeal
-    deals <- Spell.list_get_strings(JOINED_DEALS)
-    if !deals.success:
-        spell_log(["Can't get deals from storage:", deals.error])
-    else:
-       for deal_str <- deals.value:
+    deals <- list_get(JOINED_DEALS)
+    if deals != nil:
+       for deal_str <- deals!:
             try:
                 joined_deals <<- JsonJoinedDeal.parse(deal_str)
             catch e:

@@ -1,11 +1,11 @@
-aqua Worker declares WorkerArgs, WorkerSettings, create, remove, trigger_worker_spell
+aqua Worker declares WorkerArgs, WorkerSettings, create, trigger_worker_spell
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
 import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
 import Worker, CUID from "@fluencelabs/aqua-lib/workers.aqua"
 import PeerSpell from "@fluencelabs/spell/api.aqua"
 
-import spell_log, deal_log, get_string from "../fluence/spell.aqua"
+import spell_log, deal_log from "../fluence/spell.aqua"
 import Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
 import DealId, SpellId, WorkerId from "../types.aqua"
 
@@ -37,25 +37,21 @@ func create(deal_id: DealId, cu_ids: []CUID) -> ?WorkerId:
         -- if worker was not created yet, create it
         try:
             worker_id <- Worker.create(deal_id, cu_ids)
-            deal_log(deal_id, ["created worker for deal", worker_id!])
+            deal_log(deal_id, ["Created worker for deal", worker_id!])
         catch e:
-            deal_log(deal_id, ["error creating worker", e.message])
+            deal_log(deal_id, ["Error creating worker", e.message])
     else:
-        deal_log(deal_id, ["found existing worker", existing_worker!])
+        deal_log(deal_id, ["Found existing worker", existing_worker!])
         -- if worker was already created, get its id
         worker_id <<- existing_worker!
 
 
     <- worker_id
 
-func remove(host_id: PeerId, worker_id: WorkerId):
-    spell_log(["will remove worker", worker_id, "from host", host_id])
-    on host_id:
-        Worker.remove(worker_id)
-
 func trigger_worker_spell(worker_id: WorkerId, worker_settings: WorkerSettings):
     on worker_id:
         try:
             PeerSpell.update_trigger_config("worker-spell", worker_settings.config)
         catch e:
-            spell_log(["error updating trigger config", e.message])
+            on HOST_PEER_ID:
+                spell_log(["Error updating trigger config", e.message])

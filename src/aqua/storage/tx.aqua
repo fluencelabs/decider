@@ -14,13 +14,13 @@ service JsonWorkerTxInfo("json"):
     parse(str: string) -> WorkerTxInfo
 
 func store_tx(tx_info: WorkerTxInfo):
-    list_push("spell", TXS_KEY, tx_info)
+    list_push(TXS_KEY, tx_info)
 
 func remove_tx(tx_info: WorkerTxInfo):
-    list_remove("spell", TXS_KEY, tx_info)
+    list_remove(TXS_KEY, tx_info)
 
 func get_txs() -> []WorkerTxInfo:
-    txs <- list_get("spell", TXS_KEY)
+    txs <- list_get(TXS_KEY)
 
     infos: *WorkerTxInfo
     if txs != nil:
@@ -39,4 +39,4 @@ service JsonWorkerTxStatus("json"):
     parse(str: string) -> WorkerTxStatus
 
 func store_tx_status(tx_status: WorkerTxStatus):
-    list_push("spell", TXS_STATUS_KEY, tx_status)
+    list_push(TXS_STATUS_KEY, tx_status)

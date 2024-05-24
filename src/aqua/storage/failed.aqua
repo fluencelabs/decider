@@ -13,4 +13,4 @@ data FailedDeal:
 
 func store_failed(deal_id: DealId, message: string):
     failed = FailedDeal(deal_id = deal_id, message = message)
-    list_push("spell", FAILED_DEALS, failed)
+    list_push(FAILED_DEALS, failed)

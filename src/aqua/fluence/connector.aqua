@@ -6,6 +6,7 @@ import DealId, TxHash from "../types.aqua"
 
 data Deal:
     deal_id: DealId 
+    -- For comparision, use DEAL_STATUS_* from consts.aqua
     status: string
     unit_ids: []CUID
     app_cid: string
@@ -21,7 +22,10 @@ data TxReceipt:
 data TxResult:
     success: bool
     error: ?string
+    -- Should be either 'pending', 'failed' or 'ok'
+    -- For comparison, use TX_STATUS_* from consts.aqua
     status: string
+    -- Should be present when status isn't `pending`
     receipt: ?TxReceipt
 
 service ChainConnector("connector"):
