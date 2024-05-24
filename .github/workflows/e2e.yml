@@ -40,7 +40,7 @@ jobs:
 
     uses: fluencelabs/nox/.github/workflows/build.yml@master
     with:
-      ref: get_deals_builtin
+      ref: update-to-lightweight-decider
       cargo-dependencies: |
         [
           {
