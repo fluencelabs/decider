@@ -6,16 +6,27 @@ import "@fluencelabs/aqua-lib/builtin.aqua"
 const TXS_KEY = "worker_registration_txs"
 
 -- List of the transactions statuses: ok or failed
-const TXS_STATUS_KEY = "worker_registration_txs_statuses"
+-- The list is available for modification from the host (to clean it, for example)
+const TXS_STATUS_KEY = "h_worker_registration_txs_statuses"
 
 -- List of deals that failed
 -- Note the some deals may be both joined and failed since there can be a problem during
 -- subnet registration
-const FAILED_DEALS = "failed_deals"
+const FAILED_DEALS = "h_failed_deals"
 
 -- List of joined deals. For each deal from the list a worker was created and
 -- subnet registration request was sent
-const JOINED_DEALS = "joined_deals"
+const DEAL_STORAGE_DEALS = "installed_deals"
+
+const DEAL_STORAGE_TX_HASH_PREFIX = "deal:tx_hash:"
+
+func deal_tx_hash_key(deal_id: string) -> string:
+    <- Op.concat_strings(DEAL_STORAGE_TX_HASH_PREFIX, deal_id)
+
+const TX_STORAGE_TX_HASH_PREFIX = "tx_hash:"
+
+func tx_hash_key(deal_id: string) -> string:
+    <- Op.concat_strings(TX_STORAGE_TX_HASH_PREFIX, deal_id)
 
 -- Decider puts in Worker Spell's KV storage CID of worker definition
 -- This name must be in sync with Worker Spell.
@@ -27,6 +38,7 @@ const DEAL_STATUS_ENDED = "ENDED"
 const DEAL_STATUS_ACTIVE = "ACTIVE"
 const DEAL_STATUS_INSUFFICIENT_FUNDS = "INSUFFICIENT_FUNDS"
 const DEAL_STATUS_NOT_ENOUGH_WORKERS = "NOT_ENOUGH_WORKERS"
+const DEAL_STATUS_SMALL_BALANCE = "SMALL_BALANCE"
 
 -- Tx Status
 const TX_STATUS_OK = "ok"

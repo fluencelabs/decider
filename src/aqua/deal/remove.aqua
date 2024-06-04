@@ -5,23 +5,22 @@ import Worker from "@fluencelabs/aqua-lib/workers.aqua"
 import DealId, WorkerId from "../types.aqua"
 import spell_log, deal_log from "../fluence/spell.aqua"
 
-import JoinedDeal from "../storage/deal.aqua"
 use "../storage/deal.aqua" as DealStorage
 
-func remove_deal(deal: JoinedDeal, worker_id: WorkerId):
-    deal_log(deal.deal_id, "Removing the worker and the deal state from kv")
+func remove_deal(deal_id: DealId, worker_id: WorkerId):
+    deal_log(deal_id, "Removing the worker and the deal state from kv")
     try:
         Worker.remove(worker_id)
         -- remove the state of the deal only when the worker is removed, otherwise we couldn't try on the next run
-        DealStorage.remove_deal(deal)
+        DealStorage.remove_deal(deal_id)
     catch e:
-        deal_log(deal.deal_id, ["Couldn't remove a worker, try on the next run", worker_id, e])
+        deal_log(deal_id, ["error: Couldn't remove a worker, try on the next run", worker_id, e])
 
-func remove_deals(deals: []JoinedDeal):
-    for deal <- deals:
-        worker_id <- Worker.get_worker_id(deal.deal_id)
+func remove_deals(deals: []DealId):
+    for deal_id <- deals:
+        worker_id <- Worker.get_worker_id(deal_id)
         if worker_id == nil:
-            deal_log(deal.deal_id, ["Cannot remove the deal: worker isn't found for the deal, will only clear storage"])
-            DealStorage.remove_deal(deal)
+            deal_log(deal_id, ["error: Cannot remove the deal: worker isn't found for the deal, will only clear storage"])
+            DealStorage.remove_deal(deal_id)
         else:
-            remove_deal(deal, worker_id!)
+            remove_deal(deal_id, worker_id!)

@@ -2,41 +2,31 @@ aqua TxStorage declares *
 
 import list_push, list_remove, list_get from "../fluence/spell.aqua" 
 import Json from "../fluence/peer.aqua"
-import TXS_KEY, TXS_STATUS_KEY from "../consts.aqua"
-import SpellId, TxHash from "../types.aqua"
-import spell_log from "../fluence/spell.aqua"
+import TXS_KEY, TXS_STATUS_KEY, tx_hash_key from "../consts.aqua"
+import DealId, TxHash from "../types.aqua"
+import "../fluence/spell.aqua"
 
-data WorkerTxInfo:
-  deal_id: string
-  tx_hash: TxHash 
+func store_tx(deal_id: DealId, tx_hash: TxHash):
+    set_string(tx_hash_key(deal_id), tx_hash)
+    list_push_str(TXS_KEY, deal_id)
 
-service JsonWorkerTxInfo("json"):
-    parse(str: string) -> WorkerTxInfo
+func remove_tx(deal_id: DealId):
+    remove(tx_hash_key(deal_id))
+    list_remove_str(TXS_KEY, deal_id)
 
-func store_tx(tx_info: WorkerTxInfo):
-    list_push(TXS_KEY, tx_info)
+data TxInfo:
+    deal_id: DealId
+    tx_hash: TxHash
 
-func remove_tx(tx_info: WorkerTxInfo):
-    list_remove(TXS_KEY, tx_info)
-
-func get_txs() -> []WorkerTxInfo:
-    txs <- list_get(TXS_KEY)
-
-    infos: *WorkerTxInfo
-    if txs != nil:
-        for tx <- txs!:
-            try:
-                infos <- JsonWorkerTxInfo.parse(tx)
-            catch e:
-                spell_log(["Failed to parse tx info:", tx, e])
-    <- infos 
-
-data WorkerTxStatus:
-    tx_info: WorkerTxInfo
-    status: string
-
-service JsonWorkerTxStatus("json"):
-    parse(str: string) -> WorkerTxStatus
-
-func store_tx_status(tx_status: WorkerTxStatus):
-    list_push(TXS_STATUS_KEY, tx_status)
+func get_txs() -> []TxInfo:
+    result: *TxInfo
+    deals <- list_get(TXS_KEY)
+    if deals != nil:
+        for deal_id <- deals!:
+            tx_hash <- get_string(tx_hash_key(deal_id))
+            if tx_hash != nil:
+                result <<- TxInfo(deal_id = deal_id, tx_hash = tx_hash!)
+            else:
+                deal_log(deal_id, ["Found deal for tx status polling without tx hash. Remove the deal from polling list"])
+                remove_tx(deal_id)
+    <- result

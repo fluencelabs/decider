@@ -2,39 +2,43 @@ aqua DealStorage declares *
 
 import Spell from "@fluencelabs/spell/spell_service.aqua"
 
-import DealId from "../types.aqua"
+import DealId, TxHash from "../types.aqua"
 import Json from "../fluence/peer.aqua"
-import deal_log, spell_log, list_get from "../fluence/spell.aqua"
-import JOINED_DEALS from "../consts.aqua"
+import "../fluence/spell.aqua"
+import DEAL_STORAGE_DEALS, deal_tx_hash_key from "../consts.aqua"
 
-data JoinedDeal:
-    deal_id: DealId
-
-service JsonJoinedDeal("json"):
-    parse(json: string) -> JoinedDeal
-
-func store_deal(deal: JoinedDeal):
+func store_deal(deal_id: DealId, tx_hash: TxHash):
     Spell "spell" 
-    json <- Json.stringify(deal)
-    result <- Spell.list_push_string(JOINED_DEALS, json)
-    if !result.success:
-        deal_log(deal.deal_id, ["Can't store deal_id in storage:", result])
 
-func remove_deal(deal: JoinedDeal):
-    Spell "spell"
-    json <- Json.stringify(deal)
-    result <- Spell.list_remove_string(JOINED_DEALS, json)
-    if !result.success:
-        deal_log(deal.deal_id, ["Can't remove deal_id from storage:", result])
+    -- Save TX_HASH of the deal
+    set_string(deal_tx_hash_key(deal_id), tx_hash)
 
-func get_deals() -> []JoinedDeal:
+    -- Save the deal to the list of all installed deals
+    result <- Spell.list_push_string(DEAL_STORAGE_DEALS, deal_id)
+    if !result.success:
+        deal_log(deal_id, ["Can't store deal_id in storage:", result])
+
+func remove_deal(deal_id: DealId):
     Spell "spell"
-    joined_deals: *JoinedDeal
-    deals <- list_get(JOINED_DEALS)
-    if deals != nil:
-       for deal_str <- deals!:
-            try:
-                joined_deals <<- JsonJoinedDeal.parse(deal_str)
-            catch e:
-                spell_log(["Can't parse deal from storage:", e])
-    <- joined_deals
+
+    -- First, remove the aux data of the deal
+    remove(deal_tx_hash_key(deal_id))
+
+    -- And only then remove it from the list
+    result <- Spell.list_remove_string(DEAL_STORAGE_DEALS, deal_id)
+    if !result.success:
+        deal_log(deal_id, ["Can't remove deal_id from storage:", result])
+
+func get_deals() -> []DealId:
+    Spell "spell"
+    result: *[]DealId
+    deals <- list_get(DEAL_STORAGE_DEALS)
+    if deals == nil:
+        result <<- []
+    else:
+        result <<- deals!
+    <- result!
+
+func get_tx(deal_id: DealId) -> ?TxHash:
+    Spell "spell"
+    <- get_string(deal_tx_hash_key(deal_id))

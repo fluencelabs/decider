@@ -15,9 +15,7 @@ import register_worker from "../worker/register.aqua"
 
 import Srv from "@fluencelabs/aqua-lib/builtin.aqua"
 
-import WorkerTxInfo from "../storage/tx.aqua"
 use "../storage/tx.aqua" as TxStorage
-import JoinedDeal from "../storage/deal.aqua"
 use "../storage/deal.aqua" as DealStorage
 
 use "./status.aqua" as DealStatus
@@ -83,8 +81,9 @@ func install_deals(worker_settings: WorkerSettings, deals: []Deal):
             worker_id <- install_deal(worker_settings, deal)
             if worker_id != nil:
                 deal_log(deal.deal_id, ["Worker installed", worker_id])
-                register_worker(deal.deal_id, worker_id!, deal.unit_ids)
-                DealStorage.store_deal(JoinedDeal(deal_id = deal.deal_id))
+                tx_hash <- register_worker(deal.deal_id, worker_id!, deal.unit_ids)
+                if tx_hash != nil:
+                    DealStorage.store_deal(deal.deal_id, tx_hash!)
             else:
                 deal_log(deal.deal_id, ["Failed to install worker for the deal, will try again on the next run"])
         else:

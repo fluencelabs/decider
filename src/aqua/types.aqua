@@ -1,7 +1,16 @@
 aqua Types declares *
 
+import CUID from "@fluencelabs/aqua-lib/workers.aqua"
+
 alias DealId: string
 alias SpellId: string
 alias WorkerId: string
 alias CID: string
 alias TxHash: string
+
+data Deal:
+    deal_id: DealId 
+    -- For comparision, use DEAL_STATUS_* from consts.aqua
+    status: string
+    unit_ids: []CUID
+    app_cid: string

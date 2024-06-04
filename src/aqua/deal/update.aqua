@@ -38,8 +38,11 @@ func update_deals(worker_settings: WorkerSettings, deals: []Deal):
                     if is_updated == nil:
                         deal_log(deal.deal_id, ["Error updating App CID"])
                     else:
-                        if is_updated! && was_active:
+                        if is_updated!:
                             deal_log(deal.deal_id, ["App CID updated to", deal.app_cid])
-                            trigger_worker_spell(worker_id!, worker_settings)
+                            if was_active:
+                                -- TODO: ask if it's neccessary
+                                -- This can reduce the chance of double-running but it stil can happen
+                                trigger_worker_spell(worker_id!, worker_settings)
             catch e:
                 deal_log(deal.deal_id, ["Error updating deal:", e])

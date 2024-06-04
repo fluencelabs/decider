@@ -1,17 +1,17 @@
 #![feature(async_closure)]
 #![feature(try_blocks)]
 
-use crate::utils::chain::{random_tx, ChainReplies, Deal};
+use crate::utils::{enable_decider_logs, oneshot_config, TestApp};
+use crate::utils::chain::{ChainReplies, Deal, random_tx};
 use crate::utils::control::{
     run_decider, update_worker_config, wait_worker_spell_stopped, wait_worker_spell_stopped_after,
 };
-use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE, TX_RECEIPT_STATUS_OK};
+use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE};
 use crate::utils::setup::setup_nox;
 use crate::utils::state::deal;
 use crate::utils::state::subnet;
 use crate::utils::state::worker;
 use crate::utils::test_rpc_server::run_test_server;
-use crate::utils::{enable_decider_logs, oneshot_config, TestApp};
 
 pub mod utils;
 
@@ -49,7 +49,7 @@ async fn test_run_empty() {
 /// 2. Decider State:
 ///    - Deal is in `joined_deals`
 ///    - Transaction for Worker Registration is not in `worker_registration_txs` after checking receipts
-///    - Transaction Status in `worker_registration_txs_statuses` is `ok`
+///    - Tx hash is stored for the deal
 ///
 #[tokio::test]
 async fn test_install_happy_path() {
@@ -150,6 +150,10 @@ async fn test_install_happy_path() {
         let deals = deal::get_joined_deals(&mut client).await;
         assert_eq!(deals.len(), 1);
         assert_eq!(deals[0].deal_id, deal_id);
+
+        let deal_tx_hash = deal::get_deal_tx_hash(&mut client, deal_id).await.unwrap();
+        assert!(deal_tx_hash.is_some(), "no tx hash stored for the deal");
+        assert_eq!(deal_tx_hash.unwrap(), tx_hash, "wrong tx hash is stored for {deal_id}");
     }
     // Check Transaction Status
     {
@@ -159,12 +163,6 @@ async fn test_install_happy_path() {
             "txs queue for getting receipts must be empty: {:?}",
             txs_queue_after_checking_receipts
         );
-
-        let tx_statuses = subnet::get_txs_statuses(&mut client).await;
-        assert_eq!(tx_statuses.len(), 1);
-        assert_eq!(tx_statuses[0].tx_info.tx_hash, tx_hash);
-        assert_eq!(tx_statuses[0].tx_info.deal_id, deal_id);
-        assert_eq!(tx_statuses[0].status, TX_RECEIPT_STATUS_OK);
     }
     server.shutdown().await;
 }
@@ -309,6 +307,7 @@ async fn test_update_happy_path() {
 ///     - `worker_id` doesn't exist
 /// - on Decider:
 ///     - no deal in `joined_deals`
+///     - no tx stored for the deal
 #[tokio::test]
 async fn test_remove_happy_path() {
     enable_decider_logs();
@@ -361,5 +360,9 @@ async fn test_remove_happy_path() {
         joined_deals.is_empty(),
         "no deals must be installed: {joined_deals:?}, target deal_id {deal_id}"
     );
+    let tx_hash = deal::get_deal_tx_hash(&mut client, deal_id).await.unwrap();
+    assert!(tx_hash.is_none(), "tx_hash for {deal_id} should be cleaned");
+
+
     server.shutdown().await;
 }

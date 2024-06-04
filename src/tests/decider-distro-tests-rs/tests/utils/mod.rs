@@ -19,18 +19,25 @@ use std::collections::HashMap;
 pub fn enable_decider_logs() {
     let namespaces = vec![
         "run-console=debug",
+        /*
         "spell=debug",
+        /*
         "ipfs_effector=debug",
         "ipfs_pure=debug",
         "spell_event_bus=trace",
         "system_services=debug",
         "particle_reap=debug",
+        */
         "aquamarine::actor=debug",
         "aquamarine::aqua_runtime=off",
         "aquamarine=debug",
+
+         */
+        /*
         "nox=debug",
         "chain_listener=debug",
         "chain-connector=debug",
+        */
     ];
 
     let namespaces = namespaces
@@ -69,8 +76,8 @@ pub fn oneshot_config() -> TriggerConfig {
 }
 
 pub fn hex_u32_deserialize<'de, D>(deserializer: D) -> Result<u32, D::Error>
-where
-    D: serde::Deserializer<'de>,
+    where
+        D: serde::Deserializer<'de>,
 {
     let s: String = serde::Deserialize::deserialize(deserializer)?;
     if s.starts_with("0x") {

@@ -6,23 +6,28 @@ import Spell, TriggerConfig from "@fluencelabs/spell/spell_service.aqua"
 import "@fluencelabs/spell/spell_service.aqua"
 
 import deal_log, spell_log from "../fluence/spell.aqua"
-import DealId, WorkerId from "../types.aqua"
+import DealId, WorkerId, TxHash from "../types.aqua"
 import ChainConnector from "../fluence/connector.aqua"
 
-import WorkerTxInfo, WorkerTxStatus from "../storage/tx.aqua"
 use "../storage/tx.aqua" as TxStorage
-use "../storage/failed.aqua" as FailedStorage
+use "../storage/deal.aqua" as DealStorage
 import "../consts.aqua"
 import Json from "../fluence/peer.aqua"
 
 
-func register_worker(deal_id: DealId, worker_id: WorkerId, cu_ids: []CUID):
+func register_worker(deal_id: DealId, worker_id: WorkerId, cu_ids: []CUID) -> ?TxHash:
+    tx_hash: *TxHash
     try:
-        tx <- ChainConnector.register_worker(deal_id, worker_id, cu_ids)
-        TxStorage.store_tx(WorkerTxInfo(deal_id = deal_id, tx_hash = tx))
-        deal_log(deal_id, ["Worker registered: ", tx])
+        exsiting_hash <- DealStorage.get_tx(deal_id)
+        if exsiting_hash != nil:
+            deal_log(deal_id, ["Found registration transaction", exsiting_hash, ". No registration required"])
+            tx_hash <<- exsiting_hash!
+        else:
+            deal_log(deal_id, ["Registering worker"])
+            tx <- ChainConnector.register_worker(deal_id, worker_id, cu_ids)
+            TxStorage.store_tx(deal_id, tx)
+            deal_log(deal_id, ["Worker registered, tx hash:", tx])
+            tx_hash <<- tx
     catch e:
-        err = ["Failed to register worker: ", e]
-        deal_log(deal_id, err)
-        str <- Json.stringify(err)
-        FailedStorage.store_failed(deal_id, str)
+        deal_log(deal_id, ["Failed to register worker:", e, "Try again on the next run"])
+    <- tx_hash

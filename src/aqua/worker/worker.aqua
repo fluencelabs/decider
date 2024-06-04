@@ -28,6 +28,7 @@ data WorkerSettings:
     -- IPFS API for the worker to pull info from
     ipfs: string
 
+-- TODO: get_or_create
 func create(deal_id: DealId, cu_ids: []CUID) -> ?WorkerId:
     worker_id: *WorkerId
 

@@ -1,12 +1,12 @@
 #![feature(async_closure)]
 
-use crate::utils::chain::{random_tx, ChainReplies, Deal, TxReceipt};
+use crate::utils::{chain, enable_decider_logs, TestApp};
+use crate::utils::chain::{ChainReplies, Deal, random_tx, TxReceipt};
 use crate::utils::control::run_decider;
-use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE, TX_RECEIPT_STATUS_FAILED};
+use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE};
 use crate::utils::setup::setup_nox;
 use crate::utils::state::{deal, subnet, worker};
 use crate::utils::test_rpc_server::run_test_server;
-use crate::utils::{chain, enable_decider_logs, TestApp};
 
 pub mod utils;
 
@@ -95,7 +95,10 @@ async fn test_failed_get_deals() {
 /// 1. Try to install a deal with `register_workers` failure
 ///    - The deal is installed and worker is created
 ///    - The txs list is empty since no txs was sent
-///    - The chain error is in the `failed_deals` list
+///    - The deal isn't joined since it wasn't registered in the subnet
+/// 2. Run decider second time without problems
+///    - The deal should be registered in the subnet and joined
+///    - The tx hash is stored with the deal
 #[tokio::test]
 async fn test_failed_register_workers() {
     enable_decider_logs();
@@ -107,16 +110,16 @@ async fn test_failed_register_workers() {
 
     let deal_id = DEAL_IDS[0];
 
+    let deal = Deal::ok(deal_id, TestApp::test_app1(), DEAL_STATUS_ACTIVE);
     let chain_replies = ChainReplies {
-        deals: vec![Deal::ok(deal_id, TestApp::test_app1(), DEAL_STATUS_ACTIVE)],
+        deals: vec![deal.clone()],
         new_deals_tx_hashes: vec![None],
         new_deals_receipts: vec![],
     };
     run_decider(&mut server, &mut client, chain_replies).await;
 
     let joined = deal::get_joined_deals(&mut client).await;
-    assert!(!joined.is_empty(), "The deal {deal_id} must be joined");
-    assert_eq!(deal_id, joined[0].deal_id, "wrong deal is joined");
+    assert!(joined.is_empty(), "The deal {deal_id} shouldn't be joined");
     let worker_id = worker::get_worker(&mut client, &deal_id).await;
     assert!(
         !worker_id.is_empty(),
@@ -126,12 +129,16 @@ async fn test_failed_register_workers() {
     let txs = subnet::get_txs(&mut client).await;
     assert!(txs.is_empty(), "No txs should be registered, got: {txs:?}");
 
-    let failed = deal::get_failed_deals(&mut client).await;
-    assert!(
-        !failed.is_empty(),
-        "No failed deals should be registered, got: {failed:?}"
-    );
-    assert_eq!(failed[0].deal_id, deal_id, "wrong deal failed");
+    let expected_hash = random_tx();
+    let chain_replies = ChainReplies::new(vec![deal], vec![expected_hash.clone()]);
+    run_decider(&mut server, &mut client, chain_replies).await;
+    let joined = deal::get_joined_deals(&mut client).await;
+    assert!(!joined.is_empty(), "The deal {deal_id} shouldn't be joined");
+    assert_eq!(joined[0].deal_id, deal_id, "Wrong deal is installed");
+
+    let tx_hash = deal::get_deal_tx_hash(&mut client, deal_id).await.unwrap();
+    assert!(tx_hash.is_some(), "tx_hash for {deal_id} isn't found");
+    assert_eq!(tx_hash.unwrap(), expected_hash, "Wrong tx hash is stored for the deal");
 
     server.shutdown().await;
 }
@@ -175,12 +182,6 @@ async fn test_failed_get_receipts() {
         assert!(!txs.is_empty(), "txs must be registered");
         assert_eq!(txs[0].tx_hash, tx_hash);
         assert_eq!(txs[0].deal_id, deal_id);
-
-        let statuses = subnet::get_txs_statuses(&mut client).await;
-        assert!(
-            statuses.is_empty(),
-            "no statuses should be registered, got: {statuses:?}"
-        );
     }
 
     let chain_replies = ChainReplies {
@@ -194,12 +195,6 @@ async fn test_failed_get_receipts() {
         assert!(!txs.is_empty(), "txs must be registered");
         assert_eq!(txs[0].tx_hash, tx_hash);
         assert_eq!(txs[0].deal_id, deal_id);
-
-        let statuses = subnet::get_txs_statuses(&mut client).await;
-        assert!(
-            statuses.is_empty(),
-            "no statuses should be registered, got: {statuses:?}"
-        );
     }
 
     let chain_replies = ChainReplies {
@@ -211,16 +206,6 @@ async fn test_failed_get_receipts() {
     {
         let txs = subnet::get_txs(&mut client).await;
         assert!(txs.is_empty(), "txs must be cleared, got {txs:?}");
-
-        let statuses = subnet::get_txs_statuses(&mut client).await;
-        assert!(
-            !statuses.is_empty(),
-            "tx status must be saved, got: {statuses:?}"
-        );
-
-        assert_eq!(statuses[0].status, TX_RECEIPT_STATUS_FAILED);
-        assert_eq!(statuses[0].tx_info.tx_hash, tx_hash);
-        assert_eq!(statuses[0].tx_info.deal_id, deal_id);
     }
 
     server.shutdown().await;

@@ -1,6 +1,6 @@
-aqua Spell declares spell_log, deal_log, list_push, list_remove, list_get
+aqua Spell declares *
 
-import Spell from "@fluencelabs/spell/spell_service.aqua"
+import Spell, StringValue from "@fluencelabs/spell/spell_service.aqua"
 import Op from "@fluencelabs/aqua-lib/builtin.aqua"
 import RunConsoleManyAny from "../debug.aqua"
 import SpellId, DealId from "../types.aqua"
@@ -32,10 +32,11 @@ func list_get(key: string) -> ?[]string:
 
 func list_push(key: string, val: ⊤):
     Spell "spell" 
+    -- TODO: sort keys in Json.stringify?
     str <- Json.stringify(val)
     result <- Spell.list_push_string(key, str)
     if !result.success:
-        spell_log(["Can't store value in list by key", key, "value", val, "error:", result.error])
+        spell_log(["Can't store value in list by key", key, "value", val, "result:", result.error])
 
 func list_remove(key: string, val: ⊤):
     Spell "spell" 
@@ -43,3 +44,40 @@ func list_remove(key: string, val: ⊤):
     result <- Spell.list_remove_string(key, str)
     if !result.success:
         spell_log(["Can't remove value in list by key", key, "value", val, "error:", result.error])
+
+func list_push_str(key: string, val: string):
+    Spell "spell" 
+    result <- Spell.list_push_string(key, val)
+    if !result.success:
+        spell_log(["Can't store value in list by key", key, "value", val, "error:", result.error])
+
+
+func list_remove_str(key: string, val: string):
+    Spell "spell" 
+    result <- Spell.list_remove_string(key, val)
+    if !result.success:
+        spell_log(["Can't remove value in list by key", key, "value", val, "error:", result.error])
+
+func get_string(key: string) -> ?string:
+    Spell "spell" 
+    value: *string
+
+    result <- Spell.get_string(key)
+    if !result.success:
+        spell_log(["Can't get value by key", key, "result:", result])
+    else:
+        if !result.absent:
+            value <<- result.value 
+    <- value
+
+func set_string(key: string, val: string):
+    Spell "spell"
+    result <- Spell.set_string(key, val)
+    if !result.success:
+        spell_log(["Can't store by key", key, "value", val, "result:", result])
+
+func remove(key: string):
+    Spell "spell"
+    result <- Spell.remove_key(key)
+    if !result.success:
+        spell_log(["Can't remove the key", key,  "result:", result])

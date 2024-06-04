@@ -87,7 +87,7 @@ dependencies = [
 [[package]]
 name = "air-interpreter-fs"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "air-interpreter-wasm",
  "eyre",
@@ -327,7 +327,7 @@ dependencies = [
 [[package]]
 name = "aquamarine"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -336,7 +336,6 @@ dependencies = [
  "bs58",
  "bytesize",
  "chrono",
- "config",
  "config-utils",
  "control-macro",
  "enum_dispatch",
@@ -1319,7 +1318,7 @@ dependencies = [
 [[package]]
 name = "chain-connector"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "alloy-primitives",
  "alloy-sol-types",
@@ -1350,10 +1349,9 @@ dependencies = [
 [[package]]
 name = "chain-data"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "alloy-sol-types",
- "alloy_serde_macro",
  "const-hex",
  "ethabi",
  "eyre",
@@ -1368,7 +1366,7 @@ dependencies = [
 [[package]]
 name = "chain-listener"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "alloy-primitives",
  "alloy-sol-types",
@@ -1434,7 +1432,7 @@ dependencies = [
 [[package]]
 name = "cid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "bytes",
  "eyre",
@@ -1571,7 +1569,7 @@ dependencies = [
 [[package]]
 name = "config-utils"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "libp2p-identity",
 ]
@@ -1579,7 +1577,7 @@ dependencies = [
 [[package]]
 name = "connected-client"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "derivative",
  "either",
@@ -1606,7 +1604,7 @@ dependencies = [
 [[package]]
 name = "connection-pool"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "fluence-libp2p",
  "futures",
@@ -1649,7 +1647,7 @@ checksum = "f7144d30dcf0fafbce74250a3963025d8d52177934239851c917d29f1df280c2"
 [[package]]
 name = "control-macro"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 
 [[package]]
 name = "convert_case"
@@ -1676,7 +1674,7 @@ checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 [[package]]
 name = "core-manager"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "async-trait",
  "bimap",
@@ -1865,7 +1863,7 @@ dependencies = [
 [[package]]
 name = "created-swarm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "air-interpreter-fs",
  "aquamarine",
@@ -1888,6 +1886,7 @@ dependencies = [
  "particle-args",
  "particle-execution",
  "particle-protocol",
+ "rand",
  "reqwest",
  "serde",
  "serde_json",
@@ -2094,9 +2093,9 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.6.13-lightweight-decider-f8ff416-1043-1.0"
-source = "registry+git://crates.fluence.dev/index"
-checksum = "adb511d1c614fec2241b94b905cd81c0cd28a8fbfc51f0609ea12204e95721bd"
+version = "0.6.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fe66aa706ae0e5af6d8ae8b6a6190cbd0a54d6a476e04ae2c4badcdc408ae816"
 dependencies = [
  "built 0.7.2",
  "fluence-spell-dtos",
@@ -2636,11 +2635,12 @@ dependencies = [
 [[package]]
 name = "fluence-libp2p"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "bs58",
  "futures",
  "futures-util",
+ "hex",
  "libp2p",
  "libp2p-mplex",
  "libp2p-noise",
@@ -2648,7 +2648,9 @@ dependencies = [
  "multihash 0.19.1",
  "rand",
  "serde",
+ "thiserror",
  "tokio",
+ "tracing",
 ]
 
 [[package]]
@@ -2718,7 +2720,7 @@ dependencies = [
 [[package]]
 name = "fs-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "cfg-if",
  "eyre",
@@ -3101,7 +3103,7 @@ dependencies = [
 [[package]]
 name = "health"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "eyre",
 ]
@@ -3157,7 +3159,7 @@ checksum = "6fe2267d4ed49bc07b63801559be28c718ea06c4738b7a03c94df7386d2cde46"
 [[package]]
 name = "hex-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "hex",
  "serde_with 3.8.1",
@@ -3837,7 +3839,7 @@ dependencies = [
 [[package]]
 name = "json-utils"
 version = "0.0.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "base64 0.21.7",
  "serde",
@@ -4152,7 +4154,7 @@ dependencies = [
 [[package]]
 name = "kademlia"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "bs58",
  "control-macro",
@@ -4170,7 +4172,6 @@ dependencies = [
  "particle-protocol",
  "prometheus-client",
  "serde_json",
- "server-config",
  "smallvec",
  "thiserror",
  "tokio",
@@ -4807,7 +4808,7 @@ checksum = "01cda141df6706de531b6c46c3a33ecca755538219bd484262fa09410c13539c"
 [[package]]
 name = "local-vm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -4818,7 +4819,6 @@ dependencies = [
  "fstrings",
  "libp2p",
  "log",
- "maplit",
  "marine-wasmtime-backend",
  "now-millis",
  "parking_lot",
@@ -4850,7 +4850,7 @@ checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 [[package]]
 name = "log-format"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "nu-ansi-term 0.50.0",
  "tracing",
@@ -4861,7 +4861,7 @@ dependencies = [
 [[package]]
 name = "log-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "log",
  "log-format",
@@ -5662,12 +5662,12 @@ checksum = "995defdca0a589acfdd1bd2e8e3b896b4d4f7675a31fd14c32611440c7f608e6"
 [[package]]
 name = "now-millis"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 
 [[package]]
 name = "nox"
-version = "0.23.6"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+version = "0.24.0"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -5717,6 +5717,7 @@ dependencies = [
  "spell-event-bus",
  "spell-service-api",
  "system-services",
+ "thiserror",
  "tokio",
  "tokio-stream",
  "tokio-util",
@@ -6075,7 +6076,7 @@ dependencies = [
 [[package]]
 name = "particle-args"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "avm-server",
  "bs58",
@@ -6090,7 +6091,7 @@ dependencies = [
 [[package]]
 name = "particle-builtins"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "async-trait",
  "avm-server",
@@ -6122,7 +6123,6 @@ dependencies = [
  "rand",
  "serde",
  "serde_json",
- "server-config",
  "service-modules",
  "subnet-resolver",
  "thiserror",
@@ -6136,7 +6136,7 @@ dependencies = [
 [[package]]
 name = "particle-execution"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "async-trait",
  "bs58",
@@ -6158,7 +6158,7 @@ dependencies = [
 [[package]]
 name = "particle-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "base64 0.21.7",
  "bytesize",
@@ -6185,7 +6185,7 @@ dependencies = [
 [[package]]
 name = "particle-protocol"
 version = "0.3.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "air-interpreter-sede",
  "asynchronous-codec 0.7.0",
@@ -6213,7 +6213,7 @@ dependencies = [
 [[package]]
 name = "particle-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "bytesize",
  "cid-utils",
@@ -6239,7 +6239,6 @@ dependencies = [
  "serde_json",
  "service-modules",
  "thiserror",
- "time",
  "tokio",
  "tokio-stream",
  "tokio-util",
@@ -6279,7 +6278,7 @@ dependencies = [
 [[package]]
 name = "peer-metrics"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "bytesize",
  "fluence-app-service",
@@ -7554,7 +7553,7 @@ dependencies = [
 [[package]]
 name = "server-config"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "air-interpreter-fs",
  "base64 0.21.7",
@@ -7571,6 +7570,8 @@ dependencies = [
  "fluence-keypair",
  "fluence-libp2p",
  "fs-utils",
+ "hex",
+ "hex-utils",
  "humantime-serde",
  "libp2p",
  "libp2p-connection-limits",
@@ -7592,7 +7593,7 @@ dependencies = [
 [[package]]
 name = "service-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "cid-utils",
  "eyre",
@@ -7769,7 +7770,7 @@ dependencies = [
 [[package]]
 name = "sorcerer"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "aquamarine",
  "connection-pool",
@@ -7808,7 +7809,7 @@ dependencies = [
 [[package]]
 name = "spell-event-bus"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "connection-pool",
  "derivative",
@@ -7834,7 +7835,7 @@ dependencies = [
 [[package]]
 name = "spell-service-api"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "fluence-libp2p",
  "fluence-spell-dtos",
@@ -7849,7 +7850,7 @@ dependencies = [
 [[package]]
 name = "spell-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "derivative",
  "eyre",
@@ -7920,7 +7921,7 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 [[package]]
 name = "subnet-resolver"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "chain-data",
  "ethabi",
@@ -8033,11 +8034,11 @@ dependencies = [
 [[package]]
 name = "system-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "aqua-ipfs-distro",
  "async-trait",
- "decider-distro 0.6.13-lightweight-decider-f8ff416-1043-1.0",
+ "decider-distro 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)",
  "eyre",
  "fluence-app-service",
  "fluence-spell-dtos",
@@ -8103,7 +8104,7 @@ dependencies = [
 [[package]]
 name = "test-constants"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 
 [[package]]
 name = "textwrap"
@@ -8334,7 +8335,7 @@ dependencies = [
 [[package]]
 name = "toml-utils"
 version = "0.0.1"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "marine-runtime",
 ]
@@ -8459,7 +8460,7 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "toy-vms"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "aquamarine",
  "async-trait",
@@ -8615,7 +8616,7 @@ checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 [[package]]
 name = "types"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "hex",
  "libp2p-identity",
@@ -8773,7 +8774,7 @@ dependencies = [
 [[package]]
 name = "uuid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "uuid",
 ]
@@ -9837,7 +9838,7 @@ dependencies = [
 [[package]]
 name = "workers"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#f0b35e3de10566b18a7586a883acbc016e20f4bc"
+source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c5fb76f314972b298401d6bbfdbec302be82c48"
 dependencies = [
  "async-trait",
  "core-manager",
