@@ -12,7 +12,6 @@ import Json from "../fluence/peer.aqua"
 
 import TxInfo from "../storage/tx.aqua"
 use "../storage/tx.aqua" as TxStorage
-use "../storage/failed.aqua" as FailedStorage
 import "../consts.aqua"
 
 func find_tx_info(txs: []TxInfo, hash: string) -> ?TxInfo:

@@ -1,11 +1,11 @@
 #![feature(async_closure)]
 #![feature(try_blocks)]
 
-use crate::utils::{enable_decider_logs, oneshot_config, TestApp};
+use std::time::Duration;
+
+use crate::utils::{enable_decider_logs, spell, TestApp};
 use crate::utils::chain::{ChainReplies, Deal, random_tx};
-use crate::utils::control::{
-    run_decider, update_worker_config, wait_worker_spell_stopped, wait_worker_spell_stopped_after,
-};
+use crate::utils::control::{run_decider, wait_worker_spell_stopped, wait_worker_spell_stopped_after};
 use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE};
 use crate::utils::setup::setup_nox;
 use crate::utils::state::deal;
@@ -170,6 +170,7 @@ async fn test_install_happy_path() {
 /// Test Scenario: Update Happy Path
 /// 1. First, install a deal
 /// 2. Second, update the deal with a new app cid
+/// 3. Third time nothing should be updated
 ///
 /// To check on the Update Phase:
 /// 1. Nox State:
@@ -209,26 +210,27 @@ async fn test_update_happy_path() {
         );
         worker.remove(0)
     };
-    wait_worker_spell_stopped(&mut client, &worker_id, std::time::Duration::from_secs(10)).await;
+    // Wait until the deal is fully installed
+    wait_worker_spell_stopped(&mut client, &worker_id, Duration::from_secs(10)).await;
+
+    // not many ways to determine that the worker spell has stopped the _second_ time
+    // sleep to increment the next unix time to ensure that we found new worker-spell status
+    tokio::time::sleep(Duration::from_secs(1)).await;
+    // Run second time to update
+    // Get the current time so that we can poll the latest worker-spell status
+    let current_timestamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
 
     let test_app_updated = TestApp::test_app2();
-    // Run second time to update
     let chain_replies = ChainReplies::new(
         vec![Deal::ok(deal_id, test_app_updated.clone(), deal_status)],
         vec![],
     );
     run_decider(&mut server, &mut client, chain_replies).await;
 
-    let current_timestamp = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_secs();
-    // Run worker-spell to install the update
-    update_worker_config(&mut client, &worker_id, &oneshot_config())
-        .await
-        .unwrap();
-
-    // Check Worker
+    // Check Worker while decider and worker-spell (triggered by the update) runs in the background
     {
         let worker_active = worker::is_active(&mut client, &deal_id).await;
         assert!(
@@ -258,11 +260,13 @@ async fn test_update_happy_path() {
         );
     }
 
+
     // Check that Decider put the new app cid to the worker spell
     {
         let worker_app_cid = worker::get_worker_app_cid(&mut client, &worker_id).await;
         assert_eq!(worker_app_cid, test_app_updated.cid);
     }
+
     wait_worker_spell_stopped_after(
         &mut client,
         &worker_id,
@@ -294,6 +298,19 @@ async fn test_update_happy_path() {
     let joined = deal::get_joined_deals(&mut client).await;
     assert_eq!(joined.len(), 1);
     assert_eq!(joined[0].deal_id, deal_id);
+
+    let counter_before = spell::get_counter_on(&mut client, &worker_id, "worker-spell").await.unwrap();
+
+    // Run third time
+    let chain_replies = ChainReplies::new(
+        vec![Deal::ok(deal_id, test_app_updated.clone(), deal_status)],
+        vec![],
+    );
+    run_decider(&mut server, &mut client, chain_replies).await;
+    let counter_after = spell::get_counter_on(&mut client, &worker_id, "worker-spell").await.unwrap();
+    assert_eq!(counter_before, counter_after, "worker-spell shouldn't be run when app cid isn't changed");
+
+
     server.shutdown().await;
 }
 

@@ -19,25 +19,18 @@ use std::collections::HashMap;
 pub fn enable_decider_logs() {
     let namespaces = vec![
         "run-console=debug",
-        /*
         "spell=debug",
-        /*
         "ipfs_effector=debug",
         "ipfs_pure=debug",
         "spell_event_bus=trace",
         "system_services=debug",
         "particle_reap=debug",
-        */
         "aquamarine::actor=debug",
         "aquamarine::aqua_runtime=off",
         "aquamarine=debug",
-
-         */
-        /*
         "nox=debug",
         "chain_listener=debug",
         "chain-connector=debug",
-        */
     ];
 
     let namespaces = namespaces

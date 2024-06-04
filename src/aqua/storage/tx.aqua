@@ -2,7 +2,7 @@ aqua TxStorage declares *
 
 import list_push, list_remove, list_get from "../fluence/spell.aqua" 
 import Json from "../fluence/peer.aqua"
-import TXS_KEY, TXS_STATUS_KEY, tx_hash_key from "../consts.aqua"
+import TXS_KEY, tx_hash_key from "../consts.aqua"
 import DealId, TxHash from "../types.aqua"
 import "../fluence/spell.aqua"
 

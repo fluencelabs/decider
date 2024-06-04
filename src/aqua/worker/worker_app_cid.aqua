@@ -15,11 +15,11 @@ func update_app_cid(worker_id: WorkerId, deal_id: DealId, app_cid: string) -> ?b
 
         -- We need a json string for the app cid because it's used as an argument to the spell function
         -- which all must be a json objects
-        str <- Json.stringify(app_cid)
-        if old_cid.success && old_cid.value == app_cid:
+        app_cid_str <- Json.stringify(app_cid)
+        if old_cid.success && old_cid.value == app_cid_str:
             is_updated <<- false
         else:
-            result <- Spell.set_string(WORKER_DEF_CID, str)
+            result <- Spell.set_string(WORKER_DEF_CID, app_cid_str)
             if !result.success:
                 on HOST_PEER_ID:
                     deal_log(deal_id, ["Failed to update app_cid on worker", result.error])

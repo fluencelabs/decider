@@ -5,15 +5,6 @@ import "@fluencelabs/aqua-lib/builtin.aqua"
 -- List of transactions for workers registrations in a subnet
 const TXS_KEY = "worker_registration_txs"
 
--- List of the transactions statuses: ok or failed
--- The list is available for modification from the host (to clean it, for example)
-const TXS_STATUS_KEY = "h_worker_registration_txs_statuses"
-
--- List of deals that failed
--- Note the some deals may be both joined and failed since there can be a problem during
--- subnet registration
-const FAILED_DEALS = "h_failed_deals"
-
 -- List of joined deals. For each deal from the list a worker was created and
 -- subnet registration request was sent
 const DEAL_STORAGE_DEALS = "installed_deals"
