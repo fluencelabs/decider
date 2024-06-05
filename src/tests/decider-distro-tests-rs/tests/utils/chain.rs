@@ -55,15 +55,25 @@ pub enum TxReceipt {
     Pending,
 }
 
+/// The configuration of replies from the chain for the deals
+///
+/// The amount of replies in each list depends on the decider state and test scenario
 #[derive(Default, Clone)]
 pub struct ChainReplies {
+    // Replies for the `get_deals` builtin
     pub deals: Vec<Deal>,
-    // when None, reply with an error
+    // Replies for the `register_worker` builtin
+    // when None, reply with an RPC error
     pub new_deals_tx_hashes: Vec<Option<String>>,
+    // Replies for the `get_tx_receipts` builtin
+    // when None, reply with an RPC error
     pub new_deals_receipts: Vec<Option<TxReceipt>>,
 }
 
 impl ChainReplies {
+    // Normal chain RPC reply sequence
+    // tx_hashes is worker registration tx hashes and must be filled for each new deal for the
+    // happy-path scenarios
     pub fn new(deals: Vec<Deal>, tx_hashes: Vec<String>) -> Self {
         Self {
             deals,
@@ -198,7 +208,7 @@ pub async fn play_register_worker_gen(server: &mut ServerHandle, tx_hash: &Optio
           "stateRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
           "transactionsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
           "receiptsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
-          // logsBloom removed
+          // `logsBloom` is a part of the response, but is removed because it's big and useless
           "difficulty": "0x0",
           "number": "0xa2",
           "gasLimit": "0x1c9c380",

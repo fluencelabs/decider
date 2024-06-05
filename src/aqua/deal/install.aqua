@@ -54,7 +54,7 @@ func install_deal(settings: WorkerSettings, deal: Deal) -> ?WorkerId:
     log = (msg: ⊤):
         deal_log(deal.deal_id, msg)
     
-    worker_id <- WorkerHelper.create(deal.deal_id, deal.unit_ids)
+    worker_id <- WorkerHelper.get_or_create(deal.deal_id, deal.unit_ids)
     if worker_id != nil:
         -- If it's not active, the deal is installed
         if Worker.is_active(deal.deal_id):

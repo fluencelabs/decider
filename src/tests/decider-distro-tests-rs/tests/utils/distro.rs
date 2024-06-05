@@ -31,27 +31,10 @@ pub fn make_distro(trigger_config: TriggerConfig, settings: DeciderConfig) -> Pa
     }
 }
 
+// Note that by default in these tests:
+// - Decider is stopped and should run manually
+// - Worker Spell is oneshot
 pub fn make_distro_default() -> PackageDistro {
-    let decider_settings = DeciderConfig {
-        worker_period_sec: 0,
-        worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),
-    };
-    // let's try to run a decider cycle on demand by updating the config
-    let mut trigger_config = TriggerConfig::default();
-    trigger_config.clock.start_sec = 1;
-    make_distro(trigger_config, decider_settings)
-}
-
-pub fn make_distro_with_config(config: TriggerConfig) -> PackageDistro {
-    let decider_settings = DeciderConfig {
-        worker_period_sec: 0,
-        worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),
-    };
-    // let's try to run a decider cycle on demand by updating the config
-    make_distro(config, decider_settings)
-}
-
-pub fn make_distro_stopped() -> PackageDistro {
     let decider_settings = DeciderConfig {
         worker_period_sec: 0,
         worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),

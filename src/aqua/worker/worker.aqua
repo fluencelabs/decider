@@ -1,4 +1,4 @@
-aqua Worker declares WorkerArgs, WorkerSettings, create, trigger_worker_spell
+aqua Worker declares WorkerArgs, WorkerSettings, get_or_create, trigger_worker_spell
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
 import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
@@ -28,8 +28,7 @@ data WorkerSettings:
     -- IPFS API for the worker to pull info from
     ipfs: string
 
--- TODO: get_or_create
-func create(deal_id: DealId, cu_ids: []CUID) -> ?WorkerId:
+func get_or_create(deal_id: DealId, cu_ids: []CUID) -> ?WorkerId:
     worker_id: *WorkerId
 
     existing_worker <- Worker.get_worker_id(deal_id)

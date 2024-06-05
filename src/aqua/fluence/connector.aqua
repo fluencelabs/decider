@@ -5,7 +5,7 @@ import DealId, TxHash, Deal from "../types.aqua"
 
 
 data DealInfo:
-    -- For comparision, use DEAL_STATUS_* from consts.aqua
+    -- For comparison, use DEAL_STATUS_* from consts.aqua
     status: string
     unit_ids: []CUID
     app_cid: string

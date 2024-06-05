@@ -8,29 +8,23 @@ import "../fluence/spell.aqua"
 import DEAL_STORAGE_DEALS, deal_tx_hash_key from "../consts.aqua"
 
 func store_deal(deal_id: DealId, tx_hash: TxHash):
-    Spell "spell" 
-
     -- Save TX_HASH of the deal
-    set_string(deal_tx_hash_key(deal_id), tx_hash)
+    set(deal_tx_hash_key(deal_id), tx_hash)
 
-    -- Save the deal to the list of all installed deals
-    result <- Spell.list_push_string(DEAL_STORAGE_DEALS, deal_id)
-    if !result.success:
-        deal_log(deal_id, ["Can't store deal_id in storage:", result])
+    -- And then save the deal to the list of all installed deals,
+    -- so if something is wrong we don't lose the tx_hash 
+    list_push(DEAL_STORAGE_DEALS, deal_id)
 
 func remove_deal(deal_id: DealId):
-    Spell "spell"
-
     -- First, remove the aux data of the deal
     remove(deal_tx_hash_key(deal_id))
 
-    -- And only then remove it from the list
-    result <- Spell.list_remove_string(DEAL_STORAGE_DEALS, deal_id)
-    if !result.success:
-        deal_log(deal_id, ["Can't remove deal_id from storage:", result])
+    -- And only then remove it from the list, so if something is wrong,
+    -- on the next run we surely cleaned all the state 
+    list_remove(DEAL_STORAGE_DEALS, deal_id)
+
 
 func get_deals() -> []DealId:
-    Spell "spell"
     result: *[]DealId
     deals <- list_get(DEAL_STORAGE_DEALS)
     if deals == nil:
@@ -40,5 +34,4 @@ func get_deals() -> []DealId:
     <- result!
 
 func get_tx(deal_id: DealId) -> ?TxHash:
-    Spell "spell"
-    <- get_string(deal_tx_hash_key(deal_id))
+    <- get(deal_tx_hash_key(deal_id))

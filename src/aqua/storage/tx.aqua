@@ -7,12 +7,12 @@ import DealId, TxHash from "../types.aqua"
 import "../fluence/spell.aqua"
 
 func store_tx(deal_id: DealId, tx_hash: TxHash):
-    set_string(tx_hash_key(deal_id), tx_hash)
-    list_push_str(TXS_KEY, deal_id)
+    set(tx_hash_key(deal_id), tx_hash)
+    list_push(TXS_KEY, deal_id)
 
 func remove_tx(deal_id: DealId):
     remove(tx_hash_key(deal_id))
-    list_remove_str(TXS_KEY, deal_id)
+    list_remove(TXS_KEY, deal_id)
 
 data TxInfo:
     deal_id: DealId
@@ -23,7 +23,7 @@ func get_txs() -> []TxInfo:
     deals <- list_get(TXS_KEY)
     if deals != nil:
         for deal_id <- deals!:
-            tx_hash <- get_string(tx_hash_key(deal_id))
+            tx_hash <- get(tx_hash_key(deal_id))
             if tx_hash != nil:
                 result <<- TxInfo(deal_id = deal_id, tx_hash = tx_hash!)
             else:

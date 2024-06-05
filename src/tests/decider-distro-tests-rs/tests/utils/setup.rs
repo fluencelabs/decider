@@ -13,7 +13,7 @@ use created_swarm::{make_swarms_with_cfg, ChainConfig, CreatedSwarm};
 
 use crate::utils::control::update_decider_script_for_tests;
 use crate::utils::default::{IPFS_MULTIADDR, NETWORK_ID, WALLET_KEY};
-use crate::utils::distro::make_distro_stopped;
+use crate::utils::distro::make_distro_default;
 
 pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
     let mut config = AquaIpfsConfig::default();
@@ -84,7 +84,7 @@ pub async fn setup_swarm(
 }
 
 pub async fn setup_nox(url: String) -> (CreatedSwarm, ConnectedClient) {
-    setup_nox_gen(make_distro_stopped(), url, None, None).await
+    setup_nox_gen(make_distro_default(), url, None, None).await
 }
 
 pub async fn setup_nox_with(
@@ -92,7 +92,7 @@ pub async fn setup_nox_with(
     temp_dir: Arc<TempDir>,
     kp: KeyPair,
 ) -> (CreatedSwarm, ConnectedClient) {
-    setup_nox_gen(make_distro_stopped(), url, Some(temp_dir), Some(kp)).await
+    setup_nox_gen(make_distro_default(), url, Some(temp_dir), Some(kp)).await
 }
 
 async fn setup_nox_gen(
