@@ -1,0 +1,37 @@
+aqua DealStorage declares *
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+
+import DealId, TxHash from "../types.aqua"
+import Json from "../fluence/peer.aqua"
+import "../fluence/spell.aqua"
+import DEAL_STORAGE_DEALS, deal_tx_hash_key from "../consts.aqua"
+
+func store_deal(deal_id: DealId, tx_hash: TxHash):
+    -- Save TX_HASH of the deal
+    set(deal_tx_hash_key(deal_id), tx_hash)
+
+    -- And then save the deal to the list of all installed deals,
+    -- so if something is wrong we don't lose the tx_hash 
+    list_push(DEAL_STORAGE_DEALS, deal_id)
+
+func remove_deal(deal_id: DealId):
+    -- First, remove the aux data of the deal
+    remove(deal_tx_hash_key(deal_id))
+
+    -- And only then remove it from the list, so if something is wrong,
+    -- on the next run we surely cleaned all the state 
+    list_remove(DEAL_STORAGE_DEALS, deal_id)
+
+
+func get_deals() -> []DealId:
+    result: *[]DealId
+    deals <- list_get(DEAL_STORAGE_DEALS)
+    if deals == nil:
+        result <<- []
+    else:
+        result <<- deals!
+    <- result!
+
+func get_tx(deal_id: DealId) -> ?TxHash:
+    <- get(deal_tx_hash_key(deal_id))

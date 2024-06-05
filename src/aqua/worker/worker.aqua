@@ -1,0 +1,57 @@
+aqua Worker declares WorkerArgs, WorkerSettings, get_or_create, trigger_worker_spell
+
+import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
+import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
+import Worker, CUID from "@fluencelabs/aqua-lib/workers.aqua"
+import PeerSpell from "@fluencelabs/spell/api.aqua"
+
+import spell_log, deal_log from "../fluence/spell.aqua"
+import Json, OpExt, JsonTriggerConfig from "../fluence/peer.aqua"
+import DealId, SpellId, WorkerId from "../types.aqua"
+
+-- Arguments of the worker
+-- Names must be in sync with Worker Spell.
+data WorkerArgs:
+    -- Address of the deal is also an ID of the deal
+    deal_id: DealId
+    -- CID of the worker's definition.
+    h_worker_def_cid: string
+    -- IPFS API where the related CID resides
+    ipfs: string
+
+-- Settings of the worker for the decider
+data WorkerSettings:
+    -- Trigger config of the worker
+    config: TriggerConfig
+    -- Worker's AIR script
+    script: string
+    -- IPFS API for the worker to pull info from
+    ipfs: string
+
+func get_or_create(deal_id: DealId, cu_ids: []CUID) -> ?WorkerId:
+    worker_id: *WorkerId
+
+    existing_worker <- Worker.get_worker_id(deal_id)
+
+    if existing_worker == nil:
+        -- if worker was not created yet, create it
+        try:
+            worker_id <- Worker.create(deal_id, cu_ids)
+            deal_log(deal_id, ["Created worker for deal", worker_id!])
+        catch e:
+            deal_log(deal_id, ["Error creating worker", e.message])
+    else:
+        deal_log(deal_id, ["Found existing worker", existing_worker!])
+        -- if worker was already created, get its id
+        worker_id <<- existing_worker!
+
+
+    <- worker_id
+
+func trigger_worker_spell(worker_id: WorkerId, worker_settings: WorkerSettings):
+    on worker_id:
+        try:
+            PeerSpell.update_trigger_config("worker-spell", worker_settings.config)
+        catch e:
+            on HOST_PEER_ID:
+                spell_log(["Error updating trigger config", e.message])

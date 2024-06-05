@@ -2,47 +2,27 @@ use crate::utils::spell;
 use connected_client::ConnectedClient;
 use serde::Deserialize;
 
-// atm the we don't use some fields in the tests, but will do in future
-#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct WorkerTxInfo {
-    deal_id: String,
-    tx_hash: String,
+    pub deal_id: String,
+    pub tx_hash: String,
 }
 
 pub async fn get_txs(mut client: &mut ConnectedClient) -> Vec<WorkerTxInfo> {
-    let txs = spell::list_get_strings(&mut client, "decider", "worker_registration_txs")
+    let deal_txs = spell::list_get_strings(&mut client, "decider", "subnet_registration_txs")
         .await
         .unwrap();
     assert!(
-        txs.success,
-        "can't receive `worker_registration_txs`: {}",
-        txs.error
+        deal_txs.success,
+        "can't receive `subnet_registration_txs`: {}",
+        deal_txs.error
     );
-    txs.value
-        .iter()
-        .map(|tx| serde_json::from_str::<WorkerTxInfo>(tx).unwrap())
-        .collect::<Vec<_>>()
-}
 
-#[allow(dead_code)]
-#[derive(Deserialize, Debug)]
-pub struct WorkerTxStatus {
-    tx_info: WorkerTxInfo,
-    status: String,
-}
-
-pub async fn get_txs_statuses(mut client: &mut ConnectedClient) -> Vec<WorkerTxStatus> {
-    let txs = spell::list_get_strings(&mut client, "decider", "worker_registration_txs_statuses")
-        .await
-        .unwrap();
-    assert!(
-        txs.success,
-        "can't receive `worker_registration_txs_statuses`: {}",
-        txs.error
-    );
-    txs.value
-        .iter()
-        .map(|tx| serde_json::from_str::<WorkerTxStatus>(tx).unwrap())
-        .collect::<Vec<_>>()
+    let mut txs = Vec::new();
+    for deal_id in deal_txs.value {
+        let tx_hash = spell::get_string(&mut client, "decider", &format!("tx_hash:{deal_id}")).await.unwrap();
+        assert!(tx_hash.success, "can't get tx_hash:{deal_id}: {tx_hash:?}");
+        txs.push(WorkerTxInfo { deal_id, tx_hash: tx_hash.value })
+    }
+    txs
 }

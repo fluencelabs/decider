@@ -1,8 +1,8 @@
-use crate::utils::default::IPFS_MULTIADDR;
-use created_swarm::fluence_app_service::TomlMarineConfig;
 use created_swarm::fluence_spell_dtos::trigger_config::TriggerConfig;
-use created_swarm::system_services::{PackageDistro, ServiceDistro, SpellDistro};
+use created_swarm::system_services::{PackageDistro, SpellDistro};
 use decider_distro::DeciderConfig;
+
+use crate::utils::default::IPFS_MULTIADDR;
 
 pub fn package_items_names(distro: &PackageDistro) -> Vec<String> {
     distro
@@ -14,15 +14,6 @@ pub fn package_items_names(distro: &PackageDistro) -> Vec<String> {
 }
 
 pub fn make_distro(trigger_config: TriggerConfig, settings: DeciderConfig) -> PackageDistro {
-    let connector = decider_distro::connector_service_modules();
-    let marine_config: TomlMarineConfig =
-        toml::from_slice(connector.config).expect("parse marine config");
-    let service = ServiceDistro {
-        modules: connector.modules,
-        config: marine_config,
-        name: connector.name.to_string(),
-    };
-
     let distro_spell = decider_distro::decider_spell(settings);
     let spell = SpellDistro {
         name: "decider".to_string(),
@@ -34,58 +25,21 @@ pub fn make_distro(trigger_config: TriggerConfig, settings: DeciderConfig) -> Pa
     PackageDistro {
         name: "decider".to_string(),
         version: decider_distro::VERSION,
-        services: vec![service],
+        services: vec![],
         spells: vec![spell],
         init: None,
     }
 }
 
+// Note that by default in these tests:
+// - Decider is stopped and should run manually
+// - Worker Spell is oneshot
 pub fn make_distro_default() -> PackageDistro {
     let decider_settings = DeciderConfig {
         worker_period_sec: 0,
         worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),
-        chain_api_endpoint: "http://127.0.0.1:12009".to_string(),
-        chain_contract_block_hex: "0x0".to_string(),
-        chain_workers_gas: 0,
-        chain_wallet_key: "".to_string(),
-        chain_matcher_addr: "0x0".to_string(),
-        chain_network_id: 0,
     };
     // let's try to run a decider cycle on demand by updating the config
-    let mut trigger_config = TriggerConfig::default();
-    trigger_config.clock.start_sec = 1;
-    make_distro(trigger_config, decider_settings)
-}
-
-pub fn make_distro_with_api(api: String) -> PackageDistro {
-    let decider_settings = DeciderConfig {
-        // worker will run once
-        worker_period_sec: 0,
-        worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),
-        chain_api_endpoint: api,
-        chain_contract_block_hex: "0x0".to_string(),
-        chain_workers_gas: 0,
-        chain_wallet_key: "".to_string(),
-        chain_matcher_addr: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed".to_string(),
-        chain_network_id: 0,
-    };
-    // decider will run once
     let trigger_config = TriggerConfig::default();
     make_distro(trigger_config, decider_settings)
-}
-
-pub fn make_distro_with_api_and_config(api: String, config: TriggerConfig) -> PackageDistro {
-    let decider_settings = DeciderConfig {
-        // worker will run once
-        worker_period_sec: 0,
-        worker_ipfs_multiaddr: IPFS_MULTIADDR.to_string(),
-        chain_api_endpoint: api,
-        chain_contract_block_hex: "0x0".to_string(),
-        chain_workers_gas: 0,
-        chain_wallet_key: "".to_string(),
-        chain_matcher_addr: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed".to_string(),
-        chain_network_id: 0,
-    };
-    // decider will run once
-    make_distro(config, decider_settings)
 }

@@ -18,7 +18,7 @@
             "type": "string",
             "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
             "nullable": true,
-            "description": "Memory limit for all service modules. If you specify this property please make sure it's at least `2 MiB * numberOfModulesInTheService`. In repl default is: Infinity. When deploying service as part of the worker default is: computeUnits * 2GB / (amount of services in the worker). Format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
+            "description": "Memory limit for all service modules. If you specify this property please make sure it's at least `2 MiB * numberOfModulesInTheService`. In repl default is the entire compute unit memory: 2GB. When deploying service as part of the worker default is: computeUnits * 2GB / (amount of services in the worker). Format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
           },
           "overrideModules": {
             "type": "object",
@@ -29,69 +29,48 @@
               "title": "Module overrides",
               "description": "Overrides for the module config",
               "properties": {
-                "maxHeapSize": {
-                  "type": "string",
-                  "nullable": true,
-                  "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
-                  "description": "DEPRECATED. Use `totalMemoryLimit` service property instead. Max size of the heap that a module can allocate in format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
-                },
-                "loggerEnabled": {
-                  "type": "boolean",
-                  "nullable": true,
-                  "description": "Set true to allow module to use the Marine SDK logger"
-                },
-                "loggingMask": {
-                  "type": "number",
-                  "nullable": true,
-                  "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
-                },
-                "volumes": {
+                "effects": {
                   "type": "object",
                   "nullable": true,
-                  "required": [],
-                  "title": "Volumes",
-                  "additionalProperties": {
-                    "type": "string"
-                  },
+                  "description": "Effects configuration. Only providers can allow and control effector modules by changing the nox configuration. Properties in this config are ignored when you deploy your code",
                   "properties": {
-                    "Alias": {
-                      "type": "string",
-                      "description": "path"
+                    "binaries": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "properties": {
+                        "binary-name": {
+                          "type": "string",
+                          "description": "Path to a binary"
+                        }
+                      },
+                      "required": [],
+                      "nullable": true,
+                      "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
                     }
                   },
-                  "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                  "additionalProperties": false,
+                  "required": []
                 },
-                "envs": {
+                "repl": {
                   "type": "object",
-                  "title": "Environment variables",
                   "nullable": true,
-                  "required": [],
-                  "additionalProperties": {
-                    "type": "string"
-                  },
+                  "description": "REPL configuration. Properties in this config are ignored when you deploy your code",
                   "properties": {
-                    "Environment_variable_name": {
-                      "type": "string",
-                      "description": "Environment variable value"
+                    "loggerEnabled": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Set true to allow module to use the Marine SDK logger"
+                    },
+                    "loggingMask": {
+                      "type": "number",
+                      "nullable": true,
+                      "description": "manages the logging targets, that are described in detail here: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
                     }
                   },
-                  "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME). Please note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
-                },
-                "mountedBinaries": {
-                  "title": "Mounted binaries",
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  },
-                  "properties": {
-                    "Mounted_binary_name": {
-                      "type": "string",
-                      "description": "Path to a mounted binary"
-                    }
-                  },
-                  "nullable": true,
-                  "required": [],
-                  "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                  "additionalProperties": false,
+                  "required": []
                 }
               },
               "required": [],
@@ -104,69 +83,48 @@
                 "title": "Module overrides",
                 "description": "Overrides for the module config",
                 "properties": {
-                  "maxHeapSize": {
-                    "type": "string",
-                    "nullable": true,
-                    "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
-                    "description": "DEPRECATED. Use `totalMemoryLimit` service property instead. Max size of the heap that a module can allocate in format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
-                  },
-                  "loggerEnabled": {
-                    "type": "boolean",
-                    "nullable": true,
-                    "description": "Set true to allow module to use the Marine SDK logger"
-                  },
-                  "loggingMask": {
-                    "type": "number",
-                    "nullable": true,
-                    "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
-                  },
-                  "volumes": {
+                  "effects": {
                     "type": "object",
                     "nullable": true,
-                    "required": [],
-                    "title": "Volumes",
-                    "additionalProperties": {
-                      "type": "string"
-                    },
+                    "description": "Effects configuration. Only providers can allow and control effector modules by changing the nox configuration. Properties in this config are ignored when you deploy your code",
                     "properties": {
-                      "Alias": {
-                        "type": "string",
-                        "description": "path"
+                      "binaries": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "properties": {
+                          "binary-name": {
+                            "type": "string",
+                            "description": "Path to a binary"
+                          }
+                        },
+                        "required": [],
+                        "nullable": true,
+                        "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
                       }
                     },
-                    "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                    "additionalProperties": false,
+                    "required": []
                   },
-                  "envs": {
+                  "repl": {
                     "type": "object",
-                    "title": "Environment variables",
                     "nullable": true,
-                    "required": [],
-                    "additionalProperties": {
-                      "type": "string"
-                    },
+                    "description": "REPL configuration. Properties in this config are ignored when you deploy your code",
                     "properties": {
-                      "Environment_variable_name": {
-                        "type": "string",
-                        "description": "Environment variable value"
+                      "loggerEnabled": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Set true to allow module to use the Marine SDK logger"
+                      },
+                      "loggingMask": {
+                        "type": "number",
+                        "nullable": true,
+                        "description": "manages the logging targets, that are described in detail here: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
                       }
                     },
-                    "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME). Please note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
-                  },
-                  "mountedBinaries": {
-                    "title": "Mounted binaries",
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    },
-                    "properties": {
-                      "Mounted_binary_name": {
-                        "type": "string",
-                        "description": "Path to a mounted binary"
-                      }
-                    },
-                    "nullable": true,
-                    "required": [],
-                    "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                    "additionalProperties": false,
+                    "required": []
                   }
                 },
                 "required": [],
@@ -197,7 +155,7 @@
               "type": "string",
               "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
               "nullable": true,
-              "description": "Memory limit for all service modules. If you specify this property please make sure it's at least `2 MiB * numberOfModulesInTheService`. In repl default is: Infinity. When deploying service as part of the worker default is: computeUnits * 2GB / (amount of services in the worker). Format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
+              "description": "Memory limit for all service modules. If you specify this property please make sure it's at least `2 MiB * numberOfModulesInTheService`. In repl default is the entire compute unit memory: 2GB. When deploying service as part of the worker default is: computeUnits * 2GB / (amount of services in the worker). Format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
             },
             "overrideModules": {
               "type": "object",
@@ -208,69 +166,48 @@
                 "title": "Module overrides",
                 "description": "Overrides for the module config",
                 "properties": {
-                  "maxHeapSize": {
-                    "type": "string",
-                    "nullable": true,
-                    "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
-                    "description": "DEPRECATED. Use `totalMemoryLimit` service property instead. Max size of the heap that a module can allocate in format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
-                  },
-                  "loggerEnabled": {
-                    "type": "boolean",
-                    "nullable": true,
-                    "description": "Set true to allow module to use the Marine SDK logger"
-                  },
-                  "loggingMask": {
-                    "type": "number",
-                    "nullable": true,
-                    "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
-                  },
-                  "volumes": {
+                  "effects": {
                     "type": "object",
                     "nullable": true,
-                    "required": [],
-                    "title": "Volumes",
-                    "additionalProperties": {
-                      "type": "string"
-                    },
+                    "description": "Effects configuration. Only providers can allow and control effector modules by changing the nox configuration. Properties in this config are ignored when you deploy your code",
                     "properties": {
-                      "Alias": {
-                        "type": "string",
-                        "description": "path"
+                      "binaries": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "properties": {
+                          "binary-name": {
+                            "type": "string",
+                            "description": "Path to a binary"
+                          }
+                        },
+                        "required": [],
+                        "nullable": true,
+                        "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
                       }
                     },
-                    "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                    "additionalProperties": false,
+                    "required": []
                   },
-                  "envs": {
+                  "repl": {
                     "type": "object",
-                    "title": "Environment variables",
                     "nullable": true,
-                    "required": [],
-                    "additionalProperties": {
-                      "type": "string"
-                    },
+                    "description": "REPL configuration. Properties in this config are ignored when you deploy your code",
                     "properties": {
-                      "Environment_variable_name": {
-                        "type": "string",
-                        "description": "Environment variable value"
+                      "loggerEnabled": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Set true to allow module to use the Marine SDK logger"
+                      },
+                      "loggingMask": {
+                        "type": "number",
+                        "nullable": true,
+                        "description": "manages the logging targets, that are described in detail here: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
                       }
                     },
-                    "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME). Please note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
-                  },
-                  "mountedBinaries": {
-                    "title": "Mounted binaries",
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    },
-                    "properties": {
-                      "Mounted_binary_name": {
-                        "type": "string",
-                        "description": "Path to a mounted binary"
-                      }
-                    },
-                    "nullable": true,
-                    "required": [],
-                    "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                    "additionalProperties": false,
+                    "required": []
                   }
                 },
                 "required": [],
@@ -283,69 +220,48 @@
                   "title": "Module overrides",
                   "description": "Overrides for the module config",
                   "properties": {
-                    "maxHeapSize": {
-                      "type": "string",
-                      "nullable": true,
-                      "pattern": "^\\d+(\\.\\d+)?(\\s?)(kB|KB|kiB|KiB|KIB|mB|MB|miB|MiB|MIB|gB|GB|giB|GiB|GIB)$",
-                      "description": "DEPRECATED. Use `totalMemoryLimit` service property instead. Max size of the heap that a module can allocate in format: [number][whitespace?][B] where ? is an optional field and B is one of the following: kB, KB, kiB, KiB, KIB, mB, MB, miB, MiB, MIB, gB, GB, giB, GiB, GIB"
-                    },
-                    "loggerEnabled": {
-                      "type": "boolean",
-                      "nullable": true,
-                      "description": "Set true to allow module to use the Marine SDK logger"
-                    },
-                    "loggingMask": {
-                      "type": "number",
-                      "nullable": true,
-                      "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
-                    },
-                    "volumes": {
+                    "effects": {
                       "type": "object",
                       "nullable": true,
-                      "required": [],
-                      "title": "Volumes",
-                      "additionalProperties": {
-                        "type": "string"
-                      },
+                      "description": "Effects configuration. Only providers can allow and control effector modules by changing the nox configuration. Properties in this config are ignored when you deploy your code",
                       "properties": {
-                        "Alias": {
-                          "type": "string",
-                          "description": "path"
+                        "binaries": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {
+                            "binary-name": {
+                              "type": "string",
+                              "description": "Path to a binary"
+                            }
+                          },
+                          "required": [],
+                          "nullable": true,
+                          "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
                         }
                       },
-                      "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                      "additionalProperties": false,
+                      "required": []
                     },
-                    "envs": {
+                    "repl": {
                       "type": "object",
-                      "title": "Environment variables",
                       "nullable": true,
-                      "required": [],
-                      "additionalProperties": {
-                        "type": "string"
-                      },
+                      "description": "REPL configuration. Properties in this config are ignored when you deploy your code",
                       "properties": {
-                        "Environment_variable_name": {
-                          "type": "string",
-                          "description": "Environment variable value"
+                        "loggerEnabled": {
+                          "type": "boolean",
+                          "nullable": true,
+                          "description": "Set true to allow module to use the Marine SDK logger"
+                        },
+                        "loggingMask": {
+                          "type": "number",
+                          "nullable": true,
+                          "description": "manages the logging targets, that are described in detail here: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
                         }
                       },
-                      "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME). Please note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
-                    },
-                    "mountedBinaries": {
-                      "title": "Mounted binaries",
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      },
-                      "properties": {
-                        "Mounted_binary_name": {
-                          "type": "string",
-                          "description": "Path to a mounted binary"
-                        }
-                      },
-                      "nullable": true,
-                      "required": [],
-                      "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                      "additionalProperties": false,
+                      "required": []
                     }
                   },
                   "required": [],
@@ -367,7 +283,7 @@
       "nullable": true
     },
     "version": {
-      "type": "number",
+      "type": "integer",
       "const": 8
     },
     "hosts": {
@@ -455,7 +371,7 @@
             "description": "Path to spell"
           },
           "version": {
-            "type": "number",
+            "type": "integer",
             "const": 0
           },
           "aquaFilePath": {
@@ -480,7 +396,7 @@
             "description": "Trigger the spell execution periodically. If you want to disable this property by overriding it in fluence.yaml - pass empty config for it like this: `clock: {}`",
             "properties": {
               "periodSec": {
-                "type": "number",
+                "type": "integer",
                 "description": "How often the spell will be executed. If set to 0, the spell will be executed only once. If this value not provided at all - the spell will never be executed",
                 "minimum": 0,
                 "maximum": 3153600000,
@@ -497,14 +413,14 @@
                 "nullable": true
               },
               "startDelaySec": {
-                "type": "number",
+                "type": "integer",
                 "description": "How long to wait before the first execution in seconds. If this property or `startTimestamp` not specified, periodic execution will start immediately. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. This property conflicts with `startTimestamp`. You can specify only one of them",
                 "nullable": true,
                 "minimum": 0,
                 "maximum": 4294967295
               },
               "endDelaySec": {
-                "type": "number",
+                "type": "integer",
                 "description": "How long to wait before the last execution in seconds. If this property or `endTimestamp` not specified, periodic execution will never end. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. If it is in the past at the moment of spell creation - the spell will never be executed. This property conflicts with `endTimestamp`. You can specify only one of them",
                 "nullable": true,
                 "minimum": 0,
@@ -529,7 +445,7 @@
               "description": "Path to spell"
             },
             "version": {
-              "type": "number",
+              "type": "integer",
               "const": 0
             },
             "aquaFilePath": {
@@ -554,7 +470,7 @@
               "description": "Trigger the spell execution periodically. If you want to disable this property by overriding it in fluence.yaml - pass empty config for it like this: `clock: {}`",
               "properties": {
                 "periodSec": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "How often the spell will be executed. If set to 0, the spell will be executed only once. If this value not provided at all - the spell will never be executed",
                   "minimum": 0,
                   "maximum": 3153600000,
@@ -571,14 +487,14 @@
                   "nullable": true
                 },
                 "startDelaySec": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "How long to wait before the first execution in seconds. If this property or `startTimestamp` not specified, periodic execution will start immediately. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. This property conflicts with `startTimestamp`. You can specify only one of them",
                   "nullable": true,
                   "minimum": 0,
                   "maximum": 4294967295
                 },
                 "endDelaySec": {
-                  "type": "number",
+                  "type": "integer",
                   "description": "How long to wait before the last execution in seconds. If this property or `endTimestamp` not specified, periodic execution will never end. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. If it is in the past at the moment of spell creation - the spell will never be executed. This property conflicts with `endTimestamp`. You can specify only one of them",
                   "nullable": true,
                   "minimum": 0,
@@ -630,8 +546,8 @@
           "description": "Contracts environment to use for this fluence network to sign contracts on the blockchain",
           "enum": [
             "dar",
-            "stage",
             "kras",
+            "stage",
             "local"
           ]
         },
@@ -909,7 +825,7 @@
             "nullable": true
           },
           "computeUnits": {
-            "type": "number",
+            "type": "integer",
             "minimum": 1,
             "maximum": 1,
             "default": 1,
@@ -917,20 +833,20 @@
             "nullable": true
           },
           "targetWorkers": {
-            "type": "number",
+            "type": "integer",
             "description": "Max workers in the deal",
             "default": 3,
             "nullable": true,
             "minimum": 1
           },
           "minWorkers": {
-            "type": "number",
+            "type": "integer",
             "description": "Required workers to activate the deal. Matches target workers by default",
             "nullable": true,
             "minimum": 1
           },
           "maxWorkersPerProvider": {
-            "type": "number",
+            "type": "integer",
             "description": "Max workers per provider. Matches target workers by default",
             "nullable": true,
             "minimum": 1
@@ -938,13 +854,12 @@
           "pricePerWorkerEpoch": {
             "type": "string",
             "description": "Price per worker epoch in USDC",
-            "default": "0.0001",
+            "default": "0.33",
             "nullable": true
           },
           "initialBalance": {
             "type": "string",
-            "description": "Initial balance after deploy in USDC",
-            "default": "1",
+            "description": "Initial balance after deploy in USDC. Default: targetWorkers * pricePerWorkerEpoch * minDealDepositedEpochs. For local environment: enough for deal to be active for 1 day",
             "nullable": true
           },
           "effectors": {
@@ -954,6 +869,29 @@
               "type": "string"
             },
             "nullable": true
+          },
+          "whitelist": {
+            "type": "array",
+            "description": "Whitelist of providers to deploy to. Can't be used together with blacklist",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "blacklist": {
+            "type": "array",
+            "description": "Blacklist of providers to deploy to. Can't be used together with whitelist",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "protocolVersion": {
+            "type": "integer",
+            "description": "Protocol version. Default: 1",
+            "nullable": true,
+            "default": 1,
+            "minimum": 1
           }
         },
         "required": [],
@@ -981,7 +919,7 @@
               "nullable": true
             },
             "computeUnits": {
-              "type": "number",
+              "type": "integer",
               "minimum": 1,
               "maximum": 1,
               "default": 1,
@@ -989,20 +927,20 @@
               "nullable": true
             },
             "targetWorkers": {
-              "type": "number",
+              "type": "integer",
               "description": "Max workers in the deal",
               "default": 3,
               "nullable": true,
               "minimum": 1
             },
             "minWorkers": {
-              "type": "number",
+              "type": "integer",
               "description": "Required workers to activate the deal. Matches target workers by default",
               "nullable": true,
               "minimum": 1
             },
             "maxWorkersPerProvider": {
-              "type": "number",
+              "type": "integer",
               "description": "Max workers per provider. Matches target workers by default",
               "nullable": true,
               "minimum": 1
@@ -1010,13 +948,12 @@
             "pricePerWorkerEpoch": {
               "type": "string",
               "description": "Price per worker epoch in USDC",
-              "default": "0.0001",
+              "default": "0.33",
               "nullable": true
             },
             "initialBalance": {
               "type": "string",
-              "description": "Initial balance after deploy in USDC",
-              "default": "1",
+              "description": "Initial balance after deploy in USDC. Default: targetWorkers * pricePerWorkerEpoch * minDealDepositedEpochs. For local environment: enough for deal to be active for 1 day",
               "nullable": true
             },
             "effectors": {
@@ -1026,6 +963,29 @@
                 "type": "string"
               },
               "nullable": true
+            },
+            "whitelist": {
+              "type": "array",
+              "description": "Whitelist of providers to deploy to. Can't be used together with blacklist",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "blacklist": {
+              "type": "array",
+              "description": "Blacklist of providers to deploy to. Can't be used together with whitelist",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "protocolVersion": {
+              "type": "integer",
+              "description": "Protocol version. Default: 1",
+              "nullable": true,
+              "default": 1,
+              "minimum": 1
             }
           },
           "required": [],

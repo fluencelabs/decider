@@ -1,0 +1,37 @@
+aqua Consts declares *
+
+import "@fluencelabs/aqua-lib/builtin.aqua"
+
+-- List of transactions for workers registrations in a subnet
+const TXS_KEY = "subnet_registration_txs"
+
+-- List of joined deals. For each deal from the list a worker was created and
+-- subnet registration request was sent
+const DEAL_STORAGE_DEALS = "installed_deals"
+
+const DEAL_STORAGE_TX_HASH_PREFIX = "deal:tx_hash:"
+
+func deal_tx_hash_key(deal_id: string) -> string:
+    <- Op.concat_strings(DEAL_STORAGE_TX_HASH_PREFIX, deal_id)
+
+const TX_STORAGE_TX_HASH_PREFIX = "tx_hash:"
+
+func tx_hash_key(deal_id: string) -> string:
+    <- Op.concat_strings(TX_STORAGE_TX_HASH_PREFIX, deal_id)
+
+-- Decider puts in Worker Spell's KV storage CID of worker definition
+-- This name must be in sync with Worker Spell.
+-- IMPORTANT: In this code base we have several places where we use this constant as a field name
+const WORKER_DEF_CID = "h_worker_def_cid"
+
+-- Deal statuses
+const DEAL_STATUS_ENDED = "ENDED"
+const DEAL_STATUS_ACTIVE = "ACTIVE"
+const DEAL_STATUS_INSUFFICIENT_FUNDS = "INSUFFICIENT_FUNDS"
+const DEAL_STATUS_NOT_ENOUGH_WORKERS = "NOT_ENOUGH_WORKERS"
+const DEAL_STATUS_SMALL_BALANCE = "SMALL_BALANCE"
+
+-- Tx Status
+const TX_STATUS_OK = "ok"
+const TX_STATUS_PENDING = "pending"
+const TX_STATUS_FAILED = "failed"

@@ -1,0 +1,55 @@
+aqua DealStatus declares update, should_install, is_active
+
+import Worker from "@fluencelabs/aqua-lib/workers.aqua"
+
+import "../consts.aqua"
+import spell_log, deal_log from "../fluence/spell.aqua"
+import DealId, WorkerId from "../types.aqua"
+import Deal from "../fluence/connector.aqua"
+
+-- Note: SMALL_BALANCE also considered to be an active state, just a warning that
+-- the deal will be out of money soon
+func is_active(status: string) -> bool:
+    <- status == DEAL_STATUS_ACTIVE || status == DEAL_STATUS_SMALL_BALANCE
+
+func is_inactive(status: string) -> bool:
+    <- status == DEAL_STATUS_NOT_ENOUGH_WORKERS
+
+-- On these statuses, Nox will eventually exit the deal and decider will remove it when these happens,
+-- now just deactivate the workers to prevent them from doing any work
+func is_ended(status: string) -> bool:
+    <- status == DEAL_STATUS_ENDED || status == DEAL_STATUS_INSUFFICIENT_FUNDS
+
+func should_install(status: string) -> bool:
+    <- is_active(status) || is_inactive(status)
+
+
+func activate_deal(deal_id: DealId):
+    try:
+        if !Worker.is_active(deal_id):
+            deal_log(deal_id, "Activating worker")
+            Worker.activate(deal_id)
+    catch e:
+        deal_log(deal_id, ["Couldn't activate a worker", e])
+
+func deactivate_deal(deal_id: DealId):
+    try:
+        if Worker.is_active(deal_id):
+            deal_log(deal_id, "Deactivating worker")
+            Worker.deactivate(deal_id)
+    catch e:
+        deal_log(deal_id, ["Couldn't deactivate a worker", e])
+
+
+func update(worker_id: WorkerId, deal: Deal):
+    if is_active(deal.status):
+        activate_deal(deal.deal_id)
+    else:
+        if is_inactive(deal.status):
+            deactivate_deal(deal.deal_id)
+        else: 
+            if is_ended(deal.status):
+                deal_log(deal.deal_id, ["Deactivating deal before removal based on status", deal.status])
+                deactivate_deal(deal.deal_id)
+            else:
+                deal_log(deal.deal_id, ["Unsupported deal status:", deal.status])

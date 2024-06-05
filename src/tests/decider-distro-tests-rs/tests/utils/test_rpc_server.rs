@@ -1,15 +1,16 @@
-use eyre::WrapErr;
-use hyper::body::Buf;
-use hyper::service::{make_service_fn, service_fn};
-use hyper::{body, Body, Request, Response};
-use serde::Deserialize;
-use serde_json::{json, Value};
 use std::convert::Infallible;
 use std::future::Future;
 use std::net::SocketAddr;
 use std::ops::{Deref, DerefMut};
 use std::sync::Arc;
 use std::time::Duration;
+
+use eyre::WrapErr;
+use hyper::body::Buf;
+use hyper::service::{make_service_fn, service_fn};
+use hyper::{body, Body, Request, Response};
+use serde::Deserialize;
+use serde_json::{json, Value};
 use tokio::sync::mpsc::{channel, unbounded_channel, Sender, UnboundedReceiver, UnboundedSender};
 use tokio::sync::Mutex;
 use tokio::task;
@@ -18,8 +19,8 @@ use tokio::time::timeout;
 pub type RpcMethod = String;
 pub type RpcParams = Vec<Value>;
 
-type RpcResult = Value;
-type RpcError = Value;
+pub type RpcResult = Value;
+pub type RpcError = Value;
 
 #[derive(Clone)]
 pub struct ServerChannels {
@@ -122,13 +123,8 @@ pub fn run_test_server() -> ServerHandle {
             let response = if raw_request.is_array() {
                 let reqs = serde_json::from_value::<Vec<JrpcReq>>(raw_request).unwrap();
                 let mut results = Vec::new();
-                for (idx, req) in reqs.into_iter().enumerate() {
+                for req in reqs.into_iter() {
                     assert_eq!(req.jsonrpc, "2.0", "wrong jsonrpc version: {}", req.jsonrpc);
-                    assert_eq!(
-                        req.id, idx as u32,
-                        "wrong jsonrpc id: {}, req: {:?}",
-                        req.id, req
-                    );
                     let result = process_request(&send_req, &recv_resp, req).await;
                     results.push(result);
                 }

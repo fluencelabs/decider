@@ -40,6 +40,7 @@ jobs:
 
     uses: fluencelabs/nox/.github/workflows/build.yml@master
     with:
+      ref: update-to-lightweight-decider
       cargo-dependencies: |
         [
           {
@@ -65,3 +66,4 @@ jobs:
     uses: fluencelabs/cli/.github/workflows/tests.yml@main
     with:
       nox-image: "${{ needs.nox-snapshot.outputs.nox-image }}"
+      ref: change-nox-config

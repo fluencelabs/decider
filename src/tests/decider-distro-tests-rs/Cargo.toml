@@ -8,9 +8,9 @@ edition = "2021"
 [dev-dependencies]
 decider-distro = { path = "../../distro" }
 
-created-swarm = { git = "https://github.com/fluencelabs/nox.git", branch = "default_fees" }
-connected-client = { git = "https://github.com/fluencelabs/nox.git", branch = "default_fees" }
-log-utils = { git = "https://github.com/fluencelabs/nox.git", branch = "default_fees" }
+created-swarm = { git = "https://github.com/fluencelabs/nox.git", branch = "get_deals_builtin" }
+connected-client = { git = "https://github.com/fluencelabs/nox.git", branch = "get_deals_builtin" }
+log-utils = { git = "https://github.com/fluencelabs/nox.git", branch = "get_deals_builtin" }
 
 tempfile = "3.9.0"
 tracing = { version = "0.1.37", default-features = false, features = ["log"] }
@@ -35,3 +35,6 @@ opt-level = 0
 [profile.dev.package."*"]
 opt-level = 3
 codegen-units = 256
+[dependencies]
+rand = "0.8.5"
+futures = "0.3.30"

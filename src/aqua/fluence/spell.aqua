@@ -1,54 +1,68 @@
-aqua Spell declares get_string, spell_log, get_counter, deal_log, list_push
+aqua Spell declares *
 
-import Spell from "@fluencelabs/spell/spell_service.aqua"
+import Spell, StringValue from "@fluencelabs/spell/spell_service.aqua"
 import Op from "@fluencelabs/aqua-lib/builtin.aqua"
 import RunConsoleManyAny from "../debug.aqua"
 import SpellId, DealId from "../types.aqua"
 import OpExt, Json from "peer.aqua"
 
-func spell_log(spell_id: SpellId, msg: ⊤):
+func spell_log(msg: ⊤):
     co RunConsoleManyAny.print("decider", msg)
     msg_str <- Json.stringify(msg)
-    Spell spell_id
+    Spell "spell" 
     Spell.store_log(msg_str)
 
-func deal_log(spell_id: SpellId, deal_id: DealId, msg: ⊤):
+func deal_log(deal_id: DealId, msg: ⊤):
     title <- OpExt.concat_strings("decider deal_id=", deal_id, ": ")
     co RunConsoleManyAny.print(title, msg)
     msg_str <- Json.stringify(msg)
     msg_full <- Op.concat_strings(title, msg_str)
-    Spell spell_id
+    Spell "spell" 
     Spell.store_log(msg_full)
 
--- Wrapper over spell.get_string to get a string from spell's KV with reduced amount of if-else's
-func get_string(spell_id: SpellId, key: string) -> ?string:
-    Spell spell_id
-
-    result: *string
-
-    value <- Spell.get_string(key)
-    if !value.success:
-        spell_log(spell_id, ["get_string failed", key, value.error])
-    else:
-        if !value.absent:
-            result <<- value.value
-
-    <- result
-
-
-func get_counter(spell_id: SpellId) -> u32:
-    Spell spell_id
-    result: *u32
-    counter <- Spell.get_u32("hw_counter")
-    if counter.success:
-        result <<- counter.value
-    else:
-        result <<- 0
-    <- result!
-
-func list_push(spell_id: SpellId, key: string, val: ⊤):
-    Spell spell_id
-    str <- Json.stringify(val)
-    result <- Spell.list_push_string(key, str)
+func list_get(key: string) -> ?[]string:
+    Spell "spell" 
+    list: *[]string
+    result <- Spell.list_get_strings(key)
     if !result.success:
-        spell_log(spell_id, ["can't store value in list by key", key, "error:", result.error])
+        spell_log(["Can't get list by key", key, "error:", result.error])
+    else:
+        list <<- result.value
+    <- list
+
+func list_push(key: string, val: string):
+    Spell "spell" 
+    result <- Spell.list_push_string(key, val)
+    if !result.success:
+        spell_log(["Can't store value in list by key", key, "value", val, "error:", result.error])
+
+
+func list_remove(key: string, val: string):
+    Spell "spell" 
+    result <- Spell.list_remove_string(key, val)
+    if !result.success:
+        spell_log(["Can't remove value in list by key", key, "value", val, "error:", result.error])
+
+func get(key: string) -> ?string:
+    Spell "spell" 
+    value: *string
+
+    result <- Spell.get_string(key)
+    if !result.success:
+        spell_log(["Can't get value by key", key, "result:", result])
+    else:
+        if !result.absent:
+            value <<- result.value 
+    <- value
+
+func set(key: string, val: string):
+    Spell "spell"
+    result <- Spell.set_string(key, val)
+    if !result.success:
+        spell_log(["Can't store by key", key, "value", val, "result:", result])
+
+func remove(key: string):
+    Spell "spell"
+    result <- Spell.remove_key(key)
+    if !result.success:
+        spell_log(["Can't remove the key", key,  "result:", result])

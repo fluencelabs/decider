@@ -1,17 +1,19 @@
-use crate::utils::chain::LogsReq;
-use crate::utils::default::{
-    default_receipt, default_status, DEAL_STATUS_ACTIVE, IPFS_MULTIADDR, NETWORK_ID, WALLET_KEY,
-};
-use crate::utils::test_rpc_server::ServerHandle;
-use crate::utils::*;
+use std::str::FromStr;
+use std::sync::Arc;
+
 use clarity::PrivateKey;
+use maplit::hashmap;
+use tempfile::TempDir;
+
 use connected_client::ConnectedClient;
+use created_swarm::fluence_keypair::KeyPair;
 use created_swarm::system_services::PackageDistro;
 use created_swarm::system_services_config::{AquaIpfsConfig, SystemServicesConfig};
 use created_swarm::{make_swarms_with_cfg, ChainConfig, CreatedSwarm};
-use serde_json::json;
-use std::str::FromStr;
-use maplit::hashmap;
+
+use crate::utils::control::update_decider_script_for_tests;
+use crate::utils::default::{IPFS_MULTIADDR, NETWORK_ID, WALLET_KEY};
+use crate::utils::distro::make_distro_default;
 
 pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
     let mut config = AquaIpfsConfig::default();
@@ -30,7 +32,13 @@ pub fn setup_system_config() -> SystemServicesConfig {
     config
 }
 
-pub async fn setup_swarm(distro: PackageDistro, peers: usize) -> Vec<CreatedSwarm> {
+pub async fn setup_swarm(
+    distro: PackageDistro,
+    peers: usize,
+    url: String,
+    tmp_dir: Option<Arc<TempDir>>,
+    kp: Option<KeyPair>,
+) -> Vec<CreatedSwarm> {
     let swarms = make_swarms_with_cfg(peers, move |mut cfg| {
         cfg.enabled_system_services = vec!["aqua-ipfs".to_string()];
         cfg.extend_system_services = vec![distro.clone()];
@@ -49,142 +57,72 @@ pub async fn setup_swarm(distro: PackageDistro, peers: usize) -> Vec<CreatedSwar
         config.decider.worker_period_sec = 0;
         cfg.override_system_services_config = Some(config);
 
-        let chain_info = distro.spells[0].kv["chain"].as_object().unwrap();
         cfg.chain_config = Some(ChainConfig {
-            http_endpoint: chain_info["api_endpoint"].as_str().unwrap().to_string(),
-            core_contract_address: "".to_string(),
-            cc_contract_address: "".to_string(),
-            market_contract_address: chain_info["market"].as_str().unwrap().to_string(),
+            http_endpoint: url.clone(),
+            core_contract_address: "core_contract".to_string(),
+            cc_contract_address: "cc_contract".to_string(),
+            market_contract_address: "market_contract".to_string(),
             network_id: NETWORK_ID,
             wallet_key: PrivateKey::from_str(WALLET_KEY).unwrap(),
             default_base_fee: None,
             default_priority_fee: None,
+
         });
+
+        if let Some(tmp_dir) = &tmp_dir {
+            cfg.tmp_dir = tmp_dir.clone();
+        }
+
+        if let Some(kp) = &kp {
+            cfg.keypair = kp.clone();
+        }
+
         cfg
     })
-    .await;
+        .await;
     swarms
 }
 
-pub async fn setup_nox(distro: PackageDistro) -> (CreatedSwarm, ConnectedClient) {
-    let mut swarms = setup_swarm(distro, 1).await;
+pub async fn setup_nox(url: String) -> (CreatedSwarm, ConnectedClient) {
+    setup_nox_gen(make_distro_default(), url, None, None).await
+}
+
+pub async fn setup_nox_with(
+    url: String,
+    temp_dir: Arc<TempDir>,
+    kp: KeyPair,
+) -> (CreatedSwarm, ConnectedClient) {
+    setup_nox_gen(make_distro_default(), url, Some(temp_dir), Some(kp)).await
+}
+
+async fn setup_nox_gen(
+    distro: PackageDistro,
+    url: String,
+    temp_dir: Option<Arc<TempDir>>,
+    kp: Option<KeyPair>,
+) -> (CreatedSwarm, ConnectedClient) {
+    let mut swarms = setup_swarm(distro, 1, url, temp_dir, kp).await;
     let swarm = swarms.remove(0);
-    let client = ConnectedClient::connect_with_keypair(
-        swarm.multiaddr.clone(),
-        Some(swarm.management_keypair.clone()),
-    )
-    .await
-    .unwrap();
+    let client = setup_client(&swarm).await;
     (swarm, client)
 }
 
-// Deploy the first deal for a peer as a part of the test setup process.
-// The sequence of RPC calls describes **only** the flow when there are no other deals were previously joined.
-pub async fn setup_rpc_deploy_deal(
-    server: &mut ServerHandle,
-    latest_block: u32,
-    deal_id: &str,
-    block_number: u32,
-) -> Option<()> {
-    setup_rpc_deploy_deals(server, latest_block, vec![(deal_id, block_number)]).await
+async fn setup_client(swarm: &CreatedSwarm) -> ConnectedClient {
+    let mut client = ConnectedClient::connect_with_keypair(
+        swarm.multiaddr.clone(),
+        Some(swarm.management_keypair.clone()),
+    )
+        .await
+        .unwrap();
+    update_decider_script_for_tests(
+        &mut client,
+        swarm.config.dir_config.persistent_base_dir.clone(),
+    )
+        .await;
+    client
 }
 
-pub async fn setup_rpc_deploy_deals(
-    server: &mut ServerHandle,
-    latest_block: u32,
-    deals: Vec<(&str, u32)>,
-) -> Option<()> {
-    // Expected calls:
-    // - 1 eth_blockNumber
-    // - 1 eth_getLogs
-    // - (1 eth_getBlockByNumber, 1 eth_maxPriorityFeePerGas, 1 eth_estimateGas, 1 eth_getTransactionCount, 1 eth_sendRawTransaction, 1 eth_getTransactionReceipt, 1 eth_call) * deals number
-    let expected_reqs = 2 + 7 * deals.len();
-    for _ in 0..expected_reqs {
-        let (method, params) = server.receive_request().await?;
-        let response = match method.as_str() {
-            "eth_blockNumber" => json!(to_hex(latest_block)),
-            "eth_getLogs" => {
-                let log = serde_json::from_value::<LogsReq>(params[0].clone()).unwrap();
-                let logs = deals
-                    .iter()
-                    .map(|(deal_id, block_number)| {
-                        TestApp::log_test_app1(deal_id, *block_number, log.topics[1].as_str())
-                    })
-                    .collect::<Vec<_>>();
-                json!(logs)
-            }
-            "eth_sendRawTransaction" => {
-                json!("0x55bfec4a4400ca0b09e075e2b517041cd78b10021c51726cb73bcba52213fa05")
-            }
-            "eth_getTransactionCount" => json!("0x1"),
-            "eth_getBlockByNumber" => json!({"baseFeePerGas": "0x3b9aca07"}),
-            "eth_maxPriorityFeePerGas" => json!("0x3b9aca07"),
-            "eth_estimateGas" => json!("0x3b9aca07"),
-            "eth_getTransactionReceipt" => default_receipt(),
-            "eth_call" => default_status(),
-            _ => panic!("mock http got an unexpected rpc method: {}", method),
-        };
-        server.send_response(Ok(response));
-    }
-    Some(())
+pub fn stop_nox(swarm: CreatedSwarm) -> Result<(), ()> {
+    swarm.exit_outlet.send(())?;
+    Ok(())
 }
-
-// Expected RPC calls when nothing is happening on-chain, and
-// the joined deal **don't** require transaction status updates.
-pub async fn setup_rpc_empty_run(
-    server: &mut ServerHandle,
-    latest_block: u32,
-    joined: usize,
-) -> Option<()> {
-    setup_rpc_empty_run_with_status(server, latest_block, DEAL_STATUS_ACTIVE, joined).await
-}
-
-pub async fn setup_rpc_empty_run_with_status(
-    server: &mut ServerHandle,
-    latest_block: u32,
-    status: &str,
-    joined: usize,
-) -> Option<()> {
-    let expected_reqs = 2 + 3 * joined;
-    for _ in 0..expected_reqs {
-        let (method, _params) = server.receive_request().await?;
-        let response = match method.as_str() {
-            "eth_blockNumber" => json!(to_hex(latest_block)),
-            "eth_getLogs" => {
-                json!([])
-            }
-            "eth_call" => json!(status),
-            _ => panic!("mock http got an unexpected rpc method: {}", method),
-        };
-        server.send_response(Ok(response));
-    }
-    Some(())
-}
-
-/*
-
-Expected RPC calls:
-
-eth_blockNumber
-eth_getLogs (for new deals) -> new_deals
-    for new_deal in new_deals {
-        eth_getBlockByNumber
-        eth_estimateGas
-        eth_maxPriorityFeePerGas
-        eth_getTransactionCount
-        eth_sendRawTransaction
-        eth_getTransactionReceipt
-        eth_call (getStatus) <--- This call is batched, done after all logs are processed
-    }
-
-for joined_deal in joined_deals {
-    eth_getLogs (for update)  <-- This request is batched
-    eth_call (getStatus)      <-- This request is batched
-    eth_getLogs (for removes) <-- This request is batched
-    if joined_deal.tx_status == "pending":
-      eth_getTransactionReceipt <-- This request is also batched
-}
-
-Batched requests in this test system are encoded as separate requests.
-
- */
