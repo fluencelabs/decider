@@ -3,7 +3,7 @@ aqua Consts declares *
 import "@fluencelabs/aqua-lib/builtin.aqua"
 
 -- List of transactions for workers registrations in a subnet
-const TXS_KEY = "worker_registration_txs"
+const TXS_KEY = "subnet_registration_txs"
 
 -- List of joined deals. For each deal from the list a worker was created and
 -- subnet registration request was sent

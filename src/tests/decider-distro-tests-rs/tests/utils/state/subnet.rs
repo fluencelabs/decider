@@ -9,12 +9,12 @@ pub struct WorkerTxInfo {
 }
 
 pub async fn get_txs(mut client: &mut ConnectedClient) -> Vec<WorkerTxInfo> {
-    let deal_txs = spell::list_get_strings(&mut client, "decider", "worker_registration_txs")
+    let deal_txs = spell::list_get_strings(&mut client, "decider", "subnet_registration_txs")
         .await
         .unwrap();
     assert!(
         deal_txs.success,
-        "can't receive `worker_registration_txs`: {}",
+        "can't receive `subnet_registration_txs`: {}",
         deal_txs.error
     );
 
