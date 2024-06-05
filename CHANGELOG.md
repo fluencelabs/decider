@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.7.0](https://github.com/fluencelabs/decider/compare/connector-v0.6.12...connector-v0.7.0) (2024-06-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* lightweight decider
+
+### Features
+
+* lightweight decider ([6324a50](https://github.com/fluencelabs/decider/commit/6324a50938e6686f524ce8dda9e61bafb46994de))
+
 ## [0.6.12](https://github.com/fluencelabs/decider/compare/connector-v0.6.11...connector-v0.6.12) (2024-05-14)
 
 
