@@ -9,3 +9,4 @@ targets = [
   "aarch64-apple-darwin",
   "wasm32-wasi"
 ]
+
