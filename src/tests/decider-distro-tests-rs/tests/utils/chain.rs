@@ -1,3 +1,22 @@
+/*
+ * Nox Fluence Peer
+ *
+ * Copyright (C) 2024 Fluence DAO
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 use rand::Rng;
 use serde_json::{json, Value};
 use tracing::log;
@@ -80,9 +99,7 @@ impl ChainReplies {
             new_deals_tx_hashes: tx_hashes.clone().into_iter().map(Some).collect(),
             new_deals_receipts: tx_hashes
                 .into_iter()
-                .map(|hash| {
-                    Some(TxReceipt::Ok { hash })
-                })
+                .map(|hash| Some(TxReceipt::Ok { hash }))
                 .collect(),
         }
     }
@@ -134,7 +151,6 @@ pub async fn play_get_deals(server: &mut ServerHandle, deals: &Vec<Deal>) {
         };
         server.send_response(reply);
 
-
         // App Cid Reply
         let (method, params) = server.receive_request().await.unwrap();
         assert_eq!(method, "eth_call");
@@ -156,7 +172,6 @@ pub async fn play_get_deals(server: &mut ServerHandle, deals: &Vec<Deal>) {
         };
         server.send_response(reply);
     }
-
 
     /*
 
@@ -262,22 +277,19 @@ pub async fn play_tx_receipts_gen(server: &mut ServerHandle, receipt: &Option<Tx
 
     let reply = match receipt {
         None => Err(json!("no receipt provided")),
-        Some(receipt) =>
-            match receipt {
-                TxReceipt::Failed { hash } =>
-                    Ok(json!({
-                        "blockNumber": "0x1",
-                        "transactionHash": hash,
-                        "status": "0x0"
-                    })),
-                TxReceipt::Ok { hash } =>
-                    Ok(json!({
-                        "blockNumber": "0x1",
-                        "transactionHash": hash,
-                        "status": "0x1"
-                    })),
-                TxReceipt::Pending => Ok(Value::Null)
-            }
+        Some(receipt) => match receipt {
+            TxReceipt::Failed { hash } => Ok(json!({
+                "blockNumber": "0x1",
+                "transactionHash": hash,
+                "status": "0x0"
+            })),
+            TxReceipt::Ok { hash } => Ok(json!({
+                "blockNumber": "0x1",
+                "transactionHash": hash,
+                "status": "0x1"
+            })),
+            TxReceipt::Pending => Ok(Value::Null),
+        },
     };
 
     server.send_response(reply);

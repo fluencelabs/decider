@@ -1,3 +1,22 @@
+/*
+ * Nox Fluence Peer
+ *
+ * Copyright (C) 2024 Fluence DAO
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #![feature(async_closure)]
 
 use crate::utils::chain::{random_tx, ChainReplies, Deal};
@@ -163,11 +182,7 @@ async fn test_worker_spell_double_run() {
     let (_swarm, mut client) = setup_nox(url).await;
 
     // Install a deal
-    let mut deal = Deal::ok(
-        DEAL_IDS[0],
-        TestApp::test_app1(),
-        DEAL_STATUS_ACTIVE,
-    );
+    let mut deal = Deal::ok(DEAL_IDS[0], TestApp::test_app1(), DEAL_STATUS_ACTIVE);
     let chain_replies = ChainReplies::new(vec![deal.clone()], vec![random_tx()]);
     run_decider(&mut server, &mut client, chain_replies).await;
 
@@ -185,21 +200,27 @@ async fn test_worker_spell_double_run() {
     run_decider(&mut server, &mut client, chain_replies).await;
 
     {
-        let is_active = worker::is_active(&mut client, &deal.deal_id).await.expect("can't get worker active status");
+        let is_active = worker::is_active(&mut client, &deal.deal_id)
+            .await
+            .expect("can't get worker active status");
         assert!(is_active, "worker must be activated");
         let worker_id = {
             let mut worker_id = worker::get_worker(&mut client, &deal.deal_id).await;
-            assert!(!worker_id.is_empty(), "couldn't get worker id, empty string");
+            assert!(
+                !worker_id.is_empty(),
+                "couldn't get worker id, empty string"
+            );
             worker_id.remove(0)
         };
 
         let app_cid = worker::get_worker_app_cid(&mut client, &worker_id).await;
         assert_eq!(expected_app_cid, app_cid, "the app cid should be changed");
 
-        let counter = spell::get_counter_on(&mut client, &worker_id, "worker-spell").await.expect("worker-spell counter failed");
+        let counter = spell::get_counter_on(&mut client, &worker_id, "worker-spell")
+            .await
+            .expect("worker-spell counter failed");
         assert_eq!(2, counter, "worker-spell must be run only twice");
     }
-
 
     server.shutdown().await;
 }

@@ -1,17 +1,38 @@
+/*
+ * Nox Fluence Peer
+ *
+ * Copyright (C) 2024 Fluence DAO
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #![feature(async_closure)]
 #![feature(try_blocks)]
 
 use std::time::Duration;
 
-use crate::utils::{enable_decider_logs, spell, TestApp};
-use crate::utils::chain::{ChainReplies, Deal, random_tx};
-use crate::utils::control::{run_decider, wait_worker_spell_stopped, wait_worker_spell_stopped_after};
+use crate::utils::chain::{random_tx, ChainReplies, Deal};
+use crate::utils::control::{
+    run_decider, wait_worker_spell_stopped, wait_worker_spell_stopped_after,
+};
 use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE};
 use crate::utils::setup::setup_nox;
 use crate::utils::state::deal;
 use crate::utils::state::subnet;
 use crate::utils::state::worker;
 use crate::utils::test_rpc_server::run_test_server;
+use crate::utils::{enable_decider_logs, spell, TestApp};
 
 pub mod utils;
 
@@ -153,7 +174,11 @@ async fn test_install_happy_path() {
 
         let deal_tx_hash = deal::get_deal_tx_hash(&mut client, deal_id).await.unwrap();
         assert!(deal_tx_hash.is_some(), "no tx hash stored for the deal");
-        assert_eq!(deal_tx_hash.unwrap(), tx_hash, "wrong tx hash is stored for {deal_id}");
+        assert_eq!(
+            deal_tx_hash.unwrap(),
+            tx_hash,
+            "wrong tx hash is stored for {deal_id}"
+        );
     }
     // Check Transaction Status
     {
@@ -260,7 +285,6 @@ async fn test_update_happy_path() {
         );
     }
 
-
     // Check that Decider put the new app cid to the worker spell
     {
         let worker_app_cid = worker::get_worker_app_cid(&mut client, &worker_id).await;
@@ -273,7 +297,7 @@ async fn test_update_happy_path() {
         current_timestamp,
         std::time::Duration::from_secs(20),
     )
-        .await;
+    .await;
 
     // Check that worker spell installed the updated app
     {
@@ -299,7 +323,9 @@ async fn test_update_happy_path() {
     assert_eq!(joined.len(), 1);
     assert_eq!(joined[0].deal_id, deal_id);
 
-    let counter_before = spell::get_counter_on(&mut client, &worker_id, "worker-spell").await.unwrap();
+    let counter_before = spell::get_counter_on(&mut client, &worker_id, "worker-spell")
+        .await
+        .unwrap();
 
     // Run third time
     let chain_replies = ChainReplies::new(
@@ -307,9 +333,13 @@ async fn test_update_happy_path() {
         vec![],
     );
     run_decider(&mut server, &mut client, chain_replies).await;
-    let counter_after = spell::get_counter_on(&mut client, &worker_id, "worker-spell").await.unwrap();
-    assert_eq!(counter_before, counter_after, "worker-spell shouldn't be run when app cid isn't changed");
-
+    let counter_after = spell::get_counter_on(&mut client, &worker_id, "worker-spell")
+        .await
+        .unwrap();
+    assert_eq!(
+        counter_before, counter_after,
+        "worker-spell shouldn't be run when app cid isn't changed"
+    );
 
     server.shutdown().await;
 }
@@ -379,7 +409,6 @@ async fn test_remove_happy_path() {
     );
     let tx_hash = deal::get_deal_tx_hash(&mut client, deal_id).await.unwrap();
     assert!(tx_hash.is_none(), "tx_hash for {deal_id} should be cleaned");
-
 
     server.shutdown().await;
 }
