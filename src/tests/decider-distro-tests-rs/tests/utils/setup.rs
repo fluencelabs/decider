@@ -1,3 +1,22 @@
+/*
+ * Nox Fluence Peer
+ *
+ * Copyright (C) 2024 Fluence DAO
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 use std::str::FromStr;
 use std::sync::Arc;
 
@@ -66,7 +85,6 @@ pub async fn setup_swarm(
             wallet_key: PrivateKey::from_str(WALLET_KEY).unwrap(),
             default_base_fee: None,
             default_priority_fee: None,
-
         });
 
         if let Some(tmp_dir) = &tmp_dir {
@@ -79,7 +97,7 @@ pub async fn setup_swarm(
 
         cfg
     })
-        .await;
+    .await;
     swarms
 }
 
@@ -112,13 +130,13 @@ async fn setup_client(swarm: &CreatedSwarm) -> ConnectedClient {
         swarm.multiaddr.clone(),
         Some(swarm.management_keypair.clone()),
     )
-        .await
-        .unwrap();
+    .await
+    .unwrap();
     update_decider_script_for_tests(
         &mut client,
         swarm.config.dir_config.persistent_base_dir.clone(),
     )
-        .await;
+    .await;
     client
 }
 

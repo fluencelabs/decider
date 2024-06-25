@@ -1,12 +1,31 @@
+/*
+ * Nox Fluence Peer
+ *
+ * Copyright (C) 2024 Fluence DAO
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #![feature(async_closure)]
 
-use crate::utils::{chain, enable_decider_logs, TestApp};
-use crate::utils::chain::{ChainReplies, Deal, random_tx, TxReceipt};
+use crate::utils::chain::{random_tx, ChainReplies, Deal, TxReceipt};
 use crate::utils::control::run_decider;
 use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE};
 use crate::utils::setup::setup_nox;
 use crate::utils::state::{deal, subnet, worker};
 use crate::utils::test_rpc_server::run_test_server;
+use crate::utils::{chain, enable_decider_logs, TestApp};
 
 pub mod utils;
 
@@ -138,7 +157,11 @@ async fn test_failed_register_workers() {
 
     let tx_hash = deal::get_deal_tx_hash(&mut client, deal_id).await.unwrap();
     assert!(tx_hash.is_some(), "tx_hash for {deal_id} isn't found");
-    assert_eq!(tx_hash.unwrap(), expected_hash, "Wrong tx hash is stored for the deal");
+    assert_eq!(
+        tx_hash.unwrap(),
+        expected_hash,
+        "Wrong tx hash is stored for the deal"
+    );
 
     server.shutdown().await;
 }
@@ -200,7 +223,9 @@ async fn test_failed_get_receipts() {
     let chain_replies = ChainReplies {
         deals: vec![Deal::ok(deal_id, TestApp::test_app1(), DEAL_STATUS_ACTIVE)],
         new_deals_tx_hashes: vec![],
-        new_deals_receipts: vec![Some(TxReceipt::Failed { hash: tx_hash.clone() })],
+        new_deals_receipts: vec![Some(TxReceipt::Failed {
+            hash: tx_hash.clone(),
+        })],
     };
     run_decider(&mut server, &mut client, chain_replies).await;
     {

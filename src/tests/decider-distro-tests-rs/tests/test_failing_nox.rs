@@ -1,22 +1,41 @@
+/*
+ * Nox Fluence Peer
+ *
+ * Copyright (C) 2024 Fluence DAO
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #![feature(async_closure)]
 
 use std::sync::Arc;
 
-use created_swarm::{CreatedSwarm, FunctionOutcome, JError};
 use created_swarm::fluence_keypair::KeyPair;
+use created_swarm::{CreatedSwarm, FunctionOutcome, JError};
 use futures::future::BoxFuture;
 use futures::FutureExt;
 use maplit::hashmap;
 use serde_json::{json, Value};
 use tempfile::TempDir;
 
-use crate::utils::{enable_decider_logs, TestApp};
-use crate::utils::chain::{ChainReplies, Deal, random_tx};
+use crate::utils::chain::{random_tx, ChainReplies, Deal};
 use crate::utils::control::run_decider;
 use crate::utils::default::{DEAL_IDS, DEAL_STATUS_ACTIVE, DEAL_STATUS_NOT_ENOUGH_WORKERS};
 use crate::utils::setup::{setup_nox_with, stop_nox};
 use crate::utils::state::{deal, worker};
 use crate::utils::test_rpc_server::run_test_server;
+use crate::utils::{enable_decider_logs, TestApp};
 
 pub mod utils;
 
