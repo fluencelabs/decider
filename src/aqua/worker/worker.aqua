@@ -15,7 +15,8 @@
 --
 -- You should have received a copy of the GNU Affero General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
---aqua Worker declares WorkerArgs, WorkerSettings, get_or_create, trigger_worker_spell
+--
+aqua Worker declares WorkerArgs, WorkerSettings, get_or_create, trigger_worker_spell
 
 import TriggerConfig, Spell from "@fluencelabs/spell/spell_service.aqua"
 import PeerId from "@fluencelabs/aqua-lib/builtin.aqua"
