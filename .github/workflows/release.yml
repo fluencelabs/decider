@@ -63,7 +63,7 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Install cargo-edit
-        uses: baptiste0928/cargo-install@v3.0.0
+        uses: baptiste0928/cargo-install@v3.1.1
         with:
           crate: cargo-edit
 
@@ -107,7 +107,7 @@ jobs:
         uses: nahsi/setup-ipfs@v1
 
       - name: Import secrets
-        uses: hashicorp/vault-action@v2.7.4
+        uses: hashicorp/vault-action@v2.8.1
         with:
           url: https://vault.fluence.dev
           path: jwt/github
@@ -123,7 +123,7 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Install cargo-workspaces
-        uses: baptiste0928/cargo-install@v3.0.0
+        uses: baptiste0928/cargo-install@v3.1.1
         with:
           crate: cargo-workspaces
           version: v0.3.0
@@ -168,7 +168,7 @@ jobs:
           echo "found any?:" "${{ steps.status.outputs.found }}"
 
       - name: Import secrets
-        uses: hashicorp/vault-action@v2.7.4
+        uses: hashicorp/vault-action@v2.8.1
         with:
           url: https://vault.fluence.dev
           path: jwt/github
