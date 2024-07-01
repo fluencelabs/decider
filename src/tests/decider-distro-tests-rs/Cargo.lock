@@ -2084,6 +2084,8 @@ dependencies = [
 [[package]]
 name = "decider-distro"
 version = "0.6.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fe66aa706ae0e5af6d8ae8b6a6190cbd0a54d6a476e04ae2c4badcdc408ae816"
 dependencies = [
  "built 0.7.2",
  "fluence-spell-dtos",
@@ -2093,9 +2095,7 @@ dependencies = [
 
 [[package]]
 name = "decider-distro"
-version = "0.6.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe66aa706ae0e5af6d8ae8b6a6190cbd0a54d6a476e04ae2c4badcdc408ae816"
+version = "0.7.0"
 dependencies = [
  "built 0.7.2",
  "fluence-spell-dtos",
@@ -2111,7 +2111,7 @@ dependencies = [
  "clarity",
  "connected-client",
  "created-swarm",
- "decider-distro 0.6.12",
+ "decider-distro 0.7.0",
  "eyre",
  "futures",
  "hex",
@@ -7451,9 +7451,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.117"
+version = "1.0.120"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "455182ea6142b14f93f4bc5320a2b31c1f266b66a4a5c858b013302a5d8cbfc3"
+checksum = "4e0d21c9a8cae1235ad58a00c11cb40d4b1e5c784f1ef2c537876ed6ffd8b7c5"
 dependencies = [
  "indexmap 2.2.6",
  "itoa",
@@ -8038,7 +8038,7 @@ source = "git+https://github.com/fluencelabs/nox.git?branch=get_deals_builtin#7c
 dependencies = [
  "aqua-ipfs-distro",
  "async-trait",
- "decider-distro 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "decider-distro 0.6.12",
  "eyre",
  "fluence-app-service",
  "fluence-spell-dtos",
