@@ -253,21 +253,35 @@ pub async fn play_register_worker_gen(server: &mut ServerHandle, tx_hash: &Optio
         assert_eq!(method, "eth_maxPriorityFeePerGas");
         server.send_response(Ok(json!(max_priority_fee)));
     }
-    {
-        let (method, _params) = server.receive_request().await.unwrap();
-        assert_eq!(method, "eth_getTransactionCount");
-        server.send_response(Ok(json!(nonce)));
-    }
 
+    // eth_getTransactionCount is now optional, so we may meet sendRawTransaction without getting
+    // nonce
     {
         let (method, _params) = server.receive_request().await.unwrap();
-        assert_eq!(method, "eth_sendRawTransaction");
-        let reply = if let Some(tx_hash) = tx_hash {
-            Ok(json!(tx_hash))
-        } else {
-            Err(json!("no tx hash provided"))
-        };
-        server.send_response(reply);
+        match method.as_ref() {
+            "eth_sendRawTransaction" => {
+                let reply = if let Some(tx_hash) = tx_hash {
+                    Ok(json!(tx_hash))
+                } else {
+                    Err(json!("no tx hash provided"))
+                };
+                server.send_response(reply);
+            }
+            "eth_getTransactionCount" => {
+                server.send_response(Ok(json!(nonce)));
+                {
+                    let (method, _params) = server.receive_request().await.unwrap();
+                    assert_eq!(method, "eth_sendRawTransaction");
+                    let reply = if let Some(tx_hash) = tx_hash {
+                        Ok(json!(tx_hash))
+                    } else {
+                        Err(json!("no tx hash provided"))
+                    };
+                    server.send_response(reply);
+                }
+            }
+            _ => panic!("unexpected method: {method}, expected eth_getTransactionCount or eth_sendRawTransaction"),
+        }
     }
 }
 
