@@ -38,7 +38,7 @@ pub fn setup_aqua_ipfs() -> AquaIpfsConfig {
     let mut config = AquaIpfsConfig::default();
     static IPFS_CLI_PATH: Option<&str> = option_env!("IPFS_CLI_PATH");
     if let Some(path) = IPFS_CLI_PATH {
-        config.ipfs_binary_path = path.to_string();
+        config.ipfs_binary_path = path.into();
     }
     config.external_api_multiaddr = IPFS_MULTIADDR.to_string();
     config.local_api_multiaddr = IPFS_MULTIADDR.to_string();
@@ -78,9 +78,7 @@ pub async fn setup_swarm(
 
         cfg.chain_config = Some(ChainConfig {
             http_endpoint: url.clone(),
-            core_contract_address: "core_contract".to_string(),
-            cc_contract_address: "cc_contract".to_string(),
-            market_contract_address: "market_contract".to_string(),
+            diamond_contract_address: "diamond_contract".to_string(),
             network_id: NETWORK_ID,
             wallet_key: PrivateKey::from_str(WALLET_KEY).unwrap(),
             default_base_fee: None,

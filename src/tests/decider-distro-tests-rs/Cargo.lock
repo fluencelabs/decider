@@ -87,7 +87,7 @@ dependencies = [
 [[package]]
 name = "air-interpreter-fs"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "air-interpreter-wasm",
  "eyre",
@@ -327,7 +327,7 @@ dependencies = [
 [[package]]
 name = "aquamarine"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1299,6 +1299,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "cfg_aliases"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fd16c4719339c4530435d38e511904438d07cce7950afa3718a84ac36c10e89e"
+
+[[package]]
 name = "chacha20"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1325,7 +1331,7 @@ dependencies = [
 [[package]]
 name = "chain-connector"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "alloy-primitives",
  "alloy-sol-types",
@@ -1340,6 +1346,7 @@ dependencies = [
  "hex-utils",
  "jsonrpsee 0.22.5",
  "libipld",
+ "libp2p-identity",
  "particle-args",
  "particle-builtins",
  "particle-execution",
@@ -1355,7 +1362,7 @@ dependencies = [
 [[package]]
 name = "chain-data"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "alloy-primitives",
  "alloy-sol-types",
@@ -1375,7 +1382,7 @@ dependencies = [
 [[package]]
 name = "chain-listener"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "alloy-primitives",
  "alloy-sol-types",
@@ -1441,7 +1448,7 @@ dependencies = [
 [[package]]
 name = "cid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "bytes",
  "eyre",
@@ -1588,7 +1595,7 @@ dependencies = [
 [[package]]
 name = "config-utils"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "libp2p-identity",
 ]
@@ -1596,7 +1603,7 @@ dependencies = [
 [[package]]
 name = "connected-client"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "derivative",
  "either",
@@ -1623,7 +1630,7 @@ dependencies = [
 [[package]]
 name = "connection-pool"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "fluence-libp2p",
  "futures",
@@ -1666,7 +1673,7 @@ checksum = "f7144d30dcf0fafbce74250a3963025d8d52177934239851c917d29f1df280c2"
 [[package]]
 name = "control-macro"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 
 [[package]]
 name = "convert_case"
@@ -1677,13 +1684,11 @@ checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
 [[package]]
 name = "core-distributor"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
- "async-trait",
  "bimap",
  "ccp-shared",
  "cpu-utils",
- "derivative",
  "enum_dispatch",
  "futures",
  "fxhash",
@@ -1883,7 +1888,7 @@ dependencies = [
 [[package]]
 name = "created-swarm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "air-interpreter-fs",
  "aquamarine",
@@ -2657,7 +2662,7 @@ dependencies = [
 [[package]]
 name = "fluence-libp2p"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "bs58",
  "futures",
@@ -2742,7 +2747,7 @@ dependencies = [
 [[package]]
 name = "fs-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "cfg-if",
  "eyre",
@@ -3125,7 +3130,7 @@ dependencies = [
 [[package]]
 name = "health"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "eyre",
 ]
@@ -3181,7 +3186,7 @@ checksum = "6fe2267d4ed49bc07b63801559be28c718ea06c4738b7a03c94df7386d2cde46"
 [[package]]
 name = "hex-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "hex",
  "serde_with 3.8.1",
@@ -3870,7 +3875,7 @@ dependencies = [
 [[package]]
 name = "ivalue-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "fluence-it-types",
  "serde_json",
@@ -3917,7 +3922,7 @@ dependencies = [
 [[package]]
 name = "json-utils"
 version = "0.0.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "base64 0.21.7",
  "serde",
@@ -4244,7 +4249,7 @@ dependencies = [
 [[package]]
 name = "kademlia"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "bs58",
  "control-macro",
@@ -4898,7 +4903,7 @@ checksum = "01cda141df6706de531b6c46c3a33ecca755538219bd484262fa09410c13539c"
 [[package]]
 name = "local-vm"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -4940,7 +4945,7 @@ checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 [[package]]
 name = "log-format"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "nu-ansi-term 0.50.0",
  "tracing",
@@ -4951,7 +4956,7 @@ dependencies = [
 [[package]]
 name = "log-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "log",
  "log-format",
@@ -4976,6 +4981,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "31e24f1ad8321ca0e8a1e0ac13f23cb668e6f5466c2c57319f6a5cf1cc8e3b1c"
 dependencies = [
  "linked-hash-map",
+]
+
+[[package]]
+name = "mac_address"
+version = "1.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8836fae9d0d4be2c8b4efcdd79e828a2faa058a90d005abf42f91cac5493a08e"
+dependencies = [
+ "nix 0.28.0",
+ "winapi",
 ]
 
 [[package]]
@@ -5728,6 +5743,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "nix"
+version = "0.28.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ab2156c4fce2f8df6c499cc1c763e4394b7482525bf2a9701c9d79d215f519e4"
+dependencies = [
+ "bitflags 2.5.0",
+ "cfg-if",
+ "cfg_aliases",
+ "libc",
+ "memoffset",
+]
+
+[[package]]
 name = "nohash-hasher"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5752,12 +5780,12 @@ checksum = "995defdca0a589acfdd1bd2e8e3b896b4d4f7675a31fd14c32611440c7f608e6"
 [[package]]
 name = "now-millis"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 
 [[package]]
 name = "nox"
 version = "0.25.2"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "air-interpreter-fs",
  "air-interpreter-wasm",
@@ -6163,7 +6191,7 @@ dependencies = [
 [[package]]
 name = "particle-args"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "avm-server",
  "bs58",
@@ -6178,18 +6206,20 @@ dependencies = [
 [[package]]
 name = "particle-builtins"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "async-trait",
  "avm-server",
  "base64 0.21.7",
  "bs58",
  "bytesize",
+ "config-utils",
  "connection-pool",
  "derivative",
  "eyre",
  "fluence-app-service",
  "fluence-keypair",
+ "fs-utils",
  "futures",
  "health",
  "humantime-serde",
@@ -6211,10 +6241,10 @@ dependencies = [
  "serde",
  "serde_json",
  "service-modules",
- "subnet-resolver",
  "thiserror",
  "tokio",
  "toml-utils",
+ "tracing",
  "types",
  "uuid-utils",
  "workers",
@@ -6223,7 +6253,7 @@ dependencies = [
 [[package]]
 name = "particle-execution"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "async-trait",
  "bs58",
@@ -6245,7 +6275,7 @@ dependencies = [
 [[package]]
 name = "particle-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "base64 0.21.7",
  "bytesize",
@@ -6272,7 +6302,7 @@ dependencies = [
 [[package]]
 name = "particle-protocol"
 version = "0.3.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "air-interpreter-sede",
  "asynchronous-codec 0.7.0",
@@ -6300,7 +6330,7 @@ dependencies = [
 [[package]]
 name = "particle-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "bytesize",
  "cid-utils",
@@ -6365,7 +6395,7 @@ dependencies = [
 [[package]]
 name = "peer-metrics"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "bytesize",
  "fluence-app-service",
@@ -7127,7 +7157,7 @@ dependencies = [
  "log",
  "netlink-packet-route",
  "netlink-proto",
- "nix",
+ "nix 0.24.3",
  "thiserror",
  "tokio",
 ]
@@ -7683,7 +7713,7 @@ dependencies = [
 [[package]]
 name = "server-config"
 version = "0.2.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "air-interpreter-fs",
  "base64 0.21.7",
@@ -7723,7 +7753,7 @@ dependencies = [
 [[package]]
 name = "service-modules"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "cid-utils",
  "eyre",
@@ -7926,7 +7956,7 @@ dependencies = [
 [[package]]
 name = "sorcerer"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "aquamarine",
  "connection-pool",
@@ -7965,7 +7995,7 @@ dependencies = [
 [[package]]
 name = "spell-event-bus"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "connection-pool",
  "derivative",
@@ -7991,7 +8021,7 @@ dependencies = [
 [[package]]
 name = "spell-service-api"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "fluence-libp2p",
  "fluence-spell-dtos",
@@ -8006,14 +8036,13 @@ dependencies = [
 [[package]]
 name = "spell-storage"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "derivative",
  "eyre",
  "fluence-app-service",
  "fluence-libp2p",
  "fluence-spell-distro",
- "itertools 0.13.0",
  "log",
  "parking_lot",
  "particle-modules",
@@ -8073,24 +8102,6 @@ name = "strsim"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
-
-[[package]]
-name = "subnet-resolver"
-version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
-dependencies = [
- "chain-data",
- "ethabi",
- "eyre",
- "hex",
- "hex-utils",
- "jsonrpsee 0.22.5",
- "libp2p-identity",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
-]
 
 [[package]]
 name = "subtle"
@@ -8190,7 +8201,7 @@ dependencies = [
 [[package]]
 name = "system-services"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "aqua-ipfs-distro",
  "async-trait",
@@ -8260,14 +8271,15 @@ dependencies = [
 [[package]]
 name = "test-constants"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 
 [[package]]
 name = "test-utils"
 version = "0.3.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "base64 0.21.7",
+ "clarity",
  "connected-client",
  "cpu-utils",
  "eyre",
@@ -8276,6 +8288,7 @@ dependencies = [
  "maplit",
  "particle-args",
  "serde_json",
+ "server-config",
  "service-modules",
  "test-constants",
  "tokio",
@@ -8522,7 +8535,7 @@ dependencies = [
 [[package]]
 name = "toml-utils"
 version = "0.0.1"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "marine-runtime",
 ]
@@ -8636,7 +8649,7 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "toy-vms"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "aquamarine",
  "async-trait",
@@ -8792,7 +8805,7 @@ checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 [[package]]
 name = "types"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "libp2p-identity",
  "serde",
@@ -8943,7 +8956,7 @@ dependencies = [
 [[package]]
 name = "uuid-utils"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "uuid",
 ]
@@ -8981,6 +8994,41 @@ name = "version_check"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
+
+[[package]]
+name = "virt"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ea10b64ad18e1dd0cb83a80c8ab761506acb819dbb1af576d4bca357f2fb2a62"
+dependencies = [
+ "libc",
+ "uuid",
+ "virt-sys",
+]
+
+[[package]]
+name = "virt-sys"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c504e459878f09177f41bf2f8bb3e9a8af4fca7a09e73152fee02535d501601c"
+dependencies = [
+ "libc",
+ "pkg-config",
+]
+
+[[package]]
+name = "vm-utils"
+version = "0.1.0"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
+dependencies = [
+ "ccp-shared",
+ "mac_address",
+ "nonempty",
+ "rand",
+ "thiserror",
+ "tracing",
+ "virt",
+]
 
 [[package]]
 name = "void"
@@ -10017,7 +10065,7 @@ dependencies = [
 [[package]]
 name = "workers"
 version = "0.1.0"
-source = "git+https://github.com/fluencelabs/nox.git?branch=batching#32f222eb86843ef8eff519e24180353a875f3a49"
+source = "git+https://github.com/fluencelabs/nox.git?branch=config_diamond#8e3b59841371113ec42091a2a5fb99802e3689d9"
 dependencies = [
  "async-trait",
  "core-distributor",
@@ -10032,10 +10080,12 @@ dependencies = [
  "serde",
  "thiserror",
  "tokio",
+ "tokio-stream",
  "toml 0.8.12",
  "toml_edit 0.22.12",
  "tracing",
  "types",
+ "vm-utils",
 ]
 
 [[package]]

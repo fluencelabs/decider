@@ -123,7 +123,7 @@ pub async fn play_get_deals(server: &mut ServerHandle, deals: &Vec<Deal>) {
         assert_eq!(method, "eth_call");
         assert_eq!(
             params[0].get("to").unwrap().as_str(),
-            Some("market_contract")
+            Some("diamond_contract")
         );
 
         server.send_response(Ok(json!(get_compute_units(&ids))));
