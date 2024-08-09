@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/fluencelabs/decider/compare/connector-v0.7.0...connector-v0.7.1) (2024-08-09)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate fluence-spell-dtos to v0.7.6 ([#264](https://github.com/fluencelabs/decider/issues/264)) ([91c6595](https://github.com/fluencelabs/decider/commit/91c6595d244ffe5e18ff0fa5591ce7c870be121f))
+
 ## [0.7.0](https://github.com/fluencelabs/decider/compare/connector-v0.6.12...connector-v0.7.0) (2024-06-05)
 
 
